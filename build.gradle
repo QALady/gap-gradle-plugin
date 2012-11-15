@@ -1,0 +1,47 @@
+repositories {   
+  ivy{
+    layout 'maven'
+    url "http://ci.gap.dev/artifactory/libs-release"
+  } 
+} 
+
+//User defined
+ext.majorVersion = 1
+ext.minorVersion = 0
+
+version = "${majorVersion}.${minorVersion}.${release}.${counter}"
+
+apply plugin: 'groovy'
+
+def HAMCREST = ['org.hamcrest:hamcrest-core:1.2@jar', 'org.hamcrest:hamcrest-library:1.2@jar']
+
+dependencies{
+  compile gradleApi()
+  groovy localGroovy() 
+  
+  /* Following 4 dependencies are required for gradle cobertura plugin */
+  compile 'gradle_cobertura:gradle_cobertura:1.1'
+  compile 'net.sourceforge.cobertura:cobertura:1.9.4.1'
+  compile 'asm:asm-all:3.3.1'
+  compile 'oro:oro:2.0.8'
+
+  testCompile group: 'junit', name: 'junit', version: '4.8.2'
+  testCompile HAMCREST
+}
+
+task echoVersion << {
+  println "${version}"
+}
+
+uploadArchives {
+  repositories {
+    ivy{
+      layout 'maven'
+      url "http://ci.gap.dev/artifactory/libs-release-local"
+      credentials{
+        username "admin" 
+        password "password"
+      }
+    }
+  } 
+}

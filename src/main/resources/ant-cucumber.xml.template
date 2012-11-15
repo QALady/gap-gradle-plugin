@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns:gsp='http://groovy.codehaus.org/2005/gsp'>
+  <property name="gems.home" value="\${user.home}/.ri/gems/" />
+  
+  <gsp:scriptlet>suites.each {</gsp:scriptlet>
+  <target name="features${it.name}" depends="${it.depends}">
+    <sequential>
+      <gemInstall name="bundler" version="1.0.21" classpath="\${cucumber.classpath}" gemset="${it.folder}" />
+      <jrubyExec command="bundle install --gemfile src/test/${it.folder}/resources/Gemfile" classpath="\${cucumber.classpath}" gemset="${it.folder}" />
+      <jrubyExec command="cucumber \${cucumber.feature}" gemset="${it.folder}" classpath="\${cucumber.classpath}">
+        <jvmarg value="-Duser.dir=\${basedir}/src/test/${it.folder}" />
+      </jrubyExec>
+    </sequential>
+  </target>
+  <gsp:scriptlet>}</gsp:scriptlet>
+
+  <condition property="test.jruby.debug.args" value="-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=y">
+    <isset property="test.jruby.debug" />
+  </condition>
+  <property name="test.jruby.debug.args" value="" />
+  <macrodef name="jrubyJava">
+    <attribute name="classpath" />
+    <attribute name="command" />
+    <attribute name="jvmargs" default="" />
+    <attribute name="proxy" default="http://qaproxy.gid.gap.com:8080" />
+    <attribute name="gemset" default="default" />
+    <element name="env-attributes" optional="yes" implicit="true" />
+    <sequential>
+      <java fork="true" classname="org.jruby.Main" failonerror="true">
+        <classpath>
+          <pathelement path="@{classpath}" />
+        </classpath>
+        <env key="GEM_HOME" path="\${gems.home}/@{gemset}" />
+        <env key="GEM_PATH" path="\${gems.home}/@{gemset}" />
+        <env key="PATH" path="\${gems.home}/@{gemset}/bin:\${env.PATH}" />
+        <env key="http_proxy" value="@{proxy}" />
+        <env key="TAZA_ENV" value="\${environment}" />
+        <arg line="--debug @{command}" />
+        <jvmarg line="-Djruby.debug.fullTrace=true" />
+        <jvmarg line="@{jvmargs}" />
+        <!-- jvmarg line="-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=y" / -->
+        <env-attributes />
+      </java>
+    </sequential>
+  </macrodef>
+  <macrodef name="jrubyExec">
+    <attribute name="command" />
+    <attribute name="jvmargs" default="" />
+    <attribute name="classpath" />
+    <attribute name="gemset" default="default" />
+    <element name="env-attributes" optional="yes" implicit="true" />
+    <sequential>
+      <jrubyJava classpath="@{classpath}" command="-S @{command}" jvmargs="@{jvmargs}" gemset="@{gemset}">
+        <env-attributes />
+      </jrubyJava>
+    </sequential>
+  </macrodef>
+  <macrodef name="gemInstall">
+    <attribute name="name" />
+    <attribute name="version" />
+    <attribute name="classpath" />
+    <attribute name="gemset" default="default" />
+    <sequential>
+      <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+          <pathelement path="@{classpath}" />
+        </classpath>
+      </taskdef>
+      <if>
+        <not>
+          <available file="\${gems.home}/@{gemset}/gems/@{name}-@{version}" />
+        </not>
+        <then>
+          <jruby classpath="@{classpath}" command="-S gem install @{name} -v @{version}" gemset="@{gemset}" />
+        </then>
+      </if>
+    </sequential>
+  </macrodef>
+</project>
