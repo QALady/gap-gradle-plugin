@@ -9,6 +9,7 @@ repositories {
 ext.majorVersion = 1
 ext.minorVersion = 0
 
+group 'com.gap'
 version = "${majorVersion}.${minorVersion}.${release}.${counter}"
 
 apply plugin: 'groovy'

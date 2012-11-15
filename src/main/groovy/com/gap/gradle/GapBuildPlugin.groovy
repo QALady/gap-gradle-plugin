@@ -31,30 +31,6 @@ class GapBuildPlugin implements Plugin<Project>{
         sourceSets.test.resources.srcDirs 'src/test/unit/resources'
       }
 
-      //print Ivy identifiers task
-      target.task('ivyIdentifiers') << {
-        println project.group + ":" + project.name
-      }
-
-      //print Ivy dependencies task
-      target.task('ivyDependencies') << {
-        configurations.each { 
-          config -> config.dependencies.each { 
-            dep -> println dep.group + ":" + dep.name 
-          } 
-        }
-      }
-    
-      //unzip integration test dependencies task
-      target.task('unzipIntegrationTests') << {
-        configurations.integrationTest.files.each {
-          file -> copy {
-            from zipTree(file.path)
-            into '.'
-          }
-        }
-      }
-
     }
   }
 }
