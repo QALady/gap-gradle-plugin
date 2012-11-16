@@ -42,10 +42,16 @@ class GapUploadPlugin implements Plugin<Project>{
         from "src/test/functional"
       }
 
+      project.tasks.add(name:'packageSmokeTests', type: Zip)
+      {
+        classifier = 'smokeTests'
+        from "src/test/smoke"
+      }
+
       project.configure(project){
         uploadArchives {
 
-          dependsOn('uploadSources','uploadTestRuntime', 'uploadConfig', 'uploadIntegrationTest')
+          dependsOn('uploadSources','uploadTestRuntime', 'uploadConfig', 'uploadIntegrationTest', 'uploadSmokeTest')
 
           //Upload Project dependencies as well
           project.configurations.compile.dependencies.each{
@@ -69,6 +75,7 @@ class GapUploadPlugin implements Plugin<Project>{
           sources
           testRuntime{visible true}
           integrationTest
+          smokeTest
         }
 
         artifacts {
@@ -76,6 +83,7 @@ class GapUploadPlugin implements Plugin<Project>{
           config(packageConfigs){ type = 'config' }
           testRuntime(packageTests){ type = 'test' }
           integrationTest(packageIntegrationTests){ type = 'integrationTest' }
+          smokeTest(packageSmokeTests){ type = 'smokeTest' }
         }
 
         uploadSources {
@@ -94,8 +102,11 @@ class GapUploadPlugin implements Plugin<Project>{
           repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
         }
 
-            }
+        uploadSmokeTest {
+          repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
         }
 
+      }
     }
+  }
 }
