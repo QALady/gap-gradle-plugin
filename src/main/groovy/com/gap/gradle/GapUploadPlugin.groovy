@@ -3,7 +3,6 @@ package com.gap.gradle
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.bundling.Zip
 
 class GapUploadPlugin implements Plugin<Project>{
 
@@ -36,13 +35,13 @@ class GapUploadPlugin implements Plugin<Project>{
         from project.sourceSets.test.output
       }
 
-      project.tasks.add(name:'packageIntegrationTests', type: Zip)
+      project.tasks.add(name:'packageIntegrationTests', type: Jar)
       {
         classifier = 'integrationTests'
         from "src/test/functional"
       }
 
-      project.tasks.add(name:'packageSmokeTests', type: Zip)
+      project.tasks.add(name:'packageSmokeTests', type: Jar)
       {
         classifier = 'smokeTests'
         from "src/test/smoke"
