@@ -8,12 +8,8 @@ class GapGemJarPlugin implements Plugin<Project> {
   void apply(Project target) {
     target.configure(target) {
       repositories {
-        ivy {
-          url 'http://ci.gap.dev/gemjar'
-          layout 'pattern', {
-            artifact 'jars/[organization]/[module]-[revision].[ext]'
-            ivy 'ivys/[organization]/ivy-[module]-[revision].[ext]'
-          }   
+        maven {
+          url 'http://repo1.phx.gapinc.dev/artifactory/gemjars'
         }
       }
     }
