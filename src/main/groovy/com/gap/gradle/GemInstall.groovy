@@ -12,6 +12,7 @@ class GemInstall extends DefaultTask {
   def String gemVersion
   def String gemHome
   def String gemSet
+  def String customMaxHeapSize
 
   @TaskAction
   def run() {
@@ -19,6 +20,7 @@ class GemInstall extends DefaultTask {
     if (!gemDir.isDirectory()) {
       project.javaexec {
         main = 'org.jruby.Main'
+        maxHeapSize = customMaxHeapSize ?: Runtime.getRuntime().maxMemory()
         args = ['-S','gem','install',gemName,'-v',gemVersion]
         def os = System.getProperty('os.name').toLowerCase()
         if(!os.contains('windows')){
