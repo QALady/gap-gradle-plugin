@@ -11,13 +11,13 @@ class Bundle extends DefaultTask {
   def String gemFile
   def String gemHome
   def String gemSet
-  def String customMaxHeapSize
+  def String customMaxHeapSizeForGem
 
   @TaskAction
   def run() {
     project.javaexec {
       main = 'org.jruby.Main'
-      maxHeapSize = customMaxHeapSize ?: Runtime.getRuntime().maxMemory()
+      maxHeapSize = customMaxHeapSizeForGem ?: Runtime.getRuntime().maxMemory()
       args = ['-S','bundle','install','--gemfile',gemFile]      
       def os = System.getProperty('os.name').toLowerCase()
       if(!os.contains('windows')){
