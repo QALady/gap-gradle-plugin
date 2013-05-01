@@ -24,8 +24,7 @@ class Bundle extends DefaultTask {
         environment = [
           GEM_HOME:gemHome + '/' + gemSet,
           GEM_PATH:gemHome + '/' + gemSet,
-          PATH:gemHome + '/' + gemSet + '/bin:$PATH',
-          http_proxy:'http://qaproxy.gid.gap.com:8080'
+          PATH:gemHome + '/' + gemSet + '/bin:$PATH'
         ]
       }
       classpath = project.configurations.jruby
