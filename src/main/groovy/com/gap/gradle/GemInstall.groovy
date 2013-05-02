@@ -21,7 +21,7 @@ class GemInstall extends DefaultTask {
       project.javaexec {
         main = 'org.jruby.Main'
         maxHeapSize = customMaxHeapSizeForGem ?: Runtime.getRuntime().maxMemory()
-        args = ['-S','gem','install',gemName,'-v',gemVersion]
+        args = ['-S','gem','install',gemName,'-v',gemVersion,'--source','http://ks64.phx.gapinc.dev/gemrepo/']
         def os = System.getProperty('os.name').toLowerCase()
         if(!os.contains('windows')){
           environment = [
