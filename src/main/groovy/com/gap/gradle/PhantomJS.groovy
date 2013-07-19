@@ -7,6 +7,18 @@ import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.Exec;
 import org.gradle.api.Project;
 
+/*
+ * Upload new versions of phantomjs to artifactory at:
+ * ext-release-local/org/phantomjs/phantomjs/{version}/phantomjs-{version}-{qualifier}.zip
+ *
+ * Contents of zip should be ONLY the single binary executable for phantomjs
+ *
+ * EXAMPLE in build.gradle:
+ * task(type: com.gap.gradle.PhantomJS){
+ *     version: '1.9.1'
+ *     args = [ 'runner.js', 'jasmine-runner.html' ]
+ * }
+ */
 class PhantomJS extends DefaultTask {
   def Iterable<?> args
   def String version = '1.9.1'
