@@ -13,7 +13,7 @@ class GapJRubyPlugin implements Plugin<Project> {
         jruby
       }
       dependencies {
-        jruby 'org.jruby:jruby-complete:1.7.3'
+        jruby 'org.jruby:jruby-complete:1.7.4'
       }
     }
   }
