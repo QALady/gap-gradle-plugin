@@ -13,7 +13,10 @@ class GapJRubyPlugin implements Plugin<Project> {
         jruby
       }
       dependencies {
-        jruby 'org.jruby:jruby-complete:1.7.4'
+        jruby 'com.jcraft:jzlib:1.1.1'
+        jruby 'org.jruby:jruby-core:1.6.7'
+        jruby 'org.jruby:jruby-stdlib:1.6.7'
+        jruby 'org.jruby:jruby-common:1.6.7'
       }
     }
   }
