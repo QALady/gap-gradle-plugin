@@ -43,7 +43,7 @@ class PhantomJS extends DefaultTask {
     }
 
     project.configurations { binaries }
-    project.dependencies.binaries "org.phantomjs:phantomjs:${version}:${qualifier}@zip"
+    project.dependencies.binaries group: "org.phantomjs", name:"phantomjs", version: "${version}", classifier: "${qualifier}", ext: "zip"
     project.configurations.binaries.each { file ->
         project.copy {
             from project.zipTree(file)
