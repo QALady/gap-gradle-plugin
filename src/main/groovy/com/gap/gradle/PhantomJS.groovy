@@ -22,12 +22,13 @@ import org.gradle.api.Project;
 class PhantomJS extends DefaultTask {
   def Iterable<?> args
   def String version = '1.9.1'
-  def final String phantomjsBin = "${project.buildDir}/bin/phantomjs"
+  def final String phantomjsBin    = "${project.buildDir}/bin/phantomjs"
+  def final String phantomjsBinExe = "${project.buildDir}/bin/phantomjs.exe"
 
   @TaskAction
   def run() {
-    def String os = System.properties['os.name'].toLowerCase()
-    def String arch = System.properties['os.arch'].toLowerCase()
+    def final String os = System.properties['os.name'].toLowerCase()
+    def final String arch = System.properties['os.arch'].toLowerCase()
 
     def String qualifier
     if (os.indexOf('linux') >= 0) {
@@ -52,7 +53,7 @@ class PhantomJS extends DefaultTask {
     }
 
     project.exec {
-        executable = phantomjsBin
+        executable = qualifier == 'windows' ? phantomjsBinExe : phantomjsBin
         args = this.args
     }
   }
