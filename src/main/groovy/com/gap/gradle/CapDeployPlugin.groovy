@@ -44,7 +44,7 @@ class CapDeployPlugin implements Plugin<Project> {
                     'cap', "${project.deploy.configuration}", 'deploy_app',
                     '-s', "version=${component.archives.version}",
                     '-s', "appConfig=${project.deploy.configuration}",
-                    '-s', "cookbook_version=${component.cookbooks.version}]"
+                    '-s', "cookbook_version=${component.cookbooks.version}"
                 )
                 builder.directory(project.file("${name}-capfiles/deploy"))
                 def proc = builder.start()
