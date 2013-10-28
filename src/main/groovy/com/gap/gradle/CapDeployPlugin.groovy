@@ -3,6 +3,7 @@ package com.gap.gradle
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 import org.gradle.api.GradleException
+import groovy.json.*
 
 class CapDeployPlugin implements Plugin<Project> {
 
@@ -43,7 +44,7 @@ class CapDeployPlugin implements Plugin<Project> {
                     'cap', "${project.deploy.configuration}", 'deploy_app',
                     '-s', "version=${component.archives.version}",
                     '-s', "appConfig=${project.deploy.configuration}",
-                    '-s', "cookbook_version=${component.cookbooks.version}"
+                    '-s', "cookbook_version=${component.cookbooks.version}]"
                 )
                 builder.directory(project.file("${name}-capfiles/deploy"))
                 def proc = builder.start()
@@ -83,9 +84,16 @@ class CapDeployPlugin implements Plugin<Project> {
             def (group, name, ext) = coords.split(':')
             def path = dependency.absolutePath
             if (path.contains("/${group}/${name}/") && path.endsWith(ext)) {
+                def version
+								if (dependency.name.startsWith("metadata-") && dependency.name.endsWith(".json")) {
+   									def json = new JsonSlurper().parse(new FileReader(project.file(path)))
+										version = json.version
+								} else {
+										version = path.substring(path.lastIndexOf('-') + 1, path.lastIndexOf('.'))
+                }
                 return [
-                    version: path.substring(path.lastIndexOf('-') + 1, path.lastIndexOf('.')),
-                    file: project.file(path),
+                    version: version,
+										file: project.file(path),
                 ]
             }
         }
