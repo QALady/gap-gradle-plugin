@@ -23,7 +23,7 @@ class GapMetricsPlugin implements Plugin<Project>{
         }
 
         dependencies {
-          coberturaRuntime 'net.sourceforge.cobertura:cobertura:1.9.3'
+          coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.0.3'
         }
 
         project.task('coberturaPrepare') {
