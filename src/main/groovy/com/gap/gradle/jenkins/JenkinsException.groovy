@@ -1,7 +1,8 @@
 package com.gap.gradle.jenkins
 
-class JenkinsException extends Exception{
-    JenkinsException(message){
+class JenkinsException extends RuntimeException {
+
+    JenkinsException(message) {
         super(message)
     }
 }

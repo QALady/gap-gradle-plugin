@@ -4,13 +4,6 @@ import static groovyx.net.http.Method.*
 import static groovyx.net.http.ContentType.*
 
 import groovyx.net.http.HTTPBuilder
-enum JobStatus
-{
-    success,
-    failure,
-    pending,
-    unknown
-}
 
 class JenkinsClient {
 
@@ -27,6 +20,10 @@ class JenkinsClient {
     def getAuthorizationHeader(){
         def credentials = "${userName}:${apiToken}".toString().bytes.encodeBase64().toString()
         "Basic  ${credentials}"
+    }
+
+    def getJobUrl(jobName, jobNumber) {
+        "TODO" // TODO
     }
 
     def getNextBuildNumber (jobName){
