@@ -1,7 +1,7 @@
 package com.gap.gradle.jenkins
 
-import static groovyx.net.http.Method.GET
-import static groovyx.net.http.Method.POST
+import static groovyx.net.http.Method.*
+import static groovyx.net.http.ContentType.*
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.equalTo
 import static org.junit.Assert.assertEquals
@@ -76,7 +76,7 @@ class JenkinsClientTest {
     }
 
     @Test(expected = JenkinsException)
-    void shouldThrowException_whenFailedToGetNextBuildNumbe (){
+    void shouldThrowException_whenFailedToGetNextBuildNumber (){
         mockHttpBuilder.demand.request {method, contentType, body ->
             body.delegate = mockRequestDelegate
             body.call()
@@ -89,12 +89,77 @@ class JenkinsClientTest {
     }
 
 
+    @Test
+    void isFinished_shouldInvokeJenkinsApi() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            assertThat(method, equalTo(GET))
+            assertEquals(JSON, contentType)
+            assertThat(mockRequestDelegate.uri.path.toString(), equalTo("/job/jenkins_job_name/203/api/json"))
+            assertAuthorizationHeader(mockRequestDelegate)
+        }
 
-//
-//    @Test
-//    void shouldGetWhetherJobIsFinished_forJobNameAndBuildNumber() {
-//        assertThat(client.isFinished("job name", 203), is(false)) // job is not finished
-//    }
+        mockHttpBuilder.use {
+            client.isFinished("jenkins_job_name", 203)
+        }
+    }
+
+    @Test
+    void isFinished_shouldReturnTrue_WhenJobIsComplete() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.success(mockResponse, [building: false])
+        }
+
+        mockHttpBuilder.use {
+            assertEquals(true, client.isFinished("jenkins_job_name", 203))
+        }
+    }
+
+    @Test
+    void isFinished_shouldReturnFalse_WhenJobIsInProgress() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.success(mockResponse, [building: true])
+        }
+
+        mockHttpBuilder.use {
+            assertEquals(false, client.isFinished("jenkins_job_name", 203))
+        }
+    }
+
+    @Test
+    void isFinished_shouldReturnFalse_WhenJobCannotBeFound() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.failure([statusLine: [statusCode: 404]])
+        }
+
+        mockHttpBuilder.use {
+            assertEquals(false, client.isFinished("jenkins_job_name", 203))
+        }
+    }
+
+    @Test(expected = JenkinsException)
+    void isFinished_shouldThrowException_whenRequestToJenkinsApiFails() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.failure([statusLine: [statusCode: 500]])
+        }
+
+        mockHttpBuilder.use {
+            client.isFinished("jenkins_job_name", 203)
+        }
+    }
+
+    private void assertAuthorizationHeader(requestDelegate) {
+        assertThat(requestDelegate.headers.Authorization.toString(), equalTo("Basic  anVuaXRVc2VyOmp1bml0QXBpVG9rZW4="))
+    }
 //
 //    @Test
 //    void shouldGetWhetherJobIsSuccessful_forJobNameAndBuildNumber() {

@@ -51,7 +51,19 @@ class JenkinsClient {
     }
 
     def isFinished(jobName, jobNumber) {
-        return true
+        http.request(GET, JSON) {
+            uri.path = "/job/${jobName}/${jobNumber}/api/json"
+            headers.'Authorization' = getAuthorizationHeader()
+            response.success = {resp, json ->
+                json.building == false
+            }
+            response.failure = {resp ->
+                if (resp.statusLine.statusCode == 404)
+                    false
+                else
+                    throw new JenkinsException("Unable to status of build ${jobNumber} for job ${jobName}")
+            }
+        }
     }
 
     def isSuccessful(jobName, jobNumber) {
