@@ -1,9 +1,11 @@
 package com.gap.gradle.jenkins
-
-import static groovyx.net.http.Method.*
-import static groovyx.net.http.ContentType.*
+import static groovyx.net.http.ContentType.JSON
+import static groovyx.net.http.Method.GET
+import static groovyx.net.http.Method.POST
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.equalTo
+import static org.junit.Assert.assertTrue
+import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertEquals
 
 import groovy.mock.interceptor.MockFor
@@ -25,7 +27,7 @@ class JenkinsClientTest {
     }
 
     @Test
-    void shouldTriggerNewJobInJenkinsServer_whenJobIsKickedOff (){
+    void startJob_shouldTriggerNewJobInJenkinsServer (){
         mockHttpBuilder.demand.request {method, contentType, body -> }
         mockHttpBuilder.demand.request {Method method, Closure body ->
             body.delegate = mockRequestDelegate
@@ -40,7 +42,7 @@ class JenkinsClientTest {
     }
 
     @Test(expected = JenkinsException)
-    void shouldThrowException_whenFailedToTriggerNewJobInJenkins (){
+    void startJob_shouldThrowException_whenFailedToTriggerNewJobInJenkins (){
         mockHttpBuilder.demand.request {method, contentType, body -> }
         mockHttpBuilder.demand.request {Method method, Closure body ->
             body.delegate = mockRequestDelegate
@@ -54,7 +56,7 @@ class JenkinsClientTest {
     }
 
     @Test
-    void shouldReturnNextBuildNumberFromJenkins_whenJobSuccessfullyKickedOff() {
+    void startJob_shouldReturnNextBuildNumberFromJenkins_whenJobSuccessfullyKickedOff() {
         mockHttpBuilder.demand.request {method, contentType, body ->
             body.delegate = mockRequestDelegate
             body.call()
@@ -76,7 +78,7 @@ class JenkinsClientTest {
     }
 
     @Test(expected = JenkinsException)
-    void shouldThrowException_whenFailedToGetNextBuildNumber (){
+    void startJob_shouldThrowException_whenFailedToGetNextBuildNumber (){
         mockHttpBuilder.demand.request {method, contentType, body ->
             body.delegate = mockRequestDelegate
             body.call()
@@ -160,17 +162,32 @@ class JenkinsClientTest {
     private void assertAuthorizationHeader(requestDelegate) {
         assertThat(requestDelegate.headers.Authorization.toString(), equalTo("Basic  anVuaXRVc2VyOmp1bml0QXBpVG9rZW4="))
     }
-//
-//    @Test
-//    void shouldGetWhetherJobIsSuccessful_forJobNameAndBuildNumber() {
-//        assertThat(client.isSuccessful("job name", 203), is(true)) // job is finished and successful
-//    }
-//
-//    @Test(expected = IllegalStateException)
-//    void shouldThrowException_whenNotFinished() {
-//        client.isSuccessful("job name", 203) // should throw exception because "job name"@203 is not finished
-//    }
-//
+    @Test
+    void isSuccessful_shouldReturnTrue_whenJenkinsJobIsSuccessful() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.success(mockResponse, [building: false, result: 'SUCCESS'])
+        }
+
+        mockHttpBuilder.use {
+            assertTrue(client.isSuccessful("job name", 203))
+        }
+    }
+
+    @Test
+    void isSuccessful_shouldReturnFalse_whenJenkinsJobFails() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.success(mockResponse, [building: false, result: 'FAILURE'])
+        }
+
+        mockHttpBuilder.use {
+            assertFalse(client.isSuccessful("job name", 203))
+        }
+    }
+
 //    @Test
 //    void shouldGetConsoleLog() {
 //        assertThat(client.getConsole("job name", 203), containsString("hello world"))

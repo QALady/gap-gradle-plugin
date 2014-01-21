@@ -4,6 +4,13 @@ import static groovyx.net.http.Method.*
 import static groovyx.net.http.ContentType.*
 
 import groovyx.net.http.HTTPBuilder
+enum JobStatus
+{
+    success,
+    failure,
+    pending,
+    unknown
+}
 
 class JenkinsClient {
 
@@ -51,23 +58,31 @@ class JenkinsClient {
     }
 
     def isFinished(jobName, jobNumber) {
+        def jobStatus = getJobStatus(jobName, jobNumber)
+        jobStatus == JobStatus.success || jobStatus == JobStatus.failure
+    }
+
+    private def getJobStatus(jobName, jobNumber) {
         http.request(GET, JSON) {
             uri.path = "/job/${jobName}/${jobNumber}/api/json"
             headers.'Authorization' = getAuthorizationHeader()
-            response.success = {resp, json ->
-                json.building == false
+            response.success = { resp, json ->
+                if (json.building)
+                    return JobStatus.pending
+                json.result == 'SUCCESS'? JobStatus.success : JobStatus.failure
             }
-            response.failure = {resp ->
+            response.failure = { resp ->
                 if (resp.statusLine.statusCode == 404)
-                    false
+                    JobStatus.unknown
                 else
-                    throw new JenkinsException("Unable to status of build ${jobNumber} for job ${jobName}")
+                    throw new JenkinsException("Unable to get status of build ${jobNumber} for job ${jobName}")
             }
         }
     }
 
     def isSuccessful(jobName, jobNumber) {
-
+        def jobStatus = getJobStatus(jobName, jobNumber)
+        jobStatus == JobStatus.success
     }
 
     def getConsole(jobName, jobNumber) {
