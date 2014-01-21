@@ -29,22 +29,25 @@ class JenkinsClient {
             response.success = {resp, json ->
                 json.nextBuildNumber
             }
+            response.failure = {resp ->
+                throw new JenkinsException("Failed to get the next build number from Jenkins: ${resp.statusLine}")
+            }
         }
     }
 
     def startJob(jobName) {
+        def nextBuildNumber = getNextBuildNumber (jobName)
+
         http.request(POST) {
             uri.path = "/job/${jobName}/build"
             headers.'Authorization' = getAuthorizationHeader()
             response.success = {
-                getNextBuildNumber (jobName)
+                nextBuildNumber
             }
             response.failure = { resp ->
                 throw new JenkinsException("Failed to start job in jenkins: ${resp.statusLine}")
            }
         }
-
-//        return buildNumber
     }
 
     def isFinished(jobName, jobNumber) {
