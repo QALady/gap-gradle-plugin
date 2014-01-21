@@ -19,6 +19,7 @@ class JenkinsClientTest {
     def mockHttpBuilder
     def mockRequestDelegate = [response: [:], uri: [:], headers: [:]]
     def mockResponse = [resp: [:]]
+
     @Before
     void setUp() {
         mockHttpBuilder = new MockFor(HTTPBuilder)
@@ -226,5 +227,10 @@ class JenkinsClientTest {
         mockHttpBuilder.use {
             assertEquals ('this is jenkins console output', client.getConsole("jenkins_job_name", 203))
         }
+    }
+
+    @Test
+    void getJobUrl_shouldReturnTheFullJobUrl(){
+        assertEquals("serverUrl/job/jenkins_job_name/203", client.getJobUrl("jenkins_job_name", 203))
     }
 }

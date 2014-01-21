@@ -10,8 +10,10 @@ class JenkinsClient {
     def http
     def userName
     def apiToken
+    private Object serverUrl
 
     JenkinsClient(serverUrl, userName, apiToken) {
+        this.serverUrl = serverUrl
         this.http = new HTTPBuilder(serverUrl)
         this.userName = userName
         this.apiToken = apiToken
@@ -22,8 +24,8 @@ class JenkinsClient {
         "Basic  ${credentials}"
     }
 
-    def getJobUrl(jobName, jobNumber) {
-        "TODO" // TODO
+    def getJobUrl(jobName, buildNumber) {
+        "${serverUrl}/job/${jobName}/${buildNumber}".toString()
     }
 
     def getNextBuildNumber (jobName){
@@ -54,14 +56,14 @@ class JenkinsClient {
         }
     }
 
-    def isFinished(jobName, jobNumber) {
-        def jobStatus = getJobStatus(jobName, jobNumber)
+    def isFinished(jobName, buildNumber) {
+        def jobStatus = getJobStatus(jobName, buildNumber)
         jobStatus == JobStatus.success || jobStatus == JobStatus.failure
     }
 
-    private def getJobStatus(jobName, jobNumber) {
+    private def getJobStatus(jobName, buildNumber) {
         http.request(GET, JSON) {
-            uri.path = "/job/${jobName}/${jobNumber}/api/json"
+            uri.path = "/job/${jobName}/${buildNumber}/api/json"
             headers.'Authorization' = getAuthorizationHeader()
             response.success = { resp, json ->
                 if (json.building)
@@ -72,25 +74,25 @@ class JenkinsClient {
                 if (resp.statusLine.statusCode == 404)
                     JobStatus.unknown
                 else
-                    throw new JenkinsException("Unable to get status of build ${jobNumber} for job ${jobName}")
+                    throw new JenkinsException("Unable to get status of build ${buildNumber} for job ${jobName}")
             }
         }
     }
 
-    def isSuccessful(jobName, jobNumber) {
-        def jobStatus = getJobStatus(jobName, jobNumber)
+    def isSuccessful(jobName, buildNumber) {
+        def jobStatus = getJobStatus(jobName, buildNumber)
         jobStatus == JobStatus.success
     }
 
-    def getConsole(jobName, jobNumber) {
+    def getConsole(jobName, buildNumber) {
         http.request(GET, TEXT) {
-            uri.path = "/job/${jobName}/${jobNumber}/logText/progressiveText"
+            uri.path = "/job/${jobName}/${buildNumber}/logText/progressiveText"
             response.success = {resp, reader ->
                 reader.text
             }
 
             response.failure = {resp ->
-                throw new JenkinsException("Unable to get console log for build ${jobNumber} for job ${jobName}. Error - ${resp.statusLine}")
+                throw new JenkinsException("Unable to get console log for build ${buildNumber} for job ${jobName}. Error - ${resp.statusLine}")
             }
         }
     }
