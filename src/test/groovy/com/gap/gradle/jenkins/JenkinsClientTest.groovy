@@ -1,7 +1,6 @@
 package com.gap.gradle.jenkins
-import static groovyx.net.http.ContentType.JSON
-import static groovyx.net.http.Method.GET
-import static groovyx.net.http.Method.POST
+import static groovyx.net.http.ContentType.*
+import static groovyx.net.http.Method.*
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.equalTo
 import static org.junit.Assert.assertTrue
@@ -160,7 +159,7 @@ class JenkinsClientTest {
     }
 
     private void assertAuthorizationHeader(requestDelegate) {
-        assertThat(requestDelegate.headers.Authorization.toString(), equalTo("Basic  anVuaXRVc2VyOmp1bml0QXBpVG9rZW4="))
+        assertEquals("Basic  anVuaXRVc2VyOmp1bml0QXBpVG9rZW4=", requestDelegate.headers.Authorization.toString())
     }
     @Test
     void isSuccessful_shouldReturnTrue_whenJenkinsJobIsSuccessful() {
@@ -188,8 +187,44 @@ class JenkinsClientTest {
         }
     }
 
-//    @Test
-//    void shouldGetConsoleLog() {
-//        assertThat(client.getConsole("job name", 203), containsString("hello world"))
-//    }
+    @Test
+    void getConsole_shouldInvokeJenkinsApi() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            assertEquals(GET, method)
+            assertEquals(TEXT, contentType)
+            assertThat(mockRequestDelegate.uri.path.toString(), equalTo("/job/jenkins_job_name/203/logText/progressiveText"))
+        }
+
+        mockHttpBuilder.use {
+            client.getConsole("jenkins_job_name", 203)
+        }
+    }
+
+    @Test
+    void getConsole_shouldReturnConsoleOutput_whenSuccessful() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.success(mockResponse, [text: 'this is jenkins console output'])
+        }
+
+        mockHttpBuilder.use {
+            assertEquals ('this is jenkins console output', client.getConsole("jenkins_job_name", 203))
+        }
+    }
+
+    @Test(expected = JenkinsException)
+    void getConsole_shouldThrowJenkinsExceptoin_whenFailed() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.failure(mockResponse)
+        }
+
+        mockHttpBuilder.use {
+            assertEquals ('this is jenkins console output', client.getConsole("jenkins_job_name", 203))
+        }
+    }
 }

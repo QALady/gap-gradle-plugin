@@ -86,6 +86,15 @@ class JenkinsClient {
     }
 
     def getConsole(jobName, jobNumber) {
+        http.request(GET, TEXT) {
+            uri.path = "/job/${jobName}/${jobNumber}/logText/progressiveText"
+            response.success = {resp, reader ->
+                reader.text
+            }
 
+            response.failure = {resp ->
+                throw new JenkinsException("Unable to get console log for build ${jobNumber} for job ${jobName}. Error - ${resp.statusLine}")
+            }
+        }
     }
 }
