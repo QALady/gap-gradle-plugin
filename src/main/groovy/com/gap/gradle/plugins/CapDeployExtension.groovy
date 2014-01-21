@@ -1,4 +1,4 @@
-package com.gap.gradle
+package com.gap.gradle.plugins
 
 import java.util.Map
 

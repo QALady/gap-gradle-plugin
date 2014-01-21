@@ -1,4 +1,4 @@
-package com.gap.gradle
+package com.gap.gradle.plugins
 
 import org.gradle.api.Project
 import org.gradle.api.Plugin

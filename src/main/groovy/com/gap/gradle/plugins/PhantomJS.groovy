@@ -1,4 +1,4 @@
-package com.gap.gradle
+package com.gap.gradle.plugins
 
 import java.util.Map;
 import org.gradle.api.DefaultTask;
@@ -14,7 +14,7 @@ import org.gradle.api.Project;
  * Contents of zip should be ONLY the single binary executable for phantomjs
  *
  * EXAMPLE in build.gradle:
- * task(type: com.gap.gradle.PhantomJS){
+ * task(type: com.gap.gradle.plugins.PhantomJS){
  *     version: '1.9.1'
  *     args = [ 'runner.js', 'jasmine-runner.html' ]
  * }
