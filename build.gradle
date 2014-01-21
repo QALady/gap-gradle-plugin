@@ -1,9 +1,12 @@
-repositories {   
-  ivy{
-    layout 'maven'
+repositories {
+  maven {
     url "http://repo1.phx.gapinc.dev/artifactory/libs-release"
-  } 
-} 
+  }
+  ivy {
+    layout "maven"
+    url "http://repo1.phx.gapinc.dev/artifactory/libs-release"
+  }
+}
 
 //User defined
 ext.majorVersion = 1
@@ -13,8 +16,7 @@ group 'com.gap'
 version = "${majorVersion}.${minorVersion}.${release}.${counter}"
 
 apply plugin: 'groovy'
-
-def HAMCREST = ['org.hamcrest:hamcrest-core:1.2@jar', 'org.hamcrest:hamcrest-library:1.2@jar']
+apply plugin: 'idea'
 
 dependencies{
   compile gradleApi()
@@ -25,9 +27,13 @@ dependencies{
   compile 'net.sourceforge.cobertura:cobertura:1.9.4.1'
   compile 'asm:asm-all:3.3.1'
   compile 'oro:oro:2.0.8'
+  compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.6'
+  compile 'org.apache.httpcomponents:httpclient:+'
 
-  testCompile group: 'junit', name: 'junit', version: '4.8.2'
-  testCompile HAMCREST
+  testCompile 'junit:junit:4.8.2'
+  testCompile 'org.hamcrest:hamcrest-core:1.2@'
+  testCompile 'org.hamcrest:hamcrest-library:1.2'
+  testCompile 'org.mockito:mockito-core:1.9.5'
 }
 
 task echoVersion << {
