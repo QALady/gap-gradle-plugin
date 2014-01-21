@@ -10,7 +10,7 @@ repositories {
 
 //User defined
 ext.majorVersion = 1
-ext.minorVersion = 1
+ext.minorVersion = 2
 
 group 'com.gap'
 version = "${majorVersion}.${minorVersion}.${release}.${counter}"
