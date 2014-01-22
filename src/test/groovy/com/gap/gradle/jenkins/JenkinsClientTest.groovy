@@ -99,7 +99,6 @@ class JenkinsClientTest {
             assertThat(method, equalTo(GET))
             assertEquals(JSON, contentType)
             assertThat(mockRequestDelegate.uri.path.toString(), equalTo("/job/jenkins_job_name/203/api/json"))
-            assertAuthorizationHeader(mockRequestDelegate)
         }
 
         mockHttpBuilder.use {
