@@ -66,15 +66,18 @@ class JenkinsClient {
             uri.path = "/job/${jobName}/${buildNumber}/api/json"
             headers.'Authorization' = getAuthorizationHeader()
             response.success = { resp, json ->
-                if (json.building)
+                if (json.building) {
                     return JobStatus.pending
+                }
                 json.result == 'SUCCESS'? JobStatus.success : JobStatus.failure
             }
             response.failure = { resp ->
-                if (resp.statusLine.statusCode == 404)
+                if (resp.statusLine.statusCode == 404) {
                     JobStatus.unknown
-                else
+                } else {
+                    println(resp)
                     throw new JenkinsException("Unable to get status of build ${buildNumber} for job ${jobName}")
+                }
             }
         }
     }

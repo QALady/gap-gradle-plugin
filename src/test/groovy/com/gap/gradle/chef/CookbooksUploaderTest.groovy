@@ -45,8 +45,9 @@ class CookbooksUploaderTest {
     @Test
     void shouldThrowExceptionWhenJenkinsJobFails(){
         exception.expect(ChefException)
-        exception.expectMessage(containsString("Jenkins cookbook job cookbook-mycookbook-tdev #204 failed <http://jenkinsserver/unittest/204>"))
+        exception.expectMessage("Jenkins job failed <http://jenkinsserver/unittest/204>: Console log: oops, you broke it")
         when(jenkinsClient.isSuccessful('cookbook-mycookbook-tdev', 204)).thenReturn(false)
+        when(jenkinsClient.getConsole('cookbook-mycookbook-tdev', 204)).thenReturn("oops, you broke it")
         uploader.upload("mycookbook", "tdev")
     }
 
@@ -62,8 +63,8 @@ class CookbooksUploaderTest {
     @Test
     void shouldTimeoutAndThrowException_whenJobTakesALongTimeToComplete (){
         exception.expect(ChefException)
-        exception.expectMessage(containsString("Timed out waiting for job to finish cookbook-mycookbook-tdev #204 <http://jenkinsserver/unittest/204>"))
-        uploader = new CookbookUploader(jenkinsClient, 10, 200)
+        exception.expectMessage(containsString("Timed out after 50 ms waiting for job to finish <http://jenkinsserver/unittest/204>"))
+        uploader = new CookbookUploader(jenkinsClient, 10, 50)
         when(jenkinsClient.isFinished(anyString(), eq(204))).thenReturn(false)
         uploader.upload("mycookbook", "tdev")
     }
