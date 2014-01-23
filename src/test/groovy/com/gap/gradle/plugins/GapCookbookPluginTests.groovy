@@ -26,6 +26,11 @@ class GapCookbookPluginTests {
         publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer2')
     }
 
+    @Test
+    void publishCookbookToArtifactoryTaskIsAddedToProject(){
+        def task = project.tasks.findByName('publishCookbookToArtifactory')
+        assertEquals('publishCookbookToArtifactory', task.name)
+    }
 
     @Test
     void publishCookbookToChefServer_taskIsAddedToProject () {
