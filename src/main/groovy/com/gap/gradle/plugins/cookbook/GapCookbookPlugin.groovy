@@ -11,7 +11,7 @@ class GapCookbookPlugin implements Plugin<Project> {
         project.extensions.create('jenkins', JenkinsConfig)
         project.extensions.create('chef', ChefConfig)
 
-        loadCredentials(project)
+        loadConfig(project)
 
         project.task('publishCookbookToArtifactory') << {
             new PublishCookbookToArtifactoryTask(project).execute()
@@ -35,18 +35,18 @@ class GapCookbookPlugin implements Plugin<Project> {
         }
     }
 
-    def loadCredentials(Project project) {
-        File credentialsFile = new File(CONFIG_FILE)
-        if (credentialsFile.exists()) {
+    def loadConfig(Project project) {
+        File configFile = new File(CONFIG_FILE)
+        if (configFile.exists()) {
             Properties credentials = new Properties()
-            credentials.load(new InputStreamReader(new FileInputStream(credentialsFile)))
+            credentials.load(new InputStreamReader(new FileInputStream(configFile)))
             credentials.each {
-                setProperty(project, it.key, it.value)
+                setConfig(project, it.key, it.value)
             }
         }
     }
 
-    def setProperty(project, name, value) {
+    def setConfig(project, name, value) {
         def parts = name.split('\\.')
         def target = project
         for (int i = 0; i < parts.size() - 1; i++) {
