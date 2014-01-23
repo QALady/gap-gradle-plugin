@@ -4,10 +4,15 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class GapCookbookPlugin implements Plugin<Project> {
+
+    static def CONFIG_FILE = "${System.getProperty('user.home')}/.watchmen/gapcookbook.properties"
         
     void apply(Project project) {
         project.extensions.create('jenkins', JenkinsConfig)
         project.extensions.create('chef', ChefConfig)
+
+        loadCredentials(project)
+
         project.task('publishCookbookToArtifactory') << {
             new PublishCookbookToArtifactoryTask(project).execute()
         }
@@ -28,8 +33,26 @@ class GapCookbookPlugin implements Plugin<Project> {
                 commandLine "${home_dir}/knife/push.rb", '.'
             }
         }
+    }
 
+    def loadCredentials(Project project) {
+        File credentialsFile = new File(CONFIG_FILE)
+        if (credentialsFile.exists()) {
+            Properties credentials = new Properties()
+            credentials.load(new InputStreamReader(new FileInputStream(credentialsFile)))
+            credentials.each {
+                setProperty(project, it.key, it.value)
+            }
+        }
+    }
 
+    def setProperty(project, name, value) {
+        def parts = name.split('\\.')
+        def target = project
+        for (int i = 0; i < parts.size() - 1; i++) {
+            target = target."${parts[i]}"
+        }
+        target."${parts[parts.size() - 1]}" = value
     }
 
     void verifyIfCookbookDirectoryIsValid() {
