@@ -2,8 +2,8 @@ package com.gap.gradle.utils
 
 import org.apache.commons.logging.LogFactory
 
-class Process {
-    def logger = LogFactory.getLog(Process)
+class ShellCommand {
+    def logger = LogFactory.getLog(ShellCommand)
     void execute(command){
         logger.info ("Executing command ${command} ...")
         def proc = command.execute()

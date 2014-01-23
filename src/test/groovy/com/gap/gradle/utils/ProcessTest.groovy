@@ -13,18 +13,18 @@ class ProcessTest {
 
     @Test
     void shouldSuccessfullyExecuteShellCommand(){
-        new Process().execute("echo this is a test")
+        new ShellCommand().execute("echo this is a test")
     }
 
     @Test (expected = IOException)
     void shouldThrowAnException_whenProcessCannotBeFound(){
-        new Process().execute("badcommand")
+        new ShellCommand().execute("badcommand")
     }
 
     @Test
     void shouldThrowAnException_whenProcessReturnsANonZeroExitCode(){
         exception.expectMessage("Command execution failed!!")
-        new Process().execute("ls nonexistentFolder")
+        new ShellCommand().execute("ls nonexistentFolder")
     }
 
 }
