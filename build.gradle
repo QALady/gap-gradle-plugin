@@ -60,7 +60,6 @@ check.dependsOn << 'integrationTest'
 
 tasks.withType(Test) {
     testLogging {
-        showStandardStreams = true
         exceptionFormat 'full'
         showExceptions true
         showCauses true

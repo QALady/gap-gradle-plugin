@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins.gapcookbook
+package com.gap.gradle.plugins.cookbook
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

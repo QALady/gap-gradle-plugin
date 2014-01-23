@@ -11,7 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-class CookbooksUploaderTest {
+class CookbookUploaderTest {
 
     @Rule
     public final ExpectedException exception = none()

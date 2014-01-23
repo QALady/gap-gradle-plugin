@@ -1,8 +1,8 @@
 package com.gap.gradle.plugins
 import static org.junit.Assert.assertEquals
 
-import com.gap.gradle.plugins.gapcookbook.PublishCookbookToArtifactoryTask
-import com.gap.gradle.plugins.gapcookbook.PublishCookbookToChefServerTask
+import com.gap.gradle.plugins.cookbook.PublishCookbookToArtifactoryTask
+import com.gap.gradle.plugins.cookbook.PublishCookbookToChefServerTask
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder

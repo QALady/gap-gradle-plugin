@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse
 import static org.junit.internal.matchers.StringContains.containsString
 
 import com.gap.gradle.chef.CookbookUploader
+import com.gap.gradle.chef.CookbookUtil
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -48,6 +49,28 @@ class PublishCookbookToChefServerTaskTest {
         project.jenkins.authToken = "jenkins_password"
         project.chef.environment = "local"
         project.chef.cookbookName = "myapp"
+
+        def mockCookbookUploader = new MockFor(CookbookUploader)
+        mockCookbookUploader.demand.upload { cookbook, env ->
+            assertEquals("myapp", cookbook)
+            assertEquals("local", env)
+        }
+
+        mockCookbookUploader.use {
+            publishCookbookTask.execute()
+        }
+    }
+
+    @Test
+    void shouldGetCookbookNameFromMetadata_whenCookbookNameIsNotProvided(){
+        project.jenkins.serverUrl = "jenkins"
+        project.jenkins.user = "jenkins_user"
+        project.jenkins.authToken = "jenkins_password"
+        project.chef.environment = "local"
+
+        CookbookUtil.metaClass.'static'.metadataFrom = { path ->
+            [ name: "myapp", version: "1.1.13" ]
+        }
 
         def mockCookbookUploader = new MockFor(CookbookUploader)
         mockCookbookUploader.demand.upload { cookbook, env ->

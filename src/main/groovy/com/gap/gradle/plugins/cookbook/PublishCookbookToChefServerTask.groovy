@@ -1,6 +1,7 @@
-package com.gap.gradle.plugins.gapcookbook
+package com.gap.gradle.plugins.cookbook
 
 import com.gap.gradle.chef.CookbookUploader
+import com.gap.gradle.chef.CookbookUtil
 import com.gap.gradle.jenkins.JenkinsClient
 import org.gradle.api.Project
 
@@ -30,6 +31,7 @@ class PublishCookbookToChefServerTask {
         def jenkinsConfig = project.jenkins
         JenkinsClient client = new JenkinsClient(jenkinsConfig.serverUrl, jenkinsConfig.user, jenkinsConfig.authToken)
         CookbookUploader uploader = new CookbookUploader(client)
-        uploader.upload(project.chef.cookbookName, project.chef.environment)
+        def cookbookName = project.chef.cookbookName ?: CookbookUtil.metadataFrom().name
+        uploader.upload(cookbookName, project.chef.environment)
     }
 }

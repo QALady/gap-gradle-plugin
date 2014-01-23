@@ -1,4 +1,4 @@
-package com.gap.gradle.chef.com.gap.gradle.plugins.gapcookbook
+package com.gap.gradle.plugins.cookbook
 
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
