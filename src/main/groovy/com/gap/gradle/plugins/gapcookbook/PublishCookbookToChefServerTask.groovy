@@ -13,9 +13,7 @@ class PublishCookbookToChefServerTask {
 
     def execute(){
         requireJenkinsConfig()
-
-        //get cookbook name
-        //call publishCookToChefServer
+        publishCookbookToChefServer()
     }
 
     def requireJenkinsConfig() {
@@ -28,9 +26,10 @@ class PublishCookbookToChefServerTask {
         }
     }
 
-    def publishCookbookToChefServer(serverUrl, user, authToken) {
-        JenkinsClient client = new JenkinsClient(serverUrl, user, authToken)
+    def publishCookbookToChefServer() {
+        def jenkinsConfig = project.jenkins
+        JenkinsClient client = new JenkinsClient(jenkinsConfig.serverUrl, jenkinsConfig.user, jenkinsConfig.authToken)
         CookbookUploader uploader = new CookbookUploader(client)
-        uploader.upload(/* TODO */ "cookbook name", /* TODO */ "env")
+        uploader.upload(project.chef.cookbookName, project.chef.environment)
     }
 }

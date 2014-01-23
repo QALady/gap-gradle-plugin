@@ -1,15 +1,16 @@
 package com.gap.gradle.plugins
-
+import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertThat
-import static org.junit.matchers.JUnitMatchers.containsString
+import static org.junit.internal.matchers.StringContains.containsString
 
+import com.gap.gradle.chef.CookbookUploader
+import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
-
 
 class PublishCookbookToChefServerTaskTest {
 
@@ -38,6 +39,25 @@ class PublishCookbookToChefServerTaskTest {
         project.jenkins.serverUrl = "jenkins"
         project.jenkins.user = "jenkins_user"
         assertThrowsExceptionWithMessage("No jenkins auth-token configured", {publishCookbookTask.execute()})
+    }
+
+    @Test
+    void shouldSuccessfullyUploadCookbook(){
+        project.jenkins.serverUrl = "jenkins"
+        project.jenkins.user = "jenkins_user"
+        project.jenkins.authToken = "jenkins_password"
+        project.chef.environment = "local"
+        project.chef.cookbookName = "myapp"
+
+        def mockCookbookUploader = new MockFor(CookbookUploader)
+        mockCookbookUploader.demand.upload { cookbook, env ->
+            assertEquals("myapp", cookbook)
+            assertEquals("local", env)
+        }
+
+        mockCookbookUploader.use {
+            publishCookbookTask.execute()
+        }
     }
 
     void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){

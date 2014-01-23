@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins
+package com.gap.gradle.plugins.gapcookbook
 
 class JenkinsConfig {
 

@@ -1,5 +1,5 @@
 package com.gap.gradle.plugins.gapcookbook
-import com.gap.gradle.plugins.JenkinsConfig
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -7,6 +7,7 @@ class GapCookbookPlugin implements Plugin<Project> {
         
     void apply(Project project) {
         project.extensions.create('jenkins', JenkinsConfig)
+        project.extensions.create('chef', ChefConfig)
         project.task('publishCookbookToArtifactory') << {
             new PublishCookbookToArtifactoryTask(project).execute()
         }
