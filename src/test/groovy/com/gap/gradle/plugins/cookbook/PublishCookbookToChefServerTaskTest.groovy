@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins
+package com.gap.gradle.plugins.cookbook
 import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.junit.Assert.assertFalse

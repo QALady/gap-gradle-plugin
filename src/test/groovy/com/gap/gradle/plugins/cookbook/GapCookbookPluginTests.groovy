@@ -1,25 +1,20 @@
-package com.gap.gradle.plugins
-
+package com.gap.gradle.plugins.cookbook
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.nullValue
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
 
-import com.gap.gradle.plugins.cookbook.GapCookbookPlugin
-import com.gap.gradle.plugins.cookbook.PublishCookbookToArtifactoryTask
-import com.gap.gradle.plugins.cookbook.PublishCookbookToChefServerTask
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
 
 class GapCookbookPluginTests {
 
     @Rule
-    public final TemporaryFolder temp = new TemporaryFolder()
+    public final ConfigFileResource config = new ConfigFileResource(GapCookbookPlugin, "CONFIG_FILE")
 
     private Project project
 
@@ -63,32 +58,22 @@ class GapCookbookPluginTests {
 
     @Test
     void shouldUseDefaultConfig_whenConfigFileDoesNotExist() {
-        def originalConfig = GapCookbookPlugin.CONFIG_FILE
-        def config = "/this/does/not/exist.properties"
-        try {
-            GapCookbookPlugin.CONFIG_FILE = config
-            project = ProjectBuilder.builder().build()
-            project.apply plugin: 'gapcookbook'
-            assertThat(project.jenkins.serverUrl, nullValue())
-            assertThat(project.chef.environment, equalTo('tdev'))
-        } finally {
-            GapCookbookPlugin.CONFIG_FILE = originalConfig
-        }
+        new File(GapCookbookPlugin.CONFIG_FILE).delete()
+        def project = ProjectBuilder.builder().build()
+        project.apply plugin: 'gapcookbook'
+        assertThat(project.jenkins.serverUrl, nullValue())
+        assertThat(project.chef.environment, equalTo('tdev'))
     }
 
     @Test
     void shouldReadCredentialsFromConfigFile() {
-        def originalConfig = GapCookbookPlugin.CONFIG_FILE
-        def config = temp.newFile()
-        config.write("jenkins.serverUrl=http://my.jenkins.server\nchef.environment=prod")
-        try {
-            GapCookbookPlugin.CONFIG_FILE = config.absolutePath
-            project = ProjectBuilder.builder().build()
-            project.apply plugin: 'gapcookbook'
-            assertThat(project.jenkins.serverUrl, equalTo("http://my.jenkins.server"))
-            assertThat(project.chef.environment, equalTo("prod"))
-        } finally {
-            GapCookbookPlugin.CONFIG_FILE = originalConfig
-        }
+        new File(GapCookbookPlugin.CONFIG_FILE).write(
+            "jenkins.serverUrl=http://my.jenkins.server\n"
+            + "chef.environment=prod"
+        )
+        def project = ProjectBuilder.builder().build()
+        project.apply plugin: 'gapcookbook'
+        assertThat(project.jenkins.serverUrl, equalTo("http://my.jenkins.server"))
+        assertThat(project.chef.environment, equalTo("prod"))
     }
 }
