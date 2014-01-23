@@ -34,7 +34,7 @@ class JenkinsClientTest {
             body.call()
             assertEquals(POST, method)
             assertEquals("/job/jenkins_job_name/build", mockRequestDelegate.uri.path.toString() )
-            assertEquals("Basic  anVuaXRVc2VyOmp1bml0QXBpVG9rZW4=",mockRequestDelegate.headers.Authorization.toString())
+            assertAuthorizationHeader(mockRequestDelegate)
         }
         mockHttpBuilder.use {
             client.startJob("jenkins_job_name")
@@ -62,7 +62,6 @@ class JenkinsClientTest {
             body.call()
             assertThat(method, equalTo(GET))
             assertThat(mockRequestDelegate.uri.path.toString(), equalTo("/job/jenkins_job_name/api/json"))
-            assertThat(mockRequestDelegate.headers.Authorization.toString(), equalTo("Basic  anVuaXRVc2VyOmp1bml0QXBpVG9rZW4="))
 
             mockRequestDelegate.response.success(mockResponse, [nextBuildNumber: 203])
         }
