@@ -21,7 +21,7 @@ class GapCookbookPlugin implements Plugin<Project> {
             new PublishCookbookToChefServerTask(project).execute()
         }
 
-        project.task('publishCookbookToChefServer') <<{
+        project.task('publishCookbookToChefServer') << {
 
             verifyIfCookbookDirectoryIsValid()
 
@@ -38,30 +38,28 @@ class GapCookbookPlugin implements Plugin<Project> {
     def loadConfig(Project project) {
         File configFile = new File(CONFIG_FILE)
         if (configFile.exists()) {
-            Properties credentials = new Properties()
-            credentials.load(new InputStreamReader(new FileInputStream(configFile)))
-            credentials.each {
+            Properties properties = new Properties()
+            properties.load(new InputStreamReader(new FileInputStream(configFile)))
+            properties.each {
                 setConfig(project, it.key, it.value)
             }
         }
     }
 
     def setConfig(project, name, value) {
-        def parts = name.split('\\.')
+        def segments = name.split('\\.')
         def target = project
-        for (int i = 0; i < parts.size() - 1; i++) {
-            target = target."${parts[i]}"
+        for (int i = 0; i < segments.size() - 1; i++) {
+            target = target."${segments[i]}"
         }
-        target."${parts[parts.size() - 1]}" = value
+        target."${segments[segments.size() - 1]}" = value
     }
 
-    void verifyIfCookbookDirectoryIsValid() {
+    def verifyIfCookbookDirectoryIsValid() {
         def current_dir = System.getProperty("user.dir")
         def pattern = ".*/cookbooks/[^/]+"
-        if ( !(current_dir ==~ pattern)) {
+        if (!(current_dir ==~ pattern)) {
             throw new Exception("Your current working directory is ${current_dir}. However for uploading to chef server your cookbook should be located in 'cookbooks/<your cookbook name>'")
         }
     }
-
-
 }
