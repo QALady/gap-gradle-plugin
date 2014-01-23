@@ -13,6 +13,9 @@ class PublishCookbookToChefServerTask {
 
     def execute(){
         requireJenkinsConfig()
+
+        //get cookbook name
+        //call publishCookToChefServer
     }
 
     def requireJenkinsConfig() {
