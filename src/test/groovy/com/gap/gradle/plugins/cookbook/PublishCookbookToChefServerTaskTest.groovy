@@ -24,6 +24,7 @@ class PublishCookbookToChefServerTaskTest {
         project.apply plugin: 'gapcookbook'
         publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer2')
     }
+
     @Test
     void shouldThrowException_whenJenkinsServerUrlIsNotConfigured(){
         assertThrowsExceptionWithMessage("No jenkins url configured", {publishCookbookTask.execute()})
@@ -68,7 +69,8 @@ class PublishCookbookToChefServerTaskTest {
         project.jenkins.authToken = "jenkins_password"
         project.chef.environment = "local"
 
-        CookbookUtil.metaClass.'static'.metadataFrom = { path ->
+        def mockCookbookUtil = new MockFor(CookbookUtil)
+        mockCookbookUtil.demand.metadataFrom { path ->
             [ name: "myapp", version: "1.1.13" ]
         }
 
@@ -78,8 +80,10 @@ class PublishCookbookToChefServerTaskTest {
             assertEquals("local", env)
         }
 
-        mockCookbookUploader.use {
-            publishCookbookTask.execute()
+        mockCookbookUtil.use {
+            mockCookbookUploader.use {
+                publishCookbookTask.execute()
+            }
         }
     }
 
@@ -92,5 +96,4 @@ class PublishCookbookToChefServerTaskTest {
             assertThat(ex.dump(), containsString(expectedMessage))
         }
     }
-
 }
