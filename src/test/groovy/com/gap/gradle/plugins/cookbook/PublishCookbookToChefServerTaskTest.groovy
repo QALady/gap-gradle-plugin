@@ -22,7 +22,7 @@ class PublishCookbookToChefServerTaskTest {
     void setUp (){
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapcookbook'
-        publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer2')
+        publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer')
     }
 
     @Test

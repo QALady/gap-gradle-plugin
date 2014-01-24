@@ -32,15 +32,15 @@ class GapCookbookPluginTests {
 
     @Test
     void publishCookbookToChefServerTaskIsAddedToProject () {
-        def task = project.tasks.findByName('publishCookbookToChefServer2')
-        assertEquals('publishCookbookToChefServer2', task.name)
+        def task = project.tasks.findByName('publishCookbookToChefServer')
+        assertEquals('publishCookbookToChefServer', task.name)
     }
 
     @Test
     void shouldExecutePublishCookbookToChefServerTask (){
         def mockTask = new MockFor(PublishCookbookToChefServerTask)
         mockTask.demand.execute {}
-        def task = project.tasks.findByName('publishCookbookToChefServer2')
+        def task = project.tasks.findByName('publishCookbookToChefServer')
         mockTask.use {
             task.execute()
         }

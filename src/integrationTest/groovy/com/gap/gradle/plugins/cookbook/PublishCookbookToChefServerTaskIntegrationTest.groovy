@@ -14,7 +14,7 @@ class PublishCookbookToChefServerTaskIntegrationTest {
         project.jenkins.authToken = "4661bb66b1f850bdff9c3ce5f5daca65"
         project.chef.cookbookName = "ref-app"
 
-        def publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer2')
+        def publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer')
 
         publishCookbookTask.execute()
     }

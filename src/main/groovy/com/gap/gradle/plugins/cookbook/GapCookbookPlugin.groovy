@@ -17,21 +17,8 @@ class GapCookbookPlugin implements Plugin<Project> {
             new PublishCookbookToArtifactoryTask(project).execute()
         }
 
-        project.task('publishCookbookToChefServer2') << {
-            new PublishCookbookToChefServerTask(project).execute()
-        }
-
         project.task('publishCookbookToChefServer') << {
-
-            verifyIfCookbookDirectoryIsValid()
-
-            def home_dir = System.getenv()['HOME']
-            def current_dir = System.getProperty("user.dir")
-            def knife_push_working_dir = "${current_dir}/../.."
-            project.exec {
-                workingDir knife_push_working_dir
-                commandLine "${home_dir}/knife/push.rb", '.'
-            }
+            new PublishCookbookToChefServerTask(project).execute()
         }
     }
 
@@ -68,11 +55,4 @@ class GapCookbookPlugin implements Plugin<Project> {
         target."${segments.last()}" = value
     }
 
-    def verifyIfCookbookDirectoryIsValid() {
-        def current_dir = System.getProperty("user.dir")
-        def pattern = ".*/cookbooks/[^/]+"
-        if (!(current_dir ==~ pattern)) {
-            throw new Exception("Your current working directory is ${current_dir}. However for uploading to chef server your cookbook should be located in 'cookbooks/<your cookbook name>'")
-        }
-    }
 }
