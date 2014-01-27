@@ -12,8 +12,8 @@ class CookbookUtil {
 
     def doesCookbookExist(cookbookMetadata) {
         try {
-            new ShellCommand().execute("knife cookbook show ${cookbookMetadata.name} | grep ${cookbookMetadata.version}")
-            return true
+            def output = new ShellCommand().execute("knife cookbook show ${cookbookMetadata.name}")
+            return output.contains(" ${cookbookMetadata.version} ")
         }
         catch(Exception)
         {

@@ -4,6 +4,7 @@ import static org.junit.rules.ExpectedException.none
 
 import org.junit.Rule
 import org.junit.Test
+import static  org.junit.Assert.assertEquals
 import org.junit.rules.ExpectedException
 
 class ShellCommandTest {
@@ -13,7 +14,8 @@ class ShellCommandTest {
 
     @Test
     void shouldSuccessfullyExecuteShellCommand(){
-        new ShellCommand().execute("echo this is a test")
+        def output = new ShellCommand().execute("echo this is a test")
+        assertEquals("this is a test", output.trim());
     }
 
     @Test (expected = IOException)

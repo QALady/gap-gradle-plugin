@@ -53,10 +53,22 @@ class CookbookUtilTest {
     @Test
     void doesCookbookExist_shouldReturnTrue_whenCookbookFound(){
         mockShellCommand.demand.execute{ command ->
-            assertEquals("knife cookbook show myapp | grep 1.1.13", command)
+            assertEquals("knife cookbook show myapp", command)
+            return "myapp   1.1.13  0.0.41  0.0.39"
         }
         mockShellCommand.use {
             assertTrue(new CookbookUtil().doesCookbookExist([name: 'myapp', version: '1.1.13']))
+        }
+    }
+
+    @Test
+    void doesCookbookExist_shouldReturnFalse_whenCookbookVersionCannotBeFound(){
+        mockShellCommand.demand.execute{ command ->
+            assertEquals("knife cookbook show myapp", command)
+            return "myapp   1.1.12  0.0.41  0.0.39"
+        }
+        mockShellCommand.use {
+            assertFalse(new CookbookUtil().doesCookbookExist([name: 'myapp', version: '1.1.13']))
         }
     }
 
