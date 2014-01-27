@@ -13,7 +13,8 @@ class ShellCommand {
             logger.info("Command completed successfully")
         } else {
             logger.error("Command failed with exit code ${exitCode}")
-            logger.warn("${proc.err.text}") //temporary hack as EC fails build... should be an error but some times it is expected
+            def trimmedErrorMessage = proc.err.text.replaceAll("ERROR:","") //temporary hack as EC fails build... should be an error but some times it is expected
+            logger.error("${trimmedErrorMessage}")
             throw new Exception("Command execution failed!!")
         }
 
