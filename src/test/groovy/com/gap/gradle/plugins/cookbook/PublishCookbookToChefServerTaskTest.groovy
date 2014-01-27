@@ -1,7 +1,7 @@
 package com.gap.gradle.plugins.cookbook
+import static junit.framework.Assert.assertFalse
 import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
 import static org.hamcrest.MatcherAssert.assertThat
-import static org.junit.Assert.assertFalse
 import static org.junit.internal.matchers.StringContains.containsString
 
 import com.gap.gradle.chef.CookbookUploader
@@ -17,12 +17,19 @@ class PublishCookbookToChefServerTaskTest {
 
     Project project
     Task publishCookbookTask
+    def mockCookbookUploader
+    def mockCookbookUtil
 
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapcookbook'
         publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer')
+        mockCookbookUploader = new MockFor(CookbookUploader)
+        mockCookbookUtil = new MockFor(CookbookUtil)
+        mockCookbookUtil.demand.metadataFrom { path ->
+            [ name: "myapp", version: "1.1.13" ]
+        }
     }
 
     @Test
@@ -44,37 +51,26 @@ class PublishCookbookToChefServerTaskTest {
     }
 
     @Test
-    void shouldSuccessfullyUploadCookbook(){
-        project.jenkins.serverUrl = "jenkins"
-        project.jenkins.user = "jenkins_user"
-        project.jenkins.authToken = "jenkins_password"
-        project.chef.environment = "local"
-        project.chef.cookbookName = "myapp"
-
-        def mockCookbookUploader = new MockFor(CookbookUploader)
+    void shouldTriggerUploadOfCookbookUsingJenkinsPipeline_whenTheCookbookDoesNotExistInChefServer(){
+        setupTaskProperties()
         mockCookbookUploader.demand.upload { cookbook, env ->
             assertEquals("myapp", cookbook)
             assertEquals("local", env)
         }
+        mockCookbookUtil.demand.doesCookbookExist { return false }
 
-        mockCookbookUploader.use {
-            publishCookbookTask.execute()
+        mockCookbookUtil.use {
+           mockCookbookUploader.use {
+               publishCookbookTask.execute()
+           }
         }
     }
 
     @Test
     void shouldGetCookbookNameFromMetadata_whenCookbookNameIsNotProvided(){
-        project.jenkins.serverUrl = "jenkins"
-        project.jenkins.user = "jenkins_user"
-        project.jenkins.authToken = "jenkins_password"
-        project.chef.environment = "local"
+        setupTaskProperties()
 
-        def mockCookbookUtil = new MockFor(CookbookUtil)
-        mockCookbookUtil.demand.metadataFrom { path ->
-            [ name: "myapp", version: "1.1.13" ]
-        }
-
-        def mockCookbookUploader = new MockFor(CookbookUploader)
+        mockCookbookUtil.demand.doesCookbookExist {return false}
         mockCookbookUploader.demand.upload { cookbook, env ->
             assertEquals("myapp", cookbook)
             assertEquals("local", env)
@@ -85,6 +81,30 @@ class PublishCookbookToChefServerTaskTest {
                 publishCookbookTask.execute()
             }
         }
+    }
+
+    @Test
+    void shouldNotTriggerUpload_whenCookbookVersionAlreadyExistsInChef(){
+        setupTaskProperties()
+
+        mockCookbookUtil.demand.doesCookbookExist { return true }
+
+        mockCookbookUploader.ignore.upload {}
+
+        mockCookbookUploader.use{
+            mockCookbookUtil.use{
+                publishCookbookTask.execute()
+            }
+        }
+    }
+
+    private void setupTaskProperties() {
+        project.jenkins.serverUrl = "jenkins"
+        project.jenkins.user = "jenkins_user"
+        project.jenkins.authToken = "jenkins_password"
+        project.chef.environment = "local"
+        project.chef.cookbookName = "myapp"
+
     }
 
     void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){

@@ -1,5 +1,7 @@
 package com.gap.gradle.plugins.cookbook
 
+import com.gap.gradle.chef.CookbookUtil
+import groovy.mock.interceptor.MockFor
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
 
@@ -14,8 +16,15 @@ class PublishCookbookToChefServerTaskIntegrationTest {
         project.jenkins.authToken = "4661bb66b1f850bdff9c3ce5f5daca65"
         project.chef.cookbookName = "ref-app"
 
-        def publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer')
+        def mockCookbookUtil = new MockFor(CookbookUtil)
+        mockCookbookUtil.demand.metadataFrom { path ->
+            [ name: "myapp", version: "1.1.13" ]
+        }
+        mockCookbookUtil.demand.doesCookbookExist {return false}
 
-        publishCookbookTask.execute()
+        mockCookbookUtil.use{
+            def publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer')
+            publishCookbookTask.execute()
+        }
     }
 }
