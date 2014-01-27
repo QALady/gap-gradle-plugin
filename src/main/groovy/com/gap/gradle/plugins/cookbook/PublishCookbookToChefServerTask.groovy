@@ -35,9 +35,8 @@ class PublishCookbookToChefServerTask {
         JenkinsClient client = new JenkinsClient(jenkinsConfig.serverUrl, jenkinsConfig.user, jenkinsConfig.authToken)
         CookbookUploader uploader = new CookbookUploader(client)
         def cookbookUtil = new CookbookUtil()
-        def cookbookMetadata = cookbookUtil.metadataFrom()
+        def cookbookMetadata = cookbookUtil.metadataFrom(project.chef.cookbookDir)
         def cookbookName = project.chef.cookbookName ?: cookbookMetadata.name
-
         if (!cookbookUtil.doesCookbookExist(cookbookMetadata)) {
             uploader.upload(cookbookName, project.chef.environment)
         }
