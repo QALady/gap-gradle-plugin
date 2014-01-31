@@ -22,25 +22,25 @@ class ValidateCookbookDependenciesTaskTest {
 
     @Ignore
     @Test
-    void shouldNotThrowException_whenNoCookbookDependencies() {
+    void shouldSucceed_whenNoCookbookDependencies() {
         fail()
     }
 
     @Ignore
     @Test
-    void shouldNotThrowException_whenAllCookbookDependenciesHavePinnedVersions() {
+    void shouldSucceed_whenAllCookbookDependenciesHavePinnedVersions() {
         fail()
     }
 
     @Ignore
     @Test
-    void shouldThrowException_whenCookbookDependencyHasNoVersion() {
+    void shouldFail_whenCookbookDependencyHasNoVersion() {
         fail()
     }
 
     @Ignore
     @Test
-    void shouldThrowException_whenCookbookDependencyHasDynamicVersion() {
+    void shouldFail_whenCookbookDependencyHasDynamicVersion() {
         fail()
     }
 }
