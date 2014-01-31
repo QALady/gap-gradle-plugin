@@ -1,15 +1,14 @@
 package com.gap.gradle.plugins.cookbook
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.nullValue
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertThat
-
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.nullValue
+import static org.junit.Assert.*
 
 class GapCookbookPluginTests {
 
@@ -75,5 +74,28 @@ class GapCookbookPluginTests {
         project.apply plugin: 'gapcookbook'
         assertThat(project.jenkins.serverUrl, equalTo("http://my.jenkins.server"))
         assertThat(project.chef.environment, equalTo("prod"))
+    }
+
+    @Test
+    public void shouldAddValidateCookbookDependenciesTaskToProject() {
+        def task = project.tasks.findByName('validateCookbookDependencies')
+        assertEquals('validateCookbookDependencies', task.name)
+    }
+
+    @Test
+    void publishCookbookToArtifactory_andPublishCookbookToChefServer_shouldBothDependOnValidateCookbookDependencies() {
+        def publishArtifactoryTask = project.tasks.findByName('publishCookbookToArtifactory')
+        def publishChefTask = project.tasks.findByName('publishCookbookToChefServer')
+        assertHasDependency(publishArtifactoryTask, 'validateCookbookDependencies')
+        assertHasDependency(publishChefTask, 'validateCookbookDependencies')
+    }
+
+    static def assertHasDependency(task, requiredDependency) {
+        for (def dependency : task.dependsOn) {
+            if (dependency == requiredDependency) {
+                return true
+            }
+        }
+        fail("Task ${task} does not declare a dependency on ${requiredDependency}")
     }
 }

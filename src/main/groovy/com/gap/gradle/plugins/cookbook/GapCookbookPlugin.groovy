@@ -6,19 +6,23 @@ import org.gradle.api.Project
 class GapCookbookPlugin implements Plugin<Project> {
 
     static def CONFIG_FILE = "${System.getProperty('user.home')}/.watchmen/gapcookbook.properties"
-        
+
     void apply(Project project) {
         project.extensions.create('jenkins', JenkinsConfig)
         project.extensions.create('chef', ChefConfig)
 
         loadConfig(project)
 
-        project.task('publishCookbookToArtifactory') << {
+        project.task('publishCookbookToArtifactory', dependsOn: 'validateCookbookDependencies') << {
             new PublishCookbookToArtifactoryTask(project).execute()
         }
 
-        project.task('publishCookbookToChefServer') << {
+        project.task('publishCookbookToChefServer', dependsOn: 'validateCookbookDependencies') << {
             new PublishCookbookToChefServerTask(project).execute()
+        }
+
+        project.task('validateCookbookDependencies') << {
+            new ValidateCookbookDependenciesTask(project).execute()
         }
     }
 

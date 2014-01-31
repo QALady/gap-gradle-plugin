@@ -81,5 +81,4 @@ class CookbookUtilTest {
             assertFalse(new CookbookUtil().doesCookbookExist([name: 'myapp', version: '1.1.13']))
         }
     }
-
 }
