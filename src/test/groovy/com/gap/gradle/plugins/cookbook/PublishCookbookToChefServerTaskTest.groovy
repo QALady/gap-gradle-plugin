@@ -27,9 +27,7 @@ class PublishCookbookToChefServerTaskTest {
         publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer')
         mockCookbookUploader = new MockFor(CookbookUploader)
         mockCookbookUtil = new MockFor(CookbookUtil)
-        mockCookbookUtil.demand.metadataFrom { path ->
-            [ name: "myapp", version: "1.1.13" ]
-        }
+        project.chef.metadata = [ name: "myapp", version: "1.1.13" ]
     }
 
     @Test

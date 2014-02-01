@@ -1,7 +1,6 @@
 package com.gap.gradle.plugins.cookbook
 import static java.util.regex.Pattern.quote
 
-import com.gap.gradle.chef.CookbookUtil
 import org.gradle.api.Project
 
 class ValidateCookbookDependenciesTask {
@@ -15,7 +14,18 @@ class ValidateCookbookDependenciesTask {
     }
 
     def execute() {
-        def dependencies = new CookbookUtil().metadataFrom().dependencies;
+        requireMetadata()
+        validateDependencies()
+    }
+
+    def requireMetadata() {
+        if (project.chef.metadata == null) {
+            throw new IllegalStateException("No chef metadata found on project!")
+        }
+    }
+
+    def validateDependencies() {
+        def dependencies = project.chef.metadata.dependencies;
         if (dependencies) {
             for (def entry : dependencies) {
                 if (entry.value == "") {

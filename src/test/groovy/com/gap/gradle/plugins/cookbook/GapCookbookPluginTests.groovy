@@ -1,14 +1,13 @@
 package com.gap.gradle.plugins.cookbook
+import static org.hamcrest.Matchers.*
+import static org.junit.Assert.*
+
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.nullValue
-import static org.junit.Assert.*
 
 class GapCookbookPluginTests {
 
@@ -25,14 +24,12 @@ class GapCookbookPluginTests {
 
     @Test
     void publishCookbookToArtifactoryTaskIsAddedToProject(){
-        def task = project.tasks.findByName('publishCookbookToArtifactory')
-        assertEquals('publishCookbookToArtifactory', task.name)
+        taskShouldExist('publishCookbookToArtifactory')
     }
 
     @Test
     void publishCookbookToChefServerTaskIsAddedToProject () {
-        def task = project.tasks.findByName('publishCookbookToChefServer')
-        assertEquals('publishCookbookToChefServer', task.name)
+        taskShouldExist('publishCookbookToChefServer')
     }
 
     @Test
@@ -78,22 +75,53 @@ class GapCookbookPluginTests {
 
     @Test
     public void shouldAddValidateCookbookDependenciesTaskToProject() {
-        def task = project.tasks.findByName('validateCookbookDependencies')
-        assertEquals('validateCookbookDependencies', task.name)
+        taskShouldExist('validateCookbookDependencies')
     }
 
     @Test
-    void publishCookbookToArtifactory_andPublishCookbookToChefServer_shouldBothDependOnValidateCookbookDependencies() {
-        def publishArtifactoryTask = project.tasks.findByName('publishCookbookToArtifactory')
-        def publishChefTask = project.tasks.findByName('publishCookbookToChefServer')
-        assertHasDependency(publishArtifactoryTask, 'validateCookbookDependencies')
-        assertHasDependency(publishChefTask, 'validateCookbookDependencies')
+    void publishCookbookToArtifactory_shouldDependOnValidateCookbookDependencies() {
+        taskShouldDependOn('publishCookbookToArtifactory', 'validateCookbookDependencies')
     }
 
-    static def assertHasDependency(task, requiredDependency) {
-        for (def dependency : task.dependsOn) {
+    @Test
+    void publishCookbookToChefServer_shouldDependOnValidateCookbookDependencies() {
+        taskShouldDependOn('publishCookbookToChefServer', 'validateCookbookDependencies')
+    }
+
+    @Test
+    public void shouldAddGenerateCookbookMetadataTaskToProject() {
+        taskShouldExist('generateCookbookMetadata')
+    }
+
+    @Test
+    void validateCookbookDependencies_shouldDependOnGenerateCookbookMetadata() {
+        taskShouldDependOn('validateCookbookDependencies', 'generateCookbookMetadata')
+    }
+
+    @Test
+    void publishCookbookToArtifactory_shouldDependOnGenerateCookbookMetadata() {
+        taskShouldDependOn('publishCookbookToArtifactory', 'generateCookbookMetadata')
+    }
+
+    @Test
+    void publishCookbookToChefServer_shouldDependOnGenerateCookbookMetadata() {
+        taskShouldDependOn('publishCookbookToChefServer', 'generateCookbookMetadata')
+    }
+
+    def taskShouldExist(task) {
+        assertThat(project.tasks.findByName(task), notNullValue())
+    }
+
+    def taskShouldDependOn(task, requiredDependency) {
+        for (def dependency : project.tasks.findByName(task).dependsOn) {
             if (dependency == requiredDependency) {
-                return true
+                return
+            } else if (dependency instanceof List) {
+                for (def d : dependency) {
+                    if (d == requiredDependency) {
+                        return
+                    }
+                }
             }
         }
         fail("Task ${task} does not declare a dependency on ${requiredDependency}")
