@@ -1,10 +1,10 @@
 package com.gap.gradle.utils
 
+import static org.junit.Assert.assertEquals
 import static org.junit.rules.ExpectedException.none
 
 import org.junit.Rule
 import org.junit.Test
-import static  org.junit.Assert.assertEquals
 import org.junit.rules.ExpectedException
 
 class ShellCommandTest {
@@ -26,7 +26,6 @@ class ShellCommandTest {
     @Test
     void shouldThrowAnException_whenProcessReturnsANonZeroExitCode(){
         exception.expect(ShellCommandException)
-        exception.expectMessage("Command execution failed! Exit code 1: ls: nonexistentFolder: No such file or directory")
         new ShellCommand().execute("ls nonexistentFolder")
     }
 }
