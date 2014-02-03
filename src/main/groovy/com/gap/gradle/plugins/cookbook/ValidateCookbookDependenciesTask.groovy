@@ -14,8 +14,10 @@ class ValidateCookbookDependenciesTask {
     }
 
     def execute() {
-        requireMetadata()
-        validateDependencies()
+        if (project.chef.enforceMetadata) {
+            requireMetadata()
+            validateDependencies()
+        }
     }
 
     def requireMetadata() {

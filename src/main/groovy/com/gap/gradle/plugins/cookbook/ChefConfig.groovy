@@ -6,6 +6,8 @@ class ChefConfig {
     def environment = "tdev"
     def cookbookDir = "."
 
+    def enforceMetadata = false
+
     /**
      * Metadata should not be user-configurable: it is populated by task {@link GenerateCookbookMetadataTask}.
      */
