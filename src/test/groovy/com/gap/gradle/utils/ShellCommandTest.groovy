@@ -10,7 +10,7 @@ import org.junit.rules.ExpectedException
 class ShellCommandTest {
 
     @Rule
-    public ExpectedException exception = none()
+    public final ExpectedException exception = none()
 
     @Test
     void shouldSuccessfullyExecuteShellCommand(){
@@ -25,8 +25,8 @@ class ShellCommandTest {
 
     @Test
     void shouldThrowAnException_whenProcessReturnsANonZeroExitCode(){
-        exception.expectMessage("Command execution failed!!")
+        exception.expect(ShellCommandException)
+        exception.expectMessage("Command execution failed! Exit code 1: ls: nonexistentFolder: No such file or directory")
         new ShellCommand().execute("ls nonexistentFolder")
     }
-
 }
