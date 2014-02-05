@@ -5,4 +5,5 @@ class JenkinsConfig {
     def serverUrl
     def user
     def authToken
+	def jobName
 }

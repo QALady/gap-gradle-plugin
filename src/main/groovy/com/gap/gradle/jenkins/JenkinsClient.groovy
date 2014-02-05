@@ -55,6 +55,24 @@ class JenkinsClient {
         }
     }
 
+	def startJobWithParams(jobName, jobParams) {
+		def nextBuildNumber = getNextBuildNumber (jobName)
+		println jobParams
+		assert jobParams as java.util.Map
+		http.request(POST) {
+			uri.path = "/job/${jobName}/buildWithParameters"
+			headers.'Authorization' = getAuthorizationHeader()
+			requestContentType = URLENC
+			body =  jobParams
+			response.success = {
+				nextBuildNumber
+			}
+			response.failure = { resp ->
+				throw new JenkinsException("Failed to start job in jenkins: ${resp.statusLine}")
+		   }
+		}
+	}
+
     def isFinished(jobName, buildNumber) {
         def jobStatus = getJobStatus(jobName, buildNumber)
         jobStatus == JobStatus.success || jobStatus == JobStatus.failure

@@ -68,22 +68,6 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
     }
 
     @Test
-    void shouldFail_whenCookbookDependencyVersionIsBlank() {
-        try {
-            createMetadataRb([
-                "version '999.99.9999'",
-                "name    'ref-app'",
-                "depends 'gapTomcat', '0.0.23'",
-                "depends 'gapNagios', ''",
-            ])
-            executeTasks()
-            fail("No exception thrown!")
-        } catch (Throwable throwable) {
-            assertCause(throwable, ShellCommandException, "The version constraint syntax you are using is not valid")
-        }
-    }
-
-    @Test
     void shouldFail_whenCookbookDependencyVersionIsMissing() {
         try {
             createMetadataRb([

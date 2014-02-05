@@ -10,6 +10,7 @@ class GapCookbookPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.extensions.create('jenkins', JenkinsConfig)
         project.extensions.create('chef', ChefConfig)
+		project.extensions.create('parameters', ParameterConfig)
 
         loadConfig(project)
 
@@ -28,6 +29,11 @@ class GapCookbookPlugin implements Plugin<Project> {
         project.task('publishCookbookToChefServer', dependsOn: [ 'generateCookbookMetadata', 'validateCookbookDependencies' ]) << {
             new PublishCookbookToChefServerTask(project).execute()
         }
+		project.task('promoteChefObjectsToServer') {
+			doLast {
+				new PromoteChefObjectsToServerTask(project).execute()
+			}
+		}
     }
 
     def loadConfig(Project project) {

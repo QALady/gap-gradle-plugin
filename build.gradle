@@ -24,6 +24,7 @@ version = "${majorVersion}.${minorVersion}.${release}.${counter}"
 
 apply plugin: 'groovy'
 apply plugin: 'idea'
+apply plugin: 'eclipse'
 
 dependencies{
   compile gradleApi()
