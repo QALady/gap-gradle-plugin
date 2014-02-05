@@ -1,11 +1,18 @@
 repositories {
-  maven {
-    url "http://repo1.phx.gapinc.dev/artifactory/libs-release"
-  }
-  ivy {
-    layout "maven"
-    url "http://repo1.phx.gapinc.dev/artifactory/libs-release"
-  }
+    maven {
+        url "http://repo1.phx.gapinc.dev/artifactory/libs-release"
+    }
+    ivy {
+        layout "maven"
+        url "http://repo1.phx.gapinc.dev/artifactory/libs-release"
+    }
+    maven {
+        url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
+    }
+    ivy {
+        layout "maven"
+        url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
+    }
 }
 
 //User defined
@@ -20,7 +27,7 @@ apply plugin: 'idea'
 
 dependencies{
   compile gradleApi()
-  groovy localGroovy() 
+  groovy localGroovy()
 
   /* Following 4 dependencies are required for gradle cobertura plugin */
   compile 'gradle_cobertura:gradle_cobertura:1.1'
@@ -68,14 +75,22 @@ tasks.withType(Test) {
 }
 
 uploadArchives {
-  repositories {
-    ivy{
-      layout 'maven'
-      url "http://repo1.phx.gapinc.dev/artifactory/libs-release-local"
-      credentials{
-        username "admin" 
-        password "password"
-      }
+    repositories {
+        ivy {
+            layout 'maven'
+            url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
+            credentials {
+                username "admin"
+                password "password"
+            }
+        }
+        ivy{
+            layout 'maven'
+            url "http://repo1.phx.gapinc.dev/artifactory/libs-release-local"
+            credentials{
+                username "admin"
+                password "password"
+            }
+        }
     }
-  }
 }
