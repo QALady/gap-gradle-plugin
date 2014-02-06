@@ -21,7 +21,7 @@ import org.gradle.api.Project;
  */
 class PhantomJS extends DefaultTask {
   def Iterable<?> args
-  def String version = '1.9.1'
+  def String version = '+'
   def final String phantomjsBin    = "${project.buildDir}/bin/phantomjs"
   def final String phantomjsBinExe = "${project.buildDir}/bin/phantomjs.exe"
 
