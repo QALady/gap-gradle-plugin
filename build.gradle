@@ -85,13 +85,5 @@ uploadArchives {
                 password "password"
             }
         }
-        ivy{
-            layout 'maven'
-            url "http://repo1.phx.gapinc.dev/artifactory/libs-release-local"
-            credentials{
-                username "admin"
-                password "password"
-            }
-        }
     }
 }
