@@ -1,6 +1,8 @@
 package com.gap.gradle.plugins.git
 
 import com.gap.gradle.utils.ShellCommand
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 /**
@@ -9,10 +11,19 @@ import org.gradle.api.Project
 class GitCommitAndPushTask {
 
     Project project
+    Log log = LogFactory.getLog(GitCommitAndPushTask)
+    def fullRepo
+    def repo
+    def gitPath
+    def currentPath
 
     GitCommitAndPushTask(Project project){
         this.project = project
         parametersExist()
+        fullRepo = project.gitconfig.fullRepoName
+        repo = project.gitconfig.fullRepoName.split("/")[1]
+        currentPath = System.getProperty("user.dir")
+        gitPath = currentPath + "/" + repo
     }
 
     def parametersExist(){
@@ -30,15 +41,13 @@ class GitCommitAndPushTask {
     }
 
     def commitToGit(){
-        def repo = project.gitconfig.fullRepoName.split("/")[1]
         def userId = project.gitconfig.userId
-        new ShellCommand().execute("cd " + repo)
-        new ShellCommand().execute("git commit -am'[" + userId
-                + "] - Commit from Electric Commander' --author='"+ userId
-                + " <" + userId + "@gap.com>'")
+        ["git", "commit", "-am",
+                "'[${userId}] - Commit from Electric Commander'",
+                "--author='${userId} <noreply@gap.com>'"].execute(null, new File(gitPath))
     }
 
     def pushToGit(){
-        new ShellCommand().execute('git push')
+    "git push".execute(null, new File(gitPath))
     }
 }

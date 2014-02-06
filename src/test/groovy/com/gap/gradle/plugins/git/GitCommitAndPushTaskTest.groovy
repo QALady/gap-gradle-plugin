@@ -19,7 +19,6 @@ class GitCommitAndPushTaskTest {
 
     private Project project
     Task gitCommitAndPushTask
-    def mockShellCommand
 
     @Before
     void setUp(){
@@ -28,7 +27,6 @@ class GitCommitAndPushTaskTest {
         project.gitconfig.fullRepoName = 'watchmen/gitTest'
         project.gitconfig.userId = 'ca9s7i9'
         gitCommitAndPushTask = project.tasks.findByName('gitCommitAndPush')
-        mockShellCommand = new MockFor(ShellCommand)
     }
 
     @Test
@@ -48,14 +46,6 @@ class GitCommitAndPushTaskTest {
             gitCommitAndPushTask.execute()
         } catch (Exception e) {
             assertThat(e.dump(), containsString('There is no user id defined'))
-        }
-    }
-
-    @Test
-    void shouldSuccessfullyExecute(){
-        mockShellCommand.demand.execute(3) { 0 }
-        mockShellCommand.use {
-            assertEquals(0, new GitCommitAndPushTask(project).execute()) //TODO: Use task instead of new instance
         }
     }
 }

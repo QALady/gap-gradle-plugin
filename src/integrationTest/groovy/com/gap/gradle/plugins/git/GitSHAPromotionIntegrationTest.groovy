@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
@@ -43,7 +42,7 @@ class GitSHAPromotionIntegrationTest {
             gitCheckoutTask.execute()
             gitUpdateSHATask.execute()
             log.debug("SHA Id: " + project.gitconfig.shaId)
-            // gitCommitAndPushTask.execute()
+            gitCommitAndPushTask.execute()
         }
         catch (ShellCommandException e){
             log.error(e.printStackTrace())
