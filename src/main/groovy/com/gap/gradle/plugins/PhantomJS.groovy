@@ -9,7 +9,7 @@ import org.gradle.api.Project;
 
 /*
  * Upload new versions of phantomjs to artifactory at:
- * ext-release-local/org/phantomjs/phantomjs/{version}/phantomjs-{version}-{qualifier}.zip
+ * local-external:org/phantomjs/phantomjs/{version}/phantomjs-{version}-{qualifier}.zip
  *
  * Contents of zip should be ONLY the single binary executable for phantomjs
  *
