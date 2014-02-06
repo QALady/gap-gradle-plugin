@@ -15,10 +15,10 @@ class PromoteChefObjectsToServerTaskIntegrationTest {
         def project = ProjectBuilder.builder().build()
 
         project.apply plugin: 'gapcookbook'
-        project.jenkins.serverUrl = "http://jenkins01.phx.gapinc.dev:8080"
-        project.jenkins.user = "kr8s8k9"
-		project.jenkins.jobName = "TagProdReady"
-        project.jenkins.authToken = "4661bb66b1f850bdff9c3ce5f5daca65"
+        project.jenkins.knifeServerUrl = "http://jenkins01.phx.gapinc.dev:8080"
+        project.jenkins.knifeUser = "kr8s8k9"
+		project.jenkins.knifeJobName = "TagProdReady"
+        project.jenkins.knifeAuthToken = "4661bb66b1f850bdff9c3ce5f5daca65"
 		project.parameters.COMMIT_ID = "sha1-git-commit-id"
 		project.parameters.TAG_MESSAGE = "promote this change to chef server using EC-CI"
 		project.parameters.parameterNames = "COMMIT_ID,TAG_MESSAGE"

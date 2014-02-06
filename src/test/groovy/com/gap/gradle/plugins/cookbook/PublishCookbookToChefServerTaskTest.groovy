@@ -37,14 +37,14 @@ class PublishCookbookToChefServerTaskTest {
 
     @Test
     void shouldThrowException_whenJenkinsUserNameIsNotConfigured(){
-        project.jenkins.serverUrl = "testserver"
+        project.jenkins.cookbookServerUrl = "testserver"
         assertThrowsExceptionWithMessage("No jenkins user configured", {publishCookbookTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenJenkinsApiTokenIsNotConfigured(){
-        project.jenkins.serverUrl = "jenkins"
-        project.jenkins.user = "jenkins_user"
+        project.jenkins.cookbookServerUrl = "jenkins"
+        project.jenkins.cookbookUser = "jenkins_user"
         assertThrowsExceptionWithMessage("No jenkins auth-token configured", {publishCookbookTask.execute()})
     }
 
@@ -97,9 +97,9 @@ class PublishCookbookToChefServerTaskTest {
     }
 
     private void setupTaskProperties() {
-        project.jenkins.serverUrl = "jenkins"
-        project.jenkins.user = "jenkins_user"
-        project.jenkins.authToken = "jenkins_password"
+        project.jenkins.cookbookServerUrl = "jenkins"
+        project.jenkins.cookbookUser = "jenkins_user"
+        project.jenkins.cookbookAuthToken = "jenkins_password"
         project.chef.environment = "local"
         project.chef.cookbookName = "myapp"
 

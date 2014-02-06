@@ -24,7 +24,7 @@ class PublishCookbookToChefServerTask {
 
     def publishCookbookToChefServer() {
         def jenkinsConfig = project.jenkins
-        JenkinsClient client = new JenkinsClient(jenkinsConfig.serverUrl, jenkinsConfig.user, jenkinsConfig.authToken)
+        JenkinsClient client = new JenkinsClient(jenkinsConfig.cookbookServerUrl, jenkinsConfig.cookbookUser, jenkinsConfig.cookbookAuthToken)
         CookbookUploader uploader = new CookbookUploader(client)
         def cookbookUtil = new CookbookUtil()
         def cookbookMetadata = project.chef.metadata
@@ -37,11 +37,11 @@ class PublishCookbookToChefServerTask {
     }
 
     def requireJenkinsConfig() {
-        if (!project.jenkins.serverUrl) {
+        if (!project.jenkins.cookbookServerUrl) {
             throw new Exception("No jenkins url configured")
-        } else if (!project.jenkins.user) {
+        } else if (!project.jenkins.cookbookUser) {
             throw new Exception("No jenkins user configured")
-        } else if (!project.jenkins.authToken) {
+        } else if (!project.jenkins.cookbookAuthToken) {
             throw new Exception("No jenkins auth-token configured")
         }
     }

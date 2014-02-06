@@ -51,6 +51,6 @@ class GitSHAPromotionIntegrationTest {
     @After
     void cleanUp(){
         def cookbook = project.gitconfig.fullRepoName.split('/')[1]
-        // new ShellCommand().execute('rm -rf ' + cookbook);
+        new ShellCommand().execute('rm -rf ' + cookbook);
     }
 }

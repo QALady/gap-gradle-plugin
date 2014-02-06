@@ -57,19 +57,19 @@ class GapCookbookPluginTests {
         new File(GapCookbookPlugin.CONFIG_FILE).delete()
         def project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapcookbook'
-        assertThat(project.jenkins.serverUrl, nullValue())
+        assertThat(project.jenkins.cookbookServerUrl, nullValue())
         assertThat(project.chef.environment, equalTo('tdev'))
     }
 
     @Test
     void shouldReadCredentialsFromConfigFile() {
         new File(GapCookbookPlugin.CONFIG_FILE).write(
-            "jenkins.serverUrl=http://my.jenkins.server\n"
+            "jenkins.cookbookServerUrl=http://my.jenkins.server\n"
             + "chef.environment=prod"
         )
         def project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapcookbook'
-        assertThat(project.jenkins.serverUrl, equalTo("http://my.jenkins.server"))
+        assertThat(project.jenkins.cookbookServerUrl, equalTo("http://my.jenkins.server"))
         assertThat(project.chef.environment, equalTo("prod"))
     }
 

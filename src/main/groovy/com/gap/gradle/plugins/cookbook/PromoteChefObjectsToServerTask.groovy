@@ -26,19 +26,19 @@ class PromoteChefObjectsToServerTask {
 
 	def promoteChefObjectsByCallingJenkinsJob() {
 		def jConfig = project.jenkins
-		JenkinsClient jClient = new JenkinsClient(jConfig.serverUrl, jConfig.user, jConfig.authToken)
+		JenkinsClient jClient = new JenkinsClient(jConfig.knifeServerUrl, jConfig.knifeUser, jConfig.knifeAuthToken)
 		JenkinsRunner jRunner = new JenkinsRunner(jClient)
-		jRunner.runJob(jConfig.jobName, jobParams)
+		jRunner.runJob(jConfig.knifeJobName, jobParams)
 	}
 
 	def requireJenkinsConfig() {
-		if (!project.jenkins.serverUrl) {
+		if (!project.jenkins.knifeServerUrl) {
 			throw new Exception("No jenkins url configured")
-		} else if (!project.jenkins.user) {
+		} else if (!project.jenkins.knifeUser) {
 			throw new Exception("No jenkins user configured")
-		} else if (!project.jenkins.authToken) {
+		} else if (!project.jenkins.knifeAuthToken) {
 			throw new Exception("No jenkins auth-token configured")
-		} else if (!project.jenkins.jobName) {
+		} else if (!project.jenkins.knifeJobName) {
 			throw new Exception("No jenkins jobName configured")
 		}
 	}
