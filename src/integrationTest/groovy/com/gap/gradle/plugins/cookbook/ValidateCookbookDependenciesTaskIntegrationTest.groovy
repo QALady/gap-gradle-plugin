@@ -3,7 +3,6 @@ import static org.hamcrest.Matchers.containsString
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
 
-import com.gap.gradle.utils.ShellCommandException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -26,7 +25,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapcookbook'
         project.chef.cookbookDir = tempFolder.root.absolutePath
-        project.chef.enforceMetadata = true
+        project.chef.requirePinnedDependencies = true
         metadataTask = project.tasks.findByName("generateCookbookMetadata")
         validateTask = project.tasks.findByName("validateCookbookDependencies")
     }

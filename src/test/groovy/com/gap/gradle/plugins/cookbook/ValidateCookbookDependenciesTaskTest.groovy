@@ -15,7 +15,7 @@ class ValidateCookbookDependenciesTaskTest {
     void setUp() {
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapcookbook'
-        project.chef.enforceMetadata = true
+        project.chef.requirePinnedDependencies = true
         validateTask = project.tasks.findByName('validateCookbookDependencies')
     }
 
