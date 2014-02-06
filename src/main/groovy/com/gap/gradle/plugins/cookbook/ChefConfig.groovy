@@ -6,7 +6,15 @@ class ChefConfig {
     def environment = "tdev"
     def cookbookDir = "."
 
-    def enforceMetadata = false
+    /**
+     * Feature flag for ITCI-920
+     */
+    def requirePinnedDependencies = false
+
+    /**
+     * Feature flag for ITCI-943
+     */
+    def requirePinnedTransitiveDependencies = false
 
     /**
      * Metadata should not be user-configurable: it is populated by task {@link GenerateCookbookMetadataTask}.
