@@ -33,6 +33,8 @@ class GitSHAPromotionIntegrationTest {
         gitCheckoutTask = project.tasks.findByName('gitCheckout')
         gitUpdateSHATask = project.tasks.findByName('gitUpdateSHA')
         gitCommitAndPushTask = project.tasks.findByName('gitCommitAndPush')
+        def cookbook = project.gitconfig.fullRepoName.split('/')[1]
+        new ShellCommand().execute('rm -rf ' + cookbook);
     }
 
     @Test
@@ -46,11 +48,5 @@ class GitSHAPromotionIntegrationTest {
         catch (ShellCommandException e){
             log.error(e.printStackTrace())
         }
-    }
-
-    @After
-    void cleanUp(){
-        def cookbook = project.gitconfig.fullRepoName.split('/')[1]
-        new ShellCommand().execute('rm -rf ' + cookbook);
     }
 }
