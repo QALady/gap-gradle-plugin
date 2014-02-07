@@ -28,7 +28,8 @@ class GitUpdateSHATask {
 
     def updateSHA(){
         try{
-            def cookbook = project.gitconfig.fullRepoName.split('/')[1]
+            def (org, cookbook) = project.gitconfig.fullRepoName.tokenize('/')
+            log.info("Organization: " + org + " Cookbook: " + cookbook)
             file = new File(cookbook + '/Berksfile.prod')
             def fileContents = file.getText('UTF-8')
             def replacedFileContent = fileContents.replaceAll(/ref: '.*'/, "ref: '"

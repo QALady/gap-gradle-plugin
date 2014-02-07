@@ -22,7 +22,7 @@ class GitSHAPromotionIntegrationTest {
     def shaId
     def cookbook
     private Log log = LogFactory.getLog(GitSHAPromotionIntegrationTest)
-    Random random = new Random()
+    private Random random = new Random()
 
     @Before
     void setUp(){
@@ -34,8 +34,8 @@ class GitSHAPromotionIntegrationTest {
         gitCheckoutTask = project.tasks.findByName('gitCheckout')
         gitUpdateSHATask = project.tasks.findByName('gitUpdateSHA')
         gitCommitAndPushTask = project.tasks.findByName('gitCommitAndPush')
-        cookbook = project.gitconfig.fullRepoName.split('/')[1]
-        new ShellCommand().execute('rm -rf ' + cookbook);
+        cookbook = project.gitconfig.fullRepoName.tokenize('/')[1]
+        deleteRepo()
     }
 
     @Test
@@ -43,7 +43,6 @@ class GitSHAPromotionIntegrationTest {
         try {
             gitCheckoutTask.execute()
             gitUpdateSHATask.execute()
-            log.debug("SHA Id: " + project.gitconfig.shaId)
             gitCommitAndPushTask.execute()
         }
         catch (ShellCommandException e){
@@ -54,6 +53,10 @@ class GitSHAPromotionIntegrationTest {
     @After
     void cleanUp(){
         cookbook = project.gitconfig.fullRepoName.split('/')[1]
-        new ShellCommand().execute('rm -rf ' + cookbook);
+        deleteRepo()
+    }
+
+    void deleteRepo(){
+        new ShellCommand().execute('rm -rf ' + cookbook)
     }
 }

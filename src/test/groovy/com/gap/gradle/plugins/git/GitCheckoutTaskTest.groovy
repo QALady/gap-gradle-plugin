@@ -42,12 +42,4 @@ class GitCheckoutTaskTest {
             assertThat(e.dump(), containsString('There is no fullRepoName defined'))
         }
     }
-
-    @Test
-    void shouldSuccessfullyExecute(){
-        mockShellCommand.demand.execute { 0 }
-        mockShellCommand.use {
-           assertEquals(0, new GitCheckoutTask(project).execute()) //TODO: Use task instead of new instance
-        }
-    }
 }
