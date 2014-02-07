@@ -21,7 +21,7 @@ class GitCommitAndPushTask {
         this.project = project
         parametersExist()
         fullRepo = project.gitconfig.fullRepoName
-        repo = project.gitconfig.fullRepoName.split("/")[1]
+        repo = project.gitconfig.fullRepoName.split("/")[1]      //TODO: Catch invalid repo format
         currentPath = System.getProperty("user.dir")
         gitPath = currentPath + "/" + repo
     }
@@ -48,6 +48,6 @@ class GitCommitAndPushTask {
     }
 
     def pushToGit(){
-    "git push".execute(null, new File(gitPath))
+        "git push".execute(null, new File(gitPath))
     }
 }

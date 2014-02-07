@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
@@ -19,6 +20,7 @@ class GitSHAPromotionIntegrationTest {
     Task gitUpdateSHATask
     Task gitCommitAndPushTask
     def shaId
+    def cookbook
     private Log log = LogFactory.getLog(GitSHAPromotionIntegrationTest)
     Random random = new Random()
 
@@ -32,7 +34,7 @@ class GitSHAPromotionIntegrationTest {
         gitCheckoutTask = project.tasks.findByName('gitCheckout')
         gitUpdateSHATask = project.tasks.findByName('gitUpdateSHA')
         gitCommitAndPushTask = project.tasks.findByName('gitCommitAndPush')
-        def cookbook = project.gitconfig.fullRepoName.split('/')[1]
+        cookbook = project.gitconfig.fullRepoName.split('/')[1]
         new ShellCommand().execute('rm -rf ' + cookbook);
     }
 
@@ -47,5 +49,11 @@ class GitSHAPromotionIntegrationTest {
         catch (ShellCommandException e){
             log.error(e.printStackTrace())
         }
+    }
+
+    @After
+    void cleanUp(){
+        cookbook = project.gitconfig.fullRepoName.split('/')[1]
+        new ShellCommand().execute('rm -rf ' + cookbook);
     }
 }
