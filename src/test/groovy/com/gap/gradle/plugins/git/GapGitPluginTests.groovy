@@ -88,7 +88,7 @@ class GapGitPluginTests {
 
     private void setupTaskProperties(){
         project.gitconfig.userId = "testUser"
-        project.gitconfig.fullRepoName = "testRepo"
+        project.gitconfig.fullRepoName = "test/Repo"
         project.gitconfig.shaId = "testSHA"
     }
 
