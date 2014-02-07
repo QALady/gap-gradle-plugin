@@ -54,13 +54,4 @@ class GitUpdateSHATaskTest {
             assertThat(e.dump(), containsString('There is no SHA Id defined'))
         }
     }
-
-    @Test
-    void shouldSuccessfullyUpdateSHA(){
-        try{
-            new GitUpdateSHATask(project).execute() // TODO: use Task instead of new instance
-        } catch (FileNotFoundException e){
-            log.error(e.printStackTrace())
-        }
-    }
 }
