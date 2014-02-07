@@ -20,6 +20,7 @@ class GitUpdateSHATask {
     GitUpdateSHATask(Project project){
         this.project = project
         parametersExist()
+        checkFullRepoNameFormat()
     }
 
     def execute(){
@@ -45,11 +46,18 @@ class GitUpdateSHATask {
 
     def parametersExist(){
         if(project.gitconfig.fullRepoName == null){
-            throw new Exception('There is no fullRepoName defined')
+            throw new Exception('There is no fullRepoName defined' +
+                    'please run this gradle task with -PfullRepoName=value')
         }
         if(project.gitconfig.shaId == null){
-            throw new Exception('There is no SHA Id defined')
+            throw new Exception('There is no SHA Id defined' +
+                    'please run this gradle task with -PshaId=value')
         }
     }
 
+    def checkFullRepoNameFormat(){
+        if(!project.gitconfig.fullRepoName.contains("/")){
+            throw new Exception("The fullRepoName must have the following format: 'organization/repoName'")
+        }
+    }
 }

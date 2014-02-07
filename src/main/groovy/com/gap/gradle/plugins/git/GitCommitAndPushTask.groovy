@@ -22,17 +22,12 @@ class GitCommitAndPushTask {
     GitCommitAndPushTask(Project project){
         this.project = project
         parametersExist()
+        checkFullRepoNameFormat()
         fullRepo = project.gitconfig.fullRepoName
-        try {
-            checkFullRepoNameFormat()
-            (org, repo) = project.gitconfig.fullRepoName.tokenize('/')
-            log.info("Organization: " + org + " Repository: " + repo)
-            currentPath = System.getProperty("user.dir")
-            gitPath = currentPath + "/" + repo
-            file = new File(gitPath)
-        }catch (Exception e){
-            log.error(e.printStackTrace(), e)
-        }
+        repo = project.gitconfig.fullRepoName.tokenize('/')[1]
+        currentPath = System.getProperty("user.dir")
+        gitPath = currentPath + "/" + repo
+        file = new File(gitPath)
     }
 
     def checkFullRepoNameFormat(){
