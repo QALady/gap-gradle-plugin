@@ -57,6 +57,6 @@ class GitSHAPromotionIntegrationTest {
     }
 
     void deleteRepo(){
-        // new ShellCommand().execute('rm -rf ' + cookbook)
+        new ShellCommand().execute('rm -rf ' + cookbook)
     }
 }

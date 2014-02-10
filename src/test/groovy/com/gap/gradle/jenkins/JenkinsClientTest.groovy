@@ -17,7 +17,7 @@ class JenkinsClientTest {
 
     def client
     def mockHttpBuilder
-    def mockRequestDelegate = [response: [:], uri: [:], headers: [:]]
+    def mockRequestDelegate = [response: [:], uri: [:], headers: [:], requestContentType: [:], body: [:]]
     def mockResponse = [resp: [:]]
 
     @Before
@@ -230,5 +230,57 @@ class JenkinsClientTest {
     @Test
     void getJobUrl_shouldReturnTheFullJobUrl(){
         assertEquals("serverUrl/job/jenkins_job_name/203", client.getJobUrl("jenkins_job_name", 203))
+    }
+
+    @Test
+    void startJobWithParams_shouldTriggerNewJobInJenkinsServer (){
+        mockHttpBuilder.demand.request {method, contentType, body -> }
+        mockHttpBuilder.demand.request {Method method, Closure body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            assertEquals(POST, method)
+            assertEquals("/job/jenkins_job_name/buildWithParameters", mockRequestDelegate.uri.path.toString())
+            assertEquals("job_params", mockRequestDelegate.body)
+            assertEquals(URLENC, mockRequestDelegate.requestContentType)
+            assertAuthorizationHeader(mockRequestDelegate)
+        }
+        mockHttpBuilder.use {
+            client.startJobWithParams("jenkins_job_name", "job_params")
+        }
+    }
+
+    @Test(expected = JenkinsException)
+    void startJobWithParams_shouldThrowException_whenFailedToTriggerNewJobInJenkins (){
+        mockHttpBuilder.demand.request {method, contentType, body -> }
+        mockHttpBuilder.demand.request {Method method, Closure body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.failure(mockResponse)
+        }
+
+        mockHttpBuilder.use {
+            client.startJobWithParams("jenkins_job_name", "job_params")
+        }
+    }
+
+    @Test
+    void startJobWithParams_shouldReturnNextBuildNumberFromJenkins_whenJobSuccessfullyKickedOff() {
+        mockHttpBuilder.demand.request {method, contentType, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            assertThat(method, equalTo(GET))
+            assertThat(mockRequestDelegate.uri.path.toString(), equalTo("/job/jenkins_job_name/api/json"))
+
+            mockRequestDelegate.response.success(mockResponse, [nextBuildNumber: 203])
+        }
+
+        mockHttpBuilder.demand.request {method, body ->
+            body.delegate = mockRequestDelegate
+            body.call()
+            mockRequestDelegate.response.success()
+        }
+        mockHttpBuilder.use{
+            assertThat(client.startJobWithParams("jenkins_job_name", "job_params"), equalTo(203))
+        }
     }
 }
