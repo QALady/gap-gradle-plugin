@@ -31,7 +31,11 @@ class JenkinsRunner {
 		}
 		if (jenkinsClient.isSuccessful(jobName, buildNumber)) {
 			log.info("Jenkins job completed successfully <${getJobUrl(jobName, buildNumber)}>")
-		}
+		} else {
+            def message = "Jenkins job failed <${getJobUrl(jobName, buildNumber)}>: Console log: ${jenkinsClient.getConsole(jobName, buildNumber)}"
+            log.error(message)
+            throw new JenkinsException(message)
+        }
 	}
 	
 	def getJobUrl(jobName, buildNumber) {
