@@ -6,9 +6,6 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
-/**
- * Created by ccaceres on 2/10/14.
- */
 class UpdateCookbookSHATask {
     Project project
     GitClient client

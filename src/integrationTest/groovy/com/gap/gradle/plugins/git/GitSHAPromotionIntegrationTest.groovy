@@ -9,13 +9,8 @@ import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
 
-/**
- * Created by ccaceres on 2/5/14.
- */
 class GitSHAPromotionIntegrationTest {
     private Project project
     Task updateBerksfileTask

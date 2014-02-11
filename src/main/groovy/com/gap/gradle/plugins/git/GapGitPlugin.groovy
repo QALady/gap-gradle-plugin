@@ -4,9 +4,6 @@ import com.gap.gradle.plugins.cookbook.UpdateCookbookSHATask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-/**
- * Created by ccaceres on 2/5/14.
- */
 class GapGitPlugin implements Plugin<Project> {
 
     @Override

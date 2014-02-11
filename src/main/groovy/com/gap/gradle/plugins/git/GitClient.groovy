@@ -4,9 +4,6 @@ import com.gap.gradle.utils.ShellCommand
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 
-/**
- * Created by ccaceres on 2/10/14.
- */
 class GitClient {
 
     def userId

@@ -8,13 +8,9 @@ import org.junit.Before
 import org.junit.Test
 
 import static org.hamcrest.Matchers.notNullValue
-import static org.hamcrest.Matchers.nullValue
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
 
-/**
- * Created by sh6o2vv on 2/6/14.
- */
 class GapGitPluginTests {
 
     private Project project

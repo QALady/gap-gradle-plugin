@@ -5,15 +5,8 @@ import groovy.mock.interceptor.MockFor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ExpectedException
 
-import static org.junit.rules.ExpectedException.none
-
-/**
- * Created by ccaceres on 2/10/14.
- */
 class GitClientTest {
 
     GitClient client

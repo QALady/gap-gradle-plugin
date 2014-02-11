@@ -1,6 +1,6 @@
-package com.gap.gradle.plugins.git
+package com.gap.gradle.plugins.cookbook
 
-import com.gap.gradle.plugins.cookbook.UpdateCookbookSHATask
+import com.gap.gradle.plugins.git.GitClient
 import groovy.mock.interceptor.MockFor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -10,14 +10,10 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
-import static junit.framework.Assert.assertEquals
 import static junit.framework.Assert.assertFalse
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.junit.internal.matchers.StringContains.containsString
 
-/**
- * Created by ccaceres on 2/10/14.
- */
 class UpdateCookbookSHATaskTest {
 
     private Project project
