@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins.git
-
 import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
 import org.apache.commons.logging.Log
@@ -53,7 +52,7 @@ class GitSHAPromotionIntegrationTest {
 
     void deleteRepo(){
         if (!System.properties['os.name'].toString().toLowerCase().contains('windows')){
-            new ShellCommand().execute('rm -rf ' + cookbook, null)
+            new ShellCommand().execute('rm -rf ' + cookbook)
         }
     }
 }

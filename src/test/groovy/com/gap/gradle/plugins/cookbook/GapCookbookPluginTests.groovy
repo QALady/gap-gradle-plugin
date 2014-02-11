@@ -1,6 +1,7 @@
 package com.gap.gradle.plugins.cookbook
 import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
+import static org.junit.Assert.assertThat
+import static org.junit.Assert.fail
 
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
@@ -34,22 +35,12 @@ class GapCookbookPluginTests {
 
     @Test
     void shouldExecutePublishCookbookToChefServerTask (){
-        def mockTask = new MockFor(PublishCookbookToChefServerTask)
-        mockTask.demand.execute {}
-        def task = project.tasks.findByName('publishCookbookToChefServer')
-        mockTask.use {
-            task.execute()
-        }
+        shouldExecuteTask('publishCookbookToChefServer', PublishCookbookToChefServerTask)
     }
 
     @Test
     void shouldExecutePublishCookbookToArtifactoryTask (){
-        def mockTask = new MockFor(PublishCookbookToArtifactoryTask)
-        mockTask.demand.execute {}
-        def task = project.tasks.findByName('publishCookbookToArtifactory')
-        mockTask.use {
-            task.execute()
-        }
+        shouldExecuteTask('publishCookbookToArtifactory', PublishCookbookToArtifactoryTask)
     }
 
     @Test
@@ -74,23 +65,33 @@ class GapCookbookPluginTests {
     }
 
     @Test
-    public void shouldAddValidateCookbookDependenciesTaskToProject() {
+    void shouldAddValidateCookbookDependenciesTaskToProject() {
         taskShouldExist('validateCookbookDependencies')
     }
 
     @Test
-    void publishCookbookToArtifactory_shouldDependOnValidateCookbookDependencies() {
-        taskShouldDependOn('publishCookbookToArtifactory', 'validateCookbookDependencies')
+    void shouldExecuteValidateCookbookDependenciesTask() {
+        shouldExecuteTask('validateCookbookDependencies', ValidateCookbookDependenciesTask)
     }
 
     @Test
-    void publishCookbookToChefServer_shouldDependOnValidateCookbookDependencies() {
-        taskShouldDependOn('publishCookbookToChefServer', 'validateCookbookDependencies')
+    void publishCookbookToArtifactory_shouldDependOnCheckCookbookDependencies() {
+        taskShouldDependOn('publishCookbookToArtifactory', 'checkCookbookDependencies')
     }
 
     @Test
-    public void shouldAddGenerateCookbookMetadataTaskToProject() {
+    void publishCookbookToChefServer_shouldDependOnCheckCookbookDependencies() {
+        taskShouldDependOn('publishCookbookToChefServer', 'checkCookbookDependencies')
+    }
+
+    @Test
+    void shouldAddGenerateCookbookMetadataTaskToProject() {
         taskShouldExist('generateCookbookMetadata')
+    }
+
+    @Test
+    void shouldExecuteGenerateCookbookMetadataTask() {
+
     }
 
     @Test
@@ -106,6 +107,24 @@ class GapCookbookPluginTests {
     @Test
     void publishCookbookToChefServer_shouldDependOnGenerateCookbookMetadata() {
         taskShouldDependOn('publishCookbookToChefServer', 'generateCookbookMetadata')
+    }
+
+    @Test
+    void shouldAddCheckCookbookDependenciesTaskToProject() {
+        taskShouldExist('checkCookbookDependencies')
+    }
+
+    @Test
+    void checkCookbookDependenciesShouldDependOnValidateCookbookDependencies() {
+        taskShouldDependOn('checkCookbookDependencies', 'validateCookbookDependencies')
+    }
+
+    def shouldExecuteTask(taskName, type) {
+        def task = new MockFor(type)
+        task.demand.execute {}
+        task.use {
+            project.tasks.findByName(taskName).execute()
+        }
     }
 
     def taskShouldExist(task) {

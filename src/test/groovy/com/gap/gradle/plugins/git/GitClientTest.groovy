@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins.git
-
 import com.gap.gradle.utils.ShellCommand
 import groovy.mock.interceptor.MockFor
 import org.apache.commons.logging.Log
@@ -25,7 +24,7 @@ class GitClientTest {
 
     @Test
     void checkoutShouldSucceed_whenFullRepoNameIsValid(){
-        mockShellCommand.demand.execute(1){ command, path -> 0 }
+        mockShellCommand.demand.execute(1){ command -> 0 }
         mockShellCommand.use {
             client.checkout()
         }
@@ -33,7 +32,7 @@ class GitClientTest {
 
     @Test
     void checkoutShouldThrowException_whenRepoNameIsInvalid(){
-        mockShellCommand.demand.execute(1){ command, path -> -1 }
+        mockShellCommand.demand.execute(1){ command -> -1 }
         mockShellCommand.use {
             client.checkout()
         }
@@ -46,7 +45,7 @@ class GitClientTest {
 
     @Test
     void commitShouldSucceed_whenParametersAreValid(){
-        mockShellCommand.demand.execute(1..2){ command, path -> 0 }
+        mockShellCommand.demand.execute(1..2){ command -> 0 }
         mockShellCommand.use {
             client.commitAndPush()
         }
@@ -54,7 +53,7 @@ class GitClientTest {
 
     @Test
     void commitShouldThrowException_whenParametersAreInvalid(){
-        mockShellCommand.demand.execute(1..2){ command, path -> -1 }
+        mockShellCommand.demand.execute(1..2){ command -> -1 }
         mockShellCommand.use {
             client.commitAndPush()
         }

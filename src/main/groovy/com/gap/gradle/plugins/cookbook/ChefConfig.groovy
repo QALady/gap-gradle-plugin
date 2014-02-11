@@ -14,7 +14,7 @@ class ChefConfig {
     /**
      * Feature flag for ITCI-943
      */
-    def requirePinnedTransitiveDependencies = false
+    def requireTransitiveDependencies = false
 
     /**
      * Metadata should not be user-configurable: it is populated by task {@link GenerateCookbookMetadataTask}.

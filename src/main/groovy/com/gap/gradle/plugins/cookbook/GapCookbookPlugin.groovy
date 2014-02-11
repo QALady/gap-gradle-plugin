@@ -22,11 +22,15 @@ class GapCookbookPlugin implements Plugin<Project> {
             new ValidateCookbookDependenciesTask(project).execute()
         }
 
-        project.task('publishCookbookToArtifactory', dependsOn: [ 'generateCookbookMetadata', 'validateCookbookDependencies' ]) << {
+        project.task('checkCookbookDependencies', dependsOn: [
+            'validateCookbookDependencies',
+        ])
+
+        project.task('publishCookbookToArtifactory', dependsOn: [ 'generateCookbookMetadata', 'checkCookbookDependencies' ]) << {
             new PublishCookbookToArtifactoryTask(project).execute()
         }
 
-        project.task('publishCookbookToChefServer', dependsOn: [ 'generateCookbookMetadata', 'validateCookbookDependencies' ]) << {
+        project.task('publishCookbookToChefServer', dependsOn: [ 'generateCookbookMetadata', 'checkCookbookDependencies' ]) << {
             new PublishCookbookToChefServerTask(project).execute()
         }
 		project.task('promoteChefObjectsToServer') {

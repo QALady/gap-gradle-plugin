@@ -5,16 +5,19 @@ import org.apache.commons.logging.LogFactory
 class ShellCommand {
 
     def logger = LogFactory.getLog(ShellCommand)
+    def workingDir
 
-    def execute(command, path) {
+    def ShellCommand() {
+        this.workingDir = new File('.')
+    }
+
+    def ShellCommand(workingDir) {
+        this.workingDir = workingDir instanceof File ? workingDir : new File(workingDir)
+    }
+
+    def execute(command, environment = null) {
         logger.info("Executing command ${command} ...")
-        def proc
-        if(path == null){
-            proc = command.execute()
-        }
-        else{
-            proc = command.execute(null, path)
-        }
+        def proc = command.execute(environment, workingDir)
         def exitCode = proc.waitFor()
         def output = proc.in.text
         logger.info("${output}")

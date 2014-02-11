@@ -24,15 +24,14 @@ class GitClient {
     }
 
     def checkout(){
-        new ShellCommand().execute('git clone git@github.gapinc.dev:'
-                + fullRepoName + '.git', null);
+        new ShellCommand().execute('git clone git@github.gapinc.dev:' + fullRepoName + '.git');
     }
 
     def commitAndPush(){
-        new ShellCommand().execute(["git", "commit", "-am",
+        new ShellCommand(location).execute(["git", "commit", "-am",
                 "'[${userId}] - Commit from Electric Commander'",
-                "--author='${userId} <noreply@gap.com>'"], location)
-        new ShellCommand().execute("git push", location)
+                "--author='${userId} <noreply@gap.com>'"])
+        new ShellCommand(location).execute("git push")
     }
 
     def updateBerksfile() throws FileNotFoundException{

@@ -7,6 +7,10 @@ class ValidateCookbookDependenciesTask {
 
     private static final def ranges = /[${[ "<", "<=", ">=", "~>", ">" ].each { t -> quote(t) }.join("|")}]/
 
+    static def isUnpinned(version) {
+        return version =~ ranges
+    }
+
     Project project
 
     ValidateCookbookDependenciesTask(Project project) {
@@ -34,7 +38,7 @@ class ValidateCookbookDependenciesTask {
                     throw new UnpinnedDependencyException(
                         "Cookbook dependency '" + entry.key + "' has no version pinned"
                     )
-                } else if (entry.value =~ ranges) {
+                } else if (isUnpinned(entry.value)) {
                     throw new UnpinnedDependencyException(
                         "Cookbook dependency '" + entry.key + "' version '" + entry.value + "' is not pinned"
                     )
