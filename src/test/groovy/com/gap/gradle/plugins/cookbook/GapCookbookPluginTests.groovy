@@ -119,6 +119,21 @@ class GapCookbookPluginTests {
         taskShouldDependOn('checkCookbookDependencies', 'validateCookbookDependencies')
     }
 
+    @Test
+    void checkCookbookDependenciesShouldDependOnValidateTransitiveCookbookDependencies() {
+        taskShouldDependOn('checkCookbookDependencies', 'validateTransitiveCookbookDependencies')
+    }
+
+    @Test
+    void shouldAddValidateTransitiveCookbookDependenciesTaskToProject() {
+        taskShouldExist('validateTransitiveCookbookDependencies')
+    }
+
+    @Test
+    void validateTransitiveCookbookDependencies_shouldDependOnValidateCookbookDependencies() {
+        taskShouldDependOn('validateTransitiveCookbookDependencies', 'validateCookbookDependencies')
+    }
+
     def shouldExecuteTask(taskName, type) {
         def task = new MockFor(type)
         task.demand.execute {}

@@ -22,8 +22,13 @@ class GapCookbookPlugin implements Plugin<Project> {
             new ValidateCookbookDependenciesTask(project).execute()
         }
 
+        project.task('validateTransitiveCookbookDependencies', dependsOn: [ 'generateCookbookMetadata', 'validateCookbookDependencies' ]) << {
+            new ValidateTransitiveCookbookDependenciesTask(project).execute()
+        }
+
         project.task('checkCookbookDependencies', dependsOn: [
             'validateCookbookDependencies',
+            'validateTransitiveCookbookDependencies',
         ])
 
         project.task('publishCookbookToArtifactory', dependsOn: [ 'generateCookbookMetadata', 'checkCookbookDependencies' ]) << {

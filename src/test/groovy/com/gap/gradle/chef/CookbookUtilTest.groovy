@@ -28,7 +28,7 @@ class CookbookUtilTest {
     @Test
     void metadataFrom_shouldRunKnifeCommandToGenerateMetadataJson() {
         temp.newFile("metadata.json").write("{}")
-        mockShellCommand.demand.execute { command, path ->
+        mockShellCommand.demand.execute { command ->
             assertEquals("knife cookbook metadata from file ${temp.root.path}/metadata.rb", command)
         }
         mockShellCommand.use {
@@ -38,7 +38,7 @@ class CookbookUtilTest {
 
     @Test
     void metadataFrom_shouldLoadCookbookNameAndVersionFromMetadata(){
-        mockShellCommand.ignore.execute { command, path -> }
+        mockShellCommand.ignore.execute { command -> }
 
         File metadataFile = temp.newFile("metadata.json")
         metadataFile.write('{"name": "mycookbook", "version": "1.1.13"}')
@@ -52,7 +52,7 @@ class CookbookUtilTest {
 
     @Test
     void doesCookbookExist_shouldReturnTrue_whenCookbookFound(){
-        mockShellCommand.demand.execute{ command, path ->
+        mockShellCommand.demand.execute{ command ->
             assertEquals("knife cookbook show myapp", command)
             return "myapp   1.1.13  0.0.41  0.0.39"
         }
@@ -63,7 +63,7 @@ class CookbookUtilTest {
 
     @Test
     void doesCookbookExist_shouldReturnFalse_whenCookbookVersionCannotBeFound(){
-        mockShellCommand.demand.execute{ command, path ->
+        mockShellCommand.demand.execute{ command ->
             assertEquals("knife cookbook show myapp", command)
             return "myapp   1.1.12  0.0.41  0.0.39"
         }
