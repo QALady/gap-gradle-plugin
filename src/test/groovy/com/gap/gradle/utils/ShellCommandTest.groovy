@@ -14,18 +14,18 @@ class ShellCommandTest {
 
     @Test
     void shouldSuccessfullyExecuteShellCommand(){
-        def output = new ShellCommand().execute("echo this is a test")
+        def output = new ShellCommand().execute("echo this is a test", null)
         assertEquals("this is a test", output.trim());
     }
 
     @Test (expected = IOException)
     void shouldThrowAnException_whenProcessCannotBeFound(){
-        new ShellCommand().execute("badcommand")
+        new ShellCommand().execute("badcommand", null)
     }
 
     @Test
     void shouldThrowAnException_whenProcessReturnsANonZeroExitCode(){
         exception.expect(ShellCommandException)
-        new ShellCommand().execute("ls nonexistentFolder")
+        new ShellCommand().execute("ls nonexistentFolder", null)
     }
 }

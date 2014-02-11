@@ -6,9 +6,15 @@ class ShellCommand {
 
     def logger = LogFactory.getLog(ShellCommand)
 
-    def execute(command) {
+    def execute(command, path) {
         logger.info("Executing command ${command} ...")
-        def proc = command.execute()
+        def proc
+        if(path == null){
+            proc = command.execute()
+        }
+        else{
+            proc = command.execute(null, path)
+        }
         def exitCode = proc.waitFor()
         def output = proc.in.text
         logger.info("${output}")

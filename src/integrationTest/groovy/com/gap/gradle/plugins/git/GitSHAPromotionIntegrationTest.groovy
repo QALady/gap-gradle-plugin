@@ -9,16 +9,16 @@ import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 /**
  * Created by ccaceres on 2/5/14.
  */
 class GitSHAPromotionIntegrationTest {
     private Project project
-    Task gitCheckoutTask
-    Task gitUpdateSHATask
-    Task gitCommitAndPushTask
+    Task updateBerksfileTask
     def shaId
     def cookbook
     private Log log = LogFactory.getLog(GitSHAPromotionIntegrationTest)
@@ -28,22 +28,22 @@ class GitSHAPromotionIntegrationTest {
     void setUp(){
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapgit'
-        project.gitconfig.fullRepoName = 'watchmen/gitTest'
-        project.gitconfig.shaId = random.nextInt(Integer.MAX_VALUE)
-        project.gitconfig.userId = 'Ca9s7i9'
-        gitCheckoutTask = project.tasks.findByName('gitCheckout')
-        gitUpdateSHATask = project.tasks.findByName('gitUpdateSHA')
-        gitCommitAndPushTask = project.tasks.findByName('gitCommitAndPush')
+        updateBerksfileTask = project.tasks.findByName('promoteCookbookBerksfile')
+        setUpProperties()
         cookbook = project.gitconfig.fullRepoName.tokenize('/')[1]
         deleteRepo()
     }
 
+    def setUpProperties(){
+        project.gitconfig.fullRepoName = 'watchmen/gitTest'
+        project.gitconfig.shaId = random.nextInt(Integer.MAX_VALUE)
+        project.gitconfig.userId = 'Ca9s7i9'
+    }
+
     @Test
-    void shouldSucceedSHAUpdate_whenRepoAndSHAAreValid(){
+    void updateShouldSucceed_whenParametersAreValid(){
         try {
-            gitCheckoutTask.execute()
-            gitUpdateSHATask.execute()
-            gitCommitAndPushTask.execute()
+            updateBerksfileTask.execute()
         }
         catch (ShellCommandException e){
             log.error(e.printStackTrace())
@@ -57,6 +57,8 @@ class GitSHAPromotionIntegrationTest {
     }
 
     void deleteRepo(){
-        new ShellCommand().execute('rm -rf ' + cookbook)
+        if (!System.properties['os.name'].toString().toLowerCase().contains('windows')){
+            new ShellCommand().execute('rm -rf ' + cookbook, null)
+        }
     }
 }
