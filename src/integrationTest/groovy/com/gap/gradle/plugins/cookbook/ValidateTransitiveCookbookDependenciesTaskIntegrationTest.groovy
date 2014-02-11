@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins.cookbook
-
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -36,6 +35,7 @@ class ValidateTransitiveCookbookDependenciesTaskIntegrationTest {
             "name    'ref-app'",
             "depends 'gapTomcat', '0.0.23'",
             "depends 'gapNagios', '0.4.338'",
+            //"depends 'gapJava', '0.0.11'",
         ])
         executeTasks()
     }

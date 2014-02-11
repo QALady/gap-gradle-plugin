@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins.cookbook
-
 import com.gap.gradle.utils.ShellCommand
 import groovy.json.JsonSlurper
 import org.gradle.api.Project
@@ -26,30 +25,53 @@ class ValidateTransitiveCookbookDependenciesTask {
     }
 
     def verifyDependencies() {
-        project.chef.metadata.dependencies.each { cookbook, version ->
-            def path = pathFor(cookbook, version)
-            def command = new ShellCommand(path)
-            command.execute("berks install", envFor(path))
-            new JsonSlurper().parse(new FileReader(new File(path, "Berksfile.lock")))["sources"].each { name, info ->
-                // TODO test for existence in prod
-                println "==================================== ${name} '${info["locked_version"]}'"
+        def path = new File(project.chef.cookbookDir, "berks")
+        createBerksfile(path)
+        downloadDependencies(path)
+        verifyDependencies(path)
+    }
+
+    def verifyDependencies(File path) {
+        def command = new ShellCommand(path)
+        def missing = []
+        try {
+            command.execute("switchblade prod")
+            readSources(path).each { name, info ->
+                def versions = command.execute("knife cookbook show ${name}").split(/\s+/)
+                if (!versions.contains(info["locked_version"])) {
+                    missing << "${name}@${info["locked_version"]} (latest is ${versions[1]})"
+                }
             }
+        } finally {
+            command.execute("switchblade tdev")
+        }
+        if (!missing.isEmpty()) {
+            throw new UnpinnedDependencyException("These transitive dependencies don't exist in prod: ${missing.join(', ')}")
+        }
+    }
+
+    def readSources(File path) {
+        return new JsonSlurper().parse(new FileReader(new File(path, "Berksfile.lock")))["sources"]
+    }
+
+    def downloadDependencies(File path) {
+        def command = new ShellCommand(path)
+        command.execute("switchblade tdev")
+        command.execute("berks install", envFor(path))
+    }
+
+    def createBerksfile(File path) {
+        path.mkdirs()
+        def berksfile = new File(path, "Berksfile")
+        berksfile.append("chef_api :config\n")
+        project.chef.metadata.dependencies.each { cookbook, version ->
+            berksfile.append("cookbook '${cookbook}', '${version}'\n")
         }
     }
 
     def envFor(path) {
-        def env = ["BERKSHELF_PATH=${path}/berkshelf"]
+        def env = ["BERKSHELF_PATH=${path}/cookbooks"]
         System.getenv().each { k, v -> env.add("$k=$v") }
         env
-    }
-
-    def pathFor(cookbook, version) {
-        def path = new File(project.chef.cookbookDir, "${cookbook}-${version}")
-        path.mkdirs()
-        new File(path, "Berksfile").write([
-            "chef_api :config",
-            "cookbook '${cookbook}', '${version}'"
-        ].join('\n'))
-        return path
     }
 }
