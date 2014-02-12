@@ -43,7 +43,7 @@ class PromoteChefObjectsToServerTask {
 			throw new Exception("No jenkins jobName configured")
 		}
 	}
-	
+
 	def requireIncludeParameters() {
 		if (project.parameters == null) {
 			throw new Exception("No parameters passed to project!")
