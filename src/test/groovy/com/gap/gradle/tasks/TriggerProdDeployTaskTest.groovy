@@ -1,30 +1,37 @@
 package com.gap.gradle.tasks
 
+import groovy.json.JsonBuilder
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
+import static org.mockito.Matchers.anyString
+import static org.mockito.Matchers.anyObject
+import org.gradle.testfixtures.ProjectBuilder
 
 import static junit.framework.Assert.assertFalse
 import static org.junit.internal.matchers.StringContains.containsString
+import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
+import static org.hamcrest.MatcherAssert.assertThat
 
 import com.gap.gradle.jenkins.JenkinsClient
 import com.gap.gradle.jenkins.JenkinsRunner
+import com.gap.gradle.ProdDeployConfig
 
-@Ignore
 class TriggerProdDeployTaskTest{
 
     private Task triggerProdDeployTask
     private Project project
     def mockJenkinsRunner
+    def sha1IdList = ["1234", "5678"]
 
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapproddeploy'
-        triggerProdDeployTask = project.tasks.findByName('triggerProdDeployTask')
+        triggerProdDeployTask = project.tasks.findByName('triggerProdDeploy')
 
         mockJenkinsRunner = new MockFor(JenkinsRunner)
     }
@@ -55,20 +62,15 @@ class TriggerProdDeployTaskTest{
         assertThrowsExceptionWithMessage("No jenkins jobName configured", {triggerProdDeployTask.execute()})
     }
 
-//    @Test
-    void shouldTriggerPromoteChefObjectsJob_whenAllParametersArePassedr(){
-//        setupTaskProperties()
-//        mockCookbookUploader.demand.upload { cookbook, env ->
-//            assertEquals("myapp", cookbook)
-//            assertEquals("local", env)
-//        }
-//        mockCookbookUtil.demand.doesCookbookExist { return false }
-//
-//        mockCookbookUtil.use {
-//           mockCookbookUploader.use {
-//               promoteChefObjectsTask.execute()
-//           }
-//        }
+    //@Test
+    void shouldTriggerPromoteChefObjectsJob_whenAllParametersArePassed(){
+        setupTaskProperties()
+        createProdDeployConfigFile()
+        mockJenkinsRunner.demand.runJob(2) { null } //anyString(), anyObject()) { return null }
+
+        mockJenkinsRunner.use {
+            triggerProdDeployTask.execute()
+        }
     }
 
 //    @Test
@@ -107,6 +109,7 @@ class TriggerProdDeployTaskTest{
         project.jenkins.knifeServerUrl = "jenkins"
         project.jenkins.knifeUser = "jenkins_user"
         project.jenkins.knifeAuthToken = "jenkins_password"
+        project.jenkins.knifeJobName = "jenkins_job"
         project.chef.environment = "local"
     }
 
@@ -118,5 +121,15 @@ class TriggerProdDeployTaskTest{
         catch(Exception ex){
             assertThat(ex.dump(), containsString(expectedMessage))
         }
+    }
+
+    void createProdDeployConfigFile(){
+        ProdDeployConfig config = new ProdDeployConfig()
+        config.sha1IdList = sha1IdList
+
+        def jsonBuilder = new JsonBuilder(config)
+        def fileWriter = new FileWriter("${ProdDeployConfig.PARAMJSON}")
+        jsonBuilder.writeTo(fileWriter)
+        fileWriter.close()
     }
 }
