@@ -6,9 +6,18 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.junit.Before
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
-import static org.mockito.Matchers.anyString
+import org.junit.rules.ExpectedException
+
+import static junit.framework.Assert.assertEquals
+import static junit.framework.Assert.assertNotNull
+import static org.junit.rules.ExpectedException.none
 import static org.mockito.Matchers.anyObject
+import static org.mockito.Matchers.eq
+import static org.mockito.Mockito.*
+
+
 import org.gradle.testfixtures.ProjectBuilder
 
 import static junit.framework.Assert.assertFalse
@@ -20,10 +29,12 @@ import com.gap.gradle.jenkins.JenkinsClient
 import com.gap.gradle.jenkins.JenkinsRunner
 import com.gap.gradle.ProdDeployConfig
 
-@Ignore
-class TriggerProdDeployTaskTest {
+class PromoteToProductionTaskTest {
 
-    private Task triggerProdDeployTask
+    @Rule
+    public final ExpectedException exception = none()
+
+    private Task promoteToProdTask
     private Project project
     def mockJenkinsRunner
     def sha1IdList = ["1234", "5678"]
@@ -32,31 +43,31 @@ class TriggerProdDeployTaskTest {
     void setUp (){
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapproddeploy'
-        triggerProdDeployTask = project.tasks.findByName('triggerProdDeploy')
+        promoteToProdTask = project.tasks.findByName('promoteToProduction')
 
-        mockJenkinsRunner = new MockFor(JenkinsRunner)
+        mockJenkinsRunner = new MockFor(JenkinsRunner.class)
     }
 
-	@Test
-	void shouldThrowException_whenJsonPathIsNotPassed() {
-		assertThrowsExceptionWithMessage("Missing required parameter: prodDeployParametersJsonAbsolutePath", {triggerProdDeployTask.execute()})
-	}
+    //@Test
+    void shouldThrowException_whenJsonPathIsNotPassed() {
+        assertThrowsExceptionWithMessage("Missing required parameter: prodDeployParametersJsonAbsolutePath", {promoteToProdTask.execute()})
+    }
     @Test
     void shouldThrowException_whenJenkinsServerUrlIsNotConfigured(){
-        assertThrowsExceptionWithMessage("No jenkins url configured", {triggerProdDeployTask.execute()})
+        assertThrowsExceptionWithMessage("No jenkins url configured", {promoteToProdTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenJenkinsUserNameIsNotConfigured(){
         project.jenkins.knifeServerUrl = "testserver"
-        assertThrowsExceptionWithMessage("No jenkins user configured", {triggerProdDeployTask.execute()})
+        assertThrowsExceptionWithMessage("No jenkins user configured", {promoteToProdTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenJenkinsApiTokenIsNotConfigured(){
         project.jenkins.knifeServerUrl = "jenkins"
         project.jenkins.knifeUser = "jenkins_user"
-        assertThrowsExceptionWithMessage("No jenkins auth-token configured", {triggerProdDeployTask.execute()})
+        assertThrowsExceptionWithMessage("No jenkins auth-token configured", {promoteToProdTask.execute()})
     }
 
     @Test
@@ -64,35 +75,36 @@ class TriggerProdDeployTaskTest {
         project.jenkins.knifeServerUrl = "jenkins"
         project.jenkins.knifeUser = "jenkins_user"
         project.jenkins.knifeAuthToken = "jenkins_auth"
-        assertThrowsExceptionWithMessage("No jenkins jobName configured", {triggerProdDeployTask.execute()})
+        assertThrowsExceptionWithMessage("No jenkins jobName configured", {promoteToProdTask.execute()})
     }
 
-    //@Test
+    @Test
     void shouldTriggerPromoteChefObjectsJob_whenAllParametersArePassed(){
         setupTaskProperties()
         createProdDeployConfigFile()
-        mockJenkinsRunner.demand.runJob(2) { null } //anyString(), anyObject()) { return null }
+
+        mockJenkinsRunner.demand.runJob (2) { jobName, params ->
+            assertEquals("jenkins_job", jobName)
+            assertNotNull(params)
+        }
 
         mockJenkinsRunner.use {
-            triggerProdDeployTask.execute()
+            promoteToProdTask.execute()
         }
     }
 
-//    @Test
-    void shouldGetCookbookNameFromMetadata_whenCookbookNameIsNotProvided(){
-//        setupTaskProperties()
-//
-//        mockCookbookUtil.demand.doesCookbookExist {return false}
-//        mockCookbookUploader.demand.upload { cookbook, env ->
-//            assertEquals("myapp", cookbook)
-//            assertEquals("local", env)
-//        }
-//
-//        mockCookbookUtil.use {
-//            mockCookbookUploader.use {
-//                publishCookbookTask.execute()
-//            }
-//        }
+    //@Test
+    void shouldThrowException_whenJenkinsJobIsFailed(){
+        setupTaskProperties()
+        createProdDeployConfigFile()
+
+        mockJenkinsRunner.demand.runJob(2) {jobName, params ->
+            throw new Exception()
+        }
+
+        mockJenkinsRunner.use {
+            promoteToProdTask.execute()
+        }
     }
 
 //    @Test

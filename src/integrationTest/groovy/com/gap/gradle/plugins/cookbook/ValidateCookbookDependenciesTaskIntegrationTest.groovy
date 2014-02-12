@@ -1,4 +1,7 @@
 package com.gap.gradle.plugins.cookbook
+
+import org.junit.Ignore
+
 import static org.hamcrest.Matchers.containsString
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
@@ -11,6 +14,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+@Ignore
 class ValidateCookbookDependenciesTaskIntegrationTest {
 
     @Rule

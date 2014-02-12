@@ -12,9 +12,15 @@ class PromoteToProductionTask extends WatchmenTask {
 	private Project project
 	private def deployConfig
 
-	PromoteToProductionTask(Project project) {
+    JenkinsClient jClient
+    JenkinsRunner jRunner
+
+    PromoteToProductionTask(Project project) {
 		super(project)
 		this.project = project
+        def jConfig = this.project.jenkins
+        jClient = new JenkinsClient(jConfig.knifeServerUrl, jConfig.knifeUser, jConfig.knifeAuthToken)
+        jRunner = new JenkinsRunner(jClient)
 	}
 
 	void execute() {
@@ -43,20 +49,13 @@ class PromoteToProductionTask extends WatchmenTask {
             def jobParams = [:]
             jobParams.put("COMMIT_ID", sha1Id)
             jobParams.put("TAG_MESSAGE", "Tag Message")
-            promoteChefObjectsByCallingJenkinsJob(jobParams)
+            jRunner.runJob(project.jenkins.knifeJobName, jobParams)
         }
 	}
 
 	def publishCookbookToProdChefServer() {
 		
 	}
-
-    def promoteChefObjectsByCallingJenkinsJob(jobParams) {
-        def jConfig = project.jenkins
-        JenkinsClient jClient = new JenkinsClient(jConfig.knifeServerUrl, jConfig.knifeUser, jConfig.knifeAuthToken)
-        JenkinsRunner jRunner = new JenkinsRunner(jClient)
-        jRunner.runJob(jConfig.knifeJobName, jobParams)
-    }
 
     def requireJenkinsConfig() {
         if (!project.jenkins.knifeServerUrl) {
