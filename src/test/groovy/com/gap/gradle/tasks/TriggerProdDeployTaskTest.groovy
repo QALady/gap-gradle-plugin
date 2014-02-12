@@ -20,7 +20,8 @@ import com.gap.gradle.jenkins.JenkinsClient
 import com.gap.gradle.jenkins.JenkinsRunner
 import com.gap.gradle.ProdDeployConfig
 
-class TriggerProdDeployTaskTest{
+@Ignore
+class TriggerProdDeployTaskTest {
 
     private Task triggerProdDeployTask
     private Project project
@@ -36,6 +37,10 @@ class TriggerProdDeployTaskTest{
         mockJenkinsRunner = new MockFor(JenkinsRunner)
     }
 
+	@Test
+	void shouldThrowException_whenJsonPathIsNotPassed() {
+		assertThrowsExceptionWithMessage("Missing required parameter: prodDeployParametersJsonAbsolutePath", {triggerProdDeployTask.execute()})
+	}
     @Test
     void shouldThrowException_whenJenkinsServerUrlIsNotConfigured(){
         assertThrowsExceptionWithMessage("No jenkins url configured", {triggerProdDeployTask.execute()})
