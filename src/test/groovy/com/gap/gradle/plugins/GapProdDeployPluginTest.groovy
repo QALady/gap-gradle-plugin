@@ -18,8 +18,18 @@ class GapProdDeployPluginTest {
 	}
 	
 	@Test
-	void triggerProdDeployTaskIsAddedToProject(){
+	void deployToProdDeployTaskIsAddedToProject(){
 		taskShouldExist('deployToProduction')
+	}
+
+	@Test
+	void promoteToProdDeployTaskIsAddedToProject(){
+		taskShouldExist('promoteToProduction')
+	}
+
+	@Test
+	void prepareToPromoteTaskIsAddedToProject() {
+		taskShouldExist('prepareToPromote')
 	}
 
 	def taskShouldExist(task) {

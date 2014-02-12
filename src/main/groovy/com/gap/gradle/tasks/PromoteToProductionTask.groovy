@@ -8,11 +8,11 @@ import com.gap.gradle.jenkins.JenkinsRunner
 import groovy.json.JsonSlurper
 import groovy.io.*
 
-class TriggerProdDeployTask extends WatchmenTask {
+class PromoteToProductionTask extends WatchmenTask {
 	private Project project
 	private def deployConfig
 
-	TriggerProdDeployTask(Project project) {
+	PromoteToProductionTask(Project project) {
 		super(project)
 		this.project = project
 	}
