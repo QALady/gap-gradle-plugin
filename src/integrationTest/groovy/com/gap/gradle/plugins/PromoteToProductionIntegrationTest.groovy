@@ -19,7 +19,7 @@ class TriggerProdDeployTaskIntegrationTest {
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
-    @Test
+    @Ignore
     void shouldPromoteChefObjectsToServerUsingJenkinsPipeline() {
         project = ProjectBuilder.builder().build()
         createProdDeployConfigFile()

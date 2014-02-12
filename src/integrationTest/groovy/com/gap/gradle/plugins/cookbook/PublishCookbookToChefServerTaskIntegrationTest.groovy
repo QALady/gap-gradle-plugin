@@ -11,7 +11,7 @@ class PublishCookbookToChefServerTaskIntegrationTest {
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
-    @Test
+    @Ignore
     void shouldUploadCookbookUsingJenkinsPipeline() {
         def project = ProjectBuilder.builder().build()
 
