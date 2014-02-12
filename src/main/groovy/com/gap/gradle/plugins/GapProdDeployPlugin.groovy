@@ -27,12 +27,6 @@ class GapProdDeployPlugin implements Plugin<Project>{
 				new TriggerProdDeployTask(project).execute()
 			}
 		}
-
-        project.task('promoteChefObjectsToServer') {
-            doLast {
-                new PromoteChefObjectsToServerTask(project).execute()
-            }
-        }
 	}
 	
 }

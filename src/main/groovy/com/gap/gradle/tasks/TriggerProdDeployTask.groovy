@@ -10,7 +10,7 @@ import groovy.io.*
 
 class TriggerProdDeployTask extends WatchmenTask {
 	private Project project
-	private ProdDeployConfig deployConfig
+	private def deployConfig
 
 	TriggerProdDeployTask(Project project) {
 		super(project)
@@ -21,7 +21,7 @@ class TriggerProdDeployTask extends WatchmenTask {
         //validate required configurations
         requireJenkinsConfig()
 		// read the json file from the prodDeployParameterJsonPath param into ProdDeployConfig
-		deployConfig = loadConfigFromJson()
+		loadConfigFromJson()
 		// promoteChefObjectsToprodServer. (involves looping thru given sha1 ids
 		promoteChefObjectsToProdServer()
 		// promoteCookbookVersion to Prod Server.
@@ -30,7 +30,11 @@ class TriggerProdDeployTask extends WatchmenTask {
 	}
 	
 	def loadConfigFromJson() {
-        deployConfig = new JsonSlurper().parse(new File(deployConfig.PARAMJSON))
+        File configFile = new File(ProdDeployConfig.PARAMJSON)
+        if(!configFile.exists()){
+            throw new Exception("Prod Deploy Config file (${ProdDeployConfig.PARAMJSON}) is missing")
+        }
+        deployConfig = new JsonSlurper().parseText(configFile.text)
         deployConfig.each { println it }
 	}
 	
