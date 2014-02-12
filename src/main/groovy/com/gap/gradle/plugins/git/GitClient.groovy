@@ -4,6 +4,8 @@ import com.gap.gradle.utils.ShellCommand
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 
+import java.util.regex.Matcher
+
 class GitClient {
 
     def userId
@@ -39,8 +41,9 @@ class GitClient {
         log.debug("Cookbook: " + cookbook + " Org: " + org)
         File berksfile = new File(cookbook + '//Berksfile.prod')
         def fileContents = berksfile.getText('UTF-8')
-        def replacedFileContent = fileContents.replaceAll(/ref: '.*'/, "ref: '"
-                + shaId + "'")
+        def replacedFileContent = fileContents.replaceAll(/${fullRepoName}\.git', ref: '.*'/,
+        fullRepoName + ".git', ref: '" + shaId + "'")
+
         def writer = berksfile.newWriter()
         writer.write(replacedFileContent)
         writer.close()
