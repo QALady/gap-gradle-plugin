@@ -7,7 +7,6 @@ import com.gap.gradle.plugins.cookbook.JenkinsConfig
 import com.gap.gradle.plugins.cookbook.ChefConfig
 import com.gap.gradle.plugins.cookbook.ParameterConfig
 import com.gap.gradle.tasks.TriggerProdDeployTask
-import com.gap.gradle.tasks.PromoteChefObjectsToServerTask
 import com.gap.gradle.utils.ConfigUtil
 
 class GapProdDeployPlugin implements Plugin<Project>{
