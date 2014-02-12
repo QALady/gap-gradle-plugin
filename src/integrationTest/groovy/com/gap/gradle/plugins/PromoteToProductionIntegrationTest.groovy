@@ -12,7 +12,6 @@ import org.gradle.api.Project
 
 import com.gap.gradle.ProdDeployConfig
 
-@Ignore
 class TriggerProdDeployTaskIntegrationTest {
 
     Project project
