@@ -1,33 +1,29 @@
 package com.gap.gradle.tasks
 
-import groovy.json.JsonBuilder
-import groovy.mock.interceptor.MockFor
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
-
-import static junit.framework.Assert.assertEquals
+import static junit.framework.Assert.assertFalse
 import static junit.framework.Assert.assertNotNull
+import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.junit.internal.matchers.StringContains.containsString
 import static org.junit.rules.ExpectedException.none
 import static org.mockito.Matchers.anyObject
 import static org.mockito.Matchers.eq
 import static org.mockito.Mockito.*
+import groovy.json.JsonBuilder
+import groovy.mock.interceptor.MockFor
 
-
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Before
+import org.junit.Ignore;
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.ExpectedException
 
-import static junit.framework.Assert.assertFalse
-import static org.junit.internal.matchers.StringContains.containsString
-import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
-import static org.hamcrest.MatcherAssert.assertThat
-
-import com.gap.gradle.jenkins.JenkinsClient
-import com.gap.gradle.jenkins.JenkinsRunner
 import com.gap.gradle.ProdDeployConfig
+import com.gap.gradle.ProdDeployParameterConfig
+import com.gap.gradle.jenkins.JenkinsRunner
 
 class PromoteToProductionTaskTest {
 
@@ -44,12 +40,13 @@ class PromoteToProductionTaskTest {
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapproddeploy'
         promoteToProdTask = project.tasks.findByName('promoteToProduction')
-
+		project.prodDeployParametersJsonAbsolutePath = "."
         mockJenkinsRunner = new MockFor(JenkinsRunner.class)
     }
 
-    //@Test
+    @Ignore
     void shouldThrowException_whenJsonPathIsNotPassed() {
+		project.prodDeployParametersJsonAbsolutePath = null
         assertThrowsExceptionWithMessage("Missing required parameter: prodDeployParametersJsonAbsolutePath", {promoteToProdTask.execute()})
     }
     @Test
@@ -59,22 +56,22 @@ class PromoteToProductionTaskTest {
 
     @Test
     void shouldThrowException_whenJenkinsUserNameIsNotConfigured(){
-        project.jenkins.knifeServerUrl = "testserver"
+        project.prodJenkins.knifeServerUrl = "testserver"
         assertThrowsExceptionWithMessage("No jenkins user configured", {promoteToProdTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenJenkinsApiTokenIsNotConfigured(){
-        project.jenkins.knifeServerUrl = "jenkins"
-        project.jenkins.knifeUser = "jenkins_user"
+        project.prodJenkins.knifeServerUrl = "jenkins"
+        project.prodJenkins.knifeUser = "jenkins_user"
         assertThrowsExceptionWithMessage("No jenkins auth-token configured", {promoteToProdTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenJenkinsJobNameIsNotConfigured(){
-        project.jenkins.knifeServerUrl = "jenkins"
-        project.jenkins.knifeUser = "jenkins_user"
-        project.jenkins.knifeAuthToken = "jenkins_auth"
+        project.prodJenkins.knifeServerUrl = "jenkins"
+        project.prodJenkins.knifeUser = "jenkins_user"
+        project.prodJenkins.knifeAuthToken = "jenkins_auth"
         assertThrowsExceptionWithMessage("No jenkins jobName configured", {promoteToProdTask.execute()})
     }
 
@@ -123,11 +120,11 @@ class PromoteToProductionTaskTest {
     }
 
     private void setupTaskProperties() {
-        project.jenkins.knifeServerUrl = "jenkins"
-        project.jenkins.knifeUser = "jenkins_user"
-        project.jenkins.knifeAuthToken = "jenkins_password"
-        project.jenkins.knifeJobName = "jenkins_job"
-        project.chef.environment = "local"
+        project.prodJenkins.knifeServerUrl = "jenkins"
+        project.prodJenkins.knifeUser = "jenkins_user"
+        project.prodJenkins.knifeAuthToken = "jenkins_password"
+        project.prodJenkins.knifeJobName = "jenkins_job"
+        project.prodChef.environment = "local"
     }
 
     void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){
@@ -141,7 +138,7 @@ class PromoteToProductionTaskTest {
     }
 
     void createProdDeployConfigFile(){
-        ProdDeployConfig config = new ProdDeployConfig()
+        ProdDeployParameterConfig config = new ProdDeployParameterConfig()
         config.sha1IdList = sha1IdList
 
         def jsonBuilder = new JsonBuilder(config)

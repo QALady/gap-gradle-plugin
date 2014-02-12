@@ -21,8 +21,8 @@ class GapProdDeployPlugin implements Plugin<Project>{
 
     @Override
 	public void apply(Project project) {
-        project.extensions.create('jenkins', JenkinsConfig)
-        project.extensions.create('chef', ChefConfig)
+        project.extensions.create('prodJenkins', JenkinsConfig)
+        project.extensions.create('prodChef', ChefConfig)
 
         new ConfigUtil().loadConfig(project, CONFIG_FILE)
 
