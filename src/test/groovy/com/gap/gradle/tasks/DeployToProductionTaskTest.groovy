@@ -24,7 +24,7 @@ class DeployToProductionTaskTest {
     @Before
     void setUp() {
         project = ProjectBuilder.builder().build();
-        project.apply plugin: 'gappipeline'
+        project.apply plugin: 'gapproddeploy'
         task = project.tasks.findByName('deployToProduction')
     }
 

@@ -1,5 +1,6 @@
 package com.gap.gradle.plugins
 
+import com.gap.gradle.ProdDeployParameterConfig
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -11,7 +12,7 @@ import com.gap.gradle.tasks.PromoteToProductionTask
 import com.gap.gradle.utils.ConfigUtil
 
 /**
- * 
+ *
  * @author krishnarangavajhala
  *
  */
@@ -23,6 +24,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 	public void apply(Project project) {
         project.extensions.create('prodJenkins', JenkinsConfig)
         project.extensions.create('prodChef', ChefConfig)
+        project.extensions.create('prodDeploy', ProdDeployParameterConfig)
 
         new ConfigUtil().loadConfig(project, CONFIG_FILE)
 
@@ -40,7 +42,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 
 		project.task('deployToProduction', dependsOn: 'promoteToProduction') {
 			doLast {
-				new DeployToProductionTask(project).execute()				
+				new DeployToProductionTask(project).execute()
 			}
 		}
     }
