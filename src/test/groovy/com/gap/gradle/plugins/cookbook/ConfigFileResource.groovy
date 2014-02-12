@@ -21,7 +21,7 @@ class ConfigFileResource extends ExternalResource {
         super.before()
         temp.before()
         originalValue = clazz."${property}"
-        clazz."${property}" = temp.newFile().absolutePath
+        clazz."${property}" = temp.newFile("temp").absolutePath
     }
 
     @Override
