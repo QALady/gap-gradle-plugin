@@ -14,7 +14,7 @@ class PromoteChefObjectsToServerTaskIntegrationTest {
     void shouldPromoteChefObjectsToServerUsingJenkinsPipeline() {
         def project = ProjectBuilder.builder().build()
 
-        project.apply plugin: 'gapcookbook'
+        project.apply plugin: 'gapproddeploy'
         project.jenkins.knifeServerUrl = "http://jenkins01.phx.gapinc.dev:8080"
         project.jenkins.knifeUser = "kr8s8k9"
 		project.jenkins.knifeJobName = "TagProdReady"

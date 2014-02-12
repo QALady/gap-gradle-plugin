@@ -3,7 +3,8 @@ package com.gap.gradle.tasks
 import org.gradle.api.Project
 
 import com.gap.gradle.ProdDeployConfig
-
+import groovy.json.JsonSlurper
+import groovy.io.*
 
 class TriggerProdDeployTask extends WatchmenTask {
 	private Project project
@@ -25,11 +26,15 @@ class TriggerProdDeployTask extends WatchmenTask {
 	}
 	
 	def loadConfigFromJson() {
-		
+        deployConfig = new JsonSlurper().parse(new File(deployConfig.PARAMJSON))
+        deployConfig.each { println it }
 	}
 	
 	def promoteChefObjectsToProdServer() {
-		
+        PromoteChefObjectsToServerTask chefObjectsTask = new PromoteChefObjectsToServerTask(this.project)
+        for (sha1Id in deployConfig.sha1IdList) {
+            chefObjectsTask.execute()
+        }
 	}
 
 	def publishCookbookToProdChefServer() {

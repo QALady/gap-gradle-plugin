@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins.cookbook
+package com.gap.gradle.tasks
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory
@@ -8,6 +8,7 @@ import org.gradle.api.Project
 import com.gap.gradle.jenkins.JenkinsClient;
 import com.gap.gradle.jenkins.JenkinsException;
 import com.gap.gradle.jenkins.JenkinsRunner;
+import com.gap.gradle.ProdDeployConfig;
 
 class PromoteChefObjectsToServerTask {
 	private Project project
@@ -58,4 +59,8 @@ class PromoteChefObjectsToServerTask {
 		log.info("All Jenkins build parameters validated and loaded.")
 	}
 
+    def loadDeployConfig(){
+        def config = new ProdDeployConfig()
+
+    }
 }

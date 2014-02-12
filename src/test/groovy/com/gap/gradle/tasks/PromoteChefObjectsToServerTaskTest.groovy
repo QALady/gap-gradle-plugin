@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins.cookbook
+package com.gap.gradle.tasks
 
 import static junit.framework.Assert.assertFalse
 import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
@@ -18,17 +18,14 @@ class PromoteChefObjectsToServerTaskTest {
     Project project
     Task promoteChefObjectsTask
     def mockJenkinsRunner
-    def mockCookbookUtil
 
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gapcookbook'
+        project.apply plugin: 'gapproddeploy'
         promoteChefObjectsTask = project.tasks.findByName('promoteChefObjectsToServer')
 
         mockJenkinsRunner = new MockFor(JenkinsRunner)
-        //mockCookbookUtil = new MockFor(CookbookUtil)
-        //project.chef.metadata = [ name: "myapp", version: "1.1.13" ]
     }
 
     @Test
