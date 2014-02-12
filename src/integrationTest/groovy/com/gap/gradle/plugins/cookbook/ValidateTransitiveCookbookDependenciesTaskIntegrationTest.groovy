@@ -3,12 +3,10 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-
-@Ignore
+//@Ignore
 class ValidateTransitiveCookbookDependenciesTaskIntegrationTest {
 
     @Rule
@@ -35,7 +33,7 @@ class ValidateTransitiveCookbookDependenciesTaskIntegrationTest {
             "name    'ref-app'",
             "depends 'gapTomcat', '0.0.23'",
             "depends 'gapNagios', '0.4.338'",
-            //"depends 'gapJava', '0.0.11'",
+            "depends 'gapJava', '0.0.11'",
         ])
         executeTasks()
     }

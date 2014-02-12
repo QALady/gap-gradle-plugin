@@ -75,13 +75,13 @@ class GapCookbookPluginTests {
     }
 
     @Test
-    void publishCookbookToArtifactory_shouldDependOnCheckCookbookDependencies() {
-        taskShouldDependOn('publishCookbookToArtifactory', 'checkCookbookDependencies')
+    void publishCookbookToArtifactory_shouldDependOnValidateCookbookDependencies() {
+        taskShouldDependOn('publishCookbookToArtifactory', 'validateCookbookDependencies')
     }
 
     @Test
-    void publishCookbookToChefServer_shouldDependOnCheckCookbookDependencies() {
-        taskShouldDependOn('publishCookbookToChefServer', 'checkCookbookDependencies')
+    void publishCookbookToChefServer_shouldDependOnValidateCookbookDependencies() {
+        taskShouldDependOn('publishCookbookToChefServer', 'validateCookbookDependencies')
     }
 
     @Test
@@ -107,21 +107,6 @@ class GapCookbookPluginTests {
     @Test
     void publishCookbookToChefServer_shouldDependOnGenerateCookbookMetadata() {
         taskShouldDependOn('publishCookbookToChefServer', 'generateCookbookMetadata')
-    }
-
-    @Test
-    void shouldAddCheckCookbookDependenciesTaskToProject() {
-        taskShouldExist('checkCookbookDependencies')
-    }
-
-    @Test
-    void checkCookbookDependenciesShouldDependOnValidateCookbookDependencies() {
-        taskShouldDependOn('checkCookbookDependencies', 'validateCookbookDependencies')
-    }
-
-    @Test
-    void checkCookbookDependenciesShouldDependOnValidateTransitiveCookbookDependencies() {
-        taskShouldDependOn('checkCookbookDependencies', 'validateTransitiveCookbookDependencies')
     }
 
     @Test
