@@ -1,10 +1,11 @@
 package com.gap.gradle.plugins
+
 import com.gap.gradle.ProdDeployConfig
 import groovy.json.JsonBuilder
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Ignore
 import org.junit.Rule
-import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 class TriggerProdDeployTaskIntegrationTest {
