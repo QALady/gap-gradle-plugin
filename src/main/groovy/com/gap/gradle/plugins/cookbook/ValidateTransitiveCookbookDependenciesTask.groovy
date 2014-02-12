@@ -19,16 +19,18 @@ class ValidateTransitiveCookbookDependenciesTask {
     }
 
     def requireMetadata() {
-        if (!project.chef.metadata) {
+        if (project.chef.metadata == null) {
             throw new IllegalStateException("No metadata found on project!")
         }
     }
 
     def verifyDependencies() {
-        def path = new File(project.chef.cookbookDir, "berks")
-        createBerksfile(path)
-        downloadDependencies(path)
-        verifyDependencies(path)
+        if (project.chef.metadata.dependencies) {
+            def path = new File(project.chef.cookbookDir, "berks")
+            createBerksfile(path)
+            downloadDependencies(path)
+            verifyDependencies(path)
+        }
     }
 
     def verifyDependencies(File path) {
