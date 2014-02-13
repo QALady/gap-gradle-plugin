@@ -1,4 +1,6 @@
 package com.gap.gradle.plugins.git
+
+import com.gap.gradle.git.GitClient
 import com.gap.gradle.utils.ShellCommand
 import groovy.mock.interceptor.MockFor
 import org.apache.commons.logging.Log

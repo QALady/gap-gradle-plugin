@@ -21,7 +21,7 @@ class GitSHAPromotionIntegrationTest {
     @Before
     void setUp(){
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gapgit'
+        project.apply plugin: 'gapchef'
         updateBerksfileTask = project.tasks.findByName('promoteCookbookBerksfile')
         setUpProperties()
         cookbook = project.gitconfig.fullRepoName.tokenize('/')[1]

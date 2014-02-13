@@ -1,10 +1,8 @@
-package com.gap.gradle.plugins.git
+package com.gap.gradle.git
 
 import com.gap.gradle.utils.ShellCommand
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
-import java.util.regex.Matcher
 
 class GitClient {
 

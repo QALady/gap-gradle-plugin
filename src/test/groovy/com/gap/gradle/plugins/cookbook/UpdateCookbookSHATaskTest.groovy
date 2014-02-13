@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins.cookbook
 
-import com.gap.gradle.plugins.git.GitClient
+import com.gap.gradle.git.GitClient
 import groovy.mock.interceptor.MockFor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -24,7 +24,7 @@ class UpdateCookbookSHATaskTest {
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gapgit'
+        project.apply plugin: 'gapchef'
         updateBerksfileTask = project.tasks.findByName('promoteCookbookBerksfile')
         mockGitClient = new MockFor(GitClient)
     }

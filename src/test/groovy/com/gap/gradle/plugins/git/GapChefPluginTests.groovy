@@ -11,14 +11,14 @@ import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
 
-class GapGitPluginTests {
+class GapChefPluginTests {
 
     private Project project
 
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gapgit'
+        project.apply plugin: 'gapchef'
     }
 
     @Test

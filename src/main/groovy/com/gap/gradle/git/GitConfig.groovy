@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins.git
+package com.gap.gradle.git
 
 
 class GitConfig {
