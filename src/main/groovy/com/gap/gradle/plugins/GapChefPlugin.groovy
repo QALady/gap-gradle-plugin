@@ -1,6 +1,8 @@
-package com.gap.gradle.plugins.cookbook
+package com.gap.gradle.plugins
 
 import com.gap.gradle.git.GitConfig
+import com.gap.gradle.tasks.UpdateCookbookSHATask;
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

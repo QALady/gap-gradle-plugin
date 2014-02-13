@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins.cookbook
+package com.gap.gradle.tasks
 
 import com.gap.gradle.git.GitClient
 

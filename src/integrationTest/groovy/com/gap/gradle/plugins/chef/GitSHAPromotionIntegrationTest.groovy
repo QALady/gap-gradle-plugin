@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins.git
+package com.gap.gradle.plugins.chef
 import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
 import org.apache.commons.logging.Log

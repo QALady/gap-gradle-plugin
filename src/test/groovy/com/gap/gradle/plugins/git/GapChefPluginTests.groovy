@@ -1,7 +1,9 @@
 package com.gap.gradle.plugins.git
 
-import com.gap.gradle.plugins.cookbook.UpdateCookbookSHATask
+import com.gap.gradle.tasks.UpdateCookbookSHATask;
+
 import groovy.mock.interceptor.MockFor
+
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before

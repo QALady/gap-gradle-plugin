@@ -1,7 +1,10 @@
 package com.gap.gradle.plugins.cookbook
 
 import com.gap.gradle.git.GitClient
+import com.gap.gradle.tasks.UpdateCookbookSHATask;
+
 import groovy.mock.interceptor.MockFor
+
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
