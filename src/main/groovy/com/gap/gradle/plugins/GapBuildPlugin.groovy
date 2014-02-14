@@ -20,7 +20,7 @@ class GapBuildPlugin implements Plugin<Project>{
       }
 
       if (target.plugins.hasPlugin('java')) {
-        apply plugin: com.gap.gradle.resources.GapResourcesPlugin
+        apply plugin: com.gap.gradle.plugins.resources.GapResourcesPlugin
 
         dependencies {
           testCompile 'junit:junit:4.10'
