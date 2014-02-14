@@ -39,16 +39,11 @@ class PromoteToProductionTaskTest {
     void setUp (){
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapproddeploy'
+		project.prodDeploy.sha1IdList = ["1234", "24343"]
         promoteToProdTask = project.tasks.findByName('promoteToProduction')
-		project.prodDeployParametersJsonAbsolutePath = "."
         mockJenkinsRunner = new MockFor(JenkinsRunner.class)
     }
 
-    @Ignore
-    void shouldThrowException_whenJsonPathIsNotPassed() {
-		project.prodDeployParametersJsonAbsolutePath = null
-        assertThrowsExceptionWithMessage("Missing required parameter: prodDeployParametersJsonAbsolutePath", {promoteToProdTask.execute()})
-    }
     @Test
     void shouldThrowException_whenJenkinsServerUrlIsNotConfigured(){
         assertThrowsExceptionWithMessage("No jenkins url configured", {promoteToProdTask.execute()})
@@ -56,29 +51,28 @@ class PromoteToProductionTaskTest {
 
     @Test
     void shouldThrowException_whenJenkinsUserNameIsNotConfigured(){
-        project.prodJenkins.knifeServerUrl = "testserver"
+        project.jenkins.knifeServerUrl = "testserver"
         assertThrowsExceptionWithMessage("No jenkins user configured", {promoteToProdTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenJenkinsApiTokenIsNotConfigured(){
-        project.prodJenkins.knifeServerUrl = "jenkins"
-        project.prodJenkins.knifeUser = "jenkins_user"
+        project.jenkins.knifeServerUrl = "jenkins"
+        project.jenkins.knifeUser = "jenkins_user"
         assertThrowsExceptionWithMessage("No jenkins auth-token configured", {promoteToProdTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenJenkinsJobNameIsNotConfigured(){
-        project.prodJenkins.knifeServerUrl = "jenkins"
-        project.prodJenkins.knifeUser = "jenkins_user"
-        project.prodJenkins.knifeAuthToken = "jenkins_auth"
+        project.jenkins.knifeServerUrl = "jenkins"
+        project.jenkins.knifeUser = "jenkins_user"
+        project.jenkins.knifeAuthToken = "jenkins_auth"
         assertThrowsExceptionWithMessage("No jenkins jobName configured", {promoteToProdTask.execute()})
     }
 
     @Test
     void shouldTriggerPromoteChefObjectsJob_whenAllParametersArePassed(){
         setupTaskProperties()
-        createProdDeployConfigFile()
 
         mockJenkinsRunner.demand.runJob (2) { jobName, params ->
             assertEquals("jenkins_job", jobName)
@@ -93,7 +87,6 @@ class PromoteToProductionTaskTest {
     //@Test
     void shouldThrowException_whenJenkinsJobIsFailed(){
         setupTaskProperties()
-        createProdDeployConfigFile()
 
         mockJenkinsRunner.demand.runJob(2) {jobName, params ->
             throw new Exception()
@@ -120,11 +113,10 @@ class PromoteToProductionTaskTest {
     }
 
     private void setupTaskProperties() {
-        project.prodJenkins.knifeServerUrl = "jenkins"
-        project.prodJenkins.knifeUser = "jenkins_user"
-        project.prodJenkins.knifeAuthToken = "jenkins_password"
-        project.prodJenkins.knifeJobName = "jenkins_job"
-        project.prodChef.environment = "local"
+        project.jenkins.knifeServerUrl = "jenkins"
+        project.jenkins.knifeUser = "jenkins_user"
+        project.jenkins.knifeAuthToken = "jenkins_password"
+        project.jenkins.knifeJobName = "jenkins_job"
     }
 
     void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){
@@ -137,13 +129,4 @@ class PromoteToProductionTaskTest {
         }
     }
 
-    void createProdDeployConfigFile(){
-        ProdDeployParameterConfig config = new ProdDeployParameterConfig()
-        config.sha1IdList = sha1IdList
-
-        def jsonBuilder = new JsonBuilder(config)
-        def fileWriter = new FileWriter("${ProdDeployConfig.PARAMJSON}")
-        jsonBuilder.writeTo(fileWriter)
-        fileWriter.close()
-    }
 }

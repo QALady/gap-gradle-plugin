@@ -1,0 +1,9 @@
+{
+	"deployECProcedure":"testprocedure",
+	"isRPM":"true",
+	"nodes":"[testnode01.phx.gapinc.dev,testnode02.phx.gapinc.dev]",
+	"cookbook":{"sha1Id":"38615ae7ac61737184440a5797fa7becd4f684c7","name":"test-app"},
+	"roleName":"test-role-name",
+	"appVersion":"976",
+	"sha1IdList":["38615ae7ac61737184440a5797fa7becd4f684c8","28615ae7ac61737184440a5797fa7becd4f684c8"]
+}

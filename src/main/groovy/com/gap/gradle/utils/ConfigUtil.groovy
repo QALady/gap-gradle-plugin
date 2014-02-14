@@ -1,5 +1,7 @@
 package com.gap.gradle.utils
 
+import groovy.json.JsonSlurper;
+
 import org.gradle.api.Project
 
 class ConfigUtil {
@@ -36,5 +38,13 @@ class ConfigUtil {
         // set value on leaf property
         target."${segments.last()}" = value
     }
+
+	def loadConfigFromJson(String filePath) {
+		File configFile = new File(filePath)
+		if(!configFile.exists()) {
+			throw new Exception("Prod Deploy Config file (${filePath}) is missing")
+		}
+		new JsonSlurper().parseText(configFile.text)
+	}
 
 }
