@@ -1,17 +1,10 @@
 repositories {
     maven {
-        url "http://repo1.phx.gapinc.dev/artifactory/libs-release"
+        url "http://artifactory.gapinc.dev/artifactory/remote-repos"
     }
     ivy {
         layout "maven"
-        url "http://repo1.phx.gapinc.dev/artifactory/libs-release"
-    }
-    maven {
-        url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
-    }
-    ivy {
-        layout "maven"
-        url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
+        url "http://artifactory.gapinc.dev/artifactory/remote-repos"
     }
 }
 
@@ -19,11 +12,14 @@ buildscript {
     repositories {
         ivy {
             layout 'maven'
-            url "http://ci.gap.dev/artifactory/libs-release"
+            url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+        }
+        maven {
+            url "http://artifactory.gapinc.dev/artifactory/remote-repos"
         }
     }
     dependencies{
-        classpath 'com.gap:gap-pipeline-plugin:1.0.0.+'
+        classpath 'com.gap:gap-pipeline-plugin:+'
     }
 }
 
@@ -42,11 +38,6 @@ dependencies{
     compile gradleApi()
     groovy localGroovy()
 
-    /* Following 4 dependencies are required for gradle cobertura plugin */
-    compile 'gradle_cobertura:gradle_cobertura:1.1'
-    compile 'net.sourceforge.cobertura:cobertura:1.9.4.1'
-    compile 'asm:asm-all:3.3.1'
-    compile 'oro:oro:2.0.8'
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.6'
     compile 'org.apache.httpcomponents:httpclient:4.3.1'
 	compile 'com.gap:gap-pipeline-plugin:+'
