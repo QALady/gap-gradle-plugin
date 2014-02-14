@@ -1,8 +1,5 @@
 package com.gap.gradle.plugins.chef
 import com.gap.gradle.utils.ShellCommand
-import com.gap.gradle.utils.ShellCommandException
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -15,7 +12,6 @@ class GitSHAPromotionIntegrationTest {
     Task updateBerksfileTask
     def shaId
     def cookbook
-    private Log log = LogFactory.getLog(GitSHAPromotionIntegrationTest)
     private Random random = new Random()
 
     @Before
@@ -36,12 +32,7 @@ class GitSHAPromotionIntegrationTest {
 
     @Test
     void updateShouldSucceed_whenParametersAreValid(){
-        try {
-            updateBerksfileTask.execute()
-        }
-        catch (ShellCommandException e){
-            log.error(e.printStackTrace())
-        }
+        updateBerksfileTask.execute()
     }
 
     @After
