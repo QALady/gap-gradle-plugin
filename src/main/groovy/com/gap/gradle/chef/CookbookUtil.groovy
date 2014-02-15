@@ -18,7 +18,7 @@ class CookbookUtil {
         try {
             def output = new ShellCommand().execute("knife cookbook show ${cookbookMetadata.name}")
             log.info("Output: ${output} - ${cookbookMetadata.version}")
-            return output.contains(" ${cookbookMetadata.version} ")
+            return output.contains("${cookbookMetadata.version}")
         }
         catch(Exception) {
             return false
