@@ -9,20 +9,16 @@ import static org.junit.rules.ExpectedException.none
 import static org.mockito.Matchers.anyObject
 import static org.mockito.Matchers.eq
 import static org.mockito.Mockito.*
-import groovy.json.JsonBuilder
 import groovy.mock.interceptor.MockFor
 
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore;
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-import com.gap.gradle.ProdDeployConfig
-import com.gap.gradle.ProdDeployParameterConfig
 import com.gap.gradle.jenkins.JenkinsRunner
 
 class PromoteToProductionTaskTest {

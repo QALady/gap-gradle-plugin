@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 import com.gap.gradle.ProdDeployParameterConfig
+import com.gap.gradle.ProdPrepareConfig;
 import com.gap.gradle.plugins.cookbook.JenkinsConfig
 import com.gap.gradle.tasks.DeployToProductionTask
 import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
@@ -47,7 +48,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 	private void loadProdDeployConfig(Project project) {
 		def prodDeploy = project.extensions.findByName("prodDeploy")
 		if (!prodDeploy && project.hasProperty('paramJsonPath')) {
-			project.extensions.create('prodDeploy', ProdDeployParameterConfig, new ConfigUtil().loadConfigFromJson(project.paramJsonPath))
+			project.extensions.create('prodDeploy', ProdDeployParameterConfig, new ConfigUtil().loadConfigFromJson(project.paramJsonPath + ProdPrepareConfig.FILE_NAME))
 		} else {
 			project.extensions.create('prodDeploy', ProdDeployParameterConfig)
 		}
