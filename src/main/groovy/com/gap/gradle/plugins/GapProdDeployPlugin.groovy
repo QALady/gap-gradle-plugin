@@ -32,7 +32,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 
 		project.task('prepareToPromote') << {
 			println "preparing to promote"
-			new PrepareToPromoteToProductionTask(project).execute()
+			//new PrepareToPromoteToProductionTask(project).execute() TODO reactivate when working
 		}
 
 		project.task('promoteToProduction', dependsOn: 'prepareToPromote') << {
