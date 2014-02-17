@@ -20,12 +20,12 @@ class GapProdDeployPluginTest {
 
 	private Project project
 	private static String pluginName = 'gapproddeploy'
-	private static String testJson = "src/test/groovy/com/gap/gradle/resources/testProdDeployParams.json"
+	private static String testJsonPath = "src/test/groovy/com/gap/gradle/resources/"
 	
 	@Before
 	void setup() {
 		project = ProjectBuilder.builder().build()
-		project.paramJsonPath = testJson
+		project.paramJsonPath = testJsonPath
 		project.apply plugin: pluginName
 	}
 	
@@ -59,7 +59,7 @@ class GapProdDeployPluginTest {
 	@Test
 	void testJenkinsExtensionConfigurationDoesNotLoadAgain() {
 		project = ProjectBuilder.builder().build()
-		project.paramJsonPath = testJson
+		project.paramJsonPath = testJsonPath
 		project.extensions.create("jenkins", JenkinsConfig) // already defining the jenkins extension
 		project.apply plugin: pluginName // this should not complain that jenkins already exist on the project
 		def jenkinsConfig = project.extensions.findByName("jenkins")
