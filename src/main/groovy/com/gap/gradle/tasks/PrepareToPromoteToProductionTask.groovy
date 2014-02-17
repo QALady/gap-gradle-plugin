@@ -9,10 +9,10 @@ class PrepareToPromoteToProductionTask extends WatchmenTask {
 	}
 
 	void execute() {
-		project.gitconfig.userId = System.getProperty("userId")
+		project.gitconfig.userId = project.getProperty("userId")
 		println "USER ID ========== " + project.gitconfig.userId
 		project.gitconfig.fullRepoName = project.prodDeploy.cookbook.name
-		project.gitconfig.sha1Id = project.prodDeploy.cookbook.sha1Id
+		project.gitconfig.shaId = project.prodDeploy.cookbook.sha1Id
 		project.tasks.findByName('promoteCookbookBerksfile').execute()
 	}
 }
