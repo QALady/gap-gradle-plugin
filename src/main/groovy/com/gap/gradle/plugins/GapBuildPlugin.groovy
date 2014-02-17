@@ -15,7 +15,7 @@ class GapBuildPlugin implements Plugin<Project>{
         }
 
         maven {
-          url 'http://repo1.phx.gapinc.dev/artifactory/generic-repo'
+          url 'http://artifactory.gapinc.dev/artifactory/local-non-prod'
         }
       }
 

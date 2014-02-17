@@ -23,7 +23,7 @@ class PublishCookbookToArtifactoryTask {
         project.uploadCookbooks.repositories {
             ivy {
                 layout 'maven'
-                url "http://repo1.phx.gapinc.dev/artifactory/libs-release-local"
+                url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
                 credentials {
                     username 'admin'
                     password 'password'

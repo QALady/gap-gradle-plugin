@@ -9,7 +9,7 @@ class GapGemJarPlugin implements Plugin<Project> {
     target.configure(target) {
       repositories {
         maven {
-          url 'http://repo1.phx.gapinc.dev/artifactory/gemjars'
+          url 'http://artifactory.gapinc.dev/artifactory/gemjars'
         }
       }
     }
