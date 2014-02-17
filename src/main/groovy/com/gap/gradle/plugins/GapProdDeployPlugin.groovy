@@ -1,6 +1,7 @@
 package com.gap.gradle.plugins
 
 import org.gradle.api.Plugin
+
 import org.gradle.api.Project
 
 import com.gap.gradle.ProdDeployParameterConfig
@@ -11,12 +12,21 @@ import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
 import com.gap.gradle.tasks.PromoteToProductionTask
 import com.gap.gradle.utils.ConfigUtil
 
+/**
+ * this plugin requires gapDeployTools:watchmen_config recipe to be run on a node
+ * to prep up the node with pipeline.gradle & gapcookbook.properties 
+ * the jenkins server urls of PROD Knife manage are expected to be configured in gapcookbook.properties  
+ *
+ */
 class GapProdDeployPlugin implements Plugin<Project>{
 
     static def CONFIG_FILE = "${System.getProperty('user.home')}/.watchmen/gapcookbook.properties"
 
     @Override
 	public void apply(Project project) {
+	  
+		project.apply plugin: 'gapchef'
+		
 		loadJenkinsConfig(project)
 		loadProdDeployConfig(project)
 
@@ -36,7 +46,14 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			println "WOO! done (:"
 		}
     }
-	
+
+	/**
+	 * though this plugin does not have explicit dependency with gapcookbook
+	 * the gapcookbook.properties file that has to be prepared on a node this deployment is being done
+	 * is expected to be loaded for the prod infra jenkins server configuration(s).	
+	 * 
+	 * this method would ensure that project.jenkins extension container is loaded from gapcookbook.properties if not already loaded.
+	 */
 	private void loadJenkinsConfig(Project project) {
 		def jenkinsExtension = project.extensions.findByName('jenkins')
 		if (!jenkinsExtension) {

@@ -6,12 +6,13 @@ class PrepareToPromoteToProductionTask extends WatchmenTask {
 
 	PrepareToPromoteToProductionTask(Project project) {
 		super(project)
-		this.project = project
 	}
 
 	void execute() {
-		// do something
-		// TODO: here we need to integrate the piece of calling the Git upload task to 
-		// update the Cookbook sha1ID into Berksfile.prod.
+		project.gitconfig.userId = System.getProperty("userId")
+		println "USER ID ========== " + project.gitconfig.userId
+		project.gitconfig.fullRepoName = project.prodDeploy.cookbook.name
+		project.gitconfig.sha1Id = project.prodDeploy.cookbook.sha1Id
+		project.tasks.findByName('promoteCookbookBerksfile').execute()
 	}
 }
