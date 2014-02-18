@@ -6,8 +6,9 @@ import org.gradle.api.Project
 
 import com.gap.gradle.jenkins.JenkinsClient
 import com.gap.gradle.jenkins.JenkinsRunner
-import com.gap.gradle.tasks.annotations.Require
-import com.gap.gradle.tasks.annotations.RequiredParameters
+import com.gap.pipeline.tasks.WatchmenTask
+import com.gap.pipeline.tasks.annotations.Require
+import com.gap.pipeline.tasks.annotations.RequiredParameters
 
 @RequiredParameters([
 	@Require(parameter = 'prodDeploy.sha1IdList', description = "SHA1 ID List of the chef objects to be promoted to production.")

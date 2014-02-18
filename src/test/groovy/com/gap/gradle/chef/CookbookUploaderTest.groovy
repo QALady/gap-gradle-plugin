@@ -1,22 +1,22 @@
 package com.gap.gradle.chef
 import static org.hamcrest.Matchers.containsString
 import static org.junit.rules.ExpectedException.none
-import static org.mockito.Matchers.anyString
-import static org.mockito.Matchers.eq
-import static org.mockito.Mockito.*
 
-import com.gap.gradle.jenkins.JenkinsClient
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+
+import static org.mockito.Mockito.*
+import static org.mockito.Matchers.*
+import com.gap.gradle.jenkins.JenkinsClient
 
 class CookbookUploaderTest {
 
     @Rule
     public final ExpectedException exception = none()
 
-    def jenkinsClient
+    JenkinsClient jenkinsClient
     def uploader
 
     @Before

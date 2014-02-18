@@ -4,13 +4,12 @@ import org.gradle.api.Plugin
 
 import org.gradle.api.Project
 
-import com.gap.gradle.ProdDeployParameterConfig
-import com.gap.gradle.ProdPrepareConfig;
 import com.gap.gradle.plugins.cookbook.JenkinsConfig
 import com.gap.gradle.tasks.DeployToProductionTask
-import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
 import com.gap.gradle.tasks.PromoteToProductionTask
 import com.gap.gradle.utils.ConfigUtil
+import com.gap.pipeline.ProdDeployParameterConfig
+import com.gap.pipeline.ProdPrepareConfig
 
 /**
  * this plugin requires gapDeployTools:watchmen_config recipe to be run on a node
