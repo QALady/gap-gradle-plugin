@@ -15,5 +15,8 @@ class PrepareToPromoteToProductionTask extends WatchmenTask {
 		project.gitconfig.fullRepoName = project.prodDeploy.cookbook.name
 		project.gitconfig.shaId = project.prodDeploy.cookbook.sha1Id
 		project.tasks.findByName('promoteCookbookBerksfile').execute()
+        if(project.prodDeploy.isRpm){
+            project.tasks.findByName('promoteRpm').execute()
+        }
 	}
 }
