@@ -16,6 +16,7 @@ import org.junit.Test
 import static junit.framework.Assert.assertFalse
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.junit.internal.matchers.StringContains.containsString
+import static helpers.Assert.assertThrowsExceptionWithMessage
 
 class UpdateCookbookSHATaskTest {
 
@@ -76,7 +77,7 @@ class UpdateCookbookSHATaskTest {
                 updateBerksfileTask.execute()
             }
         } catch (Exception e){
-            assertThat(e.dump(), containsString("There is no fullRepoName defined."))
+            assertThat(e.dump(), containsString("Missing required parameter: 'gitconfig.fullRepoName'"))
         }
     }
 
@@ -84,24 +85,21 @@ class UpdateCookbookSHATaskTest {
     void shouldThrowException_whenUserIdIsMissing(){
         project.gitconfig.shaId = 'testSHA'
         project.gitconfig.fullRepoName = 'test/repo'
-        assertThrowsExceptionWithMessage("There is no userId defined. " +
-                "Please run this gradle task with -PuserId=value", {updateBerksfileTask.execute()})
+        assertThrowsExceptionWithMessage("Missing required parameter: 'gitconfig.userId'", {updateBerksfileTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenSHAIdIsMissing(){
         project.gitconfig.userId = 'testUser'
         project.gitconfig.fullRepoName = 'test/repo'
-        assertThrowsExceptionWithMessage("There is no SHA Id defined. " +
-                "Please run this gradle task with -PshaId=value", {updateBerksfileTask.execute()})
+        assertThrowsExceptionWithMessage("Missing required parameter: 'gitconfig.shaId'", {updateBerksfileTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenFullRepoNameIsMissing(){
         project.gitconfig.userId = 'testUser'
         project.gitconfig.shaId = 'testSHA'
-        assertThrowsExceptionWithMessage("There is no fullRepoName defined. " +
-                "Please run this gradle task with -PfullRepoName=value", {updateBerksfileTask.execute()})
+        assertThrowsExceptionWithMessage("Missing required parameter: 'gitconfig.fullRepoName'", {updateBerksfileTask.execute()})
     }
 
     @Test
@@ -111,15 +109,5 @@ class UpdateCookbookSHATaskTest {
         project.gitconfig.fullRepoName = 'testrepo'
         assertThrowsExceptionWithMessage("The fullRepoName must have the " +
                 "following format: 'organization/repoName'", {updateBerksfileTask.execute()})
-    }
-
-    void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){
-        try{
-            closure()
-            assertFalse("Expected exception with message '${expectedMessage} but got none", true)
-        }
-        catch(Exception ex){
-            assertThat(ex.dump(), containsString(expectedMessage))
-        }
     }
 }

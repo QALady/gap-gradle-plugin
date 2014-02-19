@@ -48,32 +48,6 @@ class PromoteToProductionTaskTest {
     }
 
     @Test
-    void shouldThrowException_whenJenkinsServerUrlIsNotConfigured(){
-        assertThrowsExceptionWithMessage("No jenkins url configured", {promoteToProdTask.execute()})
-    }
-
-    @Test
-    void shouldThrowException_whenJenkinsUserNameIsNotConfigured(){
-        project.jenkins.knifeServerUrl = "testserver"
-        assertThrowsExceptionWithMessage("No jenkins user configured", {promoteToProdTask.execute()})
-    }
-
-    @Test
-    void shouldThrowException_whenJenkinsApiTokenIsNotConfigured(){
-        project.jenkins.knifeServerUrl = "jenkins"
-        project.jenkins.knifeUser = "jenkins_user"
-        assertThrowsExceptionWithMessage("No jenkins auth-token configured", {promoteToProdTask.execute()})
-    }
-
-    @Test
-    void shouldThrowException_whenJenkinsJobNameIsNotConfigured(){
-        project.jenkins.knifeServerUrl = "jenkins"
-        project.jenkins.knifeUser = "jenkins_user"
-        project.jenkins.knifeAuthToken = "jenkins_auth"
-        assertThrowsExceptionWithMessage("No jenkins jobName configured", {promoteToProdTask.execute()})
-    }
-
-    @Test
     void shouldTriggerPromoteChefObjectsJob_whenAllParametersArePassed(){
         setupTaskProperties()
 		def expectedTagMessage = ticketId + "-[ec-user:" + testuser + ",ec-jobid:" + ecJobId + "] " + comment 
@@ -123,15 +97,4 @@ class PromoteToProductionTaskTest {
         project.jenkins.knifeAuthToken = "jenkins_password"
         project.jenkins.knifeJobName = "jenkins_job"
     }
-
-    void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){
-        try{
-            closure()
-            assertFalse("Expected exception with message '${expectedMessage} but got none", true)
-        }
-        catch(Exception ex){
-            assertThat(ex.dump(), containsString(expectedMessage))
-        }
-    }
-
 }

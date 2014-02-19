@@ -12,6 +12,7 @@ import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
+import static helpers.Assert.assertThrowsExceptionWithMessage
 
 class PublishCookbookToChefServerTaskTest {
 
@@ -32,20 +33,20 @@ class PublishCookbookToChefServerTaskTest {
 
     @Test
     void shouldThrowException_whenJenkinsServerUrlIsNotConfigured(){
-        assertThrowsExceptionWithMessage("No jenkins url configured", {publishCookbookTask.execute()})
+        assertThrowsExceptionWithMessage("Missing required parameter: 'jenkins.cookbookServerUrl'", {publishCookbookTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenJenkinsUserNameIsNotConfigured(){
         project.jenkins.cookbookServerUrl = "testserver"
-        assertThrowsExceptionWithMessage("No jenkins user configured", {publishCookbookTask.execute()})
+        assertThrowsExceptionWithMessage("Missing required parameter: 'jenkins.cookbookUser'", {publishCookbookTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenJenkinsApiTokenIsNotConfigured(){
         project.jenkins.cookbookServerUrl = "jenkins"
         project.jenkins.cookbookUser = "jenkins_user"
-        assertThrowsExceptionWithMessage("No jenkins auth-token configured", {publishCookbookTask.execute()})
+        assertThrowsExceptionWithMessage("Missing required parameter: 'jenkins.cookbookAuthToken'", {publishCookbookTask.execute()})
     }
 
     @Test
@@ -103,15 +104,5 @@ class PublishCookbookToChefServerTaskTest {
         project.chef.environment = "local"
         project.chef.cookbookName = "myapp"
 
-    }
-
-    void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){
-        try{
-            closure()
-            assertFalse("Expected exception with message '${expectedMessage} but got none", true)
-        }
-        catch(Exception ex){
-            assertThat(ex.dump(), containsString(expectedMessage))
-        }
     }
 }

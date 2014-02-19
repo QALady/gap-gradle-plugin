@@ -15,9 +15,12 @@ import com.gap.pipeline.tasks.annotations.RequiredParameters
 	@Require(parameter = 'ecJobId', description = "EC JobId to put in the jenkins job comment."),
 	@Require(parameter = 'ecUser', description = "EC User that triggered this job to put in the jenkins job comment."),
 	@Require(parameter = 'tagMessageComment', description = "Comment for this deploy."),
-	@Require(parameter = 'ticketId', description = "Approved Service Center Ticket ID.")
+	@Require(parameter = 'ticketId', description = "Approved Service Center Ticket ID."),
+    @Require(parameter = 'jenkins.knifeServerUrl', description = "Jenkins Server URL to trigger job to promote chef objects to prod."),
+    @Require(parameter = 'jenkins.knifeUser', description = "Jenkins User ID to trigger job"),
+    @Require(parameter = 'jenkins.knifeAuthToken', description = "Jenkins API Auth token to trigger job."),
+    @Require(parameter = 'jenkins.knifeJobName', description = "Jenkins Job name to trigger.")
 ])
-
 class PromoteToProductionTask extends WatchmenTask {
 	private Project project
 
@@ -31,7 +34,7 @@ class PromoteToProductionTask extends WatchmenTask {
 
 	void execute() {
         //validate required configurations
-        validate()
+        super.validate()
 		init()
 		// promoteCookbookVersion to Prod Server.
 		publishCookbookToProdChefServer()
@@ -61,21 +64,4 @@ class PromoteToProductionTask extends WatchmenTask {
 	String getTagMessage() {
 		"${project.ticketId}-[ec-user:${project.ecUser},ec-jobid:${project.ecJobId}] ${project.tagMessageComment}" 
 	}
-
-	def validate() {
-		super.validate()
-		requireJenkinsConfig()
-	}
-
-    def requireJenkinsConfig() {
-        if (!project.jenkins.knifeServerUrl) {
-            throw new Exception("No jenkins url configured")
-        } else if (!project.jenkins.knifeUser) {
-            throw new Exception("No jenkins user configured")
-        } else if (!project.jenkins.knifeAuthToken) {
-            throw new Exception("No jenkins auth-token configured")
-        } else if (!project.jenkins.knifeJobName) {
-            throw new Exception("No jenkins jobName configured")
-        }
-    }
 }

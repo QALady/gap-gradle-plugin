@@ -1,43 +1,36 @@
 package com.gap.gradle.tasks
 
 import com.gap.gradle.git.GitClient
-
+import com.gap.pipeline.tasks.WatchmenTask
+import com.gap.pipeline.tasks.annotations.Require
+import com.gap.pipeline.tasks.annotations.RequiredParameters
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
-class UpdateCookbookSHATask {
+@RequiredParameters([
+    @Require(parameter = 'gitconfig.fullRepoName', description = "Full repo name of cookbook to be promoted."),
+    @Require(parameter = 'gitconfig.shaId', description = "SHA1 ID of cookbook repository."),
+    @Require(parameter = 'gitconfig.userId', description = "Git user id")
+])
+class UpdateCookbookSHATask extends WatchmenTask{
     Project project
     GitClient client
     private Log log = LogFactory.getLog(UpdateCookbookSHATask)
 
     UpdateCookbookSHATask(Project project){
+        super(project)
         this.project = project
     }
 
     def execute(){
-        parametersExist()
+        super.validate()
         checkFullRepoNameFormat()
         client = new GitClient(project.gitconfig.userId, project.gitconfig.shaId,
                 project.gitconfig.fullRepoName)
         client.checkout()
         client.updateBerksfile()
         client.commitAndPush()
-    }
-
-    def parametersExist(){
-        if(project.gitconfig.fullRepoName == null){
-            throw new Exception('There is no fullRepoName defined. ' +
-                    'Please run this gradle task with -PfullRepoName=value')
-        }
-        if(project.gitconfig.shaId == null){
-            throw new Exception()('There is no SHA Id defined. ' +
-                    'Please run this gradle task with -PshaId=value')
-        }
-        if(project.gitconfig.userId == null){
-            throw new Exception('There is no userId defined. ' +
-                    'Please run this gradle task with -PuserId=value')
-        }
     }
 
     def checkFullRepoNameFormat(){

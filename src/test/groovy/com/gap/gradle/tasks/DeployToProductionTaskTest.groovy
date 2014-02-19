@@ -45,17 +45,6 @@ class DeployToProductionTaskTest {
     }
 
     @Test
-    void shouldFail_whenNoNodesProvided() {
-        try {
-            project.prodDeploy.nodes = []
-            task.execute()
-            fail("No exception thrown!")
-        } catch (Exception exception) {
-            assertCause(exception, IllegalStateException, "No nodes configured on project!")
-        }
-    }
-
-    @Test
     void shouldFail_ifAnyDeployFails() {
         try {
             def commandMock = new MockFor(ShellCommand)
