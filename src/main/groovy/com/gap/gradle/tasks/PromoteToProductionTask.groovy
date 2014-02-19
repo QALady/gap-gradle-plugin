@@ -12,10 +12,10 @@ import com.gap.pipeline.tasks.annotations.RequiredParameters
 
 @RequiredParameters([
 	@Require(parameter = 'prodDeploy.sha1IdList', description = "SHA1 ID List of the chef objects to be promoted to production."),
-	@Require(parameter = 'prodDeploy.ecJobId', description = "EC JobId to put in the jenkins job comment."),
-	@Require(parameter = 'prodDeploy.ecUser', description = "EC User that triggered this job to put in the jenkins job comment."),
-	@Require(parameter = 'prodDeploy.comment', description = "Comment for this deploy."),
-	@Require(parameter = 'prodDeploy.ticketId', description = "Approved Service Center Ticket ID.")
+	@Require(parameter = 'ecJobId', description = "EC JobId to put in the jenkins job comment."),
+	@Require(parameter = 'ecUser', description = "EC User that triggered this job to put in the jenkins job comment."),
+	@Require(parameter = 'tagMessageComment', description = "Comment for this deploy."),
+	@Require(parameter = 'ticketId', description = "Approved Service Center Ticket ID.")
 ])
 
 class PromoteToProductionTask extends WatchmenTask {
@@ -59,8 +59,7 @@ class PromoteToProductionTask extends WatchmenTask {
 	}
 
 	String getTagMessage() {
-		def p = project.prodDeploy
-		"${p.ticketId}-[ec-user:${p.ecUser},ec-jobid:${p.ecJobId}] ${p.comment}" 
+		"${project.ticketId}-[ec-user:${project.ecUser},ec-jobid:${project.ecJobId}] ${project.tagMessageComment}" 
 	}
 
 	def validate() {

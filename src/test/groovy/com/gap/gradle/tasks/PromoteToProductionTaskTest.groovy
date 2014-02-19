@@ -39,10 +39,10 @@ class PromoteToProductionTaskTest {
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapproddeploy'
 		project.prodDeploy.sha1IdList = ["1234", "24343"]
-		project.prodDeploy.ecUser = testuser
-		project.prodDeploy.ecJobId = ecJobId
-		project.prodDeploy.ticketId = ticketId
-		project.prodDeploy.comment = comment
+		project.ecUser = testuser
+		project.ecJobId = ecJobId
+		project.ticketId = ticketId
+		project.tagMessageComment = comment
         promoteToProdTask = project.tasks.findByName('promoteToProduction')
         mockJenkinsRunner = new MockFor(JenkinsRunner.class)
     }

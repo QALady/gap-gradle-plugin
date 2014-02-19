@@ -13,10 +13,10 @@ class PromoteToProductionTaskIntegrationTest {
 		project = ProjectBuilder.builder().build()
 		project.apply plugin: 'gapproddeploy'
 		project.prodDeploy.sha1IdList = ["f06cfb4867a8aafd1fb5c6a01add274ba22f6ddc", "2c8518f1d8b11caaa52fee996f1cb3f1eeb5fc04"]
-		project.prodDeploy.ecUser = "integration-test"
-		project.prodDeploy.ecJobId = "9999"
-		project.prodDeploy.ticketId = "T12345"
-		project.prodDeploy.comment = "this is the comment integration test is triggering with."
+		project.ecUser = "integration-test"
+		project.ecJobId = "9999"
+		project.ticketId = "T12345"
+		project.tagMessageComment = "this is the comment integration test is triggering with."
 		project.jenkins.knifeServerUrl = "http://jenkins01.phx.gapinc.dev:8080"
 		project.jenkins.knifeUser = "kr8s8k9"
 		project.jenkins.knifeJobName = "TagProdReady"
