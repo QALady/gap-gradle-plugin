@@ -17,9 +17,6 @@ import org.apache.commons.logging.LogFactory
 	@Require(parameter = 'prodPrepare.appVersion', description = "Version of the application that should be deployed in the prod node."),
 	@Require(parameter = 'prodPrepare.cookbookSha1Id', description = "Application promoted cookbook sha1Id in git"),
 	@Require(parameter = 'prodPrepare.cookbookName', description = "Application cookbook name"),
-    @Require(parameter = 'prodPrepare.rpmName', description = "Name of he rpm with extension, version and arch"),
-    @Require(parameter = 'prodPrepare.yumSourceUrl', description = "Dev yum repo url until channel to download an rpm from"),
-    @Require(parameter = 'prodPrepare.yumDestinationUrl', description = "Prod yum repo url until channel to upload an rpm to")
 ])
 class PrepareForProductionDeployTask extends WatchmenTask {
     def log = LogFactory.getLog(com.gap.pipeline.tasks.PrepareForProductionDeployTask)
