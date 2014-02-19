@@ -14,6 +14,7 @@ ext.minorVersion = 0
 group 'com.gap'
 version = "${majorVersion}.${minorVersion}.${release}.${counter}"
 
+apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
@@ -65,6 +66,12 @@ task wrapper(type: Wrapper) {
 
 uploadArchives {
     repositories {
+        mavenDeployer {
+            repository(
+                url: "http://artifactory.gapinc.dev/artifactory/local-non-prod",
+                authentication: [userName: "admin", password: "password"]
+            )
+        }
         ivy {
             layout 'maven'
             url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
