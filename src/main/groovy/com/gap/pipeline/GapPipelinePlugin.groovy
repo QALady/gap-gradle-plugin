@@ -43,7 +43,7 @@ class GapPipelinePlugin implements Plugin<Project> {
             new DownloadArtifactsTask(project).execute()
         }
 
-        project.task('generateAuditReport') << {
+        project.task('generateAuditReport',dependsOn: ['setupBuildDirectories']) << {
             new GenerateAuditReportTask(project).execute()
         }
     }

@@ -28,6 +28,8 @@ class SetUpBuildDirectoriesTaskTest {
         setupBuildDirectoriesTask.execute()
         File buildArtifacts = new File("${temporaryFolder.root.path}/build/artifacts");
         assertTrue( buildArtifacts.exists());
+        File buildReports = new File("${temporaryFolder.root.path}/build/reports");
+        assertTrue( buildReports.exists());
     }
 
     @Test
@@ -36,6 +38,8 @@ class SetUpBuildDirectoriesTaskTest {
         project.buildDir = temporaryFolder.root.path
         File file = new File("${project.buildDir}/artifacts");
         file.mkdirs()
+        File reportsFile = new File("${project.buildDir}/reports");
+        reportsFile.mkdirs()
 
         setupBuildDirectoriesTask.execute()
     }

@@ -16,5 +16,8 @@ class SetUpBuildDirectoriesTask {
 
         def buildArtifacts = new File("${project.buildDir}/artifacts".toString())
         buildArtifacts.mkdirs()
+
+        def buildReports = new File("${project.buildDir}/reports".toString())
+        buildReports.mkdirs()
     }
 }
