@@ -6,6 +6,10 @@ class RpmConfig {
 	def rpmName
 	def appVersion	
 
+	RpmConfig() {
+		
+	}
+
 	RpmConfig(def json) {
 		this.appVersion = json.appVersion
 		this.yumSourceUrl = json.yumSourceUrl

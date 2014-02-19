@@ -1,20 +1,18 @@
 package com.gap.gradle.tasks
 
-import org.junit.Test
-
+import static org.junit.rules.ExpectedException.none
 import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.verify
 
 import org.gradle.api.Project
-import org.junit.Before
-
-import static org.mockito.Mockito.verify
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.ExpectedException
 
-import static org.junit.rules.ExpectedException.none
 import com.gap.gradle.yum.YumClient
-import com.gap.pipeline.ProdDeployParameterConfig
+import com.gap.pipeline.RpmConfig
 
 class PromoteRpmTaskTest {
 
@@ -28,12 +26,12 @@ class PromoteRpmTaskTest {
     @Before
     void setUp(){
         this.project = new ProjectBuilder().builder().build()
-        project.extensions.create('prodDeploy', ProdDeployParameterConfig)
+        project.extensions.create('rpm', RpmConfig)
 
-        project.prodDeploy.yumSourceUrl = "http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel"
-        project.prodDeploy.yumDestinationUrl = "http://ks64.phx.gapinc.com/gapSoftware/repoName/devel"
-        project.prodDeploy.rpmName = 'rpmName-1234.rpm'
-        project.prodDeploy.appVersion = "1234"
+        project.rpm.yumSourceUrl = "http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel"
+        project.rpm.yumDestinationUrl = "http://ks64.phx.gapinc.com/gapSoftware/repoName/devel"
+        project.rpm.rpmName = 'rpmName-1234.rpm'
+        project.rpm.appVersion = "1234"
 
         this.mockYumRepoClient = mock(YumClient)
         promoteRpmFromDevToProdTask = new PromoteRpmTask(project, mockYumRepoClient)
@@ -50,19 +48,19 @@ class PromoteRpmTaskTest {
 
     @Test
     public void validate_shouldVerifyThatRpmNameHasExtensionRpm(){
-        project.prodDeploy.rpmName = 'thisisabadrpmname'
+        project.rpm.rpmName = 'thisisabadrpmname'
 
         exception.expect(IllegalArgumentException)
-        exception.expectMessage("rpmConfig.rpmName thisisabadrpmname does not have .rpm extension")
+        exception.expectMessage("rpm.rpmName thisisabadrpmname does not have .rpm extension")
         promoteRpmFromDevToProdTask.validate()
     }
 
     @Test
     public void validate_shouldVerifyThatRpmNameContainsAppVersion(){
-        project.prodDeploy.rpmName = 'thisisabadrpmname.rpm'
+        project.rpm.rpmName = 'thisisabadrpmname.rpm'
 
         exception.expect(IllegalArgumentException)
-        exception.expectMessage("rpmConfig.rpmName thisisabadrpmname.rpm does not contain app version 1234")
+        exception.expectMessage("rpm.rpmName thisisabadrpmname.rpm does not contain app version 1234")
         promoteRpmFromDevToProdTask.validate()
     }
 }

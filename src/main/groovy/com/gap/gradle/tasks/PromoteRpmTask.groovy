@@ -32,11 +32,11 @@ class PromoteRpmTask extends WatchmenTask{
     }
 
     def validate(){
-        if(!project.prodDeploy.rpmName.contains('.rpm')){
-            throw new IllegalArgumentException("rpmConfig.rpmName ${project.prodDeploy.rpmName} does not have .rpm extension")
+        if(!project.rpm.rpmName.contains('.rpm')){
+            throw new IllegalArgumentException("rpm.rpmName ${project.rpm.rpmName} does not have .rpm extension")
         }
-        if(!project.prodDeploy.rpmName.contains(project.prodDeploy.appVersion)){
-            throw new IllegalArgumentException("rpmConfig.rpmName ${project.prodDeploy.rpmName} does not contain app version ${project.prodDeploy.appVersion}")
+        if(!project.rpm.rpmName.contains(project.rpm.appVersion)){
+            throw new IllegalArgumentException("rpm.rpmName ${project.rpm.rpmName} does not contain app version ${project.rpm.appVersion}")
         }
     }
 
@@ -44,9 +44,9 @@ class PromoteRpmTask extends WatchmenTask{
         validate()
         def copyToLocation = project.buildDir.path + '/tmp'
 
-        yumClient.downloadRpm(project.prodDeploy.yumSourceUrl, project.prodDeploy.rpmName, copyToLocation)
-        yumClient.uploadRpm(project.prodDeploy.rpmName, copyToLocation, project.prodDeploy.yumDestinationUrl)
-        yumClient.recreateYumRepo(project.prodDeploy.yumDestinationUrl)
+        yumClient.downloadRpm(project.rpm.yumSourceUrl, project.rpm.rpmName, copyToLocation)
+        yumClient.uploadRpm(project.rpm.rpmName, copyToLocation, project.rpm.yumDestinationUrl)
+        yumClient.recreateYumRepo(project.rpm.yumDestinationUrl)
     }
 
 }
