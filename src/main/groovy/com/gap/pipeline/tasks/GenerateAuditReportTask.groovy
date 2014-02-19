@@ -74,7 +74,7 @@ class GenerateAuditReportTask extends WatchmenTask {
 
         writer.append("***********************************************************************************************\n");
         writer.append("*                                                                                             *\n");
-        writer.append("                               Production Deployment Audit Report                                ");
+        writer.append("                               Production Deployment Audit Report                              \n");
         writer.append("*                                                                                             *\n");
         writer.append("***********************************************************************************************\n");
 
@@ -95,7 +95,7 @@ class GenerateAuditReportTask extends WatchmenTask {
     }
 
     private void copyArtifactsForUseByEC () {
-        new CommanderArtifacts(new CommanderClient()).copyToArtifactsDir("${project.buildDir}/artifacts/*")
+        new CommanderArtifacts(new CommanderClient()).copyToArtifactsDir("${project.buildDir}/reports/*")
     }
 
 
