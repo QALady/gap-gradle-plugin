@@ -8,7 +8,8 @@ import com.gap.pipeline.utils.IvyCoordinateParser
 @RequiredParameters([
 @Require(parameter = 'fromCoordinates', description = 'location to download artifacts from'),
 @Require(parameter = 'fromConfiguration', description = 'ivy configuration to download artifacts from'),
-@Require(parameter = 'toCoordinates', description = 'ivy configuration to upload the artifacts')
+@Require(parameter = 'toCoordinates', description = 'ivy configuration to upload the artifacts'),
+@Require(parameter = 'toArtifactoryUrl', description = 'destination url where artifacts need to be uploaded'),
 ])
 
 class PromoteArtifactsToProdTask extends WatchmenTask {
@@ -39,6 +40,7 @@ class PromoteArtifactsToProdTask extends WatchmenTask {
         def ivy = new IvyCoordinateParser().parse(project.fromCoordinates)
         //setting up project parameters required by uploadBuildArtifacts task
         project.artifactCoordinates = "${project.toCoordinates}:${ivy.version}"
+        project.ivy.url = project.toArtifactoryUrl
         project.tasks.findByName('uploadBuildArtifacts').execute()
     }
 

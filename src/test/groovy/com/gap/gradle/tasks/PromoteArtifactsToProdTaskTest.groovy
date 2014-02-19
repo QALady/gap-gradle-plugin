@@ -19,10 +19,11 @@ class PromoteArtifactsToProdTaskTest {
     @Before
     void setUp() {
         project = ProjectBuilder.builder().withProjectDir(new File(temporaryFolder.root.path)).build()
-        project.apply plugin: 'gapproddeploy'
         project.fromCoordinates = 'com.gap.sandbox:testDownload:123'
         project.toCoordinates = 'com.gap.sandbox:prod'
         project.fromConfiguration = 'archives'
+        project.toArtifactoryUrl = 'http://www.artifactory.url/prod'
+        project.ivy = [:]
         task = new PromoteArtifactsToProdTask(project)
     }
 
@@ -72,11 +73,18 @@ class PromoteArtifactsToProdTaskTest {
     @Test
     void shouldUploadTheArtifactsToTheRightLocation() {
         def uploadCoordinates = null
+        def destinationIvyUrl = null
         project.fromCoordinates = 'com.gap.sandbox:testDownload:201'
         project.toCoordinates = 'com.gap.mysandbox:prod'
+        project.toArtifactoryUrl = 'http://www.artifactory.url/prod'
+
         project.task('downloadArtifacts') << {}
 
-        project.task('uploadBuildArtifacts') << { uploadCoordinates = project.artifactCoordinates }
+        project.task('uploadBuildArtifacts') << {
+            uploadCoordinates = project.artifactCoordinates
+            destinationIvyUrl = project.ivy.url
+        }
+
         task.execute()
 
         assertEquals("com.gap.mysandbox:prod:201", uploadCoordinates)
@@ -103,6 +111,14 @@ class PromoteArtifactsToProdTaskTest {
         exception.expect(MissingParameterException)
         exception.expectMessage("Missing required parameter: 'toCoordinates'")
         project.toCoordinates=null
+        task.validate()
+    }
+
+    @Test
+    void shouldThrownException_whenDestinationArtifactoryUrlIsNotProvided() {
+        exception.expect(MissingParameterException)
+        exception.expectMessage("Missing required parameter: 'toArtifactoryUrl'")
+        project.toArtifactoryUrl=null
         task.validate()
     }
 
