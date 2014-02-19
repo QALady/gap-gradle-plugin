@@ -1,5 +1,4 @@
 package com.gap.pipeline
-
 import static org.hamcrest.CoreMatchers.is
 import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertThat
@@ -194,20 +193,6 @@ class GapPipelinePluginTest {
         taskMock.demand.execute { }
         taskMock.use {
             project.tasks.getByName('downloadArtifacts').execute()
-        }
-    }
-
-    @Test
-    void promoteRpmTaskIsAddedToTheProject(){
-        taskShouldExist('promoteRpm')
-    }
-
-    @Test
-    void shouldExecutePromoteRpmTask(){
-        def taskMock = new MockFor(PromoteRpmTask)
-        taskMock.demand.execute { }
-        taskMock.use {
-            project.tasks.getByName('promoteRpm').execute()
         }
     }
 

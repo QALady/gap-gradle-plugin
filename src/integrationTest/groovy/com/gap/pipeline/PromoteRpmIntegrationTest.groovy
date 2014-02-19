@@ -1,14 +1,15 @@
 package com.gap.pipeline
 
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import org.junit.Test
-import org.gradle.testfixtures.ProjectBuilder
-
-import static org.testng.Assert.assertTrue
-import com.gap.pipeline.utils.ShellCommand
 import static org.junit.Assert.assertTrue
+import static org.testng.Assert.assertTrue
+
+import com.gap.pipeline.utils.ShellCommand
+import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
+import org.junit.Ignore
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 class PromoteRpmIntegrationTest {
 
@@ -16,9 +17,10 @@ class PromoteRpmIntegrationTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     @Test
+    @Ignore
     public void shouldDownloadRefAppRpmToTempFolder(){
         def project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gappipeline'
+        project.apply plugin: 'gapproddeploy'
         project.rpmConfig.repoUrl = "http://ks64.phx.gapinc.dev/gapSoftware/watchmen/devel/"
         project.rpmConfig.prodHostname = "ks64.phx.gapinc.dev"
         project.rpmConfig.prodPath = "/mnt/repos/gapSoftware/watchmen"

@@ -1,6 +1,5 @@
 package com.gap.pipeline
 
-import com.gap.pipeline.IvyConfig
 import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
 import org.gradle.api.Plugin
@@ -46,9 +45,6 @@ class GapPipelinePlugin implements Plugin<Project> {
             new DownloadArtifactsTask(project).execute()
         }
 
-        project.task('promoteRpm') << {
-            new PromoteRpmTask(project).execute()
-        }
     }
 
     private configureTasksRequiredByWatchmenSegment(Project project) {
