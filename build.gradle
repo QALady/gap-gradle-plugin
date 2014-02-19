@@ -8,7 +8,6 @@ repositories {
     }
 }
 
-//User defined
 ext.majorVersion = 2
 ext.minorVersion = 0
 
@@ -22,7 +21,7 @@ apply plugin: 'eclipse'
 dependencies{
     compile gradleApi()
     groovy localGroovy()
-
+    compile 'com.aestasit.infrastructure.sshoogr:sshoogr:0.9.15'
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.6'
     compile 'org.apache.httpcomponents:httpclient:4.3.1'
 
@@ -31,10 +30,6 @@ dependencies{
     testCompile 'org.hamcrest:hamcrest-library:1.2'
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile 'com.cyrusinnovation:mockito-groovy-support:1.3'
-}
-
-task echoVersion << {
-    println "${version}"
 }
 
 sourceSets {
