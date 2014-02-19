@@ -54,7 +54,6 @@ class PromoteArtifactsToProdTaskTest {
     }
 
     @Test
-    @Ignore
     void shouldThrownException_whenArtifactCoordinatesAreNotProvided() {
         exception.expect(MissingParameterException)
         exception.expectMessage("Missing required parameter: 'artifactCoordinates'")
@@ -63,7 +62,6 @@ class PromoteArtifactsToProdTaskTest {
     }
 
     @Test
-    @Ignore
     void shouldThrownException_whenArtifactConfigurationNotProvided() {
         exception.expect(MissingParameterException)
         exception.expectMessage("Missing required parameter: 'artifactConfiguration'")
@@ -72,7 +70,6 @@ class PromoteArtifactsToProdTaskTest {
     }
 
     @Test
-    @Ignore
     void shouldThrownException_whenDestinationArtifactCoordinatesAreNotProvided() {
         exception.expect(MissingParameterException)
         exception.expectMessage("Missing required parameter: 'toArtifactCoordinates'")
