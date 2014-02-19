@@ -1,4 +1,5 @@
 package com.gap.gradle.tasks
+import static junit.framework.Assert.assertEquals
 import static junit.framework.Assert.assertTrue
 
 import com.gap.gradle.utils.ShellCommand
@@ -6,7 +7,6 @@ import com.gap.pipeline.exception.MissingParameterException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -20,11 +20,9 @@ class PromoteArtifactsToProdTaskTest {
     void setUp() {
         project = ProjectBuilder.builder().withProjectDir(new File(temporaryFolder.root.path)).build()
         project.apply plugin: 'gapproddeploy'
-        project.artifactCoordinates = 'com.gap.sandbox:testDownload:123'
-        project.toArtifactCoordinates = 'com.gap.sandbox:testDownload'
-
-        project.destination = 'downloads'
-        project.artifactConfiguration = 'archives'
+        project.fromCoordinates = 'com.gap.sandbox:testDownload:123'
+        project.toCoordinates = 'com.gap.sandbox:prod'
+        project.fromConfiguration = 'archives'
         task = new PromoteArtifactsToProdTask(project)
     }
 
@@ -54,26 +52,57 @@ class PromoteArtifactsToProdTaskTest {
     }
 
     @Test
-    void shouldThrownException_whenArtifactCoordinatesAreNotProvided() {
+    void shouldDownloadTheArtifactsFromTheRightLocation(){
+        def downloadCoordinates = null
+        def downloadConfiguration = null
+        project.fromCoordinates = 'com.gap.sandbox:testDownload:201'
+        project.fromConfiguration = 'myconfig'
+        project.task('downloadArtifacts') << {
+            downloadConfiguration = project.artifactConfiguration
+            downloadCoordinates = project.artifactCoordinates
+        }
+
+        project.task('uploadBuildArtifacts') << {  }
+        task.execute()
+
+        assertEquals("com.gap.sandbox:testDownload:201", downloadCoordinates)
+        assertEquals("myconfig", downloadConfiguration)
+    }
+
+    @Test
+    void shouldUploadTheArtifactsToTheRightLocation() {
+        def uploadCoordinates = null
+        project.fromCoordinates = 'com.gap.sandbox:testDownload:201'
+        project.toCoordinates = 'com.gap.mysandbox:prod'
+        project.task('downloadArtifacts') << {}
+
+        project.task('uploadBuildArtifacts') << { uploadCoordinates = project.artifactCoordinates }
+        task.execute()
+
+        assertEquals("com.gap.mysandbox:prod:201", uploadCoordinates)
+    }
+
+    @Test
+    void shouldThrownException_whenSourceArtifactCoordinatesAreNotProvided() {
         exception.expect(MissingParameterException)
-        exception.expectMessage("Missing required parameter: 'artifactCoordinates'")
-        project.artifactCoordinates=null
+        exception.expectMessage("Missing required parameter: 'fromCoordinates'")
+        project.fromCoordinates=null
         task.validate()
     }
 
     @Test
-    void shouldThrownException_whenArtifactConfigurationNotProvided() {
+    void shouldThrownException_whenSourceArtifactConfigurationNotProvided() {
         exception.expect(MissingParameterException)
-        exception.expectMessage("Missing required parameter: 'artifactConfiguration'")
-        project.artifactConfiguration=null
+        exception.expectMessage("Missing required parameter: 'fromConfiguration'")
+        project.fromConfiguration=null
         task.validate()
     }
 
     @Test
     void shouldThrownException_whenDestinationArtifactCoordinatesAreNotProvided() {
         exception.expect(MissingParameterException)
-        exception.expectMessage("Missing required parameter: 'toArtifactCoordinates'")
-        project.toArtifactCoordinates=null
+        exception.expectMessage("Missing required parameter: 'toCoordinates'")
+        project.toCoordinates=null
         task.validate()
     }
 
