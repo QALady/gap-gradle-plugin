@@ -1,18 +1,25 @@
 package com.gap.gradle.tasks
 
-import com.gap.gradle.utils.GradleTask
-
 class PromoteArtifactsToProdTask {
 
     private def project
-    private def gradleTask
 
-    PromoteArtifactsToProdTask (project,gradleTask = new GradleTask()){
-        this.gradleTask = gradleTask
+    PromoteArtifactsToProdTask (project){
         this.project = project
     }
 
     def execute(){
-        gradleTask.execute(project,'downloadArtifacts')
+        def downloadDir = "${project.rootDir}/downloads/"
+        new File(downloadDir).mkdirs()
+        project.tasks.findByName('downloadArtifacts').execute()
+        def artifactsDir = "${project.rootDir}/build/artifacts"
+        new File(artifactsDir).mkdirs()
+        project.copy {
+            from("${downloadDir}"){
+                include '*'
+            }
+            into "${artifactsDir}"
+        }
+        project.tasks.findByName('uploadBuildArtifacts').execute()
     }
 }
