@@ -18,14 +18,11 @@ buildscript {
             url "http://artifactory.gapinc.dev/artifactory/remote-repos"
         }
     }
-    dependencies{
-        classpath 'com.gap:gap-pipeline-plugin:+'
-    }
 }
 
 //User defined
-ext.majorVersion = 1
-ext.minorVersion = 2
+ext.majorVersion = 2
+ext.minorVersion = 0
 
 group 'com.gap'
 version = "${majorVersion}.${minorVersion}.${release}.${counter}"
@@ -40,7 +37,6 @@ dependencies{
 
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.6'
     compile 'org.apache.httpcomponents:httpclient:4.3.1'
-	compile 'com.gap:gap-pipeline-plugin:+'
 
     testCompile 'junit:junit:4.8.2'
     testCompile 'org.hamcrest:hamcrest-core:1.2'
