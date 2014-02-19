@@ -12,10 +12,9 @@ class GapPipelinePlugin implements Plugin<Project> {
     void apply(Project project) {
         project.extensions.create('prodPrepare', com.gap.pipeline.ProdPrepareConfig)
         project.extensions.create('ivy', IvyConfig)
-        project.extensions.create('rpmConfig', com.gap.pipeline.RpmConfig)
 
 
-        loadProperties(project, "prodPrepare", "ivy", "rpmConfig")
+        loadProperties(project, "prodPrepare", "ivy")
 
         configureTasksRequiredByWatchmenSegment(project)
 

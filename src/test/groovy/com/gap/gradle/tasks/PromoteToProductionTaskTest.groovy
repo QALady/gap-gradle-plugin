@@ -37,12 +37,13 @@ class PromoteToProductionTaskTest {
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gapproddeploy'
-		project.prodDeploy.sha1IdList = ["1234", "24343"]
+		project.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
 		project.ecUser = testuser
 		project.ecJobId = ecJobId
 		project.ticketId = ticketId
 		project.tagMessageComment = comment
+		project.apply plugin: 'gapproddeploy'
+		project.prodDeploy.sha1IdList = ["1234", "24343"]
         promoteToProdTask = project.tasks.findByName('promoteToProduction')
         mockJenkinsRunner = new MockFor(JenkinsRunner.class)
     }

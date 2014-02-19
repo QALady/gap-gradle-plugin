@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins
 
-import com.gap.gradle.git.GitConfig
+import com.gap.pipeline.GitConfig
 import com.gap.gradle.tasks.UpdateCookbookSHATask;
 
 import org.gradle.api.Plugin
@@ -11,11 +11,11 @@ class GapChefPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.apply plugin: 'gapcookbook'
 
-        project.extensions.create('gitconfig', GitConfig)
+        project.extensions.create('git', GitConfig)
 
-        project.gitconfig.userId = project.hasProperty('userId') ? project.getProperty('userId') : null
-        project.gitconfig.fullRepoName = project.hasProperty('fullRepoName') ? project.getProperty('fullRepoName') : null
-        project.gitconfig.shaId = project.hasProperty('shaId') ? project.getProperty('shaId') : null
+        project.git.userId = project.hasProperty('userId') ? project.getProperty('userId') : null
+        project.git.fullRepoName = project.hasProperty('fullRepoName') ? project.getProperty('fullRepoName') : null
+        project.git.sha1Id = project.hasProperty('sha1Id') ? project.getProperty('sha1Id') : null
 
         project.task('promoteCookbookBerksfile') << {
             new UpdateCookbookSHATask(project).execute()

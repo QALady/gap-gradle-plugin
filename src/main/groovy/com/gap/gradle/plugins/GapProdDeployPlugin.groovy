@@ -1,17 +1,19 @@
 package com.gap.gradle.plugins
 
-import com.gap.gradle.tasks.PromoteArtifactsToProdTask
 import org.gradle.api.Plugin
-
 import org.gradle.api.Project
 
 import com.gap.gradle.plugins.cookbook.JenkinsConfig
 import com.gap.gradle.tasks.DeployToProductionTask
+import com.gap.gradle.tasks.PromoteArtifactsToProdTask
+import com.gap.gradle.tasks.PromoteRpmTask
 import com.gap.gradle.tasks.PromoteToProductionTask
+import com.gap.gradle.tasks.UpdateCookbookSHATask
 import com.gap.gradle.utils.ConfigUtil
+import com.gap.pipeline.GitConfig
 import com.gap.pipeline.ProdDeployParameterConfig
 import com.gap.pipeline.ProdPrepareConfig
-import com.gap.gradle.tasks.PromoteRpmTask
+import com.gap.pipeline.RpmConfig
 
 /**
  * this plugin requires gapDeployTools:watchmen_config recipe to be run on a node
@@ -26,7 +28,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
     @Override
 	public void apply(Project project) {
 	  
-		project.apply plugin: 'gapchef'
+		project.apply plugin: 'gapcookbook'
 		
 		loadJenkinsConfig(project)
 		loadProdDeployConfig(project)
@@ -55,6 +57,11 @@ class GapProdDeployPlugin implements Plugin<Project>{
         project.task('promoteRpm', dependsOn: 'prepareToPromote') << {
             new PromoteRpmTask(project).execute()
         }
+
+		project.task('promoteCookbookBerksfile') << {
+			new UpdateCookbookSHATask(project).execute()
+		}
+
     }
 
 	/**
@@ -73,11 +80,25 @@ class GapProdDeployPlugin implements Plugin<Project>{
 	}
 	
 	private void loadProdDeployConfig(Project project) {
+		def json = new ConfigUtil().loadConfigFromJson(project.paramJsonPath + ProdPrepareConfig.FILE_NAME)
 		def prodDeploy = project.extensions.findByName("prodDeploy")
-		if (!prodDeploy && project.hasProperty('paramJsonPath')) {
-			project.extensions.create('prodDeploy', ProdDeployParameterConfig, new ConfigUtil().loadConfigFromJson(project.paramJsonPath + ProdPrepareConfig.FILE_NAME))
+		if (!prodDeploy && project.hasProperty('paramJsonPath')) {			
+			project.extensions.create('prodDeploy', ProdDeployParameterConfig, json)
 		} else {
 			project.extensions.create('prodDeploy', ProdDeployParameterConfig)
 		}
+
+		// load git config
+		loadGitConfig(project, json)
+
+		project.extensions.create("rpm", RpmConfig, json.rpm)
+	}
+
+	private loadGitConfig(Project project, json) {
+		def gitExtension = project.extensions.findByName("git")
+		if (!gitExtension) {
+			project.extensions.create('git', GitConfig, json.git)
+		}
+		project.git.userId = project.ecUser
 	}
 }

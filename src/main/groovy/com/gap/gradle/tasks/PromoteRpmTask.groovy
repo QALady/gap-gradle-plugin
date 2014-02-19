@@ -8,10 +8,10 @@ import com.gap.pipeline.tasks.annotations.RequiredParameters
 import com.gap.pipeline.tasks.annotations.Require
 
 @RequiredParameters([
-    @Require(parameter='prodDeploy.yumSourceUrl', description='name of repo within gapSoftware that hold rpm'),
-    @Require(parameter='prodDeploy.rpmName', description='full name of rpm file, including version architecture and extension'),
-    @Require(parameter='prodDeploy.yumDestinationUrl', description='url of the yum prod repo to upload the rpm to'),
-    @Require(parameter='prodDeploy.appVersion', description='app version of the rpm'),
+    @Require(parameter='rpm.yumSourceUrl', description='name of repo within gapSoftware that hold rpm'),
+    @Require(parameter='rpm.rpmName', description='full name of rpm file, including version architecture and extension'),
+    @Require(parameter='rpm.yumDestinationUrl', description='url of the yum prod repo to upload the rpm to'),
+    @Require(parameter='rpm.appVersion', description='app version of the rpm'),
 ] )
 class PromoteRpmTask extends WatchmenTask{
 

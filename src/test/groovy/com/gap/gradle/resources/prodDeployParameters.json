@@ -6,7 +6,13 @@
 	"roleName":"test-role-name",
 	"appVersion":"976",
 	"sha1IdList":["38615ae7ac61737184440a5797fa7becd4f684c8","28615ae7ac61737184440a5797fa7becd4f684c8"],
-    "yumSourceUrl": "http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel",
-    "rpmName": "rpmName-976.rpm",
-    "yumDestinationUrl": "http://ks64.phx.gapinc.com/gapSoftware/repoName/devel"
+	"git": {
+		"sha1Id": "38615ae7ac61737184440a5797fa7becd4f684c1",
+		"fullRepoName": "watchmen/ref-app"
+	},
+	"rpm" : {
+	    "yumSourceUrl": "http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel",
+	    "rpmName": "rpmName-976.rpm",
+	    "yumDestinationUrl": "http://ks64.phx.gapinc.com/gapSoftware/repoName/devel"
+	}
 }

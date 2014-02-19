@@ -138,26 +138,6 @@ class GapPipelinePluginTest {
         assertThat(project.ivy.password, is('ivy_password'))
     }
 
-    @Test
-    void shouldSetRpmPropertiesFromString() {
-        def project = ProjectBuilder.builder().build()
-        project.ext.set('rpmConfig.repoUrl','repoUrl')
-        project.ext.set('rpmConfig.rpmName', 'name')
-        project.ext.set('rpmConfig.destination', 'dest')
-        project.ext.set('rpmConfig.appVersion', '123')
-        project.ext.set('rpmConfig.prodHostname', 'prodHostname')
-        project.ext.set('rpmConfig.prodPath', 'prodPath')
-        project.ext.set('rpmConfig.channel', 'devel')
-        project.apply plugin: 'gappipeline'
-        assertThat(project.rpmConfig.repoUrl, is('repoUrl'))
-        assertThat(project.rpmConfig.rpmName, is('name'))
-        assertThat(project.rpmConfig.destination, is('dest'))
-        assertThat(project.rpmConfig.appVersion, is('123'))
-        assertThat(project.rpmConfig.prodHostname, is('prodHostname'))
-        assertThat(project.rpmConfig.prodPath, is('prodPath'))
-        assertThat(project.rpmConfig.channel, is('devel'))
-    }
-
 
     @Test
     void setupBuildDirsTaskIsAddedToTheProject (){

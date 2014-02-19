@@ -7,6 +7,7 @@ import static org.junit.Assert.fail
 import com.gap.gradle.exceptions.DeployToProductionException;
 import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
+import com.gap.pipeline.ProdDeployParameterConfig;
 
 import groovy.mock.interceptor.MockFor
 
@@ -19,13 +20,13 @@ import org.junit.Test
 class DeployToProductionTaskTest {
 
     Project project
-    Task task
+    def task
 
     @Before
     void setUp() {
         project = ProjectBuilder.builder().build();
-        project.apply plugin: 'gapproddeploy'
-        task = project.tasks.findByName('deployToProduction')
+		project.extensions.create("prodDeploy", ProdDeployParameterConfig)
+		task = new DeployToProductionTask(project)
     }
 
     @Test

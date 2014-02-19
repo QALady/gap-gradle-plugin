@@ -5,7 +5,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import com.gap.pipeline.ProdDeployParameterConfig
 import static org.hamcrest.CoreMatchers.is
 import static org.junit.Assert.assertThat
-import com.gap.gradle.git.GitConfig
+import com.gap.pipeline.GitConfig
 import com.gap.pipeline.CookbookConfig
 import org.gradle.api.Project
 import org.junit.Before

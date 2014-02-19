@@ -34,6 +34,7 @@ class GapProdDeployPluginTest {
 	void setup() {
 		project = ProjectBuilder.builder().build()
 		project.paramJsonPath = testJsonPath
+		project.ecUser = "testuser"
 		project.apply plugin: pluginName
 	}
 	
@@ -68,6 +69,7 @@ class GapProdDeployPluginTest {
 	void testJenkinsExtensionConfigurationDoesNotLoadAgain() {
 		project = ProjectBuilder.builder().build()
 		project.paramJsonPath = testJsonPath
+		project.ecUser = "testuser"
 		project.apply plugin: 'gapcookbook' // cookbook plugin already loads the jenkins extension
 		project.apply plugin: pluginName // this should not complain that jenkins already exist on the project
 		def jenkinsConfig = project.extensions.findByName("jenkins")
@@ -83,9 +85,9 @@ class GapProdDeployPluginTest {
 		assertThat(project.prodDeploy.cookbook.name, equalTo("test-app"))
 		assertThat(project.prodDeploy.cookbook.sha1Id, equalTo("38615ae7ac61737184440a5797fa7becd4f684c7"))
 		assertThat(project.prodDeploy.nodes, equalTo("[testnode01.phx.gapinc.dev,testnode02.phx.gapinc.dev]"))
-		assertThat(project.prodDeploy.yumSourceUrl, equalTo("http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel"))
-		assertThat(project.prodDeploy.rpmName, equalTo("rpmName-976.rpm"))
-		assertThat(project.prodDeploy.yumDestinationUrl, equalTo("http://ks64.phx.gapinc.com/gapSoftware/repoName/devel"))
+		assertThat(project.rpm.yumSourceUrl, equalTo("http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel"))
+		assertThat(project.rpm.rpmName, equalTo("rpmName-976.rpm"))
+		assertThat(project.rpm.yumDestinationUrl, equalTo("http://ks64.phx.gapinc.com/gapSoftware/repoName/devel"))
     }
 
     @Test

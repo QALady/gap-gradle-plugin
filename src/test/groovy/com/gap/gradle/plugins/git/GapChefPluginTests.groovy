@@ -26,9 +26,9 @@ class GapChefPluginTests {
     @Test
     void shouldUseGitConfig_whenConfigIsSet(){
         setupTaskProperties()
-        assertEquals(project.gitconfig.userId, "testUser")
-        assertEquals(project.gitconfig.fullRepoName, "test/Repo")
-        assertEquals(project.gitconfig.shaId, "testSHA")
+        assertEquals(project.git.userId, "testUser")
+        assertEquals(project.git.fullRepoName, "test/Repo")
+        assertEquals(project.git.sha1Id, "testSHA")
     }
 
     @Test
@@ -48,9 +48,9 @@ class GapChefPluginTests {
     }
 
     private void setupTaskProperties(){
-        project.gitconfig.userId = "testUser"
-        project.gitconfig.fullRepoName = "test/Repo"
-        project.gitconfig.shaId = "testSHA"
+        project.git.userId = "testUser"
+        project.git.fullRepoName = "test/Repo"
+        project.git.sha1Id = "testSHA"
     }
 
     def taskShouldExist(task) {

@@ -1,11 +1,15 @@
 package com.gap.pipeline
 
 class RpmConfig {
-    def repoUrl
-    def prodHostname
-    def prodPath
-    def channel
-    def rpmName
-    def destination
-    def appVersion
+	def yumSourceUrl
+	def yumDestinationUrl
+	def rpmName
+	def appVersion	
+
+	RpmConfig(def json) {
+		this.appVersion = json.appVersion
+		this.yumSourceUrl = json.yumSourceUrl
+		this.yumDestinationUrl = json.yumDestinationUrl
+		this.rpmName = json.rpmName
+	}
 }

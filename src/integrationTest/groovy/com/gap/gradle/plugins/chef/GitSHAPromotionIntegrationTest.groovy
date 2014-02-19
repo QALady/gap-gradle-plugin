@@ -20,14 +20,14 @@ class GitSHAPromotionIntegrationTest {
         project.apply plugin: 'gapchef'
         updateBerksfileTask = project.tasks.findByName('promoteCookbookBerksfile')
         setUpProperties()
-        cookbook = project.gitconfig.fullRepoName.tokenize('/')[1]
+        cookbook = project.git.fullRepoName.tokenize('/')[1]
         deleteRepo()
     }
 
     def setUpProperties(){
-        project.gitconfig.fullRepoName = 'watchmen/gitTest'
-        project.gitconfig.shaId = random.nextInt(Integer.MAX_VALUE)
-        project.gitconfig.userId = 'Ca9s7i9'
+        project.git.fullRepoName = 'watchmen/gitTest'
+        project.git.sha1Id = random.nextInt(Integer.MAX_VALUE)
+        project.git.userId = 'Ca9s7i9'
     }
 
     @Test
@@ -37,7 +37,7 @@ class GitSHAPromotionIntegrationTest {
 
     @After
     void cleanUp(){
-        cookbook = project.gitconfig.fullRepoName.split('/')[1]
+        cookbook = project.git.fullRepoName.split('/')[1]
         deleteRepo()
     }
 

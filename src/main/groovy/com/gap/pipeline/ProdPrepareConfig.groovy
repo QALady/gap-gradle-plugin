@@ -18,8 +18,18 @@ class ProdPrepareConfig {
     def yumSourceUrl
     def yumDestinationUrl
     def rpmName
+	def githubOrgName
 
 	CookbookConfig getCookbookConfig() {
 		new CookbookConfig(this.cookbookName, this.cookbookSha1Id)
+	}
+
+	RpmConfig getRpmConfig() {
+		new RpmConfig(this)
+	}
+
+	GitConfig getGitConfig() {
+		def fullRepoName = "${this.githubOrgName}/${this.cookbookName}"
+		new GitConfig(this.cookbookSha1Id, fullRepoName)
 	}
 }

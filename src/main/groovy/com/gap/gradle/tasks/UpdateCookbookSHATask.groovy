@@ -9,9 +9,9 @@ import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 @RequiredParameters([
-    @Require(parameter = 'gitconfig.fullRepoName', description = "Full repo name of cookbook to be promoted."),
-    @Require(parameter = 'gitconfig.shaId', description = "SHA1 ID of cookbook repository."),
-    @Require(parameter = 'gitconfig.userId', description = "Git user id")
+    @Require(parameter = 'git.fullRepoName', description = "Full repo name of cookbook to be promoted."),
+    @Require(parameter = 'git.sha1Id', description = "SHA1 ID of cookbook repository."),
+    @Require(parameter = 'git.userId', description = "Git user id")
 ])
 class UpdateCookbookSHATask extends WatchmenTask{
     Project project
@@ -26,15 +26,15 @@ class UpdateCookbookSHATask extends WatchmenTask{
     def execute(){
         super.validate()
         checkFullRepoNameFormat()
-        client = new GitClient(project.gitconfig.userId, project.gitconfig.shaId,
-                project.gitconfig.fullRepoName)
+        client = new GitClient(project.git.userId, project.git.sha1Id,
+                project.git.fullRepoName)
         client.checkout()
         client.updateBerksfile()
         client.commitAndPush()
     }
 
     def checkFullRepoNameFormat(){
-        if(!project.gitconfig.fullRepoName.contains("/")){
+        if(!project.git.fullRepoName.contains("/")){
             throw new Exception("The fullRepoName must have the following format: 'organization/repoName'")
         }
     }

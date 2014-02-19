@@ -34,9 +34,9 @@ class UpdateCookbookSHATaskTest {
     }
 
     void setUpProperties(){
-        project.gitconfig.userId = 'testUser'
-        project.gitconfig.shaId = 'testSHA'
-        project.gitconfig.fullRepoName = 'test/repo'
+        project.git.userId = 'testUser'
+        project.git.sha1Id = 'testSHA'
+        project.git.fullRepoName = 'test/repo'
     }
 
     @Test
@@ -54,7 +54,7 @@ class UpdateCookbookSHATaskTest {
     void taskShouldThrowException_whenConfigFullRepoNameIsInvalid(){
         setUpProperties()
         try{
-            project.gitconfig.fullRepoName = 'testrepo'
+            project.git.fullRepoName = 'testrepo'
             mockGitClient.demand.checkout(1){ -1 }
             mockGitClient.demand.updateBerksfile(1){ -1 }
             mockGitClient.demand.commitAndPush(1){ -1 }
@@ -77,36 +77,36 @@ class UpdateCookbookSHATaskTest {
                 updateBerksfileTask.execute()
             }
         } catch (Exception e){
-            assertThat(e.dump(), containsString("Missing required parameter: 'gitconfig.fullRepoName'"))
+            assertThat(e.dump(), containsString("Missing required parameter: 'git.fullRepoName'"))
         }
     }
 
     @Test
     void shouldThrowException_whenUserIdIsMissing(){
-        project.gitconfig.shaId = 'testSHA'
-        project.gitconfig.fullRepoName = 'test/repo'
-        assertThrowsExceptionWithMessage("Missing required parameter: 'gitconfig.userId'", {updateBerksfileTask.execute()})
+        project.git.sha1Id = 'testSHA'
+        project.git.fullRepoName = 'test/repo'
+        assertThrowsExceptionWithMessage("Missing required parameter: 'git.userId'", {updateBerksfileTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenSHAIdIsMissing(){
-        project.gitconfig.userId = 'testUser'
-        project.gitconfig.fullRepoName = 'test/repo'
-        assertThrowsExceptionWithMessage("Missing required parameter: 'gitconfig.shaId'", {updateBerksfileTask.execute()})
+        project.git.userId = 'testUser'
+        project.git.fullRepoName = 'test/repo'
+        assertThrowsExceptionWithMessage("Missing required parameter: 'git.sha1Id'", {updateBerksfileTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenFullRepoNameIsMissing(){
-        project.gitconfig.userId = 'testUser'
-        project.gitconfig.shaId = 'testSHA'
-        assertThrowsExceptionWithMessage("Missing required parameter: 'gitconfig.fullRepoName'", {updateBerksfileTask.execute()})
+        project.git.userId = 'testUser'
+        project.git.sha1Id = 'testSHA'
+        assertThrowsExceptionWithMessage("Missing required parameter: 'git.fullRepoName'", {updateBerksfileTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenFullRepoNameFormatIsInvalid(){
-        project.gitconfig.userId = 'testUser'
-        project.gitconfig.shaId = 'testSHA'
-        project.gitconfig.fullRepoName = 'testrepo'
+        project.git.userId = 'testUser'
+        project.git.sha1Id = 'testSHA'
+        project.git.fullRepoName = 'testrepo'
         assertThrowsExceptionWithMessage("The fullRepoName must have the " +
                 "following format: 'organization/repoName'", {updateBerksfileTask.execute()})
     }
