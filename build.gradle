@@ -8,18 +8,6 @@ repositories {
     }
 }
 
-buildscript {
-    repositories {
-        ivy {
-            layout 'maven'
-            url "http://artifactory.gapinc.dev/artifactory/remote-repos"
-        }
-        maven {
-            url "http://artifactory.gapinc.dev/artifactory/remote-repos"
-        }
-    }
-}
-
 //User defined
 ext.majorVersion = 2
 ext.minorVersion = 0
