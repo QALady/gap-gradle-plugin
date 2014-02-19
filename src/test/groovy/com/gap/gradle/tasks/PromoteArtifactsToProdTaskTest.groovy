@@ -14,7 +14,7 @@ import org.junit.rules.TemporaryFolder
 
 class PromoteArtifactsToProdTaskTest {
     private Project project
-    private PromoteArtifactsToProdTask task
+    private PromoteArtifactsTask task
 
     @Before
     void setUp() {
@@ -24,7 +24,7 @@ class PromoteArtifactsToProdTaskTest {
         project.fromConfiguration = 'archives'
         project.toArtifactoryUrl = 'http://www.artifactory.url/prod'
         project.ivy = [:]
-        task = new PromoteArtifactsToProdTask(project)
+        task = new PromoteArtifactsTask(project)
     }
 
     @Rule

@@ -12,11 +12,11 @@ import com.gap.pipeline.utils.IvyCoordinateParser
 @Require(parameter = 'toArtifactoryUrl', description = 'destination url where artifacts need to be uploaded'),
 ])
 
-class PromoteArtifactsToProdTask extends WatchmenTask {
+class PromoteArtifactsTask extends WatchmenTask {
 
     private def project
 
-    PromoteArtifactsToProdTask (project){
+    PromoteArtifactsTask(project){
         super(project)
         this.project = project
     }

@@ -1,11 +1,6 @@
 package com.gap.gradle.plugins
-
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-
 import com.gap.gradle.plugins.cookbook.JenkinsConfig
 import com.gap.gradle.tasks.DeployToProductionTask
-import com.gap.gradle.tasks.PromoteArtifactsToProdTask
 import com.gap.gradle.tasks.PromoteRpmTask
 import com.gap.gradle.tasks.PromoteToProductionTask
 import com.gap.gradle.tasks.UpdateCookbookSHATask
@@ -14,8 +9,10 @@ import com.gap.pipeline.GitConfig
 import com.gap.pipeline.ProdDeployParameterConfig
 import com.gap.pipeline.ProdPrepareConfig
 import com.gap.pipeline.RpmConfig
-
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 /**
+ *
  * this plugin requires gapDeployTools:watchmen_config recipe to be run on a node
  * to prep up the node with pipeline.gradle & gapcookbook.properties 
  * the jenkins server urls of PROD Knife manage are expected to be configured in gapcookbook.properties  
@@ -48,11 +45,6 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			new DeployToProductionTask(project).execute()
 			println "WOO! done (:"
 		}
-
-
-        project.task("promoteArtifactsToProd") << {
-            new PromoteArtifactsToProdTask(project).execute()
-        }
 
         project.task('promoteRpm', dependsOn: 'prepareToPromote') << {
             new PromoteRpmTask(project).execute()

@@ -1,25 +1,18 @@
 package com.gap.gradle.plugins
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.notNullValue
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertThat
 
-import com.gap.gradle.tasks.PromoteArtifactsToProdTask
-
-import static helpers.Assert.shouldExecuteTask
-import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
-
+import com.gap.gradle.plugins.cookbook.ConfigFileResource
+import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
+import com.gap.gradle.tasks.PromoteRpmTask
+import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-
-import com.gap.gradle.plugins.cookbook.ConfigFileResource
-import com.gap.gradle.plugins.cookbook.JenkinsConfig
-import com.gap.gradle.tasks.DeployToProductionTask
-import groovy.mock.interceptor.MockFor
-import com.gap.gradle.tasks.PromoteRpmTask
-import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
-
-import static helpers.CustomMatchers.sameString
 
 class GapProdDeployPluginTest {
 
@@ -104,16 +97,6 @@ class GapProdDeployPluginTest {
         mockRpmTask.use {
             project.tasks.getByName('promoteRpm').execute()
         }
-    }
-
-    @Test
-    void shouldAddPromoteArtifactsToProdTaskToProject(){
-        taskShouldExist("promoteArtifactsToProd")
-    }
-
-    @Test
-    void shouldExecutePromoteArtifactsToProdTask() {
-        shouldExecuteTask(project,'promoteArtifactsToProd', PromoteArtifactsToProdTask)
     }
 
 	def taskShouldExist(task) {

@@ -1,7 +1,6 @@
 package com.gap.pipeline
 
-import com.gap.pipeline.ec.CommanderArtifacts
-import com.gap.pipeline.ec.CommanderClient
+import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
 import org.gradle.api.Plugin
@@ -44,6 +43,10 @@ class GapPipelinePlugin implements Plugin<Project> {
 
         project.task('generateAuditReport',dependsOn: ['setupBuildDirectories']) << {
             new GenerateAuditReportTask(project).execute()
+        }
+
+        project.task("promoteArtifacts") << {
+            new PromoteArtifactsTask(project).execute()
         }
     }
 

@@ -1,13 +1,12 @@
 package com.gap.pipeline
 
-import com.gap.pipeline.ec.CommanderArtifacts
-import com.gap.pipeline.ec.CommanderClient
-
+import static helpers.Assert.shouldExecuteTask
 import static org.hamcrest.CoreMatchers.is
 import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
 
+import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.tasks.*
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
@@ -180,6 +179,16 @@ class GapPipelinePluginTest {
         taskMock.use {
             project.tasks.getByName('downloadArtifacts').execute()
         }
+    }
+
+    @Test
+    void shouldAddPromoteArtifactsTaskToProject(){
+        taskShouldExist("promoteArtifacts")
+    }
+
+    @Test
+    void shouldExecutePromoteArtifactsTask() {
+        shouldExecuteTask(project,'promoteArtifacts', PromoteArtifactsTask)
     }
 
     def taskShouldDependOn(task, requiredDependency) {
