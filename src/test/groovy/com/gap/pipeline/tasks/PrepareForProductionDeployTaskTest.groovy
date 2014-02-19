@@ -48,6 +48,9 @@ class PrepareForProductionDeployTaskTest {
         project.artifactCoordinates = "com.gap.sandbox:iso:1234"
 		project.prodPrepare.cookbookName = "test-ref-app"
 		project.prodPrepare.cookbookSha1Id = cookbookSha1Id_1
+        project.prodPrepare.yumSourceUrl = "http://devyum/repo/org/channel"
+        project.prodPrepare.yumDestinationUrl = "http://prodyum/repo/org/channel"
+        project.prodPrepare.rpmName = "myrpm-default.noarch.rpm"
         project.buildDir = "${temporaryFolder.root.path}/build"
         new File("${temporaryFolder.root.path}/build/artifacts".toString()).mkdirs()
         new File("${temporaryFolder.root.path}/artifacts".toString()).mkdirs()
