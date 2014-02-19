@@ -90,12 +90,13 @@ class GenerateAuditReportTask extends WatchmenTask {
         writer.append("ApplicationVersion - " + appVersion)
 
         log.info("File is in - " + auditReport.absolutePath)
+        log.info("Build Directory File is in - ${project.buildDir}/reports/auditReport.txt")
         writer.close()
 
     }
 
     private void copyArtifactsForUseByEC () {
-        new CommanderArtifacts(new CommanderClient()).copyToArtifactsDir("${project.buildDir}/reports/*")
+        new CommanderArtifacts(new CommanderClient()).copyToArtifactsDir("${project.buildDir}/reports/auditReport.txt")
     }
 
 
