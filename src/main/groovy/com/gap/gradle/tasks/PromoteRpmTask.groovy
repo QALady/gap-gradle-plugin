@@ -8,18 +8,16 @@ import com.gap.pipeline.tasks.annotations.RequiredParameters
 import com.gap.pipeline.tasks.annotations.Require
 
 @RequiredParameters([
-    @Require(parameter='rpmConfig.yumSourceUrl', description='name of repo within gapSoftware that hold rpm'),
-    @Require(parameter='rpmConfig.rpmName', description='full name of rpm file, including version architecture and extension'),
-    @Require(parameter='rpmConfig.destination', description='directory to download rpm to, relative to directory in which task is run'),
-    @Require(parameter='appVersion', description='app version of the rpm'),
-    @Require(parameter='rpmConfig.prodDestionUrl', description='hostname of the prod yum repo'),
-    @Require(parameter='rpmConfig.prodPath', description='relative path of the rpm\'s inside the prod yum repo'),
-    @Require(parameter='rpmConfig.channel', description='channel of the rpm')
+    @Require(parameter='prodDeploy.yumSourceUrl', description='name of repo within gapSoftware that hold rpm'),
+    @Require(parameter='prodDeploy.rpmName', description='full name of rpm file, including version architecture and extension'),
+    @Require(parameter='prodDeploy.yumDestinationUrl', description='url of the yum prod repo to upload the rpm to'),
+    @Require(parameter='prodDeploy.appVersion', description='app version of the rpm'),
 ] )
 class PromoteRpmTask extends WatchmenTask{
 
     Project project
     YumClient yumClient
+
 
     PromoteRpmTask(Project project, YumClient yumClient) {
         super(project)
@@ -34,20 +32,21 @@ class PromoteRpmTask extends WatchmenTask{
     }
 
     def validate(){
-        if(!project.rpmConfig.rpmName.contains('.rpm')){
-            throw new IllegalArgumentException("rpmConfig.rpmName ${project.rpmConfig.rpmName} does not have .rpm extension")
+        if(!project.prodDeploy.rpmName.contains('.rpm')){
+            throw new IllegalArgumentException("rpmConfig.rpmName ${project.prodDeploy.rpmName} does not have .rpm extension")
         }
-        if(!project.rpmConfig.rpmName.contains(project.rpmConfig.appVersion)){
-            throw new IllegalArgumentException("rpmConfig.rpmName ${project.rpmConfig.rpmName} does not contain app version ${project.rpmConfig.appVersion}")
+        if(!project.prodDeploy.rpmName.contains(project.prodDeploy.appVersion)){
+            throw new IllegalArgumentException("rpmConfig.rpmName ${project.prodDeploy.rpmName} does not contain app version ${project.prodDeploy.appVersion}")
         }
     }
 
     def execute(){
         validate()
-        yumClient.downloadRpm(project.rpmConfig.repoUrl, project.rpmConfig.rpmName, project.rpmConfig.destination)
-        yumClient.uploadRpm(project.rpmConfig.rpmName, project.rpmConfig.destination, project.rpmConfig.prodHostname,
-                        project.rpmConfig.prodPath, project.rpmConfig.channel)
-        yumClient.recreateYumRepo(project.rpmConfig.prodHostname, project.rpmConfig.prodPath, project.rpmConfig.channel)
+        def copyToLocation = project.buildDir.path + '/tmp'
+
+        yumClient.downloadRpm(project.prodDeploy.yumSourceUrl, project.prodDeploy.rpmName, copyToLocation)
+        yumClient.uploadRpm(project.prodDeploy.rpmName, copyToLocation, project.prodDeploy.yumDestinationUrl)
+        yumClient.recreateYumRepo(project.prodDeploy.yumDestinationUrl)
     }
 
 }

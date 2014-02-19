@@ -11,7 +11,6 @@ class PromoteArtifactsToProdTaskTest {
     void shouldInvokeDownloadArtifactsToATemporaryDownloadFolder () {
         def project = ProjectBuilder.builder().build();
         project.apply plugin: 'gapproddeploy'
-        project.apply plugin: 'gappipeline'
 
         def gradleTask = mock(GradleTask)
         project.artifactCoordinates = 'com.gap.sandbox:testDownload:123'

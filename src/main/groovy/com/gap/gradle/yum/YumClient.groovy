@@ -20,11 +20,20 @@ class YumClient {
         this.shellCommand.execute("curl -o ${destination}/${rpmName} --create-dirs ${repoUrl}/${rpmName}")
     }
 
-    void uploadRpm(String rpmName, String rpmLocation, String prodHostname, String prodPath, String channel){
-        this.shellCommand.execute("scp ${rpmLocation}/${rpmName} ${prodHostname}:${prodPath}/${channel}/${rpmName}")
+    void uploadRpm(String rpmName, String rpmLocation, String yumDestinationUrl){
+        def yumRepo = parse(yumDestinationUrl)
+        this.shellCommand.execute("scp ${rpmLocation}/${rpmName} ${yumRepo.hostname}:${yumRepo.path}/${rpmName}")
     }
 
-    void recreateYumRepo(String prodHostname, String prodPath, String channel) {
-        this.shellCommand.execute(["ssh", prodHostname, "sudo createrepo --database --update ${prodPath}/${channel}".toString()])
+    def parse(String url) {
+        def matcher = (url =~ /http:\/\/([^\/]+)\/(.+)/)
+        [hostname: matcher[0][1], path: '/mnt/repos/' + matcher[0][2]]
     }
+
+    void recreateYumRepo(String yumDestinationUrl) {
+        def yumRepo = parse(yumDestinationUrl)
+        this.shellCommand.execute(["ssh", yumRepo.hostname, "sudo createrepo --database --update ${yumRepo.path}".toString()])
+    }
+
+
 }

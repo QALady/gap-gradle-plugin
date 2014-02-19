@@ -11,6 +11,7 @@ import com.gap.gradle.tasks.PromoteToProductionTask
 import com.gap.gradle.utils.ConfigUtil
 import com.gap.pipeline.ProdDeployParameterConfig
 import com.gap.pipeline.ProdPrepareConfig
+import com.gap.gradle.tasks.PromoteRpmTask
 
 /**
  * this plugin requires gapDeployTools:watchmen_config recipe to be run on a node
@@ -46,8 +47,13 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			println "WOO! done (:"
 		}
 
+
         project.task("promoteArtifactsToProd") << {
             new PromoteArtifactsToProdTask(project).execute()
+        }
+
+        project.task('promoteRpm', dependsOn: 'prepareToPromote') << {
+            new PromoteRpmTask(project).execute()
         }
     }
 

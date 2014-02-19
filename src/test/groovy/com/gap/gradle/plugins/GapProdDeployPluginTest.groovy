@@ -15,6 +15,11 @@ import org.junit.Test
 import com.gap.gradle.plugins.cookbook.ConfigFileResource
 import com.gap.gradle.plugins.cookbook.JenkinsConfig
 import com.gap.gradle.tasks.DeployToProductionTask
+import groovy.mock.interceptor.MockFor
+import com.gap.gradle.tasks.PromoteRpmTask
+import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
+
+import static helpers.CustomMatchers.sameString
 
 class GapProdDeployPluginTest {
 
@@ -77,8 +82,27 @@ class GapProdDeployPluginTest {
 		assertThat(project.prodDeploy.roleName, equalTo("test-role-name"))
 		assertThat(project.prodDeploy.cookbook.name, equalTo("test-app"))
 		assertThat(project.prodDeploy.cookbook.sha1Id, equalTo("38615ae7ac61737184440a5797fa7becd4f684c7"))
-		assertThat(project.prodDeploy.nodes, equalTo("[testnode01.phx.gapinc.dev,testnode02.phx.gapinc.dev]"))
-	}
+//		assertThat(project.prodDeploy.nodes, equalTo(["[testnode01.phx.gapinc.dev, testnode02.phx.gapinc.dev]"]))
+		assertThat(project.prodDeploy.yumSourceUrl, equalTo("http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel"))
+		assertThat(project.prodDeploy.rpmName, equalTo("rpmName-976.rpm"))
+		assertThat(project.prodDeploy.yumDestinationUrl, equalTo("http://ks64.phx.gapinc.com/gapSoftware/repoName/devel"))
+    }
+
+    @Test
+    void promoteRpmTaskIsAddedToTheProject(){
+        taskShouldExist('promoteRpm')
+    }
+
+    @Test
+    void shouldExecutePromoteRpmTask(){
+        def mockRpmTask = new MockFor(PromoteRpmTask)
+        def mockPrepareTask = new MockFor(PrepareToPromoteToProductionTask)
+        mockPrepareTask.demand.execute {}
+        mockRpmTask.demand.execute { }
+        mockRpmTask.use {
+            project.tasks.getByName('promoteRpm').execute()
+        }
+    }
 
     @Test
     void shouldAddPromoteArtifactsToProdTaskToProject(){
