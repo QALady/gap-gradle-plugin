@@ -1,5 +1,8 @@
 package com.gap.gradle.plugins
 
+import com.gap.gradle.tasks.PromoteArtifactsToProdTask
+
+import static helpers.Assert.shouldExecuteTask
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
 
@@ -76,6 +79,16 @@ class GapProdDeployPluginTest {
 		assertThat(project.prodDeploy.cookbook.sha1Id, equalTo("38615ae7ac61737184440a5797fa7becd4f684c7"))
 		assertThat(project.prodDeploy.nodes, equalTo("[testnode01.phx.gapinc.dev,testnode02.phx.gapinc.dev]"))
 	}
+
+    @Test
+    void shouldAddPromoteArtifactsToProdTaskToProject(){
+        taskShouldExist("promoteArtifactsToProd")
+    }
+
+    @Test
+    void shouldExecutePromoteArtifactsToProdTask() {
+        shouldExecuteTask(project,'promoteArtifactsToProd', PromoteArtifactsToProdTask)
+    }
 
 	def taskShouldExist(task) {
 		assertThat(project.tasks.findByName(task), notNullValue())

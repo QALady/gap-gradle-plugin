@@ -1,5 +1,6 @@
 package com.gap.gradle.plugins
 
+import com.gap.gradle.tasks.PromoteArtifactsToProdTask
 import org.gradle.api.Plugin
 
 import org.gradle.api.Project
@@ -44,6 +45,10 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			new DeployToProductionTask(project).execute()
 			println "WOO! done (:"
 		}
+
+        project.task("promoteArtifactsToProd") << {
+            new PromoteArtifactsToProdTask(project).execute()
+        }
     }
 
 	/**

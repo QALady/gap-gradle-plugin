@@ -1,9 +1,10 @@
 package com.gap.gradle.plugins.cookbook
+
+import static helpers.Assert.shouldExecuteTask
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
 
-import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -35,12 +36,12 @@ class GapCookbookPluginTests {
 
     @Test
     void shouldExecutePublishCookbookToChefServerTask (){
-        shouldExecuteTask('publishCookbookToChefServer', PublishCookbookToChefServerTask)
+        shouldExecuteTask(project, 'publishCookbookToChefServer', PublishCookbookToChefServerTask)
     }
 
     @Test
     void shouldExecutePublishCookbookToArtifactoryTask (){
-        shouldExecuteTask('publishCookbookToArtifactory', PublishCookbookToArtifactoryTask)
+        shouldExecuteTask(project, 'publishCookbookToArtifactory', PublishCookbookToArtifactoryTask)
     }
 
     @Test
@@ -71,7 +72,7 @@ class GapCookbookPluginTests {
 
     @Test
     void shouldExecuteValidateCookbookDependenciesTask() {
-        shouldExecuteTask('validateCookbookDependencies', ValidateCookbookDependenciesTask)
+        shouldExecuteTask(project, 'validateCookbookDependencies', ValidateCookbookDependenciesTask)
     }
 
     @Test
@@ -117,14 +118,6 @@ class GapCookbookPluginTests {
     @Test
     void validateTransitiveCookbookDependencies_shouldDependOnValidateCookbookDependencies() {
         taskShouldDependOn('validateTransitiveCookbookDependencies', 'validateCookbookDependencies')
-    }
-
-    def shouldExecuteTask(taskName, type) {
-        def task = new MockFor(type)
-        task.demand.execute {}
-        task.use {
-            project.tasks.findByName(taskName).execute()
-        }
     }
 
     def taskShouldExist(task) {

@@ -1,4 +1,4 @@
-package matchers
+package helpers
 
 class CustomMatchers {
     public static GString sameString(Object value){
