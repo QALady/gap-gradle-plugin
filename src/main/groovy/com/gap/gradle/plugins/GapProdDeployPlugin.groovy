@@ -72,25 +72,13 @@ class GapProdDeployPlugin implements Plugin<Project>{
 	}
 	
 	private void loadProdDeployConfig(Project project) {
-		def json = new ConfigUtil().loadConfigFromJson(project.paramJsonPath + ProdPrepareConfig.FILE_NAME)
-		def prodDeploy = project.extensions.findByName("prodDeploy")
-		if (!prodDeploy && project.hasProperty('paramJsonPath')) {			
+		def json
+		if (project.hasProperty('paramJsonPath')) {
+			json = new ConfigUtil().loadConfigFromJson(project.paramJsonPath + ProdPrepareConfig.FILE_NAME)
 			project.extensions.create('prodDeploy', ProdDeployParameterConfig, json)
-		} else {
-			project.extensions.create('prodDeploy', ProdDeployParameterConfig)
-		}
-
-		// load git config
-		loadGitConfig(project, json)
-
-		project.extensions.create("rpm", RpmConfig, json.rpm)
-	}
-
-	private loadGitConfig(Project project, json) {
-		def gitExtension = project.extensions.findByName("git")
-		if (!gitExtension) {
+			project.extensions.create("rpm", RpmConfig, json.rpm)
 			project.extensions.create('git', GitConfig, json.git)
+			project.git.userId = project.ecUser	
 		}
-		project.git.userId = project.ecUser
 	}
 }
