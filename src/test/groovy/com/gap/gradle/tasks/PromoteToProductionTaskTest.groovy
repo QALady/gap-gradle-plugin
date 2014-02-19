@@ -1,7 +1,6 @@
 package com.gap.gradle.tasks
 
-import static junit.framework.Assert.assertFalse
-import static junit.framework.Assert.assertNotNull
+import static junit.framework.Assert.*
 import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.junit.internal.matchers.StringContains.containsString
@@ -30,12 +29,20 @@ class PromoteToProductionTaskTest {
     private Project project
     def mockJenkinsRunner
     def sha1IdList = ["1234", "5678"]
+	def testuser = "testUser"
+	def ecJobId = "9999"
+	def ticketId = "T12131"
+	def comment = "this is a comment for prod deploy"
 
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapproddeploy'
 		project.prodDeploy.sha1IdList = ["1234", "24343"]
+		project.prodDeploy.ecUser = testuser
+		project.prodDeploy.ecJobId = ecJobId
+		project.prodDeploy.ticketId = ticketId
+		project.prodDeploy.comment = comment
         promoteToProdTask = project.tasks.findByName('promoteToProduction')
         mockJenkinsRunner = new MockFor(JenkinsRunner.class)
     }
@@ -69,10 +76,12 @@ class PromoteToProductionTaskTest {
     @Test
     void shouldTriggerPromoteChefObjectsJob_whenAllParametersArePassed(){
         setupTaskProperties()
+		def expectedTagMessage = ticketId + "-[ec-user:" + testuser + ",ec-jobid:" + ecJobId + "] " + comment 
 
         mockJenkinsRunner.demand.runJob (2) { jobName, params ->
             assertEquals("jenkins_job", jobName)
-            assertNotNull(params)
+			assertNotNull(params)
+			assertEquals(expectedTagMessage, params.get("TAG_MESSAGE"))
         }
 
         mockJenkinsRunner.use {

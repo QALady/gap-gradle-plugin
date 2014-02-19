@@ -11,7 +11,11 @@ import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 
 @RequiredParameters([
-	@Require(parameter = 'prodDeploy.sha1IdList', description = "SHA1 ID List of the chef objects to be promoted to production.")
+	@Require(parameter = 'prodDeploy.sha1IdList', description = "SHA1 ID List of the chef objects to be promoted to production."),
+	@Require(parameter = 'prodDeploy.ecJobId', description = "EC JobId to put in the jenkins job comment."),
+	@Require(parameter = 'prodDeploy.ecUser', description = "EC User that triggered this job to put in the jenkins job comment."),
+	@Require(parameter = 'prodDeploy.comment', description = "Comment for this deploy."),
+	@Require(parameter = 'prodDeploy.ticketId', description = "Approved Service Center Ticket ID.")
 ])
 
 class PromoteToProductionTask extends WatchmenTask {
@@ -45,13 +49,18 @@ class PromoteToProductionTask extends WatchmenTask {
         for (sha1Id in project.prodDeploy.sha1IdList) {
             def jobParams = [:]
             jobParams.put("COMMIT_ID", sha1Id)
-            jobParams.put("TAG_MESSAGE", "Tag Message") //TODO: should be comment from EC procedure + ServiceNow ticket number
+            jobParams.put("TAG_MESSAGE", getTagMessage()) //TODO: should be comment from EC procedure + ServiceNow ticket number
             jRunner.runJob(project.jenkins.knifeJobName, jobParams)
         }
 	}
 
 	def publishCookbookToProdChefServer() {
 		// call the gap cookbook plugin
+	}
+
+	String getTagMessage() {
+		def p = project.prodDeploy
+		"${p.ticketId}-[ec-user:${p.ecUser},ec-jobid:${p.ecJobId}] ${p.comment}" 
 	}
 
 	def validate() {
