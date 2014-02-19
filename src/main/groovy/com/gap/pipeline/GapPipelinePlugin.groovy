@@ -1,5 +1,7 @@
 package com.gap.pipeline
 
+import com.gap.pipeline.ec.CommanderArtifacts
+import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
 import org.gradle.api.Plugin
@@ -25,12 +27,8 @@ class GapPipelinePlugin implements Plugin<Project> {
             new PrepareForProductionDeployTask(project).validate()
         }
 
-        project.task('prepareForProductionDeploy', dependsOn: ['setupBuildDirectories','validatePrepareForProductionInput', 'generateChangeList']) << {
+        project.task('prepareForProductionDeploy', dependsOn: ['setupBuildDirectories','validatePrepareForProductionInput', 'generateAuditReport']) << {
             new PrepareForProductionDeployTask(project).execute()
-        }
-
-        project.task('generateChangeList') << {
-            new GenerateChangeListTask().execute()
         }
 
         project.task('uploadBuildArtifacts') << {
@@ -45,6 +43,9 @@ class GapPipelinePlugin implements Plugin<Project> {
             new DownloadArtifactsTask(project).execute()
         }
 
+        project.task('generateAuditReport') << {
+            new GenerateAuditReportTask(project).execute()
+        }
     }
 
     private configureTasksRequiredByWatchmenSegment(Project project) {

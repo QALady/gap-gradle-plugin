@@ -1,4 +1,8 @@
 package com.gap.pipeline
+
+import com.gap.pipeline.ec.CommanderArtifacts
+import com.gap.pipeline.ec.CommanderClient
+
 import static org.hamcrest.CoreMatchers.is
 import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertThat
@@ -75,9 +79,14 @@ class GapPipelinePluginTest {
     }
 
     @Test
+    void validateGenerateAuditReportTaskIsAddedToTheProject() {
+        taskShouldExist('generateAuditReport')
+    }
+
+    @Test
     void verifyPrepareForProductionTaskDependencies (){
         taskShouldDependOn('prepareForProductionDeploy', 'validatePrepareForProductionInput')
-        taskShouldDependOn('prepareForProductionDeploy', 'generateChangeList')
+        taskShouldDependOn('prepareForProductionDeploy', 'generateAuditReport')
         taskShouldDependOn('prepareForProductionDeploy', 'setupBuildDirectories')
     }
 
@@ -93,18 +102,15 @@ class GapPipelinePluginTest {
     }
 
     @Test
-    void generateChangeListTaskIsAddedToTheProject() {
-        taskShouldExist("generateChangeList")
-    }
-
-    @Test
-    void shouldExecuteGenerateChangeListTask() {
-        def mockTask = new MockFor(GenerateChangeListTask)
+    void shouldExecuteGenerateAuditReportTask() {
+        def mockTask = new MockFor(GenerateAuditReportTask)
         mockTask.demand.execute {}
-        def task = project.tasks.findByName('generateChangeList')
+        def task = project.tasks.findByName('generateAuditReport')
         mockTask.use {
-            task.execute()
+           task.execute()
         }
+
+
     }
 
 
