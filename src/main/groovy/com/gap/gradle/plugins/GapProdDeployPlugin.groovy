@@ -1,6 +1,10 @@
 package com.gap.gradle.plugins
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
 import com.gap.gradle.plugins.cookbook.JenkinsConfig
 import com.gap.gradle.tasks.DeployToProductionTask
+import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
 import com.gap.gradle.tasks.PromoteRpmTask
 import com.gap.gradle.tasks.PromoteToProductionTask
 import com.gap.gradle.tasks.UpdateCookbookSHATask
@@ -11,8 +15,6 @@ import com.gap.pipeline.ProdPrepareConfig
 import com.gap.pipeline.RpmConfig
 import com.gap.pipeline.tasks.GenerateAuditReportTask
 import com.gap.pipeline.tasks.SetUpBuildDirectoriesTask
-import org.gradle.api.Plugin
-import org.gradle.api.Project
 /**
  *
  * this plugin requires gapDeployTools:watchmen_config recipe to be run on a node
@@ -38,7 +40,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 
 		project.task('prepareToPromote') << {
 			println "preparing to promote"
-			//new PrepareToPromoteToProductionTask(project).execute() TODO reactivate when working
+			new PrepareToPromoteToProductionTask(project).execute()
 		}
 
 		project.task('promoteToProduction', dependsOn: 'prepareToPromote') << {

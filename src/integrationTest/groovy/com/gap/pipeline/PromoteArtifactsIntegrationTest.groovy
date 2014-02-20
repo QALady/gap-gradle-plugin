@@ -1,4 +1,4 @@
-package groovy.com.gap.pipeline
+package com.gap.pipeline
 
 import static junit.framework.Assert.assertTrue
 

@@ -10,11 +10,10 @@ class PrepareToPromoteToProductionTask extends WatchmenTask {
 	}
 
 	void execute() {
-		project.gitconfig.userId = project.getProperty("userId")
-		println "USER ID ========== " + project.gitconfig.userId
-		project.gitconfig.fullRepoName = project.prodDeploy.cookbook.name
-		project.gitconfig.shaId = project.prodDeploy.cookbook.sha1Id
+		// task: promote cookbook berksfile
 		project.tasks.findByName('promoteCookbookBerksfile').execute()
+
+		// task: promote RPMs to prod if the artifact is rpms
         if(project.prodDeploy.isRpm){
             project.tasks.findByName('promoteRpm').execute()
         }

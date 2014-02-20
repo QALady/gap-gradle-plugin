@@ -17,17 +17,14 @@ class PromoteRpmIntegrationTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     @Test
-    @Ignore
+	@Ignore
     public void shouldDownloadRefAppRpmToTempFolder(){
         def project = ProjectBuilder.builder().build()
         project.apply plugin: 'gapproddeploy'
-        project.rpmConfig.repoUrl = "http://ks64.phx.gapinc.dev/gapSoftware/watchmen/devel/"
-        project.rpmConfig.prodHostname = "ks64.phx.gapinc.dev"
-        project.rpmConfig.prodPath = "/mnt/repos/gapSoftware/watchmen"
-        project.rpmConfig.channel = "testing"
-        project.rpmConfig.rpmName = "ref-app-1161-1.noarch.rpm"
-        project.rpmConfig.destination = temporaryFolder.root.path
-        project.rpmConfig.appVersion = '1161'
+        project.rpm.yumSourceUrl = "http://ks64.phx.gapinc.dev/gapSoftware/watchmen/devel"
+        project.rpm.yumDestinationUrl = "http://ks64.phx.gapinc.dev/gapSoftware/watchmen/testing"
+        project.rpm.rpmName = "ref-app-1161-1.noarch.rpm"
+        project.rpm.appVersion = '1161'
 
         project.tasks.findByName('promoteRpm').execute()
 
@@ -35,7 +32,7 @@ class PromoteRpmIntegrationTest {
         assertTrue(expectedFile.exists())
 
         def output = new ShellCommand().execute("curl http://ks64.phx.gapinc.dev/gapSoftware/watchmen/testing/")
-        assertTrue(output.contains(project.rpmConfig.rpmName))
+        assertTrue(output.contains(project.rpm.rpmName))
     }
 
     @After
