@@ -11,7 +11,7 @@ class PrepareToPromoteToProductionTask extends WatchmenTask {
 
 	void execute() {
 		// task: promote cookbook berksfile
-		project.tasks.findByName('promoteCookbookBerksfile').execute()
+		//project.tasks.findByName('promoteCookbookBerksfile').execute()
 
 		// task: promote RPMs to prod if the artifact is rpms
         if(project.prodDeploy.isRpm){
