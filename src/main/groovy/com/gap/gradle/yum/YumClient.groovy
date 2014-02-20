@@ -16,7 +16,7 @@ class YumClient {
     }
 
     void downloadRpm(String repoUrl, String rpmName, String destination) {
-        log.info("downloading \${repoUrl}/\${rpmName} to \${destination}")
+        log.info("downloading ${repoUrl}/${rpmName} to ${destination}")
         this.shellCommand.execute("curl -o ${destination}/${rpmName} --create-dirs --fail ${repoUrl}/${rpmName}")
     }
 
