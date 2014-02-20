@@ -54,7 +54,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			println "WOO! done (:"
 		}
 
-        project.task('promoteRpm', dependsOn: 'prepareToPromote') << {
+        project.task('promoteRpm') << {
             new PromoteRpmTask(project).execute()
         }
 

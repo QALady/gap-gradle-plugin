@@ -17,7 +17,7 @@ class YumClientTest {
 
         yum.downloadRpm(repoUrl, rpmName, copyToLocation)
 
-        verify(mockShellCommand).execute(sameString("curl -o tmp/name --create-dirs http://yumrepo.dev/gapSoftware/repoName/devel/name"))
+        verify(mockShellCommand).execute(sameString("curl -o tmp/name --create-dirs --fail http://yumrepo.dev/gapSoftware/repoName/devel/name"))
     }
 
     @Test
