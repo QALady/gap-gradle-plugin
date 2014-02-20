@@ -1,10 +1,7 @@
 package com.gap.gradle.yum
 
 import com.gap.gradle.utils.ShellCommand
-import com.sun.org.apache.commons.logging.LogFactory
-
-
-
+import org.apache.commons.logging.LogFactory
 
 class YumClient {
     def shellCommand
