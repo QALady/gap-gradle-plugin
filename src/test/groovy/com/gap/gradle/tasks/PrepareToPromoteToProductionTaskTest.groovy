@@ -27,7 +27,7 @@ class PrepareToPromoteToProductionTaskTest {
 
     @Test
     public void shouldCallPromoteRpmIfIsRpmFlagIsSet(){
-        project.prodDeploy.isRpm = true
+        project.prodDeploy.isRPM = true
         def promoteRpmWasCalled = false
         project.task('promoteRpm') << {promoteRpmWasCalled = true}
         new PrepareToPromoteToProductionTask(project).execute()
@@ -36,7 +36,7 @@ class PrepareToPromoteToProductionTaskTest {
 
     @Test
     public void shouldNotCallPromoteRpmIfIsRpmIsNotSet(){
-        project.prodDeploy.isRpm = false
+        project.prodDeploy.isRPM = false
         def promoteRpmWasCalled = false
         project.task('promoteRpm') << {promoteRpmWasCalled = true}
         new PrepareToPromoteToProductionTask(project).execute()
