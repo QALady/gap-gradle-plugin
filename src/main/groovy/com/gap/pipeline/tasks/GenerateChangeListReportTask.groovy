@@ -28,6 +28,7 @@ class GenerateChangeListReportTask extends WatchmenTask {
     def nodes
     def isRPM
     def appVersion
+    def rpmVersion
     def project
 
     GenerateChangeListReportTask(project){
@@ -59,6 +60,8 @@ class GenerateChangeListReportTask extends WatchmenTask {
         log.info("Is RPM deploy? - " + isRPM)
         appVersion = project.prodPrepare.appVersion
         log.info("Application deploy version - " + appVersion)
+        rpmVersion = project.prodPrepare.rpmName
+        log.info("Application deploy version - " + rpmVersion)
 
         createChangelistFile()
         copyArtifactsForUseByEC()
@@ -85,6 +88,7 @@ class GenerateChangeListReportTask extends WatchmenTask {
         writer.append("Application Node - " + nodes + "\n")
         writer.append("RPM Artifact? - " + isRPM + "\n")
         writer.append("Application Version - " + appVersion)
+        writer.append("RPM Version - " + rpmVersion)
 
         log.info("ChangeListReport is in - " + changeListReport.absolutePath)
         writer.close()
