@@ -9,6 +9,8 @@ import com.gap.pipeline.GitConfig
 import com.gap.pipeline.ProdDeployParameterConfig
 import com.gap.pipeline.ProdPrepareConfig
 import com.gap.pipeline.RpmConfig
+import com.gap.pipeline.tasks.GenerateAuditReportTask
+import com.gap.pipeline.tasks.SetUpBuildDirectoriesTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 /**
@@ -29,6 +31,10 @@ class GapProdDeployPlugin implements Plugin<Project>{
 		
 		loadJenkinsConfig(project)
 		loadProdDeployConfig(project)
+
+        project.task('setupBuildDirectories') <<{
+            new SetUpBuildDirectoriesTask(project).execute()
+        }
 
 		project.task('prepareToPromote') << {
 			println "preparing to promote"
@@ -53,6 +59,10 @@ class GapProdDeployPlugin implements Plugin<Project>{
 		project.task('promoteCookbookBerksfile') << {
 			new UpdateCookbookSHATask(project).execute()
 		}
+
+        project.task('generateAuditReport', dependsOn: ['setupBuildDirectories']) << {
+            new GenerateAuditReportTask(project).execute()
+        }
 
     }
 

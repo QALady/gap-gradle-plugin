@@ -78,14 +78,14 @@ class GapPipelinePluginTest {
     }
 
     @Test
-    void validateGenerateAuditReportTaskIsAddedToTheProject() {
-        taskShouldExist('generateAuditReport')
+    void validateGenerateChangeListReportTaskIsAddedToTheProject() {
+        taskShouldExist('generateChangeListReport')
     }
 
     @Test
     void verifyPrepareForProductionTaskDependencies (){
         taskShouldDependOn('prepareForProductionDeploy', 'validatePrepareForProductionInput')
-        taskShouldDependOn('prepareForProductionDeploy', 'generateAuditReport')
+        taskShouldDependOn('prepareForProductionDeploy', 'generateChangeListReport')
         taskShouldDependOn('prepareForProductionDeploy', 'setupBuildDirectories')
     }
 
@@ -101,15 +101,13 @@ class GapPipelinePluginTest {
     }
 
     @Test
-    void shouldExecuteGenerateAuditReportTask() {
-        def mockTask = new MockFor(GenerateAuditReportTask)
+    void shouldExecuteGenerateChangeListReportTask() {
+        def mockTask = new MockFor(GenerateChangeListReportTask)
         mockTask.demand.execute {}
-        def task = project.tasks.findByName('generateAuditReport')
+        def task = project.tasks.findByName('generateChangeListReport')
         mockTask.use {
            task.execute()
         }
-
-
     }
 
 

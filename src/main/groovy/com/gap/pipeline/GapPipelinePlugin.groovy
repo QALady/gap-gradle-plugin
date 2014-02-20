@@ -25,7 +25,7 @@ class GapPipelinePlugin implements Plugin<Project> {
             new PrepareForProductionDeployTask(project).validate()
         }
 
-        project.task('prepareForProductionDeploy', dependsOn: ['setupBuildDirectories','validatePrepareForProductionInput', 'generateAuditReport']) << {
+        project.task('prepareForProductionDeploy', dependsOn: ['setupBuildDirectories','validatePrepareForProductionInput', 'generateChangeListReport']) << {
             new PrepareForProductionDeployTask(project).execute()
         }
 
@@ -45,8 +45,8 @@ class GapPipelinePlugin implements Plugin<Project> {
             new DownloadArtifactsTask(project).execute()
         }
 
-        project.task('generateAuditReport',dependsOn: ['setupBuildDirectories']) << {
-            new GenerateAuditReportTask(project).execute()
+        project.task('generateChangeListReport',dependsOn: ['setupBuildDirectories']) << {
+            new GenerateChangeListReportTask(project).execute()
         }
 
         project.task("promoteArtifacts") << {

@@ -1,4 +1,8 @@
 package com.gap.gradle.plugins
+
+import com.gap.pipeline.tasks.GenerateAuditReportTask
+import com.gap.pipeline.tasks.GenerateChangeListReportTask
+
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertNotNull
@@ -89,6 +93,26 @@ class GapProdDeployPluginTest {
     }
 
     @Test
+    void setupBuildDirsTaskIsAddedToTheProject (){
+        taskShouldExist('setupBuildDirectories')
+    }
+
+    @Test
+    void generateAuditReportTaskIsAddedToTheProject (){
+        taskShouldExist('generateAuditReport')
+    }
+
+    @Test
+    void shouldExecuteGenerateAuditReportTask() {
+        def mockTask = new MockFor(GenerateAuditReportTask)
+        mockTask.demand.execute {}
+        def task = project.tasks.findByName('generateAuditReport')
+        mockTask.use {
+            task.execute()
+        }
+    }
+
+    @Test
     void shouldExecutePromoteRpmTask(){
         def mockRpmTask = new MockFor(PromoteRpmTask)
         def mockPrepareTask = new MockFor(PrepareToPromoteToProductionTask)
@@ -102,4 +126,5 @@ class GapProdDeployPluginTest {
 	def taskShouldExist(task) {
 		assertThat(project.tasks.findByName(task), notNullValue())
 	}
+
 }
