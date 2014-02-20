@@ -48,7 +48,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			new PromoteToProductionTask(project).execute()
 		}
 
-		project.task('deployToProduction', dependsOn: 'promoteToProduction') << {
+		project.task('deployToProduction', dependsOn: ['promoteToProduction', 'generateAuditReport']) << {
 			println "deploying to production"
 			new DeployToProductionTask(project).execute()
 			println "WOO! done (:"
