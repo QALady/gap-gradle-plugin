@@ -94,7 +94,7 @@ class GapProdDeployPluginTest {
 
     @Test
     void setupBuildDirsTaskIsAddedToTheProject (){
-        taskShouldExist('setupBuildDirectories')
+        taskShouldExist('setupProdBuildDirectories')
     }
 
     @Test

@@ -32,7 +32,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 		loadJenkinsConfig(project)
 		loadProdDeployConfig(project)
 
-        project.task('setupBuildDirectories') <<{
+        project.task('setupProdBuildDirectories') <<{
             new SetUpBuildDirectoriesTask(project).execute()
         }
 
@@ -60,7 +60,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			new UpdateCookbookSHATask(project).execute()
 		}
 
-        project.task('generateAuditReport', dependsOn: ['setupBuildDirectories']) << {
+        project.task('generateAuditReport', dependsOn: ['setupProdBuildDirectories']) << {
             new GenerateAuditReportTask(project).execute()
         }
 
