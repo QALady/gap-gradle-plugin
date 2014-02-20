@@ -59,7 +59,7 @@ class GenerateAuditReportTask extends WatchmenTask {
 
         writer.append("***********************************************************************************************\n");
         writer.append("*                                                                                             *\n");
-        writer.append("                               Production Deployment Audit Report                              \n");
+        writer.append("*                              Production Deployment Audit Report                             *\n");
         writer.append("*                                                                                             *\n");
         writer.append("***********************************************************************************************\n");
 

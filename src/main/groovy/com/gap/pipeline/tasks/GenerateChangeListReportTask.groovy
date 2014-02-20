@@ -74,7 +74,7 @@ class GenerateChangeListReportTask extends WatchmenTask {
 
         writer.append("***********************************************************************************************\n");
         writer.append("*                                                                                             *\n");
-        writer.append("                               Production Deployment ChangeList Report                         \n");
+        writer.append("*                              Production Deployment ChangeList Report                        *\n");
         writer.append("*                                                                                             *\n");
         writer.append("***********************************************************************************************\n");
 
@@ -87,7 +87,7 @@ class GenerateChangeListReportTask extends WatchmenTask {
         writer.append("Chef Cookbook ShaId - " + cookbookSha1Id + "\n")
         writer.append("Application Node - " + nodes + "\n")
         writer.append("RPM Artifact? - " + isRPM + "\n")
-        writer.append("Application Version - " + appVersion)
+        writer.append("Application Version - " + appVersion + "\n")
         writer.append("RPM Version - " + rpmVersion)
 
         log.info("ChangeListReport is in - " + changeListReport.absolutePath)
