@@ -1,8 +1,6 @@
 package com.gap.gradle.plugins
-
-import org.gradle.api.Project
 import org.gradle.api.Plugin
-import org.gradle.api.tasks.testing.Test
+import org.gradle.api.Project
 
 class GapMetricsPlugin implements Plugin<Project>{
   void apply(Project project) {
@@ -23,7 +21,10 @@ class GapMetricsPlugin implements Plugin<Project>{
         }
 
         dependencies {
-          coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.0.3'
+            coberturaRuntime 'maven-plugins:maven-cobertura-plugin:1.3'
+            coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.0.3', {
+                exclude group: 'maven-plugins'
+            }
         }
 
         project.task('coberturaPrepare') {
@@ -41,7 +42,7 @@ class GapMetricsPlugin implements Plugin<Project>{
           doLast {
             ant.coberturaInstrument(todir: outputDir, datafile: coberturaPrepare.datafileLocation) {
               fileset(dir: sourceSets.main.output.classesDir, excludes:coberturaExcludes)
-            }   
+            }
           }
         }
 
