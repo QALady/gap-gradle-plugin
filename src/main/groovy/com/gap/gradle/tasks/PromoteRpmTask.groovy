@@ -6,6 +6,7 @@ import com.gap.gradle.yum.YumClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 import com.gap.pipeline.tasks.annotations.Require
+import org.apache.commons.logging.LogFactory
 
 @RequiredParameters([
     @Require(parameter='rpm.yumSourceUrl', description='name of repo within gapSoftware that hold rpm'),
@@ -17,6 +18,7 @@ class PromoteRpmTask extends WatchmenTask{
 
     Project project
     YumClient yumClient
+    def log = LogFactory.getLog(PromoteRpmTask)
 
 
     PromoteRpmTask(Project project, YumClient yumClient) {
@@ -41,12 +43,17 @@ class PromoteRpmTask extends WatchmenTask{
     }
 
     def execute(){
-        validate()
-        def copyToLocation = project.buildDir.path + '/tmp'
+        if(project.prodDeploy.isRPM){
+            validate()
+            def copyToLocation = project.buildDir.path + '/tmp'
 
-        yumClient.downloadRpm(project.rpm.yumSourceUrl, project.rpm.rpmName, copyToLocation)
-        yumClient.uploadRpm(project.rpm.rpmName, copyToLocation, project.rpm.yumDestinationUrl)
-        yumClient.recreateYumRepo(project.rpm.yumDestinationUrl)
+            yumClient.downloadRpm(project.rpm.yumSourceUrl, project.rpm.rpmName, copyToLocation)
+            yumClient.uploadRpm(project.rpm.rpmName, copyToLocation, project.rpm.yumDestinationUrl)
+            yumClient.recreateYumRepo(project.rpm.yumDestinationUrl)
+        }
+        else{
+            log.info("This deployment does not require RPM promotion. Doing nothing...")
+        }
     }
 
 }

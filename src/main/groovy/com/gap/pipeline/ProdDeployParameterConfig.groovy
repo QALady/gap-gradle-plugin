@@ -21,7 +21,7 @@ class ProdDeployParameterConfig {
 		this.roleName = p.roleName
 		this.nodes = toList(p.nodes)
 		this.sha1IdList = p.sha1IdList
-		this.isRPM = p.isRPM
+		this.isRPM = Boolean.valueOf(p.isRPM)
 		this.appVersion = p.appVersion
 		this.cookbook = p.getCookbookConfig()
 		this.rpm = p.getRpmConfig()
