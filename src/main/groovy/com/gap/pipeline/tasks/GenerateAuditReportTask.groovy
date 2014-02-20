@@ -68,7 +68,6 @@ class GenerateAuditReportTask extends WatchmenTask {
     }
 
     def createChangelistFile(){
-        new File("${project.buildDir}/reports").mkdirs()
         File auditReport = new File("${project.buildDir}/reports/auditReport.txt")
         def writer = auditReport.newWriter()
 
