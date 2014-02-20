@@ -37,6 +37,10 @@ class GapPipelinePlugin implements Plugin<Project> {
             project = new DownloadArtifactsTask(project).configure()
         }
 
+        if(project.getGradle().startParameter.taskNames.contains('promoteArtifacts')){
+            project = new PromoteArtifactsTask(project).configure()
+        }
+
         project.task('downloadArtifacts') << {
             new DownloadArtifactsTask(project).execute()
         }

@@ -12,7 +12,7 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
 
-class PromoteArtifactsToProdTaskTest {
+class PromoteArtifactsTaskTest {
     private Project project
     private PromoteArtifactsTask task
 
@@ -56,11 +56,13 @@ class PromoteArtifactsToProdTaskTest {
     void shouldDownloadTheArtifactsFromTheRightLocation(){
         def downloadCoordinates = null
         def downloadConfiguration = null
+        def downloaddir = null
         project.fromCoordinates = 'com.gap.sandbox:testDownload:201'
         project.fromConfiguration = 'myconfig'
         project.task('downloadArtifacts') << {
             downloadConfiguration = project.artifactConfiguration
             downloadCoordinates = project.artifactCoordinates
+            downloaddir = project.destination
         }
 
         project.task('uploadBuildArtifacts') << {  }
@@ -68,6 +70,7 @@ class PromoteArtifactsToProdTaskTest {
 
         assertEquals("com.gap.sandbox:testDownload:201", downloadCoordinates)
         assertEquals("myconfig", downloadConfiguration)
+        assertEquals("${project.rootDir}/downloads", downloaddir)
     }
 
     @Test

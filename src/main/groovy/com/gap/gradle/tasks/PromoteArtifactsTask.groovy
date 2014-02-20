@@ -1,5 +1,6 @@
 package com.gap.gradle.tasks
 
+import com.gap.pipeline.tasks.DownloadArtifactsTask
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
@@ -47,8 +48,18 @@ class PromoteArtifactsTask extends WatchmenTask {
     private downloadArtifacts(downloadDir) {
         new File(downloadDir).mkdirs()
         //setting up project parameters required by downloadArtifacts task
+        configureParametersForDownloadTask()
+        project.tasks.findByName('downloadArtifacts').execute()
+    }
+
+    private configureParametersForDownloadTask() {
         project.artifactCoordinates = project.fromCoordinates
         project.artifactConfiguration = project.fromConfiguration
-        project.tasks.findByName('downloadArtifacts').execute()
+        project.destination = "${project.rootDir}/downloads"
+    }
+
+    def configure() {
+        configureParametersForDownloadTask()
+        new DownloadArtifactsTask(project).configure()
     }
 }
