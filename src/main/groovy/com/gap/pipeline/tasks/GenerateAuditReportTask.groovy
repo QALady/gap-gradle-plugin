@@ -64,12 +64,12 @@ class GenerateAuditReportTask extends WatchmenTask {
             *                                                                                             *
             ***********************************************************************************************
             *                                                                                             *
-            *   EC UserID - ${ecUserId}                                                                   *
-            *   EC UserName - ${ecUserName}                                                               *
-            *   Job Start Time - ${ecStartTime}                                                           *
-            *   Comments - ${ecComment}                                                                   *
-            *   Service Ticket - ${ecServiceTicketId}                                                     *
-            *   Artifact Co-ordinate - ${ecArtifactCoordinates}                                           *
+            *   EC UserID - ${ecUserId}
+            *   EC UserName - ${ecUserName}
+            *   Job Start Time - ${ecStartTime}
+            *   Comments - ${ecComment}
+            *   Service Ticket - ${ecServiceTicketId}
+            *   Artifact Co-ordinate - ${ecArtifactCoordinates}
             *                                                                                             *
             ***********************************************************************************************
         """

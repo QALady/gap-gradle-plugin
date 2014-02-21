@@ -81,17 +81,17 @@ class GenerateChangeListReportTask extends WatchmenTask {
             *                                                                                             *
             ***********************************************************************************************
             *                                                                                             *
-            *  EC UserID - ${ecUserId}                                                                    *
-            *  EC UserName - ${ecUserName}                                                                *
-            *  Job Start Time - ${ecStartTime}                                                            *
-            *  ChefObjects ShaIds - ${sha1Ids}                                                            *
-            *  Chef RoleName - ${roleName}                                                                *
-            *  Chef CookbookName - ${cookbookName}                                                        *
-            *  Chef Cookbook ShaId - ${cookbookSha1Id}                                                    *
-            *  Application Node - ${nodes}                                                                *
-            *  RPM Artifact? - ${isRPM}                                                                   *
-            *  Application Version - ${appVersion}                                                        *
-            *  RPM Version - ${rpmVersion}                                                                *
+            *  EC UserID - ${ecUserId}
+            *  EC UserName - ${ecUserName}
+            *  Job Start Time - ${ecStartTime}
+            *  ChefObjects ShaIds - ${sha1Ids}
+            *  Chef RoleName - ${roleName}
+            *  Chef CookbookName - ${cookbookName}
+            *  Chef Cookbook ShaId - ${cookbookSha1Id}
+            *  Application Node - ${nodes}
+            *  RPM Artifact? - ${isRPM}
+            *  Application Version - ${appVersion}
+            *  RPM Version - ${rpmVersion}
             *                                                                                             *
             ***********************************************************************************************
         """
@@ -109,35 +109,5 @@ class GenerateChangeListReportTask extends WatchmenTask {
     private void publishArtifactLinksToEC() {
         def artifacts = new CommanderArtifacts(new CommanderClient());
         artifacts.publishLinks()
-    }
-
-    def validate() {
-        super.validate()
-        sha1IdList = processSha1Ids()
-        sha1IdList = sha1IdList.findAll {
-            if(!(it ==~ ProdPrepareConfig.SHA1_PATTERN)) {
-                throw new InvalidSHA1IDException("Invalid SHA1 id: ${it}")
-            }
-            return true
-        }
-        if (!(project.prodPrepare.cookbookSha1Id ==~ ProdPrepareConfig.SHA1_PATTERN)) {
-            throw new InvalidSHA1IDException("Invalid SHA1 id: ${project.prodPrepare.cookbookSha1Id}")
-        }
-    }
-
-    private def processSha1Ids() {
-        if (project.prodPrepare.sha1Ids) {
-            def sha1Ids = []
-            project.prodPrepare.sha1Ids.eachLine { line ->
-                line.split(',').each { sha1 ->
-                    if (sha1.trim()) {
-                        sha1Ids << sha1.trim()
-                    }
-                }
-            }
-            sha1Ids
-        } else {
-            []
-        }
     }
 }
