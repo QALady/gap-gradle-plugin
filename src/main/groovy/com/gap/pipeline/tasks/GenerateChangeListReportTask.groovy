@@ -105,7 +105,6 @@ class GenerateChangeListReportTask extends WatchmenTask {
 
     def validate() {
         log.info("Executing validate method...")
-        log.info("commanderClient User - " + commanderClient.getUserId())
 
         super.validate()
         if (!commanderClient?.getUserId()) {
