@@ -84,12 +84,13 @@ class GenerateAuditReportTask extends WatchmenTask {
     }
 
     def validate() {
+        log.info("Executing validate method...")
         super.validate()
-        if (null == commanderClient?.userId) {
+        if (!commanderClient?.getUserId()) {
             throw new MissingParameterException()
-        }else if(null == commanderClient?.userName) {
+        }else if(!commanderClient?.getUserName()) {
             throw new MissingParameterException()
-        }else if(null == commanderClient?.startTime) {
+        }else if(!commanderClient?.getStartTime()) {
             throw new MissingParameterException()
         }
     }

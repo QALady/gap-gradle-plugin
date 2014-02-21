@@ -104,12 +104,15 @@ class GenerateChangeListReportTask extends WatchmenTask {
     }
 
     def validate() {
+        log.info("Executing validate method...")
+        log.info("commanderClient User - " + commanderClient.getUserId())
+
         super.validate()
-        if (!commanderClient?.userId) {
+        if (!commanderClient?.getUserId()) {
             throw new MissingParameterException()
-        }else if(!commanderClient?.userName) {
+        }else if(!commanderClient?.getUserName()) {
             throw new MissingParameterException()
-        }else if(!commanderClient?.startTime) {
+        }else if(!commanderClient?.getStartTime()) {
             throw new MissingParameterException()
         }
     }
