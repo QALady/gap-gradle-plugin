@@ -57,19 +57,22 @@ class GenerateAuditReportTask extends WatchmenTask {
         File auditReport = new File("${project.buildDir}/reports/Audit_Report.txt")
         def writer = auditReport.newWriter()
 
-        writer.append("***********************************************************************************************\n");
-        writer.append("*                                                                                             *\n");
-        writer.append("*                              Production Deployment Audit Report                             *\n");
-        writer.append("*                                                                                             *\n");
-        writer.append("***********************************************************************************************\n");
-
-        writer.append("EC UserID - " + ecUserId + "\n")
-        writer.append("EC UserName - " + ecUserName + "\n")
-        writer.append("Job Start Time - " + ecStartTime + "\n")
-        writer.append("Comments - " + ecComment + "\n")
-        writer.append("Service Ticket - " + ecServiceTicketId + "\n")
-        writer.append("Artifact Co-ordinate - " + ecArtifactCoordinates)
-
+        """
+            ***********************************************************************************************
+            *                                                                                             *
+            *                              Production Deployment Audit Report                             *
+            *                                                                                             *
+            ***********************************************************************************************
+            *                                                                                             *
+            *   EC UserID - ${ecUserId}                                                                   *
+            *   EC UserName - ${ecUserName}                                                               *
+            *   Job Start Time - ${ecStartTime}                                                           *
+            *   Comments - ${ecComment}                                                                   *
+            *   Service Ticket - ${ecServiceTicketId}                                                     *
+            *   Artifact Co-ordinate - ${ecArtifactCoordinates}                                           *
+            *                                                                                             *
+            ***********************************************************************************************
+        """
 
         log.info("File is in - " + auditReport.absolutePath)
         writer.close()

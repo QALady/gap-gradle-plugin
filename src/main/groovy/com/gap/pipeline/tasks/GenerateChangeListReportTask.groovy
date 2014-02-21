@@ -72,23 +72,27 @@ class GenerateChangeListReportTask extends WatchmenTask {
         File changeListReport = new File("${project.buildDir}/reports/ChangeList_Report.txt")
         def writer = changeListReport.newWriter()
 
-        writer.append("***********************************************************************************************\n");
-        writer.append("*                                                                                             *\n");
-        writer.append("*                              Production Deployment ChangeList Report                        *\n");
-        writer.append("*                                                                                             *\n");
-        writer.append("***********************************************************************************************\n");
-
-        writer.append("EC UserID - " + ecUserId + "\n")
-        writer.append("EC UserName - " + ecUserName + "\n")
-        writer.append("Job Start Time - " + ecStartTime + "\n")
-        writer.append("ChefObjects ShaIds - " + sha1Ids + "\n")
-        writer.append("Chef RoleName - " + roleName + "\n")
-        writer.append("Chef CookbookName - " + cookbookName + "\n")
-        writer.append("Chef Cookbook ShaId - " + cookbookSha1Id + "\n")
-        writer.append("Application Node - " + nodes + "\n")
-        writer.append("RPM Artifact? - " + isRPM + "\n")
-        writer.append("Application Version - " + appVersion + "\n")
-        writer.append("RPM Version - " + rpmVersion)
+        """
+            ***********************************************************************************************
+            *                                                                                             *
+            *                              Production Deployment ChangeList Report                        *
+            *                                                                                             *
+            ***********************************************************************************************
+            *                                                                                             *
+            *  EC UserID - ${ecUserId}                                                                    *
+            *  EC UserName - ${ecUserName}                                                                *
+            *  Job Start Time - ${ecStartTime}                                                            *
+            *  ChefObjects ShaIds - ${sha1Ids}                                                            *
+            *  Chef RoleName - ${roleName}                                                                *
+            *  Chef CookbookName - ${cookbookName}                                                        *
+            *  Chef Cookbook ShaId - ${cookbookSha1Id}                                                    *
+            *  Application Node - ${nodes}                                                                *
+            *  RPM Artifact? - ${isRPM}                                                                   *
+            *  Application Version - ${appVersion}                                                        *
+            *  RPM Version - ${rpmVersion}                                                                *
+            *                                                                                             *
+            ***********************************************************************************************
+        """
 
         log.info("ChangeListReport is in - " + changeListReport.absolutePath)
         writer.close()
