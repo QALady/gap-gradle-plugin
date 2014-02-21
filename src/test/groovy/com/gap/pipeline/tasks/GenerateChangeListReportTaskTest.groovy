@@ -5,7 +5,11 @@ import com.gap.pipeline.ec.CommanderClient
 import groovy.mock.interceptor.MockFor
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
+
+import static org.junit.rules.ExpectedException.none
 
 class GenerateChangeListReportTaskTest {
 
@@ -16,6 +20,8 @@ class GenerateChangeListReportTaskTest {
 
 	final static String sha1_1 = "6dc4a1a3748a29ec8a8e46fbdcd22b1e55206999,87986d3e66cd088804c5cf1b822aa155e1b03f00"
 	final static String cookbookSha1Id_1 = "bae7745b6577b402d946d35587bf629b3814210a"
+    @Rule
+    public final ExpectedException expectedException = none()
 
     @Before
     void setUp (){
@@ -29,6 +35,9 @@ class GenerateChangeListReportTaskTest {
         project.prodPrepare.roleName = 'webposCompile'
         project.prodPrepare.nodes = 'dgphxposci004.phx.gapinc.dev'
         project.prodPrepare.isRPM = true
+        project.userId = 'ka7q5f6'
+        project.userName = 'kamesh'
+        project.startTime = '20140214'
 
         generateChangeListReportTask = new GenerateChangeListReportTask(project)
         mockCommanderClient = new MockFor(CommanderClient)
@@ -38,7 +47,26 @@ class GenerateChangeListReportTaskTest {
     @Test
     void shouldGenerateChangeListReport_whenValuesAreValid(){
         new File("${project.buildDir}/reports").mkdirs()
-        setupDefaultMocks()
+        mockCommanderArtifacts.demand.copyToArtifactsDir { }
+        mockCommanderArtifacts.demand.publishLinks { }
+
+        mockCommanderClient.demand.getUserId {'ka7q5f6'}
+        mockCommanderClient.demand.getUserName{'kamesh'}
+        mockCommanderClient.demand.getStartTime{'14022014'}
+        mockCommanderClient.demand.getUserId {'ka7q5f6'}
+        mockCommanderClient.demand.getUserName{'kamesh'}
+        mockCommanderClient.demand.getStartTime{'14022014'}
+        executeTask()
+    }
+
+    @Test
+    void shouldFailToGenerateChangeListReport_whenValuesAreNotValid(){
+        expectedException.expect(Exception)
+        new File("${project.buildDir}/reports").mkdirs()
+
+        mockCommanderClient.demand.getUserId { null }
+        mockCommanderClient.demand.getUserName { null }
+        mockCommanderClient.demand.getStartTime { null }
         executeTask()
     }
 
@@ -47,6 +75,7 @@ class GenerateChangeListReportTaskTest {
         mockCommanderClient.demand.getUserName{'kamesh'}
         mockCommanderClient.demand.getStartTime{'14022014'}
     }
+
     private void setupDefaultMocks() {
         mockCommanderArtifacts.demand.copyToArtifactsDir { }
         mockCommanderArtifacts.demand.publishLinks { }

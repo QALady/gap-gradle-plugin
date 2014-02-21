@@ -1,6 +1,7 @@
 package com.gap.pipeline.tasks
 
 import com.gap.pipeline.ec.CommanderArtifacts
+import com.gap.pipeline.exception.MissingParameterException
 import org.apache.commons.logging.LogFactory
 
 import com.gap.pipeline.ec.CommanderClient
@@ -25,6 +26,7 @@ class GenerateAuditReportTask extends WatchmenTask {
     def ecServiceTicketId
     def project
     def ecArtifactCoordinates
+    def commanderClient
 
     GenerateAuditReportTask(project){
         super(project)
@@ -34,12 +36,14 @@ class GenerateAuditReportTask extends WatchmenTask {
     public void execute(){
 
         log.info("Executing GenerateChangeList task ...")
-        def commanderClient = new CommanderClient()
-        ecUserId = commanderClient.getUserId().toString()
+        commanderClient = new CommanderClient()
+        validate()
+
+        ecUserId = commanderClient.getUserId()?.toString()
         log.info("UserID from EC - " + ecUserId)
-        ecUserName = commanderClient.getUserName().toString()
+        ecUserName = commanderClient.getUserName()?.toString()
         log.info("UserName from EC - " + ecUserName)
-        ecStartTime = commanderClient.getStartTime().toString()
+        ecStartTime = commanderClient.getStartTime()?.toString()
         log.info("StartTime from EC - " + ecStartTime)
         ecComment = project.tagMessageComment
         log.info("Comment - " + ecComment)
@@ -77,6 +81,17 @@ class GenerateAuditReportTask extends WatchmenTask {
         log.info("File is in - " + auditReport.absolutePath)
         writer.close()
 
+    }
+
+    def validate() {
+        super.validate()
+        if (null == commanderClient?.userId) {
+            throw new MissingParameterException()
+        }else if(null == commanderClient?.userName) {
+            throw new MissingParameterException()
+        }else if(null == commanderClient?.startTime) {
+            throw new MissingParameterException()
+        }
     }
 
     private void copyArtifactsForUseByEC () {

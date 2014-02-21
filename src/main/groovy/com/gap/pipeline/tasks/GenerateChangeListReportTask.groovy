@@ -1,9 +1,8 @@
 package com.gap.pipeline.tasks
 
-import com.gap.pipeline.ProdPrepareConfig
 import com.gap.pipeline.ec.CommanderArtifacts
 import com.gap.pipeline.ec.CommanderClient
-import com.gap.pipeline.exception.InvalidSHA1IDException
+import com.gap.pipeline.exception.MissingParameterException
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 import org.apache.commons.logging.LogFactory
@@ -32,6 +31,7 @@ class GenerateChangeListReportTask extends WatchmenTask {
     def appVersion
     def rpmVersion
     def project
+    def commanderClient
 
     GenerateChangeListReportTask(project){
         super(project)
@@ -41,12 +41,14 @@ class GenerateChangeListReportTask extends WatchmenTask {
     public void execute(){
 
         log.info("Executing GenerateChangeList task ...")
-        def commanderClient = new CommanderClient()
-        ecUserId = commanderClient.getUserId().toString()
+        commanderClient = new CommanderClient()
+        validate()
+
+        ecUserId = commanderClient.getUserId()?.toString()
         log.info("UserID from EC - " + ecUserId)
-        ecUserName = commanderClient.getUserName().toString()
+        ecUserName = commanderClient.getUserName()?.toString()
         log.info("UserName from EC - " + ecUserName)
-        ecStartTime = commanderClient.getStartTime().toString()
+        ecStartTime = commanderClient.getStartTime()?.toString()
         log.info("StartTime from EC - " + ecStartTime)
         sha1Ids = project.prodPrepare.sha1Ids
         log.info("Sha1 ID(s) - " + sha1Ids)
@@ -99,6 +101,17 @@ class GenerateChangeListReportTask extends WatchmenTask {
         log.info("ChangeListReport is in - " + changeListReport.absolutePath)
         writer.close()
 
+    }
+
+    def validate() {
+        super.validate()
+        if (!commanderClient?.userId) {
+            throw new MissingParameterException()
+        }else if(!commanderClient?.userName) {
+            throw new MissingParameterException()
+        }else if(!commanderClient?.startTime) {
+            throw new MissingParameterException()
+        }
     }
 
     private void copyArtifactsForUseByEC () {
