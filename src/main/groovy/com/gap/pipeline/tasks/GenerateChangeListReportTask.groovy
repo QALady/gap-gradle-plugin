@@ -1,7 +1,9 @@
 package com.gap.pipeline.tasks
 
+import com.gap.pipeline.ProdPrepareConfig
 import com.gap.pipeline.ec.CommanderArtifacts
 import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.exception.InvalidSHA1IDException
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 import org.apache.commons.logging.LogFactory
@@ -71,7 +73,7 @@ class GenerateChangeListReportTask extends WatchmenTask {
     def createChangelistFile(){
         File changeListReport = new File("${project.buildDir}/reports/ChangeList_Report.txt")
         def writer = changeListReport.newWriter()
-
+        writer.append(
         """
             ***********************************************************************************************
             *                                                                                             *
@@ -93,7 +95,7 @@ class GenerateChangeListReportTask extends WatchmenTask {
             *                                                                                             *
             ***********************************************************************************************
         """
-
+        )
         log.info("ChangeListReport is in - " + changeListReport.absolutePath)
         writer.close()
 
@@ -107,5 +109,35 @@ class GenerateChangeListReportTask extends WatchmenTask {
     private void publishArtifactLinksToEC() {
         def artifacts = new CommanderArtifacts(new CommanderClient());
         artifacts.publishLinks()
+    }
+
+    def validate() {
+        super.validate()
+        sha1IdList = processSha1Ids()
+        sha1IdList = sha1IdList.findAll {
+            if(!(it ==~ ProdPrepareConfig.SHA1_PATTERN)) {
+                throw new InvalidSHA1IDException("Invalid SHA1 id: ${it}")
+            }
+            return true
+        }
+        if (!(project.prodPrepare.cookbookSha1Id ==~ ProdPrepareConfig.SHA1_PATTERN)) {
+            throw new InvalidSHA1IDException("Invalid SHA1 id: ${project.prodPrepare.cookbookSha1Id}")
+        }
+    }
+
+    private def processSha1Ids() {
+        if (project.prodPrepare.sha1Ids) {
+            def sha1Ids = []
+            project.prodPrepare.sha1Ids.eachLine { line ->
+                line.split(',').each { sha1 ->
+                    if (sha1.trim()) {
+                        sha1Ids << sha1.trim()
+                    }
+                }
+            }
+            sha1Ids
+        } else {
+            []
+        }
     }
 }

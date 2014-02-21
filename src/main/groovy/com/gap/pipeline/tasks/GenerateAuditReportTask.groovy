@@ -56,7 +56,7 @@ class GenerateAuditReportTask extends WatchmenTask {
     def createChangelistFile(){
         File auditReport = new File("${project.buildDir}/reports/Audit_Report.txt")
         def writer = auditReport.newWriter()
-
+        writer.append(
         """
             ***********************************************************************************************
             *                                                                                             *
@@ -73,7 +73,7 @@ class GenerateAuditReportTask extends WatchmenTask {
             *                                                                                             *
             ***********************************************************************************************
         """
-
+        )
         log.info("File is in - " + auditReport.absolutePath)
         writer.close()
 
