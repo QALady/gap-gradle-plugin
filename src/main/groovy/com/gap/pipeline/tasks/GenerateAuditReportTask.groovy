@@ -11,10 +11,7 @@ import com.gap.pipeline.tasks.annotations.RequiredParameters
 @RequiredParameters([
 @Require(parameter = 'artifactCoordinates', description = "location of artifacts, to pass to prodDeploy job"),
 @Require(parameter = 'tagMessageComment', description = "Comments provided by Release Engineer"),
-@Require(parameter = 'ticketId', description = "ServiceCenter Task Id"),
-@Require(parameter = 'userId', description = "User ID of person triggering deployToProd EC job"),
-@Require(parameter = 'userName', description = "User Name of person triggering deployToProd EC job"),
-@Require(parameter = 'startTime', description = "Start time triggering deployToProd EC job")
+@Require(parameter = 'ticketId', description = "ServiceCenter Task Id")
 
 ])
 class GenerateAuditReportTask extends WatchmenTask {

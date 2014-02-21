@@ -11,10 +11,7 @@ import org.apache.commons.logging.LogFactory
 @Require(parameter = 'prodPrepare.sha1Ids', description = "SHA ID's of the chef objects to promote"),
 @Require(parameter = 'prodPrepare.appVersion', description = "Version of the application that should be deployed in the prod node."),
 @Require(parameter = 'prodPrepare.cookbookSha1Id', description = "Application promoted cookbook sha1Id in git"),
-@Require(parameter = 'prodPrepare.cookbookName', description = "Application cookbook name"),
-@Require(parameter = 'userId', description = "User ID of person triggering deployToProd EC job"),
-@Require(parameter = 'userName', description = "User Name of person triggering deployToProd EC job"),
-@Require(parameter = 'startTime', description = "Start time triggering deployToProd EC job")
+@Require(parameter = 'prodPrepare.cookbookName', description = "Application cookbook name")
 
 ])
 class GenerateChangeListReportTask extends WatchmenTask {
