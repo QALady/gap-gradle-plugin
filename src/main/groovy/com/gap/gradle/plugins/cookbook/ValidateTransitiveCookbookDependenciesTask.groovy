@@ -27,13 +27,7 @@ class ValidateTransitiveCookbookDependenciesTask {
     def verifyDependencies() {
         if (project.chef.metadata.dependencies) {
             def path = new File(project.chef.cookbookDir, "berks")
-            if (path.exists()) {
-                if (path.isDirectory()) {
-                    path.deleteDir()
-                } else {
-                    path.delete()
-                }
-            }
+            new ShellCommand().execute("rm -rf ${path}".toString())
             createBerksfile(path)
             downloadDependencies(path)
             verifyDependencies(path)
