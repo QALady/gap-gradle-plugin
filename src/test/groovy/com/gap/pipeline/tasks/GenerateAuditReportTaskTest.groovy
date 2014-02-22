@@ -29,8 +29,8 @@ class GenerateAuditReportTaskTest {
         project.tagMessageComment = 'Deploying to Prod'
         project.ticketId = 'T123456'
         project.artifactCoordinates = 'com.gap.sandbox:prod_1234'
-        project.userId = 'ka7q5f6'
-        project.userName = 'kamesh'
+        project.userId = 'testUser'
+        project.userName = 'testName'
         project.startTime = '20140214'
 
         generateAuditReportTask = new GenerateAuditReportTask(project)
@@ -44,12 +44,12 @@ class GenerateAuditReportTaskTest {
         mockCommanderArtifacts.demand.copyToArtifactsDir { }
         mockCommanderArtifacts.demand.publishLinks { }
 
-        mockCommanderClient.demand.getUserId {'ka7q5f6'}
-        mockCommanderClient.demand.getUserName{'kamesh'}
-        mockCommanderClient.demand.getStartTime{'14022014'}
-        mockCommanderClient.demand.getUserId {'ka7q5f6'}
-        mockCommanderClient.demand.getUserName{'kamesh'}
-        mockCommanderClient.demand.getStartTime{'14022014'}
+        mockCommanderClient.demand.getUserId {project.userId}
+        mockCommanderClient.demand.getUserName{project.userName}
+        mockCommanderClient.demand.getStartTime{project.startTime}
+        mockCommanderClient.demand.getUserId {project.userId}
+        mockCommanderClient.demand.getUserName{project.userName}
+        mockCommanderClient.demand.getStartTime{project.startTime}
         executeTask()
     }
 
@@ -65,9 +65,9 @@ class GenerateAuditReportTaskTest {
     }
 
     private void setupCommanderClientMocks() {
-        mockCommanderClient.demand.getUserId{'ka7q5f6'}
-        mockCommanderClient.demand.getUserName{'kamesh'}
-        mockCommanderClient.demand.getStartTime{'14022014'}
+        mockCommanderClient.demand.getUserId {project.userId}
+        mockCommanderClient.demand.getUserName{project.userName}
+        mockCommanderClient.demand.getStartTime{project.startTime}
     }
     private void setupDefaultMocks() {
         mockCommanderArtifacts.demand.copyToArtifactsDir { }

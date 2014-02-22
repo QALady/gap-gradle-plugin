@@ -35,8 +35,8 @@ class GenerateChangeListReportTaskTest {
         project.prodPrepare.roleName = 'webposCompile'
         project.prodPrepare.nodes = 'dgphxposci004.phx.gapinc.dev'
         project.prodPrepare.isRPM = true
-        project.userId = 'ka7q5f6'
-        project.userName = 'kamesh'
+        project.userId = 'testUser'
+        project.userName = 'testName'
         project.startTime = '20140214'
 
         generateChangeListReportTask = new GenerateChangeListReportTask(project)
@@ -50,12 +50,12 @@ class GenerateChangeListReportTaskTest {
         mockCommanderArtifacts.demand.copyToArtifactsDir { }
         mockCommanderArtifacts.demand.publishLinks { }
 
-        mockCommanderClient.demand.getUserId {'ka7q5f6'}
-        mockCommanderClient.demand.getUserName{'kamesh'}
-        mockCommanderClient.demand.getStartTime{'14022014'}
-        mockCommanderClient.demand.getUserId {'ka7q5f6'}
-        mockCommanderClient.demand.getUserName{'kamesh'}
-        mockCommanderClient.demand.getStartTime{'14022014'}
+        mockCommanderClient.demand.getUserId {project.userId}
+        mockCommanderClient.demand.getUserName{project.userName}
+        mockCommanderClient.demand.getStartTime{project.startTime}
+        mockCommanderClient.demand.getUserId {project.userId}
+        mockCommanderClient.demand.getUserName{project.userName}
+        mockCommanderClient.demand.getStartTime{project.startTime}
         executeTask()
     }
 
@@ -71,9 +71,9 @@ class GenerateChangeListReportTaskTest {
     }
 
     private void setupCommanderClientMocks() {
-        mockCommanderClient.demand.getUserId{'ka7q5f6'}
-        mockCommanderClient.demand.getUserName{'kamesh'}
-        mockCommanderClient.demand.getStartTime{'14022014'}
+        mockCommanderClient.demand.getUserId{project.userId}
+        mockCommanderClient.demand.getUserName{project.userName}
+        mockCommanderClient.demand.getStartTime{project.startTime}
     }
 
     private void setupDefaultMocks() {
