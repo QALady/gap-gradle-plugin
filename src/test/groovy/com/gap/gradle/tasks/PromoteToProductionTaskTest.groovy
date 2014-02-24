@@ -19,6 +19,7 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 
 import com.gap.gradle.jenkins.JenkinsRunner
+import com.gap.pipeline.ec.CommanderClient;
 
 class PromoteToProductionTaskTest {
 
@@ -28,6 +29,7 @@ class PromoteToProductionTaskTest {
     private Task promoteToProdTask
     private Project project
     def mockJenkinsRunner
+	def mockCommanderClient
     def sha1IdList = ["1234", "5678"]
 	def testuser = "testUser"
 	def ecJobId = "9999"
@@ -38,14 +40,13 @@ class PromoteToProductionTaskTest {
     void setUp (){
         project = ProjectBuilder.builder().build()
 		project.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
-		project.ecUser = testuser
-		project.ecJobId = ecJobId
 		project.ticketId = ticketId
 		project.tagMessageComment = comment
 		project.apply plugin: 'gapproddeploy'
 		project.prodDeploy.sha1IdList = ["1234", "24343"]
         promoteToProdTask = project.tasks.findByName('promoteToProduction')
         mockJenkinsRunner = new MockFor(JenkinsRunner.class)
+		mockCommanderClient = new MockFor(CommanderClient.class)
     }
 
     @Test
@@ -59,8 +60,12 @@ class PromoteToProductionTaskTest {
 			assertEquals(expectedTagMessage, params.get("TAG_MESSAGE"))
         }
 
+		mockCommanderClient.demand.getUserId(1) {testuser}
+		mockCommanderClient.demand.getJobId(1) {ecJobId}
         mockJenkinsRunner.use {
-            promoteToProdTask.execute()
+			mockCommanderClient.use {
+				promoteToProdTask.execute()				
+			}
         }
     }
 

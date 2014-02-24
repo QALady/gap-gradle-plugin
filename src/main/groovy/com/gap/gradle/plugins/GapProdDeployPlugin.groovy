@@ -90,7 +90,6 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			project.extensions.create('prodDeploy', ProdDeployParameterConfig, json)
 			project.extensions.create("rpm", RpmConfig, json.rpm)
 			project.extensions.create('git', GitConfig, json.git)
-			project.git.userId = project.ecUser	
 		}
 	}
 }
