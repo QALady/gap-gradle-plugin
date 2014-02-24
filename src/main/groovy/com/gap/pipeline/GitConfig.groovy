@@ -2,7 +2,6 @@ package com.gap.pipeline
 
 class GitConfig {
 	def sha1Id
-	def userId
 	def fullRepoName
 
 	GitConfig () {
