@@ -1,5 +1,6 @@
 package com.gap.gradle.tasks
 
+import com.gap.gradle.plugins.cookbook.PublishCookbookToChefServerTask
 import groovy.io.*
 
 import org.gradle.api.Project
@@ -61,6 +62,8 @@ class PromoteToProductionTask extends WatchmenTask {
 
 	def publishCookbookToProdChefServer() {
 		// call the gap cookbook plugin
+        project.apply plugin: 'gapcookbook'
+        project.tasks.findByName('publishCookbookToChefServer').execute()
 	}
 
 	String getTagMessage() {

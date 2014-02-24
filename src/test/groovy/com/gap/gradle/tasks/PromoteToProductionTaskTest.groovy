@@ -1,6 +1,11 @@
 package com.gap.gradle.tasks
 
+import com.gap.gradle.chef.CookbookUploader
+import com.gap.gradle.chef.CookbookUtil
+
 import static junit.framework.Assert.*
+import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
+import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
 import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.junit.internal.matchers.StringContains.containsString
@@ -27,6 +32,7 @@ class PromoteToProductionTaskTest {
     public final ExpectedException exception = none()
 
     private Task promoteToProdTask
+    private Task publishCookbookToChefServerTask
     private Project project
     def mockJenkinsRunner
 	def mockCommanderClient
@@ -35,6 +41,8 @@ class PromoteToProductionTaskTest {
 	def ecJobId = "9999"
 	def ticketId = "T12131"
 	def comment = "this is a comment for prod deploy"
+    def mockCookbookUploader
+    def mockCookbookUtil
 
     @Before
     void setUp (){
@@ -43,15 +51,33 @@ class PromoteToProductionTaskTest {
 		project.ticketId = ticketId
 		project.tagMessageComment = comment
 		project.apply plugin: 'gapproddeploy'
+        project.apply plugin: 'gapcookbook'
 		project.prodDeploy.sha1IdList = ["1234", "24343"]
         promoteToProdTask = project.tasks.findByName('promoteToProduction')
+        publishCookbookToChefServerTask = project.tasks.findByName('publishCookbookToChefServer')
         mockJenkinsRunner = new MockFor(JenkinsRunner.class)
 		mockCommanderClient = new MockFor(CommanderClient.class)
+        mockCookbookUploader = new MockFor(CookbookUploader)
+        mockCookbookUtil = new MockFor(CookbookUtil)
+        project.chef.metadata = [ name: "myapp", version: "1.1.13" ]
     }
 
     @Test
     void shouldTriggerPromoteChefObjectsJob_whenAllParametersArePassed(){
         setupTaskProperties()
+
+        mockCookbookUploader.demand.upload { cookbook, env ->
+            assertEquals("myapp", cookbook)
+            assertEquals("local", env)
+        }
+        mockCookbookUtil.demand.doesCookbookExist { return false }
+
+        mockCookbookUtil.use {
+            mockCookbookUploader.use {
+                publishCookbookToChefServerTask.execute()
+            }
+        }
+
 		def expectedTagMessage = ticketId + "-[ec-user:" + testuser + ",ec-jobid:" + ecJobId + "] " + comment 
 
         mockJenkinsRunner.demand.runJob (2) { jobName, params ->
@@ -64,7 +90,7 @@ class PromoteToProductionTaskTest {
 		mockCommanderClient.demand.getJobId(1) {ecJobId}
         mockJenkinsRunner.use {
 			mockCommanderClient.use {
-				promoteToProdTask.execute()				
+				promoteToProdTask.execute()
 			}
         }
     }
@@ -102,5 +128,13 @@ class PromoteToProductionTaskTest {
         project.jenkins.knifeUser = "jenkins_user"
         project.jenkins.knifeAuthToken = "jenkins_password"
         project.jenkins.knifeJobName = "jenkins_job"
+
+        project.jenkins.cookbookServerUrl = "jenkins"
+        project.jenkins.cookbookUser = "jenkins_user"
+        project.jenkins.cookbookAuthToken = "jenkins_password"
+        project.chef.environment = "local"
+        project.chef.cookbookName = "myapp"
     }
+
+
 }
