@@ -7,7 +7,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-
 class PromoteToProductionTaskIntegrationTest {
 
     @Rule
@@ -47,5 +46,6 @@ class PromoteToProductionTaskIntegrationTest {
         def metadataFile = tempFolder.newFile("metadata.rb")
         FileUtils.writeStringToFile(metadataFile, "version '999.99.9999'\n name  'ref-app'")
         project.chef.cookbookDir = tempFolder.root.path
+        project.tasks.findByName("generateCookbookMetadata").execute()
     }
 }
