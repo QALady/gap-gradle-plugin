@@ -11,7 +11,6 @@ class PromoteToProductionTaskIntegrationTest {
 	Project project
 
 	@Test
-    @Ignore
 	void shouldPromoteChefObjectsToServerUsingJenkinsPipeline() {
 		project = ProjectBuilder.builder().build()
 		project.ecUser = "integration-test"
