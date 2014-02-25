@@ -10,44 +10,50 @@ import org.apache.commons.logging.LogFactory
 
 @RequiredParameters([
     @Require(parameter='rpm.yumSourceUrl', description='name of repo within gapSoftware that hold rpm'),
-    @Require(parameter='rpm.rpmName', description='full name of rpm file, including version architecture and extension'),
+    @Require(parameter='rpm.rpmNames', description='full name of rpm file, including version architecture and extension'),
     @Require(parameter='rpm.yumDestinationUrl', description='url of the yum prod repo to upload the rpm to'),
     @Require(parameter='rpm.appVersion', description='app version of the rpm'),
 ] )
-class PromoteRpmTask extends WatchmenTask{
+class PromoteRpmsTask extends WatchmenTask{
 
     Project project
     YumClient yumClient
-    def log = LogFactory.getLog(PromoteRpmTask)
+    def log = LogFactory.getLog(PromoteRpmsTask)
 
 
-    PromoteRpmTask(Project project, YumClient yumClient) {
+    PromoteRpmsTask(Project project, YumClient yumClient) {
         super(project)
         this.project = project
         this.yumClient = yumClient
     }
 
-    PromoteRpmTask(project){
+    PromoteRpmsTask(project){
         super(project)
         this.project = project
         this.yumClient = new YumClient()
     }
 
     def validate(){
-        if(!project.rpm.rpmName.contains('.rpm')){
-            throw new IllegalArgumentException("rpm.rpmName ${project.rpm.rpmName} does not have .rpm extension")
-        }
-        if(!project.rpm.rpmName.contains(project.rpm.appVersion)){
-            throw new IllegalArgumentException("rpm.rpmName ${project.rpm.rpmName} does not contain app version ${project.rpm.appVersion}")
+        super.validate()
+        for(def rpm: project.rpm.rpmNames){
+            if(!rpm.contains('.rpm')){
+                throw new IllegalArgumentException("rpm.rpmNames ${rpm} does not have .rpm extension")
+            }
+            if(!rpm.contains(project.rpm.appVersion)){
+                throw new IllegalArgumentException("rpm.rpmNames ${rpm} does not contain app version ${project.rpm.appVersion}")
+            }
         }
     }
 
     def execute(){
         validate()
         def copyToLocation = project.buildDir.path + '/tmp'
-
-        yumClient.downloadRpm(project.rpm.yumSourceUrl, project.rpm.rpmName, copyToLocation)
-        yumClient.uploadRpm(project.rpm.rpmName, copyToLocation, project.rpm.yumDestinationUrl)
+        for(def rpm: project.rpm.rpmNames){
+            yumClient.downloadRpm(project.rpm.yumSourceUrl, rpm, copyToLocation)
+        }
+        for(def rpm: project.rpm.rpmNames){
+            yumClient.uploadRpm(rpm, copyToLocation, project.rpm.yumDestinationUrl)
+        }
         yumClient.recreateYumRepo(project.rpm.yumDestinationUrl)
     }
 

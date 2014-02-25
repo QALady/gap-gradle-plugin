@@ -16,7 +16,7 @@ class ProdPrepareConfig {
 	def appVersion // version of the application that should be deployed in prod node.
     def yumSourceUrl
     def yumDestinationUrl
-    def rpmName
+    def rpmNames = []
 	def githubOrgName
 
 	CookbookConfig getCookbookConfig() {

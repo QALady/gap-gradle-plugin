@@ -50,7 +50,7 @@ class PrepareForProductionDeployTaskTest {
 		project.prodPrepare.cookbookSha1Id = cookbookSha1Id_1
         project.prodPrepare.yumSourceUrl = "http://devyum/repo/org/channel"
         project.prodPrepare.yumDestinationUrl = "http://prodyum/repo/org/channel"
-        project.prodPrepare.rpmName = "myrpm-default.noarch.rpm"
+        project.prodPrepare.rpmNames = "myrpm-default.noarch.rpm,myrpm2-1.noarch.rpm"
         project.buildDir = "${temporaryFolder.root.path}/build"
         new File("${temporaryFolder.root.path}/build/artifacts".toString()).mkdirs()
         new File("${temporaryFolder.root.path}/artifacts".toString()).mkdirs()
@@ -213,6 +213,30 @@ class PrepareForProductionDeployTaskTest {
 		mockUploadBuildArtifactsTask.demand.execute {}
 		executeTask()
 	}
+
+    @Test
+    void shouldPutRpmNamesIntoJsonAsArray_whenRpmNamesAreCommaSeparated() {
+        project.prodPrepare.deployECProcedure = 'Project:Procedure'
+        project.prodPrepare.sha1Ids = "${sha1_1},${sha1_2},${sha1_3}"
+        project.prodPrepare.roleName = 'myrole'
+        project.prodPrepare.cookbookName = 'mycookbook'
+        project.prodPrepare.rpmNames="rpm1-1.noarch.rpm,rpm2-1.noarch.rpm"
+        project.prodPrepare.nodes ="node1,node2"
+        setupDefaultMocks()
+
+        executeTask()
+
+        def prodDeployFileName = "${project.buildDir}/artifacts/${ProdPrepareConfig.FILE_NAME}"
+
+        def file = new File(prodDeployFileName)
+        assertTrue(file.exists())
+        def json = new JsonSlurper().parseText(new File(prodDeployFileName).text)
+        assertThat(json.rpm.rpmNames, is(["rpm1-1.noarch.rpm","rpm2-1.noarch.rpm"]))
+        assertEquals([sha1_1, sha1_2, sha1_3], json.sha1IdList)
+        assertEquals('myrole',json.roleName)
+        assertEquals('mycookbook', json.cookbook.name)
+        assertEquals(['node1','node2'], json.nodes)
+    }
 
 
 	@Test

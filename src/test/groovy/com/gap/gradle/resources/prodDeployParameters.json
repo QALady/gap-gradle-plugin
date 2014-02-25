@@ -12,7 +12,7 @@
 	},
 	"rpm" : {
 	    "yumSourceUrl": "http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel",
-	    "rpmName": "rpmName-976.rpm",
+	    "rpmNames": ["rpmNames-976.rpm"],
 	    "yumDestinationUrl": "http://ks64.phx.gapinc.com/gapSoftware/repoName/devel"
 	}
 }

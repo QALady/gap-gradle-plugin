@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import com.gap.gradle.plugins.cookbook.JenkinsConfig
 import com.gap.gradle.tasks.DeployToProductionTask
 import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
-import com.gap.gradle.tasks.PromoteRpmTask
+import com.gap.gradle.tasks.PromoteRpmsTask
 import com.gap.gradle.tasks.PromoteToProductionTask
 import com.gap.gradle.tasks.UpdateCookbookSHATask
 import com.gap.gradle.utils.ConfigUtil
@@ -61,8 +61,8 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			println "WOO! done (:"
 		}
 
-        project.task('promoteRpm') << {
-            new PromoteRpmTask(project).execute()
+        project.task('promoteRpms') << {
+            new PromoteRpmsTask(project).execute()
         }
 
 		project.task('promoteCookbookBerksfile') << {

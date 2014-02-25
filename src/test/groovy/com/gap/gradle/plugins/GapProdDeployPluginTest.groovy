@@ -8,7 +8,7 @@ import static org.junit.Assert.fail
 
 import com.gap.gradle.plugins.cookbook.ConfigFileResource
 import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
-import com.gap.gradle.tasks.PromoteRpmTask
+import com.gap.gradle.tasks.PromoteRpmsTask
 import com.gap.pipeline.tasks.GenerateAuditReportTask
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
@@ -25,7 +25,7 @@ class GapProdDeployPluginTest {
 	private Project project
 	private static String pluginName = 'gapproddeploy'
 	private static String testJsonPath = "src/test/groovy/com/gap/gradle/resources/"
-
+	
 	@Before
 	void setup() {
 		project = ProjectBuilder.builder().build()
@@ -33,7 +33,7 @@ class GapProdDeployPluginTest {
 		project.ecUser = "testuser"
 		project.apply plugin: pluginName
 	}
-
+	
 	@Test
 	void deployToProdDeployTaskIsAddedToProject(){
 		taskShouldExist('deployToProduction')
@@ -72,7 +72,7 @@ class GapProdDeployPluginTest {
 		assertNotNull(jenkinsConfig)
 	}
 
-	@Test
+	@Test	
 	void shouldReadJsonFromConfigFile() {
 		def expectedsha1s = ["38615ae7ac61737184440a5797fa7becd4f684c8", "28615ae7ac61737184440a5797fa7becd4f684c8"]
         assertThat(project.prodDeploy.appVersion, equalTo("976"))
@@ -82,13 +82,13 @@ class GapProdDeployPluginTest {
 		assertThat(project.prodDeploy.cookbook.sha1Id, equalTo("38615ae7ac61737184440a5797fa7becd4f684c7"))
 		assertThat(project.prodDeploy.nodes, equalTo("[testnode01.phx.gapinc.dev,testnode02.phx.gapinc.dev]"))
 		assertThat(project.rpm.yumSourceUrl, equalTo("http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel"))
-		assertThat(project.rpm.rpmName, equalTo("rpmName-976.rpm"))
+		assertThat(project.rpm.rpmNames, equalTo(["rpmNames-976.rpm"]))
 		assertThat(project.rpm.yumDestinationUrl, equalTo("http://ks64.phx.gapinc.com/gapSoftware/repoName/devel"))
     }
 
     @Test
-    void promoteRpmTaskIsAddedToTheProject(){
-        taskShouldExist('promoteRpm')
+    void promoteRpmsTaskIsAddedToTheProject(){
+        taskShouldExist('promoteRpms')
     }
 
     @Test
@@ -112,13 +112,13 @@ class GapProdDeployPluginTest {
     }
 
     @Test
-    void shouldExecutePromoteRpmTask(){
-        def mockRpmTask = new MockFor(PromoteRpmTask)
+    void shouldExecutePromoteRpmsTask(){
+        def mockRpmTask = new MockFor(PromoteRpmsTask)
         def mockPrepareTask = new MockFor(PrepareToPromoteToProductionTask)
         mockPrepareTask.demand.execute {}
         mockRpmTask.demand.execute { }
         mockRpmTask.use {
-            project.tasks.getByName('promoteRpm').execute()
+            project.tasks.getByName('promoteRpms').execute()
         }
     }
 

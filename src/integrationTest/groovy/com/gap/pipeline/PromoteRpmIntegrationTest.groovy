@@ -32,7 +32,7 @@ class PromoteRpmIntegrationTest {
         assertTrue(expectedFile.exists())
 
         def output = new ShellCommand().execute("curl http://ks64.phx.gapinc.dev/gapSoftware/watchmen/testing/")
-        assertTrue(output.contains(project.rpm.rpmName))
+        assertTrue(output.contains(project.rpm.rpmNames))
     }
 
     @After

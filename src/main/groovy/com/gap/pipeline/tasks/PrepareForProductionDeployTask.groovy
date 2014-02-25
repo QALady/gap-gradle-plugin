@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory
 class PrepareForProductionDeployTask extends WatchmenTask {
     def log = LogFactory.getLog(com.gap.pipeline.tasks.PrepareForProductionDeployTask)
     def project
-	def sha1IdList = [] // empty array to start with
 
     PrepareForProductionDeployTask(project){
         super(project)
@@ -55,7 +54,8 @@ class PrepareForProductionDeployTask extends WatchmenTask {
 
     private void createProdDeployJsonArtifact() {
         log.info("Creating Prod Deploy Json Artifact...")
-        project.prodPrepare.sha1IdList =	sha1IdList
+        project.prodPrepare.sha1IdList = splitOnCommas(project.prodPrepare.sha1Ids)
+        project.prodPrepare.rpmNames = splitOnCommas(project.prodPrepare.rpmNames)
         def jsonBuilder = new JsonBuilder(new ProdDeployParameterConfig(project.prodPrepare))
         def fileWriter = new FileWriter("${project.buildDir}/artifacts/${ProdPrepareConfig.FILE_NAME}")
         jsonBuilder.writeTo(fileWriter)
@@ -73,8 +73,8 @@ class PrepareForProductionDeployTask extends WatchmenTask {
 
     def validate() {
         super.validate()
-		sha1IdList = processSha1Ids()
-        sha1IdList = sha1IdList.findAll {
+		def sha1IdList = splitOnCommas(project.prodPrepare.sha1Ids)
+        sha1IdList.findAll {
             if(!(it ==~ ProdPrepareConfig.SHA1_PATTERN)) {
                 throw new InvalidSHA1IDException("Invalid SHA1 id: ${it}")
             }
@@ -85,19 +85,19 @@ class PrepareForProductionDeployTask extends WatchmenTask {
 		}
     }
 
-	private def processSha1Ids() {
-		if (project.prodPrepare.sha1Ids) {
-			def sha1Ids = []
-			project.prodPrepare.sha1Ids.eachLine { line ->
-				line.split(',').each { sha1 ->
-					if (sha1.trim()) {
-						sha1Ids << sha1.trim()
-					}
-				}
-			}
-			sha1Ids
-		} else {
-			[]
-		}
-	}
+    private def splitOnCommas(stringToSplit) {
+        if (stringToSplit) {
+            def parts = []
+            stringToSplit.eachLine { line ->
+                line.split(',').each { item ->
+                    if (item.trim()) {
+                        parts << item.trim()
+                    }
+                }
+            }
+            parts
+        } else {
+            []
+        }
+    }
 }

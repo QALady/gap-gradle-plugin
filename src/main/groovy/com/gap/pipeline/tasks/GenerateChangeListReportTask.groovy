@@ -58,7 +58,7 @@ class GenerateChangeListReportTask extends WatchmenTask {
         log.info("Deployment Nodes - " + nodes)
         appVersion = project.prodPrepare.appVersion
         log.info("Application deploy version - " + appVersion)
-        rpmVersion = project.prodPrepare.rpmName
+        rpmVersion = project.prodPrepare.rpmNames
         log.info("Application deploy version - " + rpmVersion)
 
         createChangelistFile()
