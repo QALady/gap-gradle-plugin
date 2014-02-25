@@ -24,12 +24,14 @@ class PromoteToProductionTaskIntegrationTest {
 		project.jenkins.knifeJobName = "TagProdReady"
 		project.jenkins.knifeAuthToken = "abcd1234"
 
-        def triggerProdDeployTask = project.apply plugin: 'gapcookbook'
 
+        project.apply plugin: 'gapcookbook'
         project.jenkins.cookbookServerUrl = "http://dgphxaciap014.phx.gapinc.dev:8080/"
         project.jenkins.cookbookUser = "testUser"
         project.jenkins.cookbookAuthToken = "abcd1234"
         project.chef.cookbookName = "ref-app"
+
+        def triggerProdDeployTask = project.tasks.findByName('promoteToProduction')
 
         triggerProdDeployTask.execute()
 	}
