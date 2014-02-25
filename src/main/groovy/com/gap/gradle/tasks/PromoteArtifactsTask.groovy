@@ -44,6 +44,7 @@ class PromoteArtifactsTask extends WatchmenTask {
         project.ivy.url = project.toArtifactoryUrl
         project.ivy.checkIfExists = true
         project.tasks.findByName('uploadBuildArtifacts').execute()
+        project.ivy.checkIfExists = false
     }
 
     private downloadArtifacts(downloadDir) {

@@ -6,7 +6,7 @@ package com.gap.pipeline.utils
 class IvyCoordinateParser {
 
     def validate(String coordinates) {
-        if (coordinates.split(':').length < 3) {
+        if (coordinates.trim().split(':').length != 3) {
             throw new IllegalArgumentException("The coordinates '${coordinates}' is of invalid format. The format should be <groupname>:<modulename>:<version>")
         }
     }

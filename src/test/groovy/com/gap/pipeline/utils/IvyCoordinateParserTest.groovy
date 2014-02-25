@@ -35,4 +35,10 @@ class IvyCoordinateParserTest {
         parser.parse("some.ivy.group")
     }
 
+    @Test
+    public void shouldThrowExceptionIfTheFormatContainsMoreThatThreeSeparators(){
+        exception.expect(IllegalArgumentException)
+        exception.expectMessage("The coordinates 'some:ivy:group:102' is of invalid format. The format should be <groupname>:<modulename>:<version>")
+        parser.parse("some:ivy:group:102")
+    }
 }
