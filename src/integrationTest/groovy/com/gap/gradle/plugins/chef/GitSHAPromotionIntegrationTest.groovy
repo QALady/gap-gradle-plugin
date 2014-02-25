@@ -5,6 +5,7 @@ import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 class GitSHAPromotionIntegrationTest {
@@ -17,7 +18,8 @@ class GitSHAPromotionIntegrationTest {
     @Before
     void setUp(){
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gapchef'
+        project.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
+        project.apply plugin: 'gapproddeploy'
         updateBerksfileTask = project.tasks.findByName('promoteCookbookBerksfile')
         setUpProperties()
         cookbook = project.git.fullRepoName.tokenize('/')[1]
