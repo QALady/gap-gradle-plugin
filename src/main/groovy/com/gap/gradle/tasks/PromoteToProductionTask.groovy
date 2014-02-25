@@ -38,7 +38,6 @@ class PromoteToProductionTask extends WatchmenTask {
 	void execute() {
         super.validate()
 		init()
-		publishCookbookToProdChefServer()
 		promoteChefObjectsToProdServer()
 	}
 	
@@ -58,12 +57,6 @@ class PromoteToProductionTask extends WatchmenTask {
             jobParams.put("TAG_MESSAGE", getTagMessage()) //TODO: should be comment from EC procedure + ServiceNow ticket number
             jRunner.runJob(project.jenkins.knifeJobName, jobParams)
         }
-	}
-
-	def publishCookbookToProdChefServer() {
-		// call the gap cookbook plugin
-        project.apply plugin: 'gapcookbook'
-        project.tasks.findByName('publishCookbookToChefServer').execute()
 	}
 
 	String getTagMessage() {

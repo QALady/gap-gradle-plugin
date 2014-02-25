@@ -31,7 +31,7 @@ class GapCookbookPlugin implements Plugin<Project> {
             new PublishCookbookToArtifactoryTask(project).execute()
         }
 
-        project.task('publishCookbookToChefServer', dependsOn: [ 'generateCookbookMetadata', 'validateCookbookDependencies' ]) << {
+        project.task('publishCookbookToChefServer', dependsOn: [ 'generateCookbookMetadata', 'validateCookbookDependencies' ] ) << {
             new PublishCookbookToChefServerTask(project).execute()
         }
     }

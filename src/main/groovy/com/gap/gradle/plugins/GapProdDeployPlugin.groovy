@@ -43,7 +43,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			new PrepareToPromoteToProductionTask(project).execute()
 		}
 
-		project.task('promoteToProduction', dependsOn: 'prepareToPromote') << {
+		project.task('promoteToProduction', dependsOn: ['prepareToPromote', 'publishCookbookToChefServer'] ) << {
 			println "promoting to production"
 			new PromoteToProductionTask(project).execute()
 		}

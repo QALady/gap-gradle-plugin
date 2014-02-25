@@ -26,6 +26,7 @@ class PublishCookbookToChefServerTaskIntegrationTest {
         project.chef.cookbookDir = tempFolder.root.path
 
         project.tasks.findByName("generateCookbookMetadata").execute()
+
         def publishCookbookTask = project.tasks.findByName('publishCookbookToChefServer')
         publishCookbookTask.execute()
     }
