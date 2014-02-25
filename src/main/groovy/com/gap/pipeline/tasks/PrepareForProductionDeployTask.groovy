@@ -36,7 +36,6 @@ class PrepareForProductionDeployTask extends WatchmenTask {
 		log.info("Cookbook Sha1-  ${project.prodPrepare.cookbookSha1Id}")
         log.info("Deploy EC Procedure -  ${project.prodPrepare.deployECProcedure}")
         log.info("Deployment Nodes - ${project.prodPrepare.nodes}")
-		log.info("Is the deployable RPM? - ${project.prodPrepare.isRPM}")
 		log.info("Application deploy version - ${project.prodPrepare.appVersion}")
 
         validate()

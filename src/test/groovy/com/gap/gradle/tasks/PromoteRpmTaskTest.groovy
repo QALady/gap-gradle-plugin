@@ -14,10 +14,7 @@ import org.junit.rules.ExpectedException
 import com.gap.gradle.yum.YumClient
 import com.gap.pipeline.RpmConfig
 
-import static org.mockito.Mockito.never
 import com.gap.pipeline.ProdDeployParameterConfig
-
-import static org.mockito.Matchers.anyString
 
 class PromoteRpmTaskTest {
 
@@ -45,7 +42,6 @@ class PromoteRpmTaskTest {
 
     @Test
     public void shouldPromoteRpmFromDevToProd(){
-        project.prodDeploy.isRPM = true
         promoteRpmFromDevToProdTask.execute()
         def expectedCopyToLocation = project.buildDir.path + '/tmp'
         verify(mockYumRepoClient).downloadRpm( "http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel", "rpmName-1234.rpm", expectedCopyToLocation)
@@ -69,14 +65,5 @@ class PromoteRpmTaskTest {
         exception.expect(IllegalArgumentException)
         exception.expectMessage("rpm.rpmName thisisabadrpmname.rpm does not contain app version 1234")
         promoteRpmFromDevToProdTask.validate()
-    }
-
-    @Test
-    public void execute_shouldDoNothingIfIsRPMFlagIsNotSet(){
-        project.prodDeploy.isRPM = false
-        promoteRpmFromDevToProdTask.execute()
-        verify(mockYumRepoClient, never()).downloadRpm(anyString(), anyString(), anyString())
-        verify(mockYumRepoClient, never()).uploadRpm(anyString(), anyString(), anyString())
-        verify(mockYumRepoClient, never()).recreateYumRepo(anyString())
     }
 }

@@ -8,7 +8,6 @@ class ProdDeployParameterConfig {
 	CookbookConfig cookbook
 	def nodes = []
 	def sha1IdList = [] // array of sha Ids trimmed & sha1 regex matched.
-	def isRPM // indicates if the deployable of this application is an rpm or the artifact itself.
 	def appVersion // version of the application that should be deployed in prod node.
 	RpmConfig rpm
 	GitConfig git
@@ -21,7 +20,6 @@ class ProdDeployParameterConfig {
 		this.roleName = p.roleName
 		this.nodes = toList(p.nodes)
 		this.sha1IdList = p.sha1IdList
-		this.isRPM = Boolean.valueOf(p.isRPM)
 		this.appVersion = p.appVersion
 		this.cookbook = p.getCookbookConfig()
 		this.rpm = p.getRpmConfig()
@@ -37,7 +35,6 @@ class ProdDeployParameterConfig {
 		this.roleName = json.roleName
 		this.nodes = json.nodes
 		this.sha1IdList = json.sha1IdList
-		this.isRPM = json.isRPM
 		this.appVersion = json.appVersion
 		this.cookbook = new CookbookConfig(json.cookbook.name, json.cookbook.sha1Id)
 		this.git = new GitConfig(json)

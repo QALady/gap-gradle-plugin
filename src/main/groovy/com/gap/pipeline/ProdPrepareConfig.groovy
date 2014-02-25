@@ -13,7 +13,6 @@ class ProdPrepareConfig {
     def deployECProcedure
     def nodes = []
 	def sha1IdList = [] // array of sha Ids trimmed & sha1 regex matched.
-	def isRPM // indicates if the deployable of this application is an rpm or the artifact itself.
 	def appVersion // version of the application that should be deployed in prod node.
     def yumSourceUrl
     def yumDestinationUrl

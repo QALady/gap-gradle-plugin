@@ -97,7 +97,6 @@ class PrepareForProductionDeployTaskTest {
         project.prodPrepare.roleName = 'myrole'
         project.prodPrepare.cookbookName = 'mycookbook'
         project.prodPrepare.nodes ="node1,node2"
-		project.prodPrepare.isRPM = true
 		project.prodPrepare.appVersion = '12345'
         setupDefaultMocks()
 
@@ -113,7 +112,6 @@ class PrepareForProductionDeployTaskTest {
         assertEquals('mycookbook', json.cookbook.name)
 		assertEquals(cookbookSha1Id_1, json.cookbook.sha1Id)
         assertEquals(['node1','node2'], json.nodes)
-		assertEquals(true, json.isRPM)
 		assertEquals('12345', json.appVersion)
     }
 

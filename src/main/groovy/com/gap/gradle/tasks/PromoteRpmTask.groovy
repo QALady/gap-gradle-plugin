@@ -43,17 +43,12 @@ class PromoteRpmTask extends WatchmenTask{
     }
 
     def execute(){
-        if(project.prodDeploy.isRPM){
-            validate()
-            def copyToLocation = project.buildDir.path + '/tmp'
+        validate()
+        def copyToLocation = project.buildDir.path + '/tmp'
 
-            yumClient.downloadRpm(project.rpm.yumSourceUrl, project.rpm.rpmName, copyToLocation)
-            yumClient.uploadRpm(project.rpm.rpmName, copyToLocation, project.rpm.yumDestinationUrl)
-            yumClient.recreateYumRepo(project.rpm.yumDestinationUrl)
-        }
-        else{
-            log.info("This deployment does not require RPM promotion. Doing nothing...")
-        }
+        yumClient.downloadRpm(project.rpm.yumSourceUrl, project.rpm.rpmName, copyToLocation)
+        yumClient.uploadRpm(project.rpm.rpmName, copyToLocation, project.rpm.yumDestinationUrl)
+        yumClient.recreateYumRepo(project.rpm.yumDestinationUrl)
     }
 
 }

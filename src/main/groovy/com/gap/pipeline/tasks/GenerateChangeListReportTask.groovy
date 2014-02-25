@@ -24,7 +24,6 @@ class GenerateChangeListReportTask extends WatchmenTask {
     def cookbookName
     def cookbookSha1Id
     def nodes
-    def isRPM
     def appVersion
     def rpmVersion
     def project
@@ -57,8 +56,6 @@ class GenerateChangeListReportTask extends WatchmenTask {
         log.info("Cookbook Sha1- " + cookbookSha1Id)
         nodes = project.prodPrepare.nodes
         log.info("Deployment Nodes - " + nodes)
-        isRPM = project.prodPrepare.isRPM
-        log.info("Is RPM deploy? - " + isRPM)
         appVersion = project.prodPrepare.appVersion
         log.info("Application deploy version - " + appVersion)
         rpmVersion = project.prodPrepare.rpmName
@@ -88,7 +85,6 @@ class GenerateChangeListReportTask extends WatchmenTask {
             *  Chef CookbookName - ${cookbookName}
             *  Chef Cookbook ShaId - ${cookbookSha1Id}
             *  Application Node - ${nodes}
-            *  RPM Artifact? - ${isRPM}
             *  Application Version - ${appVersion}
             *  RPM Version - ${rpmVersion}
             *                                                                                             *
