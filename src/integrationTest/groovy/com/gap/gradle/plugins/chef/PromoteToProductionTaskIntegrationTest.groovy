@@ -2,7 +2,6 @@ package com.gap.gradle.plugins.chef
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Ignore
 import org.junit.Test
 
 
