@@ -2,13 +2,16 @@ package com.gap.gradle.plugins.chef
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Ignore
 import org.junit.Test
+
 
 class PromoteToProductionTaskIntegrationTest {
 
 	Project project
 
 	@Test
+    @Ignore
 	void shouldPromoteChefObjectsToServerUsingJenkinsPipeline() {
 		project = ProjectBuilder.builder().build()
 		project.ecUser = "integration-test"
@@ -23,8 +26,13 @@ class PromoteToProductionTaskIntegrationTest {
 		project.jenkins.knifeJobName = "TagProdReady"
 		project.jenkins.knifeAuthToken = "4661bb66b1f850bdff9c3ce5f5daca65"
 
-		def triggerProdDeployTask = project.tasks.findByName('promoteToProduction')
+        def triggerProdDeployTask = project.apply plugin: 'gapcookbook'
 
-		triggerProdDeployTask.execute()
+        project.jenkins.cookbookServerUrl = "http://chefci.phx.gapinc.dev:8080"
+        project.jenkins.cookbookUser = "em4l5d0"
+        project.jenkins.cookbookAuthToken = "4661bb66b1f850bdff9c3ce5f5daca65"
+        project.chef.cookbookName = "ref-app"
+
+        triggerProdDeployTask.execute()
 	}
 }
