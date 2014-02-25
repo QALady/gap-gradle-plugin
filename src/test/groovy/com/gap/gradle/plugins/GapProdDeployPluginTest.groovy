@@ -1,16 +1,15 @@
 package com.gap.gradle.plugins
-
-import com.gap.pipeline.tasks.GenerateAuditReportTask
-import com.gap.pipeline.tasks.GenerateChangeListReportTask
-
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertThat
+import static org.junit.Assert.assertTrue
+import static org.junit.Assert.fail
 
 import com.gap.gradle.plugins.cookbook.ConfigFileResource
 import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
 import com.gap.gradle.tasks.PromoteRpmTask
+import com.gap.pipeline.tasks.GenerateAuditReportTask
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -26,7 +25,7 @@ class GapProdDeployPluginTest {
 	private Project project
 	private static String pluginName = 'gapproddeploy'
 	private static String testJsonPath = "src/test/groovy/com/gap/gradle/resources/"
-	
+
 	@Before
 	void setup() {
 		project = ProjectBuilder.builder().build()
@@ -34,7 +33,7 @@ class GapProdDeployPluginTest {
 		project.ecUser = "testuser"
 		project.apply plugin: pluginName
 	}
-	
+
 	@Test
 	void deployToProdDeployTaskIsAddedToProject(){
 		taskShouldExist('deployToProduction')
@@ -73,7 +72,7 @@ class GapProdDeployPluginTest {
 		assertNotNull(jenkinsConfig)
 	}
 
-	@Test	
+	@Test
 	void shouldReadJsonFromConfigFile() {
 		def expectedsha1s = ["38615ae7ac61737184440a5797fa7becd4f684c8", "28615ae7ac61737184440a5797fa7becd4f684c8"]
         assertThat(project.prodDeploy.appVersion, equalTo("976"))
@@ -121,6 +120,33 @@ class GapProdDeployPluginTest {
         mockRpmTask.use {
             project.tasks.getByName('promoteRpm').execute()
         }
+    }
+
+    @Test
+    void generateCookbookMetadata_shouldDependOnRequireCookbookValidation() {
+        taskShouldDependOn('generateCookbookMetadata', 'requireCookbookValidation')
+    }
+
+    @Test
+    void requireCookbookValidation_shouldEnableCookbookValidationFlags() {
+        project.tasks.findByName('requireCookbookValidation').execute()
+        assertTrue(project.chef.requirePinnedDependencies)
+        assertTrue(project.chef.requireTransitiveDependencies)
+    }
+
+    def taskShouldDependOn(task, requiredDependency) {
+        for (def dependency : project.tasks.findByName(task).dependsOn) {
+            if (dependency == requiredDependency) {
+                return
+            } else if (dependency instanceof List) {
+                for (def d : dependency) {
+                    if (d == requiredDependency) {
+                        return
+                    }
+                }
+            }
+        }
+        fail("Task ${task} does not declare a dependency on ${requiredDependency}")
     }
 
 	def taskShouldExist(task) {

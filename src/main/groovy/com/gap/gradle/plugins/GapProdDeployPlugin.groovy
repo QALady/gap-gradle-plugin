@@ -30,11 +30,16 @@ class GapProdDeployPlugin implements Plugin<Project>{
 	public void apply(Project project) {
 
 		project.apply plugin: 'gapcookbook'
-        project.chef.requirePinnedDependencies = true
-        project.chef.requireTransitiveDependencies = true
 
 		loadJenkinsConfig(project)
 		loadProdDeployConfig(project)
+
+        project.task('requireCookbookValidation') << {
+            project.chef.requirePinnedDependencies = true
+            project.chef.requireTransitiveDependencies = true
+        }
+
+        project.tasks.findByName('generateCookbookMetadata').dependsOn << 'requireCookbookValidation'
 
         project.task('setupProdBuildDirectories') <<{
             new SetUpBuildDirectoriesTask(project).execute()

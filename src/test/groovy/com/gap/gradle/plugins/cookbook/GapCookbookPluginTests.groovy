@@ -76,13 +76,23 @@ class GapCookbookPluginTests {
     }
 
     @Test
-    void publishCookbookToArtifactory_shouldDependOnValidateCookbookDependencies() {
-        taskShouldDependOn('publishCookbookToArtifactory', 'validateCookbookDependencies')
+    void validateCookbook_shouldDependOnValidateCookbookDependencies() {
+        taskShouldDependOn('validateCookbook', 'validateCookbookDependencies')
     }
 
     @Test
-    void publishCookbookToChefServer_shouldDependOnValidateCookbookDependencies() {
-        taskShouldDependOn('publishCookbookToChefServer', 'validateCookbookDependencies')
+    void validateCookbook_shouldDependOnValidateTransitiveCookbookDependencies() {
+        taskShouldDependOn('validateCookbook', 'validateTransitiveCookbookDependencies')
+    }
+
+    @Test
+    void publishCookbookToArtifactory_shouldDependOnValidateCookbook() {
+        taskShouldDependOn('publishCookbookToArtifactory', 'validateCookbook')
+    }
+
+    @Test
+    void publishCookbookToChefServer_shouldDependOnValidateCookbook() {
+        taskShouldDependOn('publishCookbookToChefServer', 'validateCookbook')
     }
 
     @Test
