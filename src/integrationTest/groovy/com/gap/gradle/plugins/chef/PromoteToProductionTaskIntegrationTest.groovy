@@ -1,13 +1,19 @@
 package com.gap.gradle.plugins.chef
 
+import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 
 class PromoteToProductionTaskIntegrationTest {
 
-	Project project
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+
+    Project project
 
 	@Test
 	void shouldPromoteChefObjectsToServerUsingJenkinsPipeline() {
@@ -24,15 +30,22 @@ class PromoteToProductionTaskIntegrationTest {
 		project.jenkins.knifeJobName = "TagProdReady"
 		project.jenkins.knifeAuthToken = "abcd1234"
 
+        setCookbookProperties()
 
+        def triggerProdDeployTask = project.tasks.findByName('promoteToProduction')
+
+        triggerProdDeployTask.execute()
+	}
+
+    private void setCookbookProperties(){
         project.apply plugin: 'gapcookbook'
         project.jenkins.cookbookServerUrl = "http://dgphxaciap014.phx.gapinc.dev:8080/"
         project.jenkins.cookbookUser = "testUser"
         project.jenkins.cookbookAuthToken = "abcd1234"
         project.chef.cookbookName = "ref-app"
 
-        def triggerProdDeployTask = project.tasks.findByName('promoteToProduction')
-
-        triggerProdDeployTask.execute()
-	}
+        def metadataFile = tempFolder.newFile("metadata.rb")
+        FileUtils.writeStringToFile(metadataFile, "version '999.99.9999'\n name  'ref-app'")
+        project.chef.cookbookDir = tempFolder.root.path
+    }
 }
