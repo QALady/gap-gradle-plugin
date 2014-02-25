@@ -12,14 +12,13 @@ class PublishCookbookToChefServerTaskIntegrationTest {
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
-    @Ignore
     void shouldUploadCookbookUsingJenkinsPipeline() {
         def project = ProjectBuilder.builder().build()
 
         project.apply plugin: 'gapcookbook'
-        project.jenkins.cookbookServerUrl = "http://chefci.phx.gapinc.dev:8080"
-        project.jenkins.cookbookUser = "em4l5d0"
-        project.jenkins.cookbookAuthToken = "4661bb66b1f850bdff9c3ce5f5daca65"
+        project.jenkins.cookbookServerUrl = "http://dgphxaciap014.phx.gapinc.dev:8080"
+        project.jenkins.cookbookUser = "testUser"
+        project.jenkins.cookbookAuthToken = "abcd1234"
         project.chef.cookbookName = "ref-app"
 
         def metadataFile = tempFolder.newFile("metadata.rb")
