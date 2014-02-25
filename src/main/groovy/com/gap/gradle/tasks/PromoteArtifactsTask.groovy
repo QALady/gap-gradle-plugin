@@ -42,6 +42,7 @@ class PromoteArtifactsTask extends WatchmenTask {
         //setting up project parameters required by uploadBuildArtifacts task
         project.artifactCoordinates = "${project.toCoordinates}:${ivy.version}"
         project.ivy.url = project.toArtifactoryUrl
+        project.ivy.checkIfExists = true
         project.tasks.findByName('uploadBuildArtifacts').execute()
     }
 

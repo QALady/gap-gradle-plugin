@@ -1,5 +1,7 @@
 package com.gap.gradle.plugins.cookbook
 
+import com.gap.pipeline.GitConfig
+
 import static helpers.Assert.assertThrowsExceptionWithMessage
 import static junit.framework.Assert.assertFalse
 import static org.hamcrest.MatcherAssert.assertThat
@@ -29,7 +31,9 @@ class UpdateCookbookSHATaskTest {
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gapchef'
+        project.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
+        project.apply plugin: 'gapproddeploy'
+        println("**************" + project.git.fullRepoName)
         updateBerksfileTask = project.tasks.findByName('promoteCookbookBerksfile')
         mockGitClient = new MockFor(GitClient)
 		mockCommanderClient = new MockFor(CommanderClient.class)
@@ -37,8 +41,6 @@ class UpdateCookbookSHATaskTest {
 
     void setUpProperties(){
 		mockCommanderClient.demand.getUserId(1) {'testUser'}
-        project.git.sha1Id = 'testSHA'
-        project.git.fullRepoName = 'test/repo'
     }
 
     @Test
@@ -76,6 +78,7 @@ class UpdateCookbookSHATaskTest {
     @Test
     void taskShouldThrowException_whenConfigIsNotSet(){
         try{
+            project.git.fullRepoName = ""
             mockGitClient.demand.checkout(1){ -1 }
             mockGitClient.demand.updateBerksfile(1){ -1 }
             mockGitClient.demand.commitAndPush(1){ -1 }
@@ -91,12 +94,14 @@ class UpdateCookbookSHATaskTest {
 
     @Test
     void shouldThrowException_whenSHAIdIsMissing(){
+        project.git.sha1Id = ""
         project.git.fullRepoName = 'test/repo'
         assertThrowsExceptionWithMessage("Missing required parameter: 'git.sha1Id'", {updateBerksfileTask.execute()})
     }
 
     @Test
     void shouldThrowException_whenFullRepoNameIsMissing(){
+        project.git.fullRepoName = ""
         project.git.sha1Id = 'testSHA'
         assertThrowsExceptionWithMessage("Missing required parameter: 'git.fullRepoName'", {updateBerksfileTask.execute()})
     }

@@ -40,13 +40,18 @@ class UploadBuildArtifactsTask extends com.gap.pipeline.tasks.WatchmenTask {
     }
 
     private void uploadArtifactsToIvy() {
-        project.uploadArchives.repositories {
-            ivy {
-                layout "maven"
-                url project.ivy.url
-                credentials {
-                    username project.ivy.userName
-                    password project.ivy.password
+        project.uploadArchives{
+            onlyIf{
+                doUpload(project)
+            }
+            repositories {
+                ivy {
+                    layout "maven"
+                    url project.ivy.url
+                    credentials {
+                        username project.ivy.userName
+                        password project.ivy.password
+                    }
                 }
             }
         }
@@ -63,6 +68,35 @@ class UploadBuildArtifactsTask extends com.gap.pipeline.tasks.WatchmenTask {
             artifactsDir.listFiles().each { file ->
                 archives file
             }
+        }
+    }
+
+    private boolean doUpload(project) {
+        if(project.ivy.checkIfExists){
+            def repositoryPath = project.group.replace(".", "/") + "/" + project.name + "/" + project.version + "/"
+            def repositoryUrl = project.ivy.url + "/" + repositoryPath
+            def exists = urlExists(repositoryUrl)
+            if(exists){
+                log.info(repositoryUrl + " alreay exists - Skipping uploading artifacts.")
+            }
+            return !exists;
+        } else{
+            return true;
+        }
+
+    }
+
+    private boolean urlExists(String repositoryUrl) {
+        try {
+            def connection = (HttpURLConnection) new URL(repositoryUrl).openConnection()
+            def timeoutInMillis = 10000
+            connection.setConnectTimeout(timeoutInMillis)
+            connection.setReadTimeout(timeoutInMillis)
+            connection.setRequestMethod("HEAD")
+            def responseCode = connection.getResponseCode()
+            return (responseCode >= 200 && responseCode <= 399)
+        } catch (IOException ignored) {
+            return false
         }
     }
 

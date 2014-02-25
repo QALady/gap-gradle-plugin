@@ -52,6 +52,7 @@ class ArtifactsUploadDownloadIntegrationTest {
         project.apply plugin: 'base'
         project.apply plugin: 'gappipeline'
         project.artifactCoordinates = coordinates
+        project.ivy.checkIfExists = true;
         project.tasks.findByName("uploadBuildArtifacts").execute()
     }
 

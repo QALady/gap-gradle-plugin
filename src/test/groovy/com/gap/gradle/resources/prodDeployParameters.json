@@ -8,7 +8,7 @@
 	"sha1IdList":["38615ae7ac61737184440a5797fa7becd4f684c8","28615ae7ac61737184440a5797fa7becd4f684c8"],
 	"git": {
 		"sha1Id": "38615ae7ac61737184440a5797fa7becd4f684c1",
-		"fullRepoName": "watchmen/ref-app"
+		"fullRepoName": "watchmen/gitTest"
 	},
 	"rpm" : {
 	    "yumSourceUrl": "http://ks64.phx.gapinc.dev/gapSoftware/repoName/devel",
