@@ -76,8 +76,11 @@ class JenkinsClient {
     }
 
 	def addDescription(jobName, buildNumber, description) {
-		http.request(GET, JSON) {
-			uri.path = "/job/${jobName}/${buildNumber}/submitDescription?description=" + description
+		http.request(POST) {
+			uri.path = "/job/${jobName}/${buildNumber}/submitDescription" 
+			headers.'Authorization' = getAuthorizationHeader()
+			requestContentType = URLENC
+			body = ['description': description]
 			response.success = {}
 			response.failure = {}
 		}

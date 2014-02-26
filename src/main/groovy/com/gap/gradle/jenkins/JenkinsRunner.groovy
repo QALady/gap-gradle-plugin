@@ -27,7 +27,6 @@ class JenkinsRunner {
 			buildNumber = jenkinsClient.startJob(jobName)
 			log.info("Started build " + buildNumber + " of jenkins job " + jobName)
 		}
-		jenkinsClient.addDescription(jobName, buildNumber, getECJobDescription())
 		def start = System.currentTimeMillis()
 		def end  = start + timeoutMillis
 		while(!jenkinsClient.isFinished(jobName, buildNumber)) {
@@ -46,6 +45,7 @@ class JenkinsRunner {
             log.error(message)
             throw new JenkinsException(message)
         }
+		jenkinsClient.addDescription(jobName, buildNumber, getECJobDescription())
 	}
 
 	def getJobUrl(jobName, buildNumber) {

@@ -107,12 +107,11 @@ class JenkinsClientTest {
 
 	@Test
 	void addDescription_shouldInvokeJenkinsApi() {
-		mockHttpBuilder.demand.request {method, contentType, body ->
+		mockHttpBuilder.demand.request {method, body ->
 			body.delegate = mockRequestDelegate
             body.call()
-			assertThat(method, equalTo(GET))
-			assertEquals(JSON, contentType)
-			assertThat(mockRequestDelegate.uri.path.toString(), equalTo("/job/jenkins_job_name/203/submitDescription?description=jobDescription"))
+			assertThat(method, equalTo(POST))
+			assertThat(mockRequestDelegate.uri.path.toString(), equalTo("/job/jenkins_job_name/203/submitDescription"))
 		}
 
 		mockHttpBuilder.use {
