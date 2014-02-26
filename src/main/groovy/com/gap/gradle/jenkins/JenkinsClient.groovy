@@ -78,6 +78,8 @@ class JenkinsClient {
 	def addDescription(jobName, buildNumber, description) {
 		http.request(GET, JSON) {
 			uri.path = "/job/${jobName}/${buildNumber}/submitDescription?description=" + description
+			response.success = {}
+			response.failure = {}
 		}
 	}
 
