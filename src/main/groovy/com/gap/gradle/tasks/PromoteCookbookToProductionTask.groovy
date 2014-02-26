@@ -35,7 +35,7 @@ class PromoteCookbookToProductionTask extends WatchmenTask {
 	def init() {
 		def jConfig = this.project.jenkins
 		jClient = new JenkinsClient(jConfig.cookbookServerUrl, jConfig.cookbookUser, project.cookbookJenkinsApiAuthToken)
-		jRunner = new JenkinsRunner(jClient, 15000, 900000)
+		jRunner = new JenkinsRunner(jClient, 15000, 9000000)
 	}
 
 }
