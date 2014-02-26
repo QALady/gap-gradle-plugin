@@ -68,7 +68,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
         }
 
 		project.task('promoteCookbookBerksfile') << {
-			new UpdateCookbookSHATask(project).execute()
+			//new UpdateCookbookSHATask(project).execute()
 		}
 
         project.task('generateAuditReport', dependsOn: ['setupProdBuildDirectories']) << {
