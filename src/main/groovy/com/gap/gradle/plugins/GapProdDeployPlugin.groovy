@@ -50,7 +50,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
 			new PromoteToProductionTask(project).execute()
 		}
 
-		project.task('promoteCookbookToProdChefServer', dependsOn: ['promoteCookbookBerksfile']) << {
+		project.task('promoteCookbookToProdChefServer') << { //, dependsOn: ['promoteCookbookBerksfile']) << {
 			new PromoteCookbookToProductionTask(project).execute()	
 		}
 
@@ -68,7 +68,7 @@ class GapProdDeployPlugin implements Plugin<Project>{
         }
 
 		project.task('promoteCookbookBerksfile') << {
-			//new UpdateCookbookSHATask(project).execute()
+			new UpdateCookbookSHATask(project).execute()
 		}
 
         project.task('generateAuditReport', dependsOn: ['setupProdBuildDirectories']) << {
