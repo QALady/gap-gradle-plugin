@@ -29,7 +29,7 @@ class PromoteToProductionTaskIntegrationTest {
 		project.jenkins.knifeJobName = "TagProdReady"
 		project.jenkins.knifeAuthToken = "abcd1234"
 
-        def triggerProdDeployTask = project.tasks.findByName('promoteToProduction')
+        def triggerProdDeployTask = project.tasks.findByName('promoteChefObjectsToProduction')
 
         triggerProdDeployTask.execute()
 	}
