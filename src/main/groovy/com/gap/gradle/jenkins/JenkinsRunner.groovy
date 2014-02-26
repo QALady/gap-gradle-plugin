@@ -61,7 +61,6 @@ class JenkinsRunner {
             ***********************************************************************************************
             *                                                                                             *
             *  EC UserID - ${commanderClient.getUserId()?.toString()}
-            *  EC UserName - ${commanderClient.getUserName()?.toString()}
             *  Job Start Time - ${commanderClient.getStartTime()?.toString()}
 			*  EC URL - https://commander.phx.gapinc.dev/commander/link/jobDetails/jobs/${commanderClient.getJobId()}
             *                                                                                             *
