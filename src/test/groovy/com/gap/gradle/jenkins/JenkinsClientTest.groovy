@@ -105,6 +105,21 @@ class JenkinsClientTest {
         }
     }
 
+	@Test
+	void addDescription_shouldInvokeJenkinsApi() {
+		mockHttpBuilder.demand.request {method, contentType, body ->
+			body.delegate = mockRequestDelegate
+            body.call()
+			assertThat(method, equalTo(GET))
+			assertEquals(JSON, contentType)
+			assertThat(mockRequestDelegate.uri.path.toString(), equalTo("/job/jenkins_job_name/203/submitDescription?description=jobDescription"))
+		}
+
+		mockHttpBuilder.use {
+			client.addDescription("jenkins_job_name", 203, "jobDescription")
+		}
+	}
+
     @Test
     void isFinished_shouldReturnTrue_WhenJobIsComplete() {
         mockHttpBuilder.demand.request {method, contentType, body ->

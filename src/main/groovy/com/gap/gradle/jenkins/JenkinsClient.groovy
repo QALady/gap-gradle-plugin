@@ -1,8 +1,7 @@
 package com.gap.gradle.jenkins
 
-import static groovyx.net.http.Method.*
 import static groovyx.net.http.ContentType.*
-
+import static groovyx.net.http.Method.*
 import groovyx.net.http.HTTPBuilder
 
 class JenkinsClient {
@@ -75,6 +74,12 @@ class JenkinsClient {
         def jobStatus = getJobStatus(jobName, buildNumber)
         jobStatus == JobStatus.success || jobStatus == JobStatus.failure
     }
+
+	def addDescription(jobName, buildNumber, description) {
+		http.request(GET, JSON) {
+			uri.path = "/job/${jobName}/${buildNumber}/submitDescription?description=" + description
+		}
+	}
 
     private def getJobStatus(jobName, buildNumber) {
         http.request(GET, JSON) {

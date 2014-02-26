@@ -6,12 +6,12 @@ import static org.mockito.Matchers.anyString
 import static org.mockito.Matchers.eq
 import static org.mockito.Mockito.*
 
-import com.gap.gradle.jenkins.JenkinsClient
-import com.gap.gradle.jenkins.JenkinsRunner
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+
+import com.gap.pipeline.ec.CommanderClient
 
 class JenkinsRunnerTest {
 
@@ -22,6 +22,7 @@ class JenkinsRunnerTest {
     def runner
     def jobName = "TagProdReady"
     def jobParams = "jobParams"
+	def mockCommanderClient
 
     @Before
     void SetUp() {
@@ -34,17 +35,23 @@ class JenkinsRunnerTest {
 		when(jenkinsClient.isSuccessful(eq(jobName), eq(200))).thenReturn(true)
         when(jenkinsClient.getJobUrl(jobName, 204)).thenReturn("http://jenkinsserver/unittest/204")
         runner = new JenkinsRunner(jenkinsClient)
+		mockCommanderClient = mock(CommanderClient)
+		when(mockCommanderClient.getUserId()).thenReturn("testuser")
+		when(mockCommanderClient.getJobId()).thenReturn(100)
+		when(mockCommanderClient.getUserName()).thenReturn("testusername")
+		when(mockCommanderClient.getStartTime()).thenReturn("test")
+		runner.commanderClient = mockCommanderClient
     }
 
     @Test
     void shouldStartJenkinsJobWithParams(){
-        runner.runJob(jobName, jobParams)
+		runner.runJob(jobName, jobParams)
         verify(jenkinsClient).startJobWithParams(jobName, jobParams)
     }
 	
     @Test
     void shouldReturnSuccessfullyWhenJobSuccessfullyCompleted(){
-        runner.runJob(jobName, jobParams)
+		runner.runJob(jobName, jobParams)
         verify(jenkinsClient).isFinished(jobName, 204)
         verify(jenkinsClient).isSuccessful(jobName, 204)
     }
@@ -69,6 +76,7 @@ class JenkinsRunnerTest {
     @Test
     void shouldPollForTheJobToBeFinished(){
         runner = new JenkinsRunner(jenkinsClient, 10)
+		runner.commanderClient = mockCommanderClient
         when(jenkinsClient.isFinished(eq(jobName), eq(204))).thenReturn(false).thenReturn(false).thenReturn(true)
         runner.runJob(jobName, jobParams)
         verify(jenkinsClient, times(3)).isFinished(jobName, 204)
@@ -80,6 +88,7 @@ class JenkinsRunnerTest {
         exception.expect(JenkinsException)
         exception.expectMessage(containsString("Timed out after 50 ms waiting for job to finish <http://jenkinsserver/unittest/204>"))
         runner = new JenkinsRunner(jenkinsClient, 10, 50)
+		runner.commanderClient = mockCommanderClient
         when(jenkinsClient.isFinished(eq(jobName), eq(204))).thenReturn(false)
         runner.runJob(jobName, jobParams)
     }

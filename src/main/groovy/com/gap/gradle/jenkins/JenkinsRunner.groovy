@@ -2,17 +2,21 @@ package com.gap.gradle.jenkins
 
 import org.apache.commons.logging.LogFactory
 
+import com.gap.pipeline.ec.CommanderClient
+
 class JenkinsRunner {
 	JenkinsClient jenkinsClient
 	def pollIntervalMillis
 	def timeoutMillis
 	def buildNumber
 	def log = LogFactory.getLog(JenkinsRunner)
+	def commanderClient
 
 	JenkinsRunner(jenkinsClient, pollIntervalMillis = 15000, timeoutMillis = 600000) {
 		this.jenkinsClient = jenkinsClient
 		this.pollIntervalMillis = pollIntervalMillis
 		this.timeoutMillis = timeoutMillis
+		this.commanderClient = new CommanderClient()
 	}
 	
 	def runJob(jobName, jobParams = null) {
@@ -23,6 +27,7 @@ class JenkinsRunner {
 			buildNumber = jenkinsClient.startJob(jobName)
 			log.info("Started build " + buildNumber + " of jenkins job " + jobName)
 		}
+		jenkinsClient.addDescription(jobName, buildNumber, getECJobDescription())
 		def start = System.currentTimeMillis()
 		def end  = start + timeoutMillis
 		while(!jenkinsClient.isFinished(jobName, buildNumber)) {
@@ -45,5 +50,22 @@ class JenkinsRunner {
 
 	def getJobUrl(jobName, buildNumber) {
 		jenkinsClient.getJobUrl(jobName, buildNumber)
+	}
+
+	def getECJobDescription() {
+		"""
+            ***********************************************************************************************
+            *                                                                                             *
+            *                                  Corresponding EC Job details                               *
+            *                                                                                             *
+            ***********************************************************************************************
+            *                                                                                             *
+            *  EC UserID - ${commanderClient.getUserId()?.toString()}
+            *  EC UserName - ${commanderClient.getUserName()?.toString()}
+            *  Job Start Time - ${commanderClient.getStartTime()?.toString()}
+			*  EC URL - https://commander.phx.gapinc.dev/commander/link/jobDetails/jobs/${commanderClient.getJobId()}
+            *                                                                                             *
+            ***********************************************************************************************
+        """
 	}
 }
