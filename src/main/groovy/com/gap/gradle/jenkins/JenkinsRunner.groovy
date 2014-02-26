@@ -53,6 +53,9 @@ class JenkinsRunner {
 	}
 
 	def getECJobDescription() {
-		"Running on behalf of EC UserID - ${commanderClient.getUserId()?.toString()} and triggered by EC URL:https://commander.phx.gapinc.dev/commander/link/jobDetails/jobs/${commanderClient.getJobId()}"
+        """
+            Running on behalf of EC UserID - ${commanderClient.getUserId()?.toString()} and
+            <a href='https://commander.phx.gapinc.dev/commander/link/jobDetails/jobs/${commanderClient.getJobId()}'>triggered by this EC Job</a>
+        """
 	}
 }
