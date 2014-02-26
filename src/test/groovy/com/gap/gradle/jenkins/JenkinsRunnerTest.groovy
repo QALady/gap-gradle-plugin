@@ -38,7 +38,6 @@ class JenkinsRunnerTest {
 		mockCommanderClient = mock(CommanderClient)
 		when(mockCommanderClient.getUserId()).thenReturn("testuser")
 		when(mockCommanderClient.getJobId()).thenReturn(100)
-		when(mockCommanderClient.getStartTime()).thenReturn("test")
 		runner.commanderClient = mockCommanderClient
     }
 

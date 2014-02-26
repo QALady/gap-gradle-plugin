@@ -53,18 +53,6 @@ class JenkinsRunner {
 	}
 
 	def getECJobDescription() {
-		"""
-            ***********************************************************************************************
-            *                                                                                             *
-            *                                  Corresponding EC Job details                               *
-            *                                                                                             *
-            ***********************************************************************************************
-            *                                                                                             *
-            *  EC UserID - ${commanderClient.getUserId()?.toString()}
-            *  Job Start Time - ${commanderClient.getStartTime()?.toString()}
-			*  EC URL - https://commander.phx.gapinc.dev/commander/link/jobDetails/jobs/${commanderClient.getJobId()}
-            *                                                                                             *
-            ***********************************************************************************************
-        """
+		"Running on behalf of EC UserID - ${commanderClient.getUserId()?.toString()} and triggered by EC URL:https://commander.phx.gapinc.dev/commander/link/jobDetails/jobs/${commanderClient.getJobId()}"
 	}
 }
