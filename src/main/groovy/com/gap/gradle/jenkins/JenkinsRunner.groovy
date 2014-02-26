@@ -15,9 +15,14 @@ class JenkinsRunner {
 		this.timeoutMillis = timeoutMillis
 	}
 	
-	def runJob(jobName, jobParams) {
-		buildNumber = jenkinsClient.startJobWithParams(jobName, jobParams)
-		log.info("Started build " + buildNumber + " of jenkins job " + jobName + " with parameters " + jobParams)
+	def runJob(jobName, jobParams = null) {
+		if (jobParams) {
+			buildNumber = jenkinsClient.startJobWithParams(jobName, jobParams)
+			log.info("Started build " + buildNumber + " of jenkins job " + jobName + " with parameters " + jobParams)
+		} else {
+			buildNumber = jenkinsClient.startJob(jobName)
+			log.info("Started build " + buildNumber + " of jenkins job " + jobName)
+		}
 		def start = System.currentTimeMillis()
 		def end  = start + timeoutMillis
 		while(!jenkinsClient.isFinished(jobName, buildNumber)) {
@@ -37,7 +42,7 @@ class JenkinsRunner {
             throw new JenkinsException(message)
         }
 	}
-	
+
 	def getJobUrl(jobName, buildNumber) {
 		jenkinsClient.getJobUrl(jobName, buildNumber)
 	}

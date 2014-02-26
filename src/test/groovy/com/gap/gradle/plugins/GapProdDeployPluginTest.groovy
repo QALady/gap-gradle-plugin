@@ -5,17 +5,17 @@ import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 import static org.junit.Assert.fail
-
-import com.gap.gradle.plugins.cookbook.ConfigFileResource
-import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
-import com.gap.gradle.tasks.PromoteRpmsTask
-import com.gap.pipeline.tasks.GenerateAuditReportTask
 import groovy.mock.interceptor.MockFor
+
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+
+import com.gap.gradle.plugins.cookbook.ConfigFileResource
+import com.gap.gradle.tasks.PromoteRpmsTask
+import com.gap.pipeline.tasks.GenerateAuditReportTask
 
 class GapProdDeployPluginTest {
 
@@ -25,7 +25,7 @@ class GapProdDeployPluginTest {
 	private Project project
 	private static String pluginName = 'gapproddeploy'
 	private static String testJsonPath = "src/test/groovy/com/gap/gradle/resources/"
-	
+
 	@Before
 	void setup() {
 		project = ProjectBuilder.builder().build()
@@ -33,22 +33,22 @@ class GapProdDeployPluginTest {
 		project.ecUser = "testuser"
 		project.apply plugin: pluginName
 	}
-	
+
 	@Test
 	void deployToProdDeployTaskIsAddedToProject(){
 		taskShouldExist('deployToProduction')
 	}
 
 	@Test
-	void promoteToProdDeployTaskIsAddedToProject(){
-		taskShouldExist('promoteToProduction')
+	void promoteChefObjectsToProductionDeployTaskIsAddedToProject(){
+		taskShouldExist('promoteChefObjectsToProduction')
 	}
 
 	@Test
-	void prepareToPromoteTaskIsAddedToProject() {
-		taskShouldExist('prepareToPromote')
+	void promoteCookbookToProdChefServerIsAddedToProject() {
+		taskShouldExist('promoteCookbookToProdChefServer')	
 	}
-
+	
 	@Test
 	void testJenkinsProjectExtensionIsLoaded() {
 		def jenkinsConfig = project.extensions.findByName("jenkins")
@@ -72,7 +72,7 @@ class GapProdDeployPluginTest {
 		assertNotNull(jenkinsConfig)
 	}
 
-	@Test	
+	@Test
 	void shouldReadJsonFromConfigFile() {
 		def expectedsha1s = ["38615ae7ac61737184440a5797fa7becd4f684c8", "28615ae7ac61737184440a5797fa7becd4f684c8"]
         assertThat(project.prodDeploy.appVersion, equalTo("976"))
@@ -90,6 +90,11 @@ class GapProdDeployPluginTest {
     void promoteRpmsTaskIsAddedToTheProject(){
         taskShouldExist('promoteRpms')
     }
+
+	@Test
+	void promoteCookbookBerksfileIsAddedToTheProject() {
+		taskShouldExist('promoteCookbookBerksfile')
+	}
 
     @Test
     void setupBuildDirsTaskIsAddedToTheProject (){
@@ -113,14 +118,21 @@ class GapProdDeployPluginTest {
 
     @Test
     void shouldExecutePromoteRpmsTask(){
-        def mockRpmTask = new MockFor(PromoteRpmsTask)
-        def mockPrepareTask = new MockFor(PrepareToPromoteToProductionTask)
-        mockPrepareTask.demand.execute {}
-        mockRpmTask.demand.execute { }
-        mockRpmTask.use {
+        def mockRpmsTask = new MockFor(PromoteRpmsTask)
+        mockRpmsTask.demand.execute { }
+        mockRpmsTask.use {
             project.tasks.getByName('promoteRpms').execute()
         }
     }
+	
+	@Test
+	void promoteChefObjectsToProduction_shouldDependOn_promoteCookbookToProdChefServer() {
+		taskShouldDependOn('promoteChefObjectsToProduction', 'promoteCookbookToProdChefServer')
+	}
+
+	void promoteCookbookToProdChefServer_shouldDependOn_promoteCookbookBerksfile() {
+		taskShouldDependOn('promoteCookbookToProdChefServer', 'promoteCookbookBerksfile')
+	}
 
     @Test
     void generateCookbookMetadata_shouldDependOnRequireCookbookValidation() {

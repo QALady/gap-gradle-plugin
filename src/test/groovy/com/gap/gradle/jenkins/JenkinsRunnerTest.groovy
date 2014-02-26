@@ -27,8 +27,11 @@ class JenkinsRunnerTest {
     void SetUp() {
         jenkinsClient = mock(JenkinsClient)
         when(jenkinsClient.startJobWithParams(eq(jobName), eq(jobParams))).thenReturn(204)
+		when(jenkinsClient.startJob(eq(jobName))).thenReturn(200)
         when(jenkinsClient.isFinished(eq(jobName), eq(204))).thenReturn(true)
+		when(jenkinsClient.isFinished(eq(jobName), eq(200))).thenReturn(true)
         when(jenkinsClient.isSuccessful(eq(jobName), eq(204))).thenReturn(true)
+		when(jenkinsClient.isSuccessful(eq(jobName), eq(200))).thenReturn(true)
         when(jenkinsClient.getJobUrl(jobName, 204)).thenReturn("http://jenkinsserver/unittest/204")
         runner = new JenkinsRunner(jenkinsClient)
     }
@@ -38,13 +41,21 @@ class JenkinsRunnerTest {
         runner.runJob(jobName, jobParams)
         verify(jenkinsClient).startJobWithParams(jobName, jobParams)
     }
-
+	
     @Test
     void shouldReturnSuccessfullyWhenJobSuccessfullyCompleted(){
         runner.runJob(jobName, jobParams)
         verify(jenkinsClient).isFinished(jobName, 204)
         verify(jenkinsClient).isSuccessful(jobName, 204)
     }
+
+	@Test
+	void shouldStartJenkinsJobWithNoParams() {
+		runner.runJob(jobName)
+		verify(jenkinsClient).startJob(jobName)
+		verify(jenkinsClient).isFinished(jobName, 200)
+		verify(jenkinsClient).isSuccessful(jobName, 200)
+	}
 
     @Test
     void shouldThrowExceptionWhenJenkinsJobFails(){

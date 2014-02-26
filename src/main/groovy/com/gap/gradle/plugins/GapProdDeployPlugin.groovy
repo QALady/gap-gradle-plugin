@@ -4,7 +4,7 @@ import org.gradle.api.Project
 
 import com.gap.gradle.plugins.cookbook.JenkinsConfig
 import com.gap.gradle.tasks.DeployToProductionTask
-import com.gap.gradle.tasks.PrepareToPromoteToProductionTask
+import com.gap.gradle.tasks.PromoteCookbookToProductionTask
 import com.gap.gradle.tasks.PromoteRpmsTask
 import com.gap.gradle.tasks.PromoteToProductionTask
 import com.gap.gradle.tasks.UpdateCookbookSHATask
@@ -45,22 +45,24 @@ class GapProdDeployPlugin implements Plugin<Project>{
             new SetUpBuildDirectoriesTask(project).execute()
         }
 
-		project.task('prepareToPromote') << {
-			println "preparing to promote"
-			new PrepareToPromoteToProductionTask(project).execute()
-		}
-
-		project.task('promoteToProduction', dependsOn: ['prepareToPromote', 'publishCookbookToChefServer'] ) << {
+		project.task('promoteChefObjectsToProduction', dependsOn: ['promoteCookbookToProdChefServer'] ) << {
 			println "promoting to production"
 			new PromoteToProductionTask(project).execute()
 		}
 
-		project.task('deployToProduction', dependsOn: ['promoteToProduction', 'generateAuditReport']) << {
+		project.task('promoteCookbookToProdChefServer', dependsOn: ['promoteCookbookBerksfile']) << {
+			new PromoteCookbookToProductionTask(project).execute()	
+		}
+
+		project.task('deployToProduction', dependsOn: ['promoteChefObjectsToProduction', 'generateAuditReport']) << {
 			println "deploying to production"
 			new DeployToProductionTask(project).execute()
 			println "WOO! done (:"
 		}
 
+		/**
+		 * this task is run as an EC step before deployToProd
+		 */
         project.task('promoteRpms') << {
             new PromoteRpmsTask(project).execute()
         }
