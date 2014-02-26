@@ -74,7 +74,7 @@ class PromoteToProductionTaskTest {
     private void setupTaskProperties() {
         project.jenkins.knifeServerUrl = "jenkins"
         project.jenkins.knifeUser = "jenkins_user"
-        project.jenkins.knifeAuthToken = "jenkins_password"
+        project.chefJenkinsApiAuthToken = "jenkins_password"
         project.jenkins.knifeJobName = "jenkins_job"
     }
 }

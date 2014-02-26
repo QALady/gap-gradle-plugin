@@ -27,7 +27,7 @@ class PromoteToProductionTaskIntegrationTest {
 		project.jenkins.knifeServerUrl = "http://dgphxaciap014.phx.gapinc.dev:8080/"
 		project.jenkins.knifeUser = "testUSer"
 		project.jenkins.knifeJobName = "TagProdReady"
-		project.jenkins.knifeAuthToken = "abcd1234"
+		project.chefJenkinsApiAuthToken = "abcd1234"
 
         def triggerProdDeployTask = project.tasks.findByName('promoteChefObjectsToProduction')
 

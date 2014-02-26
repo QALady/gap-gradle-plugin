@@ -12,7 +12,7 @@ import com.gap.pipeline.tasks.annotations.RequiredParameters
 	@Require(parameter = 'prodDeploy.cookbook.name', description = "cookbook name"),
 	@Require(parameter = 'jenkins.cookbookServerUrl', description = "Jenkins Server URL to trigger job to promote chef objects to prod."),
 	@Require(parameter = 'jenkins.cookbookUser', description = "Jenkins User ID to trigger job"),
-	@Require(parameter = 'jenkins.cookbookAuthToken', description = "Jenkins API Auth token to trigger job."),
+	@Require(parameter = 'cookbookJenkinsApiAuthToken', description = "Jenkins API Auth token passed from the EC job."),
 	@Require(parameter = 'chef.environment', description = "used to define the Jenkins job name for the cookbook")
 ])
 class PromoteCookbookToProductionTask extends WatchmenTask {
@@ -34,7 +34,7 @@ class PromoteCookbookToProductionTask extends WatchmenTask {
 	
 	def init() {
 		def jConfig = this.project.jenkins
-		jClient = new JenkinsClient(jConfig.cookbookServerUrl, jConfig.cookbookUser, jConfig.cookbookAuthToken)
+		jClient = new JenkinsClient(jConfig.cookbookServerUrl, jConfig.cookbookUser, project.cookbookJenkinsApiAuthToken)
 		jRunner = new JenkinsRunner(jClient, 15000, 900000)
 	}
 
