@@ -11,7 +11,7 @@ class CookbookUploader {
     def timeoutMillis
     def log = LogFactory.getLog(CookbookUploader)
 
-    CookbookUploader(jenkinsClient, pollIntervalMillis = 15000, timeoutMillis = 600000) {
+    CookbookUploader(jenkinsClient, pollIntervalMillis = 15000, timeoutMillis = 1800000) {
         this.jenkinsClient = jenkinsClient
         this.pollIntervalMillis = pollIntervalMillis
         this.timeoutMillis = timeoutMillis

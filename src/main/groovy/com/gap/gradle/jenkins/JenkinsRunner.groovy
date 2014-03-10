@@ -12,7 +12,7 @@ class JenkinsRunner {
 	def log = LogFactory.getLog(JenkinsRunner)
 	def commanderClient
 
-	JenkinsRunner(jenkinsClient, pollIntervalMillis = 15000, timeoutMillis = 600000) {
+	JenkinsRunner(jenkinsClient, pollIntervalMillis = 15000, timeoutMillis = 1800000) {
 		this.jenkinsClient = jenkinsClient
 		this.pollIntervalMillis = pollIntervalMillis
 		this.timeoutMillis = timeoutMillis
