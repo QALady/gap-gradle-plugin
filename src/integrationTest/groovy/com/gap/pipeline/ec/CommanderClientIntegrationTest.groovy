@@ -1,5 +1,6 @@
 package com.gap.pipeline.ec
 
+import org.apache.commons.io.FileUtils
 import org.junit.Assume
 import org.junit.Before
 
@@ -30,7 +31,28 @@ class CommanderClientIntegrationTest {
     @Test
     public void addLink_shouldInvokeEcToolToCreateLinks(){
         def jobId = commander.getJobId()
+
+        def jobDirectory = commander.currentJobDir
+        def artifactsDir = "${jobDirectory}/artifacts"
+        FileUtils.forceMkdir(artifactsDir)
+        createTextFile("${artifactsDir}/integrationTest.log")
         commander.addLink("integrationTest.log", jobId)
+    }
+
+    private void createTextFile(filePath){
+        String content = "This is the content to write into file";
+
+        File file = new File(filePath)
+
+        // if file doesnt exists, then create it
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+
+        FileWriter fw = new FileWriter(file.getAbsoluteFile())
+        BufferedWriter bw = new BufferedWriter(fw)
+        bw.write(content)
+        bw.close()
     }
 
 
