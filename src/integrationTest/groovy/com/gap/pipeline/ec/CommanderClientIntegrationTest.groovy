@@ -31,19 +31,14 @@ class CommanderClientIntegrationTest {
         commander = new CommanderClient()
     }
 
-
     @Test
     public void addLink_shouldInvokeEcToolToCreateLinks(){
         def jobId = commander.getJobId()
-
         def jobDirectory = commander.currentJobDir
         def artifactsDir = "${jobDirectory}/artifacts"
-
         createDir(artifactsDir)
-
         createTextFile("${artifactsDir}/integrationTest.log")
-
-        //commander.addLink("integrationTest.log", jobId)
+        commander.addLink("integrationTest.log", jobId)
     }
 
     private void createDir(dirPath){
