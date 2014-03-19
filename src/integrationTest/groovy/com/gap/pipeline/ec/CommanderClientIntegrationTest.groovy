@@ -1,5 +1,6 @@
 package com.gap.pipeline.ec
 
+import com.gap.pipeline.utils.Environment
 import org.apache.commons.io.FileUtils
 import org.junit.Assume
 import org.junit.Before
@@ -21,10 +22,12 @@ class CommanderClientIntegrationTest {
     def pipeline = true
 
     CommanderClient commander = null
+    Environment environment = null
 
     @Before
     def void beforeTests(){
-        Assume.assumeTrue(pipeline)
+        environment = new Environment()
+        Assume.assumeTrue(environment.getValue('COMMANDER_JOBID') != "")
         commander = new CommanderClient()
     }
 
@@ -34,9 +37,16 @@ class CommanderClientIntegrationTest {
 
         def jobDirectory = commander.currentJobDir
         def artifactsDir = "${jobDirectory}/artifacts"
-        FileUtils.forceMkdir(artifactsDir)
+
+        createDir(artifactsDir)
+
         createTextFile("${artifactsDir}/integrationTest.log")
+
         commander.addLink("integrationTest.log", jobId)
+    }
+
+    private void createDir(dirPath){
+        new File(dirPath).mkdirs()
     }
 
     private void createTextFile(filePath){
