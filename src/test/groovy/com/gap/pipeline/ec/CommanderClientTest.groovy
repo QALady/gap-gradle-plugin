@@ -41,25 +41,6 @@ public class CommanderClientTest {
     }
 
     @Test
-    public void runProcedure_shouldInvokeCommanderProcedure(){
-        commander.runProcedure("My Project:My Procedure")
-        verify(mockShellCommand).execute(["ectool", "runProcedure",  "My Project", "--procedureName", "My Procedure"])
-    }
-
-    @Test
-    public void runProcedure_shouldInvokeCommanderProcedureWithArguments(){
-        commander.runProcedure('My Project:My Procedure', [artifactLocation: 'com.gap.sandbox:iso:1234', param2: 'value2'])
-        verify(mockShellCommand).execute(["ectool", "runProcedure",  "My Project", "--procedureName", "My Procedure", "--actualParameter", "artifactLocation=com.gap.sandbox:iso:1234", "param2=value2"])
-    }
-
-    @Test
-    public void runProcedure_shouldThrowException_whenProcedureNameIsNotInRightFormat() {
-        exception.expect(IllegalArgumentException)
-        exception.expectMessage("The procedure name 'My ProjectMy Procedure' is invalid. It should be of the format '<project name>:<procedure name>")
-        commander.runProcedure("My ProjectMy Procedure")
-     }
-
-    @Test
     public void getCurrentJobDir_shouldReturnDirectoryOfCurrentJob(){
         environmentStub.setValue('COMMANDER_WORKSPACE_UNIX', '/workspace/path/dirName')
         assertEquals("/workspace/path/dirName", commander.getCurrentJobDir())

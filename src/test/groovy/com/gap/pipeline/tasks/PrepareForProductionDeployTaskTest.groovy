@@ -192,7 +192,6 @@ class PrepareForProductionDeployTaskTest {
 		project.prodPrepare.cookbookName = 'mycookbook'
 		project.prodPrepare.nodes ="node1,node2"
 		mockCommanderArtifacts.demand.publishLinks {}
-		mockCommanderClient.demand.runProcedure { }
 		mockUploadBuildArtifactsTask.demand.execute {}
 		executeTask()
 	}
@@ -209,7 +208,6 @@ class PrepareForProductionDeployTaskTest {
 		project.prodPrepare.cookbookName = 'mycookbook'
 		project.prodPrepare.nodes ="node1,node2"
 		mockCommanderArtifacts.demand.publishLinks {}
-		mockCommanderClient.demand.runProcedure { }
 		mockUploadBuildArtifactsTask.demand.execute {}
 		executeTask()
 	}
