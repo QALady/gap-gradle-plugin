@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils
 import org.junit.Assume
 import org.junit.Before
 
+import static junit.framework.Assert.assertEquals
 import static org.junit.Assert.assertTrue
 import static org.mockito.Mockito.verify
 import static org.testng.Assert.assertTrue
@@ -27,7 +28,7 @@ class CommanderClientIntegrationTest {
     @Before
     def void beforeTests(){
         environment = new Environment()
-        Assume.assumeTrue(environment.getValue('COMMANDER_JOBID') != "")
+        Assume.assumeTrue(environment.getValue('COMMANDER_JOBID') != null)
         commander = new CommanderClient()
     }
 
@@ -39,6 +40,11 @@ class CommanderClientIntegrationTest {
         createDir(artifactsDir)
         createTextFile("${artifactsDir}/integrationTest.log")
         commander.addLink("integrationTest.log", jobId)
+    }
+
+    @Test
+    public void shouldReturnCurrentDirectoryAsJobWorkingDirectory(){
+        assertEquals(commander.getCurrentJobDir(), System.getProperty("user.dir"))
     }
 
     private void createDir(dirPath){
@@ -60,6 +66,4 @@ class CommanderClientIntegrationTest {
         bw.write(content)
         bw.close()
     }
-
-
 }
