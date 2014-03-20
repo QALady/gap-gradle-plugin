@@ -18,7 +18,7 @@ class CommanderClientIntegrationTest {
     @Before
     def void beforeTests(){
         environment = new Environment()
-        Assume.assumeTrue(environment.getValue('ENV') == "ci")
+        Assume.assumeNotNull(environment.getValue('COMMANDER_HOME')) //this ensures that the tests run only in the pipeline and not locally
         commander = new CommanderClient()
     }
 
