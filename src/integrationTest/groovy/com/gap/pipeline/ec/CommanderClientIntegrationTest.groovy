@@ -1,22 +1,12 @@
 package com.gap.pipeline.ec
 
 import com.gap.pipeline.utils.Environment
-import org.apache.commons.io.FileUtils
 import org.junit.Assume
 import org.junit.Before
+import org.junit.Test
 
 import static junit.framework.Assert.assertEquals
-import static org.junit.Assert.assertTrue
-import static org.mockito.Mockito.verify
-import static org.testng.Assert.assertTrue
-
-import com.gap.pipeline.utils.ShellCommand
-import org.gradle.testfixtures.ProjectBuilder
-import org.junit.After
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import static junit.framework.Assert.assertTrue
 
 class CommanderClientIntegrationTest {
 
@@ -28,43 +18,34 @@ class CommanderClientIntegrationTest {
     @Before
     def void beforeTests(){
         environment = new Environment()
-        Assume.assumeTrue(environment.getValue('COMMANDER_JOBID') != null)
+        Assume.assumeTrue(environment.getValue('ENV') == "ci")
         commander = new CommanderClient()
     }
 
     @Test
-    public void addLink_shouldInvokeEcToolToCreateLinks(){
-        def jobId = commander.getJobId()
-        def jobDirectory = commander.currentJobDir
-        def artifactsDir = "${jobDirectory}/artifacts"
-        createDir(artifactsDir)
-        createTextFile("${artifactsDir}/integrationTest.log")
-        commander.addLink("integrationTest.log", jobId)
+    public void shouldReturnCurrentJobID(){
+        assertTrue(commander.getJobId().length > 0)
+    }
+
+    @Test
+    public void shouldReturnUserId() {
+        assertTrue(commander.getUserId().length > 0)
+    }
+
+    @Test
+    public void shouldReturnUserName(){
+        assertTrue(commander.getUserName().length > 0)
+    }
+
+    @Test
+    public void shouldReturnStartTimeOfJob(){
+        assertTrue(commander.getStartTime() != null)
     }
 
     @Test
     public void shouldReturnCurrentDirectoryAsJobWorkingDirectory(){
-        def jobDir = "/mnt/electriccommander/workspace/Watchmen Framework-Gap Gradle Plugin-${commander.getJobId()}"
+        def ecJobName = "Watchmen Framework-Gap Gradle Plugin"
+        def jobDir = "/mnt/electriccommander/workspace/${ecJobName}-${commander.getJobId()}"
         assertEquals(jobDir, commander.getCurrentJobDir())
-    }
-
-    private void createDir(dirPath){
-        new File(dirPath).mkdirs()
-    }
-
-    private void createTextFile(filePath){
-        String content = "This is the content to write into file";
-
-        File file = new File(filePath)
-
-        // if file doesnt exists, then create it
-        if (!file.exists()) {
-            file.createNewFile()
-        }
-
-        FileWriter fw = new FileWriter(file.getAbsoluteFile())
-        BufferedWriter bw = new BufferedWriter(fw)
-        bw.write(content)
-        bw.close()
     }
 }
