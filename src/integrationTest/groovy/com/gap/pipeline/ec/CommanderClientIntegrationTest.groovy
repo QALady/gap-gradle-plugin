@@ -44,7 +44,8 @@ class CommanderClientIntegrationTest {
 
     @Test
     public void shouldReturnCurrentDirectoryAsJobWorkingDirectory(){
-        assertEquals(commander.getCurrentJobDir(), System.getProperty("user.dir"))
+        def jobDir = "mnt/electriccommander/workspace/Watchmen Framework-Gap Gradle Plugin-${commander.getJobId()}"
+        assertEquals(jobDir, commander.getCurrentJobDir())
     }
 
     private void createDir(dirPath){
