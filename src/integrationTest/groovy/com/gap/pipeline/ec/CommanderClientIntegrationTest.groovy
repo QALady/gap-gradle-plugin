@@ -24,17 +24,17 @@ class CommanderClientIntegrationTest {
 
     @Test
     public void shouldReturnCurrentJobID(){
-        assertTrue(commander.getJobId().length > 0)
+        assertTrue(commander.getJobId().length() > 0)
     }
 
     @Test
     public void shouldReturnUserId() {
-        assertTrue(commander.getUserId().length > 0)
+        assertTrue(commander.getUserId().length() > 0)
     }
 
     @Test
     public void shouldReturnUserName(){
-        assertTrue(commander.getUserName().length > 0)
+        assertTrue(commander.getUserName().length() > 0)
     }
 
     @Test
