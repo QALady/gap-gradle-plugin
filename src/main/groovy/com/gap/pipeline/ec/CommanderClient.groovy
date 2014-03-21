@@ -71,10 +71,14 @@ class CommanderClient {
 
 	def getUserName(){
 		def jobTriggeredByUserId = getECProperty("/myJob/launchedByUser")
-		getECProperty("/users[$jobTriggeredByUserId]/fullUserName")
+        isJobTriggeredManually(jobTriggeredByUserId)? getECProperty("/users[$jobTriggeredByUserId]/fullUserName"): jobTriggeredByUserId
 	}
 
 	def getStartTime(){
 		getECProperty("/myJob/start/")
 	}
+
+    private static def isJobTriggeredManually(userId){
+        userId.contains(" ")
+    }
 }
