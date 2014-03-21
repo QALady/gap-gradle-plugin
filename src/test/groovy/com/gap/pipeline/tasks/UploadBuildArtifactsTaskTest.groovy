@@ -33,7 +33,7 @@ class UploadBuildArtifactsTaskTest {
         project.task('uploadArchives', overwrite: true) << {}
         project.uploadArchives.repositories = {  }
 
-        def artifactsDir = temporaryFolder.newFolder("build/artifacts")
+        def artifactsDir = new File(temporaryFolder.root.path, 'build/artifacts')
         artifactsDir.mkdirs()
         artifactsDirPath = artifactsDir.path
         uploadBuildArtifactsTask = project.tasks.findByName('uploadBuildArtifacts')
