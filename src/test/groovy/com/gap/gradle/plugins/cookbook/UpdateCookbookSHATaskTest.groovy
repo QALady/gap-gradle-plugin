@@ -1,13 +1,8 @@
 package com.gap.gradle.plugins.cookbook
-
-import com.gap.pipeline.GitConfig
-
-import static helpers.Assert.assertThrowsExceptionWithMessage
-import static junit.framework.Assert.assertFalse
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.junit.internal.matchers.StringContains.containsString
+import com.gap.gradle.git.GitClient
+import com.gap.gradle.tasks.UpdateCookbookSHATask
+import com.gap.pipeline.ec.CommanderClient
 import groovy.mock.interceptor.MockFor
-
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
@@ -16,9 +11,9 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
-import com.gap.gradle.git.GitClient
-import com.gap.gradle.tasks.UpdateCookbookSHATask
-import com.gap.pipeline.ec.CommanderClient
+import static helpers.Assert.assertThrowsExceptionWithMessage
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.containsString
 
 class UpdateCookbookSHATaskTest {
 

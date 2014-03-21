@@ -1,20 +1,7 @@
 package com.gap.gradle.tasks
 
-import com.gap.gradle.chef.CookbookUploader
-import com.gap.gradle.chef.CookbookUtil
-
-import static junit.framework.Assert.*
-import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
-import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
-import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.junit.internal.matchers.StringContains.containsString
-import static org.junit.rules.ExpectedException.none
-import static org.mockito.Matchers.anyObject
-import static org.mockito.Matchers.eq
-import static org.mockito.Mockito.*
+import com.gap.gradle.jenkins.JenkinsRunner
 import groovy.mock.interceptor.MockFor
-
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -23,8 +10,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-import com.gap.gradle.jenkins.JenkinsRunner
-import com.gap.pipeline.ec.CommanderClient;
+import static junit.framework.Assert.assertEquals
+import static org.junit.rules.ExpectedException.none
 
 class PromoteCookbookToProductionTaskTest {
 

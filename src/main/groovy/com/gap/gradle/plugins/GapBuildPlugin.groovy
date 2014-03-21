@@ -23,7 +23,7 @@ class GapBuildPlugin implements Plugin<Project>{
         apply plugin: com.gap.gradle.plugins.resources.GapResourcesPlugin
 
         dependencies {
-          testCompile 'junit:junit:4.10'
+          testCompile 'junit:junit:4.11'
         }
 
         target.tasks.test.enableAssertions false

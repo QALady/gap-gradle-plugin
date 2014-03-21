@@ -1,8 +1,5 @@
 package com.gap.gradle.plugins.cookbook
-import static junit.framework.Assert.assertFalse
 import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.junit.internal.matchers.StringContains.containsString
 
 import com.gap.gradle.chef.CookbookUploader
 import com.gap.gradle.chef.CookbookUtil

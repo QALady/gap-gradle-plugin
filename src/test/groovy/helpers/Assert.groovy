@@ -1,10 +1,9 @@
 package helpers
-
 import groovy.mock.interceptor.MockFor
 
 import static junit.framework.Assert.assertFalse
 import static org.hamcrest.MatcherAssert.assertThat
-import static org.junit.internal.matchers.StringContains.containsString
+import static org.hamcrest.Matchers.containsString
 
 class Assert {
     static def shouldExecuteTask(project, taskName, type) {
