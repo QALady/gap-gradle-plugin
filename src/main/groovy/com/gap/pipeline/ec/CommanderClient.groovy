@@ -79,6 +79,6 @@ class CommanderClient {
 	}
 
     private static def isJobTriggeredManually(userId){
-        userId.contains(" ")
+        userId.toString().contains(' ')
     }
 }
