@@ -1,8 +1,4 @@
 package com.gap.gradle.plugins.cookbook
-import static org.hamcrest.Matchers.containsString
-import static org.hamcrest.Matchers.equalTo
-import static org.junit.Assert.assertThat
-import static org.junit.Assert.fail
 
 import com.gap.gradle.utils.ShellCommand
 import groovy.json.JsonBuilder
@@ -14,6 +10,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import static org.hamcrest.Matchers.containsString
+import static org.hamcrest.Matchers.equalTo
+import static org.junit.Assert.assertThat
+import static org.junit.Assert.fail
 
 class ValidateTransitiveCookbookDependenciesTaskTest {
 

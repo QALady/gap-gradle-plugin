@@ -1,6 +1,4 @@
 package com.gap.gradle.tasks
-import static junit.framework.Assert.assertEquals
-import static junit.framework.Assert.assertTrue
 
 import com.gap.gradle.utils.ShellCommand
 import com.gap.pipeline.exception.MissingParameterException
@@ -11,6 +9,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
+
+import static junit.framework.Assert.assertEquals
+import static junit.framework.Assert.assertTrue
 
 class PromoteArtifactsTaskTest {
     private Project project

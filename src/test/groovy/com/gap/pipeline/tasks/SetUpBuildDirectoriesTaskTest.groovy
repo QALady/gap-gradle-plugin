@@ -1,12 +1,12 @@
 package com.gap.pipeline.tasks
 
-import static junit.framework.Assert.assertTrue
-
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import static junit.framework.Assert.assertTrue
 
 class SetUpBuildDirectoriesTaskTest {
 

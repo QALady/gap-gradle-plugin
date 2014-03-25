@@ -1,7 +1,5 @@
 package com.gap.pipeline.tasks
 
-import static org.junit.rules.ExpectedException.none
-
 import com.gap.pipeline.exception.MissingParameterException
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
@@ -10,6 +8,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+
+import static org.junit.rules.ExpectedException.none
 
 @RequiredParameters([
 @Require(parameter = 'ivy.url', description = ""),

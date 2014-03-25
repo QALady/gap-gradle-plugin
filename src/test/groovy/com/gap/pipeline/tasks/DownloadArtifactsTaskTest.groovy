@@ -1,10 +1,5 @@
 package com.gap.pipeline.tasks
 
-import static org.hamcrest.CoreMatchers.is
-import static org.hamcrest.CoreMatchers.notNullValue
-import static org.junit.Assert.assertThat
-import static org.junit.rules.ExpectedException.none
-
 import com.gap.pipeline.exception.MissingParameterException
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -13,6 +8,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
+
+import static org.hamcrest.CoreMatchers.is
+import static org.hamcrest.CoreMatchers.notNullValue
+import static org.junit.Assert.assertThat
+import static org.junit.rules.ExpectedException.none
 
 class DownloadArtifactsTaskTest {
 

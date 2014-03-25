@@ -1,11 +1,5 @@
 package com.gap.pipeline.tasks
 
-import static junit.framework.Assert.assertEquals
-import static junit.framework.Assert.assertTrue
-import static org.hamcrest.CoreMatchers.is
-import static org.junit.Assert.assertThat
-import static org.junit.rules.ExpectedException.none
-
 import com.gap.pipeline.ProdPrepareConfig
 import com.gap.pipeline.ec.CommanderArtifacts
 import com.gap.pipeline.ec.CommanderClient
@@ -19,7 +13,11 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
 
-import static matchers.CustomMatchers.sameString
+import static junit.framework.Assert.assertEquals
+import static junit.framework.Assert.assertTrue
+import static org.hamcrest.CoreMatchers.is
+import static org.junit.Assert.assertThat
+import static org.junit.rules.ExpectedException.none
 
 class PrepareForProductionDeployTaskTest {
 

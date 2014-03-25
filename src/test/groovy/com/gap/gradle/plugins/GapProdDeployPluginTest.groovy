@@ -1,21 +1,18 @@
 package com.gap.gradle.plugins
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.notNullValue
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertThat
-import static org.junit.Assert.assertTrue
-import static org.junit.Assert.fail
-import groovy.mock.interceptor.MockFor
 
+import com.gap.gradle.plugins.cookbook.ConfigFileResource
+import com.gap.gradle.tasks.PromoteRpmsTask
+import com.gap.pipeline.tasks.GenerateAuditReportTask
+import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-import com.gap.gradle.plugins.cookbook.ConfigFileResource
-import com.gap.gradle.tasks.PromoteRpmsTask
-import com.gap.pipeline.tasks.GenerateAuditReportTask
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.notNullValue
+import static org.junit.Assert.*
 
 class GapProdDeployPluginTest {
 

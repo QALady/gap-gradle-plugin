@@ -1,17 +1,17 @@
 package com.gap.pipeline.ec
 
-import static junit.framework.Assert.assertEquals
-import static org.junit.rules.ExpectedException.none
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.verify
-
+import com.gap.pipeline.utils.EnvironmentStub
 import com.gap.pipeline.utils.ShellCommand
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.mockito.Mockito
-import com.gap.pipeline.utils.EnvironmentStub
+
+import static junit.framework.Assert.assertEquals
+import static org.junit.rules.ExpectedException.none
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.verify
 
 public class CommanderClientTest {
     @Rule

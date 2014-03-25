@@ -1,11 +1,5 @@
 package com.gap.pipeline
 
-import static helpers.Assert.shouldExecuteTask
-import static org.hamcrest.CoreMatchers.is
-import static org.hamcrest.Matchers.notNullValue
-import static org.junit.Assert.assertThat
-import static org.junit.Assert.fail
-
 import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.tasks.*
 import groovy.mock.interceptor.MockFor
@@ -13,6 +7,12 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
+
+import static helpers.Assert.shouldExecuteTask
+import static org.hamcrest.CoreMatchers.is
+import static org.hamcrest.Matchers.notNullValue
+import static org.junit.Assert.assertThat
+import static org.junit.Assert.fail
 
 class GapPipelinePluginTest {
 

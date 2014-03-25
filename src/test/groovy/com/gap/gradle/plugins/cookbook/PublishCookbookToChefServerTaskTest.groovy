@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins.cookbook
-import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
 
 import com.gap.gradle.chef.CookbookUploader
 import com.gap.gradle.chef.CookbookUtil
@@ -9,7 +8,9 @@ import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
+
 import static helpers.Assert.assertThrowsExceptionWithMessage
+import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
 
 class PublishCookbookToChefServerTaskTest {
 

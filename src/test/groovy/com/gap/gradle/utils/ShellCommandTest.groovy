@@ -1,11 +1,11 @@
 package com.gap.gradle.utils
 
-import static org.junit.Assert.assertEquals
-import static org.junit.rules.ExpectedException.none
-
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+
+import static org.junit.Assert.assertEquals
+import static org.junit.rules.ExpectedException.none
 
 class ShellCommandTest {
 

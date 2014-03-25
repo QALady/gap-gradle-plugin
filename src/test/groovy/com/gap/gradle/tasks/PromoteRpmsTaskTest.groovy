@@ -1,9 +1,8 @@
 package com.gap.gradle.tasks
 
-import static org.junit.rules.ExpectedException.none
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.verify
-
+import com.gap.gradle.yum.YumClient
+import com.gap.pipeline.ProdDeployParameterConfig
+import com.gap.pipeline.RpmConfig
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -11,10 +10,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-import com.gap.gradle.yum.YumClient
-import com.gap.pipeline.RpmConfig
-
-import com.gap.pipeline.ProdDeployParameterConfig
+import static org.junit.rules.ExpectedException.none
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.verify
 
 class PromoteRpmsTaskTest {
 

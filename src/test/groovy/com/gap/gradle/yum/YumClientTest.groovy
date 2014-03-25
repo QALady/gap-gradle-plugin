@@ -1,10 +1,11 @@
 package com.gap.gradle.yum
 
+import com.gap.gradle.utils.ShellCommand
 import org.junit.Test
+
+import static helpers.CustomMatchers.sameString
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.verify
-import com.gap.gradle.utils.ShellCommand
-import static helpers.CustomMatchers.sameString
 
 class YumClientTest {
     @Test

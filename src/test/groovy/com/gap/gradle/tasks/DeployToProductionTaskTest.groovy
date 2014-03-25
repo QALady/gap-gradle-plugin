@@ -1,21 +1,19 @@
 package com.gap.gradle.tasks
+
+import com.gap.gradle.exceptions.DeployToProductionException
+import com.gap.gradle.utils.ShellCommand
+import com.gap.gradle.utils.ShellCommandException
+import com.gap.pipeline.ProdDeployParameterConfig
+import groovy.mock.interceptor.MockFor
+import org.gradle.api.Project
+import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Before
+import org.junit.Test
+
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.containsString
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
-
-import com.gap.gradle.exceptions.DeployToProductionException;
-import com.gap.gradle.utils.ShellCommand
-import com.gap.gradle.utils.ShellCommandException
-import com.gap.pipeline.ProdDeployParameterConfig;
-
-import groovy.mock.interceptor.MockFor
-
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Before
-import org.junit.Test
 
 class DeployToProductionTaskTest {
 

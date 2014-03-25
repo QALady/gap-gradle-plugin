@@ -1,15 +1,15 @@
 package com.gap.gradle.chef
 
-import static junit.framework.Assert.assertFalse
-import static junit.framework.Assert.assertTrue
-import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
-
 import com.gap.gradle.utils.ShellCommand
 import groovy.mock.interceptor.MockFor
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import static junit.framework.Assert.assertFalse
+import static junit.framework.Assert.assertTrue
+import static net.sf.ezmorph.test.ArrayAssertions.assertEquals
 
 class CookbookUtilTest {
 

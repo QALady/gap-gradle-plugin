@@ -1,17 +1,15 @@
 package com.gap.gradle.jenkins
 
-import static org.hamcrest.Matchers.containsString
-import static org.junit.rules.ExpectedException.none
-import static org.mockito.Matchers.anyString
-import static org.mockito.Matchers.eq
-import static org.mockito.Mockito.*
-
+import com.gap.pipeline.ec.CommanderClient
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-import com.gap.pipeline.ec.CommanderClient
+import static org.hamcrest.Matchers.containsString
+import static org.junit.rules.ExpectedException.none
+import static org.mockito.Matchers.eq
+import static org.mockito.Mockito.*
 
 class JenkinsRunnerTest {
 

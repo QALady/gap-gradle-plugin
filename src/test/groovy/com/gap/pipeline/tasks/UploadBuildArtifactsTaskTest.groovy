@@ -1,6 +1,4 @@
 package com.gap.pipeline.tasks
-import static junit.framework.Assert.*
-import static org.junit.rules.ExpectedException.none
 
 import com.gap.pipeline.exception.MissingParameterException
 import junit.framework.Assert
@@ -11,6 +9,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
+
+import static junit.framework.Assert.*
+import static org.junit.rules.ExpectedException.none
 
 class UploadBuildArtifactsTaskTest {
     @Rule

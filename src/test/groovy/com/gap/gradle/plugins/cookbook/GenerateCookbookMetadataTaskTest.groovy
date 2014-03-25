@@ -1,8 +1,5 @@
 package com.gap.gradle.plugins.cookbook
 
-import static org.hamcrest.Matchers.equalTo
-import static org.junit.Assert.assertThat
-
 import com.gap.gradle.chef.CookbookUtil
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
@@ -10,6 +7,9 @@ import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
+
+import static org.hamcrest.Matchers.equalTo
+import static org.junit.Assert.assertThat
 
 public class GenerateCookbookMetadataTaskTest {
 

@@ -1,17 +1,17 @@
 package com.gap.gradle.jenkins
-import static groovyx.net.http.ContentType.*
-import static groovyx.net.http.Method.*
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.equalTo
-import static org.junit.Assert.assertTrue
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertEquals
 
 import groovy.mock.interceptor.MockFor
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import org.junit.Before
 import org.junit.Test
+
+import static groovyx.net.http.ContentType.*
+import static groovyx.net.http.Method.GET
+import static groovyx.net.http.Method.POST
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.equalTo
+import static org.junit.Assert.*
 
 class JenkinsClientTest {
 

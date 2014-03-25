@@ -1,11 +1,11 @@
 package com.gap.pipeline.ec
 
-import static junit.framework.Assert.assertTrue
-import static org.mockito.Mockito.*
-
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import static junit.framework.Assert.assertTrue
+import static org.mockito.Mockito.*
 
 class CommanderArtifactsTest {
     @Rule
