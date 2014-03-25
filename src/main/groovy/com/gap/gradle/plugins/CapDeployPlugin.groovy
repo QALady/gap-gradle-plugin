@@ -1,9 +1,9 @@
 package com.gap.gradle.plugins
 
-import org.gradle.api.Project
-import org.gradle.api.Plugin
+import groovy.json.JsonSlurper
 import org.gradle.api.GradleException
-import groovy.json.*
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 
 class CapDeployPlugin implements Plugin<Project> {
 

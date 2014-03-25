@@ -1,10 +1,7 @@
 package com.gap.gradle.plugins
 
-import java.util.Map;
-import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.JavaExec;
-import org.gradle.api.Project;
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.TaskAction
 
 class Bundle extends DefaultTask {
 

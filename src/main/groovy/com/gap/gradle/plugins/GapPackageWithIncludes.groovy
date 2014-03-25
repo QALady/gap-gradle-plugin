@@ -1,9 +1,10 @@
 package com.gap.gradle.plugins
 
-import org.gradle.api.Project
 import org.gradle.api.Plugin
-import org.gradle.api.tasks.bundling.Zip
+import org.gradle.api.Project
 import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.bundling.Zip
+
 /*
 
 To include a dependency: add a dependency using the "include" configuration i.e.:

@@ -1,8 +1,5 @@
 package com.gap.pipeline
 
-import com.gap.pipeline.CookbookConfig
-import com.gap.pipeline.ProdPrepareConfig
-
 class ProdDeployParameterConfig {
 	def roleName
 	CookbookConfig cookbook

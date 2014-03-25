@@ -1,9 +1,8 @@
 package com.gap.gradle.plugins.cookbook
 
+import com.gap.gradle.utils.ConfigUtil
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-
-import com.gap.gradle.utils.ConfigUtil
 
 class GapCookbookPlugin implements Plugin<Project> {
 

@@ -1,8 +1,10 @@
 package com.gap.gradle.jenkins
 
-import static groovyx.net.http.ContentType.*
-import static groovyx.net.http.Method.*
 import groovyx.net.http.HTTPBuilder
+
+import static groovyx.net.http.ContentType.*
+import static groovyx.net.http.Method.GET
+import static groovyx.net.http.Method.POST
 
 class JenkinsClient {
 

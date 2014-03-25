@@ -1,12 +1,11 @@
 package com.gap.gradle.tasks
 
-import org.gradle.api.Project
-
 import com.gap.gradle.jenkins.JenkinsClient
 import com.gap.gradle.jenkins.JenkinsRunner
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
+import org.gradle.api.Project
 
 @RequiredParameters([
 	@Require(parameter = 'prodDeploy.cookbook.name', description = "cookbook name"),

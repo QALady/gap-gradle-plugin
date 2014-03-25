@@ -1,11 +1,7 @@
 package com.gap.gradle.plugins
 
-import java.util.Map;
-import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.Copy;
-import org.gradle.api.tasks.Exec;
-import org.gradle.api.Project;
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.TaskAction
 
 /*
  * Upload new versions of phantomjs to artifactory at:

@@ -1,5 +1,6 @@
 package com.gap.gradle.tasks
-import com.gap.gradle.exceptions.DeployToProductionException;
+
+import com.gap.gradle.exceptions.DeployToProductionException
 import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.tasks.WatchmenTask

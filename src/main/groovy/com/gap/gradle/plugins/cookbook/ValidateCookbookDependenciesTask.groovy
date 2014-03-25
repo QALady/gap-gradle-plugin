@@ -1,7 +1,8 @@
 package com.gap.gradle.plugins.cookbook
-import static java.util.regex.Pattern.quote
 
 import org.gradle.api.Project
+
+import static java.util.regex.Pattern.quote
 
 class ValidateCookbookDependenciesTask {
 

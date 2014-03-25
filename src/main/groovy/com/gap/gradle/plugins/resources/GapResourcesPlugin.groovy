@@ -1,7 +1,8 @@
 package com.gap.gradle.plugins.resources
 
-import org.gradle.api.Project
 import org.gradle.api.Plugin
+import org.gradle.api.Project
+
 import java.util.regex.Pattern
 
 class GapResourcesPlugin implements Plugin<Project>{

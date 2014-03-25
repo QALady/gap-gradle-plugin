@@ -1,12 +1,11 @@
 package com.gap.pipeline.tasks
 
 import com.gap.pipeline.ec.CommanderArtifacts
-import com.gap.pipeline.exception.MissingParameterException
-import org.apache.commons.logging.LogFactory
-
 import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.exception.MissingParameterException
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
+import org.apache.commons.logging.LogFactory
 
 @RequiredParameters([
 @Require(parameter = 'artifactCoordinates', description = "location of artifacts, to pass to prodDeploy job"),

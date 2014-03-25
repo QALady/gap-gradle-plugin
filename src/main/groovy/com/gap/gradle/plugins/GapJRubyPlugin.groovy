@@ -1,9 +1,7 @@
 package com.gap.gradle.plugins
 
-import org.gradle.api.Project
 import org.gradle.api.Plugin
-import java.util.ArrayList
-import groovy.text.*
+import org.gradle.api.Project
 
 class GapJRubyPlugin implements Plugin<Project> {
 

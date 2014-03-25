@@ -1,16 +1,12 @@
 package com.gap.gradle.tasks
 
-import com.gap.gradle.plugins.cookbook.PublishCookbookToChefServerTask
-import groovy.io.*
-
-import org.gradle.api.Project
-
 import com.gap.gradle.jenkins.JenkinsClient
 import com.gap.gradle.jenkins.JenkinsRunner
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
+import org.gradle.api.Project
 
 @RequiredParameters([
 	@Require(parameter = 'prodDeploy.sha1IdList', description = "SHA1 ID List of the chef objects to be promoted to production."),

@@ -1,7 +1,6 @@
 package com.gap.gradle.utils
 
-import groovy.json.JsonSlurper;
-
+import groovy.json.JsonSlurper
 import org.gradle.api.Project
 
 class ConfigUtil {

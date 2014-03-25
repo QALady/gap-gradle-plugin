@@ -1,8 +1,5 @@
 package com.gap.pipeline
 
-import com.gap.pipeline.CookbookConfig
-
-
 class ProdPrepareConfig {
 	final static String FILE_NAME = "prodDeployParameters.json"
 	final static def SHA1_PATTERN = /\b([a-f0-9]{40})\b/

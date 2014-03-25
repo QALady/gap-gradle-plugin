@@ -1,8 +1,8 @@
 package com.gap.gradle.chef
 
-import static java.lang.System.currentTimeMillis
-
 import org.apache.commons.logging.LogFactory
+
+import static java.lang.System.currentTimeMillis
 
 class CookbookUploader {
 

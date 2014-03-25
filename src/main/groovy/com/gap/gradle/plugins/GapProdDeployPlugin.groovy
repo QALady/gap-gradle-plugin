@@ -1,13 +1,7 @@
 package com.gap.gradle.plugins
-import org.gradle.api.Plugin
-import org.gradle.api.Project
 
 import com.gap.gradle.plugins.cookbook.JenkinsConfig
-import com.gap.gradle.tasks.DeployToProductionTask
-import com.gap.gradle.tasks.PromoteCookbookToProductionTask
-import com.gap.gradle.tasks.PromoteRpmsTask
-import com.gap.gradle.tasks.PromoteToProductionTask
-import com.gap.gradle.tasks.UpdateCookbookSHATask
+import com.gap.gradle.tasks.*
 import com.gap.gradle.utils.ConfigUtil
 import com.gap.pipeline.GitConfig
 import com.gap.pipeline.ProdDeployParameterConfig
@@ -15,6 +9,9 @@ import com.gap.pipeline.ProdPrepareConfig
 import com.gap.pipeline.RpmConfig
 import com.gap.pipeline.tasks.GenerateAuditReportTask
 import com.gap.pipeline.tasks.SetUpBuildDirectoriesTask
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
 /**
  *
  * this plugin requires gapDeployTools:watchmen_config recipe to be run on a node

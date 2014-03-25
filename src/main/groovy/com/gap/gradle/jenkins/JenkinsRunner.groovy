@@ -1,8 +1,7 @@
 package com.gap.gradle.jenkins
 
-import org.apache.commons.logging.LogFactory
-
 import com.gap.pipeline.ec.CommanderClient
+import org.apache.commons.logging.LogFactory
 
 class JenkinsRunner {
 	JenkinsClient jenkinsClient
