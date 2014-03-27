@@ -11,7 +11,7 @@ sonarRunner {
         property "sonar.projectVersion", "$version"
         property "sonar.sources", "src/main/groovy"
         property "sonar.tests", "src/test/groovy"
-        property "sonar.exclusions", "**/*Exception.java"
+        property "sonar.exclusions", "**/*Exception.groovy"
         property "sonar.groovy.cobertura.reportPath", "target/reports/coverage/coverage.xml"
     }
 }
