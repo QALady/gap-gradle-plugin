@@ -8,6 +8,21 @@ repositories {
     }
 }
 
+buildscript{
+    repositories{
+        maven {
+            url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+        }
+        ivy {
+            layout "maven"
+            url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+        }
+    }
+    dependencies {
+        classpath "net.saliman:gradle-cobertura-plugin:1.1.2"
+    }
+}
+
 ext.majorVersion = 2
 ext.minorVersion = 0
 
@@ -18,9 +33,14 @@ apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-
+apply plugin: 'cobertura'
 apply plugin: 'sonar-runner'
 apply from: 'gradle/sonarQube.gradle'
+
+cobertura {
+    coverageFormats = ['xml', 'html']
+    coverageReportDir = mkdir('target/reports/coverage')
+}
 
 dependencies{
     groovy localGroovy()
