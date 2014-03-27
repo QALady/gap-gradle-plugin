@@ -22,7 +22,6 @@ import org.gradle.api.Project
 class GapProdDeployPlugin implements Plugin<Project>{
 
     static def CONFIG_FILE = "${System.getProperty('user.home')}/.watchmen/gapcookbook.properties"
-
     @Override
 	public void apply(Project project) {
 
@@ -43,18 +42,15 @@ class GapProdDeployPlugin implements Plugin<Project>{
         }
 
 		project.task('promoteChefObjectsToProduction', dependsOn: ['promoteCookbookToProdChefServer'] ) << {
-			println "promoting to production"
 			new PromoteToProductionTask(project).execute()
 		}
 
 		project.task('promoteCookbookToProdChefServer') << { //, dependsOn: ['promoteCookbookBerksfile']) << {
-			new PromoteCookbookToProductionTask(project).execute()	
+			new PromoteCookbookToProductionTask(project).execute()
 		}
 
 		project.task('deployToProduction', dependsOn: ['promoteChefObjectsToProduction', 'generateAuditReport']) << {
-			println "deploying to production"
 			new DeployToProductionTask(project).execute()
-			println "WOO! done (:"
 		}
 
 		/**

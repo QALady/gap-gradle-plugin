@@ -16,8 +16,7 @@ import org.gradle.api.Project
 class UpdateCookbookSHATask extends WatchmenTask{
     Project project
     GitClient client
-    private Log log = LogFactory.getLog(UpdateCookbookSHATask)
-	CommanderClient commanderClient = new CommanderClient()
+    CommanderClient commanderClient = new CommanderClient()
 
     UpdateCookbookSHATask(Project project){
         super(project)
@@ -28,7 +27,7 @@ class UpdateCookbookSHATask extends WatchmenTask{
         super.validate()
         checkFullRepoNameFormat()		
         client = new GitClient(commanderClient.getUserId(), project.git.sha1Id,
-                project.git.fullRepoName)
+        project.git.fullRepoName)
         client.checkout()
         client.updateBerksfile()
         client.commitAndPush()

@@ -1,6 +1,8 @@
 package com.gap.gradle.jenkins
 
 import groovyx.net.http.HTTPBuilder
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 import static groovyx.net.http.ContentType.*
 import static groovyx.net.http.Method.GET
@@ -12,6 +14,7 @@ class JenkinsClient {
     def userName
     def apiToken
     private Object serverUrl
+    Log log = LogFactory.getLog(JenkinsClient)
 
     JenkinsClient(serverUrl, userName, apiToken) {
         this.serverUrl = serverUrl
@@ -101,7 +104,7 @@ class JenkinsClient {
                 if (resp.statusLine.statusCode == 404) {
                     JobStatus.unknown
                 } else {
-                    println(resp)
+                    log.info(resp)
                     throw new JenkinsException("Unable to get status of build ${buildNumber} for job ${jobName}")
                 }
             }
