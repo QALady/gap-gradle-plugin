@@ -1,8 +1,5 @@
 package com.gap.pipeline
 
-import static org.junit.Assert.assertTrue
-import static org.testng.Assert.assertTrue
-
 import com.gap.pipeline.utils.ShellCommand
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
@@ -10,6 +7,9 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import static org.junit.Assert.assertTrue
+import static org.testng.Assert.assertTrue
 
 class PromoteRpmIntegrationTest {
 

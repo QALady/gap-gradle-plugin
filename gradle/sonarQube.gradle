@@ -1,0 +1,16 @@
+sonarRunner {
+    sonarProperties {
+        property "sonar.host.url", "http://sonar001.phx.gapinc.dev:9000/"
+        property "sonar.jdbc.url", "jdbc:mysql://dgphxmetdb002.phx.gapinc.dev:3306/sonar"
+        property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
+        property "sonar.jdbc.username", "sonar"
+        property "sonar.jdbc.password", "sonar"
+        property "sonar.language", "grvy"
+        property "sonar.projectName", "Watchmen-Gradle-Plugin"
+        property "sonar.projectKey", "com.gap:gap-gradle-plugin"
+        property "sonar.projectVersion", "$version"
+        property "sonar.sources", "src/main/groovy"
+        property "sonar.tests", "src/test/groovy"
+        property "sonar.exclusions", "**/*Exception.java"
+    }
+}

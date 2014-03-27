@@ -1,11 +1,11 @@
 package com.gap.gradle.plugins.chef
+
 import com.gap.gradle.utils.ShellCommand
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 class GitSHAPromotionIntegrationTest {

@@ -1,7 +1,7 @@
 package com.gap.gradle.plugins.cookbook
+
 import org.apache.commons.io.FileUtils
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder

@@ -19,6 +19,9 @@ apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
+apply plugin: 'sonar-runner'
+apply from: 'gradle/sonarQube.gradle'
+
 dependencies{
     groovy localGroovy()
     compile gradleApi()
@@ -71,7 +74,7 @@ tasks.withType(Test) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.1'
+    gradleVersion = '1.11'
 }
 
 uploadArchives {

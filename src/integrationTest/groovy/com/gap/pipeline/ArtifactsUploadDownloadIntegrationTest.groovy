@@ -1,12 +1,12 @@
 package com.gap.pipeline
 
-import static junit.framework.Assert.assertTrue
-
 import com.gap.pipeline.tasks.DownloadArtifactsTask
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import static junit.framework.Assert.assertTrue
 
 class ArtifactsUploadDownloadIntegrationTest {
 
