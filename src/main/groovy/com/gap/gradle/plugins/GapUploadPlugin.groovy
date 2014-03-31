@@ -15,12 +15,6 @@ class GapUploadPlugin implements Plugin<Project>{
 
     if (project.plugins.hasPlugin('java')) {
 
-      project.tasks.add(name:'packageSources', type: Jar)
-      {
-        classifier = 'sources'
-        from project.sourceSets.main.allSource
-      };
-      
       project.tasks.add(name:'packageConfigs', type: Jar)
       {
         classifier = 'config'
@@ -50,7 +44,7 @@ class GapUploadPlugin implements Plugin<Project>{
       project.configure(project){
         uploadArchives {
 
-          dependsOn('uploadSources','uploadTestRuntime', 'uploadConfig', 'uploadIntegrationTest', 'uploadSmokeTest')
+          dependsOn('uploadTestRuntime', 'uploadConfig', 'uploadIntegrationTest', 'uploadSmokeTest')
 
           //Upload Project dependencies as well
           project.configurations.compile.dependencies.each{
@@ -71,22 +65,16 @@ class GapUploadPlugin implements Plugin<Project>{
 
         configurations {
           config
-          sources
           testRuntime{visible true}
           integrationTest
           smokeTest
         }
 
         artifacts {
-          sources(packageSources){ type = 'source' }
-          config(packageConfigs){ type = 'config' }
-          testRuntime(packageTests){ type = 'test' }
-          integrationTest(packageIntegrationTests){ type = 'integrationTest' }
-          smokeTest(packageSmokeTests){ type = 'smokeTest' }
-        }
-
-        uploadSources {
-          repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
+          config packageConfigs
+          testRuntime packageTests
+          integrationTest packageIntegrationTests
+          smokeTest packageSmokeTests
         }
 
         uploadTestRuntime {

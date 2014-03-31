@@ -82,8 +82,6 @@ task integrationTest(type: Test, dependsOn: 'test') {
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-check.dependsOn << 'integrationTest'
-
 tasks.withType(Test) {
     testLogging {
         exceptionFormat 'full'
