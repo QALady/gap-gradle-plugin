@@ -5,8 +5,6 @@ import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 @RequiredParameters([
