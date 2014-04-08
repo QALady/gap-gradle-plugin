@@ -5,6 +5,7 @@ import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import com.gap.gradle.ivy.IvyInfo
 
 class GapPipelinePlugin implements Plugin<Project> {
 
@@ -57,21 +58,22 @@ class GapPipelinePlugin implements Plugin<Project> {
     private configureTasksRequiredByWatchmenSegment(Project project) {
         //changing the following code might have undesired side effects.... used by WM Segment pipeline
         project.configure(project) {
+            def ivyInfo = new IvyInfo(project)
+
             project.task('ivyIdentifiers') << {
-                println project.group + ":" + project.name
+                ivyInfo.identifiers().each {println it}
             }
 
             project.task('ivyDependencies') << {
-                configurations.each {
-                    config ->
-                        config.dependencies.each {
-                            dep -> println dep.group + ":" + dep.name
-                        }
-                }
+                ivyInfo.dependencies().each {println it}
             }
 
             project.task('ivySegmentVersion') << {
-                println project.version
+                println ivyInfo.version()
+            }
+
+            project.task('populateSegmentRegistry') << {
+                new PopulateSegmentRegistryTask(project).execute()
             }
 
             project.task('unzipIntegrationTests') << {

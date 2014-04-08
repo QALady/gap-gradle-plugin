@@ -57,13 +57,22 @@ class CommanderClient {
         [projectName: parts[0], procedureName: parts[1]]
     }
 
+
     private setECProperty(name, value) {
         shellCommand.execute(['ectool', 'setProperty', name.toString(), value.toString()])
     }
 
-	private def getECProperty(property) {
+    public def getECProperty(property) {
 		shellCommand.execute(['ectool', 'getProperty', property.toString()])
 	}
+
+    def getSegmentConfig(){
+        def  segmentPropertySheet = '/myJob/watchmen_config/'
+        new SegmentConfig(getECProperty(segmentPropertySheet + 'configSCMUrl'),
+                          getECProperty(segmentPropertySheet + 'workingDir'),
+                          getECProperty(segmentPropertySheet + 'ciDir'),
+                          getECProperty(segmentPropertySheet + 'gradleFile'))
+    }
 
 	def getUserId(){
 		getECProperty("/myJob/launchedByUser")

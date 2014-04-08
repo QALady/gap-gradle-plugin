@@ -204,6 +204,11 @@ class GapPipelinePluginTest {
         fail("Task ${task} does not declare a dependency on ${requiredDependency}")
     }
 
+    @Test
+    void shouldAddPopulateSegmentRegistryTask(){
+        taskShouldExist("populateSegmentRegistry")
+    }
+
     def taskShouldExist(task) {
         assertThat("Task '${task}' does not exist on project", project.tasks.findByName(task), notNullValue())
     }

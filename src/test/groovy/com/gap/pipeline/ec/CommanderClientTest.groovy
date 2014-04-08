@@ -8,10 +8,13 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.mockito.Mockito
 
+import static org.hamcrest.CoreMatchers.is
 import static junit.framework.Assert.assertEquals
 import static org.junit.rules.ExpectedException.none
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.verify
+import static org.mockito.Mockito.when
+import static org.junit.Assert.assertThat
 
 public class CommanderClientTest {
     @Rule
@@ -95,4 +98,20 @@ public class CommanderClientTest {
 		commander.getStartTime()
 		verify(mockShellCommand).execute(['ectool', 'getProperty', '/myJob/start/'])
 	}
+
+    @Test
+    public void getSegmentConfig_ShouldReturnSegmentConfigFromWatchmenConfigECProperties(){
+        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/configSCMUrl'])).thenReturn('http://svn.gap.com/path/to/repo')
+        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/workingDir'])).thenReturn('/dev/shm/job_id')
+        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/ciDir'])).thenReturn('/mnt/electric-commander/workspace/job_id_timestamp')
+        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/gradleFile'])).thenReturn('segment-name.gradle')
+
+        SegmentConfig segmentConfig = commander.getSegmentConfig()
+
+        assertThat(segmentConfig.scmUrl, is('http://svn.gap.com/path/to/repo'))
+        assertThat(segmentConfig.workingDir, is('/dev/shm/job_id'))
+        assertThat(segmentConfig.ciDir, is('/mnt/electric-commander/workspace/job_id_timestamp'))
+        assertThat(segmentConfig.gradleFile, is('segment-name.gradle'))
+
+    }
 }
