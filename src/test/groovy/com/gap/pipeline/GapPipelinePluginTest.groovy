@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.is
 import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
+import static helpers.Assert.shouldNotExecuteTask
 
 class GapPipelinePluginTest {
 
@@ -64,12 +65,7 @@ class GapPipelinePluginTest {
 
     @Test
     void shouldExecutePrepareForProductionDeployTask() {
-        def mockTask = new MockFor(PrepareForProductionDeployTask)
-        mockTask.demand.execute {}
-        def task = project.tasks.findByName('prepareForProductionDeploy')
-        mockTask.use {
-            task.execute()
-        }
+        shouldExecuteTask(project, 'prepareForProductionDeploy', PrepareForProductionDeployTask)
     }
 
     @Test
@@ -184,11 +180,6 @@ class GapPipelinePluginTest {
         taskShouldExist("promoteArtifacts")
     }
 
-    @Test
-    void shouldExecutePromoteArtifactsTask() {
-        shouldExecuteTask(project,'promoteArtifacts', PromoteArtifactsTask)
-    }
-
     def taskShouldDependOn(task, requiredDependency) {
         for (def dependency : project.tasks.findByName(task).dependsOn) {
             if (dependency == requiredDependency) {
@@ -207,6 +198,24 @@ class GapPipelinePluginTest {
     @Test
     void shouldAddPopulateSegmentRegistryTask(){
         taskShouldExist("populateSegmentRegistry")
+    }
+
+    @Test
+    void shouldExecutePromoteArtifactsTask() {
+        shouldExecuteTask(project,'promoteArtifacts', PromoteArtifactsTask)
+    }
+
+    @Test
+    void shouldNotExecutePopulateSegmentRegistryIfProjectIsNotRoot(){
+        def parent = ProjectBuilder.builder().withName('parent')build()
+        new File("${parent.projectDir.path}/childDir/dir").mkdirs()
+        def childProjectDir =  new File("${parent.projectDir.path}/childDir")
+
+
+        def childProject = ProjectBuilder.builder().withName('child').withParent(project).withProjectDir(childProjectDir).build()
+        childProject.apply plugin: 'gappipeline'
+
+        shouldNotExecuteTask(childProject, 'populateSegmentRegistry', PopulateSegmentRegistryTask)
     }
 
     def taskShouldExist(task) {

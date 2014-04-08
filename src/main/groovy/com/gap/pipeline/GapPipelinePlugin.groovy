@@ -61,11 +61,15 @@ class GapPipelinePlugin implements Plugin<Project> {
             def ivyInfo = new IvyInfo(project)
 
             project.task('ivyIdentifiers') << {
-                ivyInfo.identifiers().each {println it}
+                if(isRootProject(project)){
+                    ivyInfo.identifiers().each {println it}
+                }
             }
 
             project.task('ivyDependencies') << {
-                ivyInfo.dependencies().each {println it}
+                if(isRootProject(project)){
+                    ivyInfo.dependencies().each {println it}
+                }
             }
 
             project.task('ivySegmentVersion') << {
@@ -73,7 +77,9 @@ class GapPipelinePlugin implements Plugin<Project> {
             }
 
             project.task('populateSegmentRegistry') << {
-                new PopulateSegmentRegistryTask(project).execute()
+                if(isRootProject(project)){
+                    new PopulateSegmentRegistryTask(project).execute()
+                }
             }
 
             project.task('unzipIntegrationTests') << {
@@ -103,6 +109,10 @@ class GapPipelinePlugin implements Plugin<Project> {
 
         }
 
+    }
+
+    private boolean isRootProject(def project) {
+        project.equals(project.rootProject)
     }
 
     //we have to do this as gradle does not allowing setting extension properties from the command line.

@@ -14,6 +14,13 @@ class Assert {
         }
     }
 
+    static def shouldNotExecuteTask(project, taskName, type) {
+        def task = new MockFor(type)
+        task.use {
+            project.tasks.findByName(taskName).execute()
+        }
+    }
+
     static void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){
         try{
             closure()
