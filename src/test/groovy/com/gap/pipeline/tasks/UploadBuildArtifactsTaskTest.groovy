@@ -1,7 +1,8 @@
 package com.gap.pipeline.tasks
+import static junit.framework.TestCase.*
+import static org.junit.rules.ExpectedException.none
 
 import com.gap.pipeline.exception.MissingParameterException
-import junit.framework.Assert
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Ignore
@@ -9,9 +10,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
-
-import static junit.framework.Assert.*
-import static org.junit.rules.ExpectedException.none
 
 class UploadBuildArtifactsTaskTest {
     @Rule
@@ -48,7 +46,8 @@ class UploadBuildArtifactsTaskTest {
 
         uploadBuildArtifactsTask.execute()
 
-        assertTrue(project.configurations.hasProperty('archives'))
+
+        assertNotNull(project.configurations.findByName('archives'))
         artifacts.each { fileName ->
             assertArchivesHasFile(fileName)
         }
@@ -112,10 +111,9 @@ class UploadBuildArtifactsTaskTest {
     }
 
     def assertArchivesHasFile(fileName){
-        println  project.configurations.archives.allArtifacts.size()
-        for(artifact in project.configurations.archives.allArtifacts){
+        for(artifact in project.configurations.findByName('archives').allArtifacts){
             if (artifact.file.path.contains(fileName.toString())) return
         }
-        Assert.fail("Cannot find file ${fileName} in the archives.")
+        fail("Cannot find file ${fileName} in the archives.")
     }
 }

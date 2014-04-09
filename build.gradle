@@ -43,7 +43,7 @@ cobertura {
 }
 
 dependencies{
-    groovy localGroovy()
+    compile localGroovy()
     compile gradleApi()
 
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.6'
