@@ -15,7 +15,7 @@ class ECClient {
     def runProcedure(String fullProcedureName, params = []){
         def procedure = parseProcedureName(fullProcedureName)
         def command = buildShellCommand(procedure.projectName,procedure.procedureName,params)
-        logger.info("runProcedure: ${command} - " + shellCommand.execute(command))
+        shellCommand.execute(command)
     }
 
     private parseProcedureName(String fullProcedureName) {
@@ -38,4 +38,7 @@ class ECClient {
         command
     }
 
+    def getJobStatus(def jobId) {
+        new XmlSlurper().parseText(shellCommand.execute("ectool getJobStatus ${jobId}"))
+    }
 }

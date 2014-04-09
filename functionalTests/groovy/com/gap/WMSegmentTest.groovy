@@ -5,7 +5,7 @@ import org.junit.Test
 import static junit.framework.Assert.assertEquals
 
 public class WMSegmentTest {
-
+    def ec = new ECClient()
 
     @Test
     public void sampleTest(){
@@ -13,11 +13,25 @@ public class WMSegmentTest {
     }
 
     @Test
-    public void shouldTriggerComponentSegmentSuccessfully(){
-        def ec = new ECClient()
-        ec.runProcedure("Watchmen Test Segments:Component Segment")
+    public void shouldTriggerComponentSegmentSuccessfully() {
+
+        def jobId = ec.runProcedure("Watchmen Test Segments:Component Segment")
+        
+        waitFor(10, {
+            ec.getJobStatus(jobId).status == 'completed'
+        })
     }
 
+    private waitFor(timeToWaitInMinutes, closure){
+        def start = System.currentTimeMillis()
+        def end  = start + timeoutMillis
 
-
+        while (!closure()) {
+            sleep(10000)
+            if (System.currentTimeMillis() > end) {
+                def message = "Timed out after ${timeoutMillis} ms waiting for job to finish"
+                throw new Exception(message)
+            }
+        }
+    }
 }
