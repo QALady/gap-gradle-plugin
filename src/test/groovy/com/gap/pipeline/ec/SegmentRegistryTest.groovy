@@ -35,7 +35,7 @@ class SegmentRegistryTest {
 
         registry.populate(ivyInfo)
 
-        verify(commander).setECProperty(sameString("/Projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/ivyIdentifiers"), 'com.gap.watchmen:moduleName')
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/ivyIdentifiers"), 'com.gap.watchmen:moduleName')
     }
 
     @Test
@@ -47,7 +47,7 @@ class SegmentRegistryTest {
 
         registry.populate(ivyInfo)
 
-        verify(commander).setECProperty(sameString("/Projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/ivyIdentifiers"), 'com.gap.watchmen:moduleName\ncom.gap.watchmen:anotherApp')
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/ivyIdentifiers"), 'com.gap.watchmen:moduleName\ncom.gap.watchmen:anotherApp')
     }
 
     @Test
@@ -63,7 +63,7 @@ class SegmentRegistryTest {
 
         registry.populate(ivyInfo)
 
-        verify(commander).setECProperty(sameString("/Projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/ivyDependencies"), 'com.gap.coolTeam:theirLib\ncom.junit:junit')
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/ivyDependencies"), 'com.gap.coolTeam:theirLib\ncom.junit:junit')
     }
 
     @Test
@@ -72,10 +72,10 @@ class SegmentRegistryTest {
         def registry = new SegmentRegistry(commander)
         registry.populate(ivyInfo)
 
-        verify(commander).setECProperty(sameString("/Projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/svnUrl"), 'http://svn.gap.dev/path/to/repo')
-        verify(commander).setECProperty(sameString("/Projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/workingDir"), '/dev/shm/1234/job_id')
-        verify(commander).setECProperty(sameString("/Projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/ciDir"), '/mnt/electric-commander/workspace/job_id')
-        verify(commander).setECProperty(sameString("/Projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/gradleFile"), 'build.gradle')
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/svnUrl"), 'http://svn.gap.dev/path/to/repo')
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/workingDir"), '/dev/shm/1234/job_id')
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/ciDir"), '/mnt/electric-commander/workspace/job_id')
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/gradleFile"), 'build.gradle')
     }
 
 

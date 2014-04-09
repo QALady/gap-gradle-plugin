@@ -1,10 +1,5 @@
 package com.gap.pipeline.ec
-
 import com.gap.gradle.ivy.IvyInfo
-import com.gap.gradle.utils.ShellCommand
-
-
-
 
 class SegmentRegistry {
 
@@ -32,6 +27,6 @@ class SegmentRegistry {
     }
 
     private void setSegmentRegistryValue(def ecProjectName, def ecProcedureName, def key, def value){
-        commander.setECProperty("/Projects[WM Segment Registry]/SegmentRegistry/${ecProjectName}:${ecProcedureName}/${key}", value)
+        commander.setECProperty("/projects[WM Segment Registry]/SegmentRegistry/${ecProjectName}:${ecProcedureName}/${key}", value)
     }
 }
