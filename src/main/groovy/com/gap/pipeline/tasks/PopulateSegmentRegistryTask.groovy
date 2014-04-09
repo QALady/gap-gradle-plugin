@@ -9,7 +9,7 @@ class PopulateSegmentRegistryTask {
     def project
     def registry
 
-    PopulateSegmentRegistryTask(def project, def registry = new SegmentRegistry()){
+    PopulateSegmentRegistryTask(project, registry = new SegmentRegistry()){
         this.project = project
         this.registry = registry
     }

@@ -1,11 +1,10 @@
 package com.gap.pipeline
-
+import com.gap.gradle.ivy.IvyInfo
 import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import com.gap.gradle.ivy.IvyInfo
 
 class GapPipelinePlugin implements Plugin<Project> {
 

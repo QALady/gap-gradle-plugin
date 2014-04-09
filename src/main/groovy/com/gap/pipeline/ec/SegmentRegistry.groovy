@@ -1,19 +1,14 @@
 package com.gap.pipeline.ec
-import com.gap.gradle.ivy.IvyInfo
 
 class SegmentRegistry {
 
-    CommanderClient commander
+    def commander
 
-    SegmentRegistry(){
-        this.commander = new CommanderClient()
-    }
-
-    SegmentRegistry(CommanderClient commander){
+    SegmentRegistry(commander = new CommanderClient()){
         this.commander = commander
     }
 
-    void populate(IvyInfo ivyInfo) {
+    void populate(ivyInfo) {
         def ecProjectName = commander.getECProperty('/myJob/projectName')
         def ecProcedureName = commander.getECProperty('/myJob/liveProcedure')
         def segmentConfig = commander.getSegmentConfig()
@@ -26,7 +21,8 @@ class SegmentRegistry {
         setSegmentRegistryValue(ecProjectName, ecProcedureName, 'gradleFile', segmentConfig.gradleFile)
     }
 
-    private void setSegmentRegistryValue(def ecProjectName, def ecProcedureName, def key, def value){
+    private void setSegmentRegistryValue(ecProjectName, ecProcedureName, key, value){
         commander.setECProperty("/projects[WM Segment Registry]/SegmentRegistry/${ecProjectName}:${ecProcedureName}/${key}", value)
     }
+
 }

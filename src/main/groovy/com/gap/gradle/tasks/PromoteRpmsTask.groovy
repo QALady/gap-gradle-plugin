@@ -1,11 +1,9 @@
 package com.gap.gradle.tasks
-
 import com.gap.gradle.yum.YumClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 import org.apache.commons.logging.LogFactory
-import org.gradle.api.Project
 
 @RequiredParameters([
     @Require(parameter='rpm.yumSourceUrl', description='name of repo within gapSoftware that hold rpm'),
@@ -15,21 +13,15 @@ import org.gradle.api.Project
 ] )
 class PromoteRpmsTask extends WatchmenTask{
 
-    Project project
-    YumClient yumClient
+    def project
+    def yumClient
     def log = LogFactory.getLog(PromoteRpmsTask)
 
 
-    PromoteRpmsTask(Project project, YumClient yumClient) {
+    PromoteRpmsTask(project, yumClient = new YumClient()) {
         super(project)
         this.project = project
         this.yumClient = yumClient
-    }
-
-    PromoteRpmsTask(project){
-        super(project)
-        this.project = project
-        this.yumClient = new YumClient()
     }
 
     def validate(){
