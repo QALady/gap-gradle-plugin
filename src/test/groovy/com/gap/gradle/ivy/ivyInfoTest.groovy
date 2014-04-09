@@ -30,7 +30,7 @@ class IvyInfoTest {
     @Test
     public void dependencies_shouldReturnIdentifiersOfProjectDependencies(){
         def project = ProjectBuilder.builder().build()
-        project.configurations.add('configurationName')
+        project.configurations.create('configurationName')
         project.dependencies.add('configurationName', 'com.external.lib:superGreatLibrary:1.1.3')
         project.dependencies.add('configurationName', 'com.gap.otherTeam:internalLib:+')
         def ivyInfo = new IvyInfo(project)
@@ -41,14 +41,14 @@ class IvyInfoTest {
     @Test
     public void dependencies_shouldIncludeDependenciesOfSubModules(){
         def project = ProjectBuilder.builder().build()
-        project.configurations.add('configurationName')
+        project.configurations.create('configurationName')
         project.dependencies.add('configurationName', 'com.external.lib:superGreatLibrary:1.1.3')
         project.dependencies.add('configurationName', 'com.gap.otherTeam:internalLib:+')
 
 
         def subProject = ProjectBuilder.builder().withParent(project).withName('anotherApp').build()
         subProject.group = 'com.gap.watchmen'
-        subProject.configurations.add('test')
+        subProject.configurations.create('test')
         subProject.dependencies.add('test', 'org.junit:junit:+')
 
 
@@ -63,12 +63,12 @@ class IvyInfoTest {
     @Test
     public void dependencies_shouldNotHaveDuplicateDependencies(){
         def project = ProjectBuilder.builder().build()
-        project.configurations.add('configurationName')
+        project.configurations.create('configurationName')
         project.dependencies.add('configurationName', 'com.external.lib:superGreatLibrary:1.1.3')
         project.dependencies.add('configurationName', 'com.gap.otherTeam:internalLib:+')
-        def subProject = ProjectBuilder.builder().withParent(project)withName('anotherApp').build()
+        def subProject = ProjectBuilder.builder().withParent(project).withName('anotherApp').build()
         subProject.group = 'com.gap.watchmen'
-        subProject.configurations.add('test')
+        subProject.configurations.create('test')
         subProject.dependencies.add('test', 'com.gap.otherTeam:internalLib:+')
 
         def ivyInfo = new IvyInfo(project)

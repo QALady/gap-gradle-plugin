@@ -39,7 +39,7 @@ class GapResourcesPlugin implements Plugin<Project>{
           def taskName = sourceSet.getTaskName('process', 'Templates')
           def resourcesOutPath = "$buildDir/templates/${sourceSet.name}"
 
-          def processTemplatesTask = project.tasks.add(name: taskName, description: "Processes the ${sourceSet.name} erb templates.") {
+          def processTemplatesTask = project.tasks.create(name: taskName, description: "Processes the ${sourceSet.name} erb templates.") {
             new File(resourcesOutPath).mkdirs()
             inputs.files sourceSet.resources, sourceSets.main.resources
             outputs.files fileTree(resourcesOutPath) { exclude project.templates.filePattern }

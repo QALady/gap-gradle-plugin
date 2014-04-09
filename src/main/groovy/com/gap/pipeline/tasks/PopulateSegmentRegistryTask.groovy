@@ -1,25 +1,15 @@
 package com.gap.pipeline.tasks
-
-import org.gradle.api.Project
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import com.gap.pipeline.ec.SegmentRegistry
 import com.gap.gradle.ivy.IvyInfo
-
-
-
+import com.gap.pipeline.ec.SegmentRegistry
+import org.apache.commons.logging.LogFactory
 
 class PopulateSegmentRegistryTask {
 
-    Log log = LogFactory.getLog(com.gap.pipeline.tasks.PopulateSegmentRegistryTask)
-    Project project
-    Object registry
+    def log = LogFactory.getLog(com.gap.pipeline.tasks.PopulateSegmentRegistryTask)
+    def project
+    def registry
 
-    PopulateSegmentRegistryTask(Project project) {
-        PopulateSegmentRegistryTask(project, new SegmentRegistry())
-    }
-
-    PopulateSegmentRegistryTask(Project project, SegmentRegistry registry){
+    PopulateSegmentRegistryTask(def project, def registry = new SegmentRegistry()){
         this.project = project
         this.registry = registry
     }

@@ -52,11 +52,11 @@ class SegmentRegistryTest {
 
     @Test
     public void populate_shouldSetDependenciesForCurrentSegment(){
-        project.configurations.add('configName')
+        project.configurations.create('configName')
         project.dependencies.add('configName', 'com.gap.coolTeam:theirLib:1.+')
         def subModule = ProjectBuilder.builder().withParent(project).withName('anotherApp').build()
         subModule.group = 'com.gap.watchmen'
-        subModule.configurations.add('test')
+        subModule.configurations.create('test')
         subModule.dependencies.add('test', 'com.junit:junit:+')
         def ivyInfo = new IvyInfo(project)
         def registry = new SegmentRegistry(commander)

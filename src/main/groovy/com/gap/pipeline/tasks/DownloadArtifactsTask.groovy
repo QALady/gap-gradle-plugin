@@ -26,7 +26,7 @@ class DownloadArtifactsTask extends com.gap.pipeline.tasks.WatchmenTask {
         def ivyParser = new IvyCoordinateParser()
         validateParameters(project, ivyParser)
 
-        project.configurations.add("_watchmenInternal")
+        project.configurations.create("_watchmenInternal")
         def ivyCoordinates = ivyParser.parse(project.artifactCoordinates)
         log.info("Configuring artifacts to be downloaded from ${ivyCoordinates}")
         project.dependencies.add('_watchmenInternal', [group: ivyCoordinates.group, name: ivyCoordinates.name, version: ivyCoordinates.version, configuration: project.artifactConfiguration])

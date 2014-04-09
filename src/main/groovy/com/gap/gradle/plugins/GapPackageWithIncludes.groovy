@@ -21,12 +21,12 @@ http://issues.gradle.org/browse/GRADLE-2171
 
 class GapPackageWithIncludes implements Plugin<Project>{
   void apply(Project project) {
-    project.configurations.add('include') { 
+    project.configurations.create('include') {
       transitive false
       visible false
     };
     project.setBuildDir('build');
-    project.tasks.add(
+    project.tasks.create(
       name:'packageWithIncludes',
       type: Zip,
       description: 'Package (zip) this project with all include dependencies (dependencies are unzipped)')
@@ -47,7 +47,7 @@ class GapPackageWithIncludes implements Plugin<Project>{
         inputs.files project.configurations.include
     };
 
-    project.tasks.add(
+    project.tasks.create(
       name:'clean',
       type: Delete,
       description: 'Clean the working directories for the packageWithIncludes task')

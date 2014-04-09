@@ -106,7 +106,7 @@ class DownloadArtifactsTaskTest {
     public void execute_shouldCopyArtifactsFromWatchmenInternalConfigurationToDestination(){
         Project project = ProjectBuilder.builder().build()
         project.destination = destinationFolder.root.path
-        project.configurations.add('_watchmenInternal')
+        project.configurations.create('_watchmenInternal')
 
         project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile.tmp')
 
@@ -120,7 +120,7 @@ class DownloadArtifactsTaskTest {
     public void execute_shouldRemoveIvyVersionFromFileName(){
         Project project = ProjectBuilder.builder().build()
         project.destination = destinationFolder.root.path
-        project.configurations.add('_watchmenInternal')
+        project.configurations.create('_watchmenInternal')
 
         project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile-123.4.1234.tmp')
 
