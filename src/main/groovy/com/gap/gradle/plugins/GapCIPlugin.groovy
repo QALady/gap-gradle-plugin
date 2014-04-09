@@ -13,7 +13,7 @@ class GapCIPlugin implements Plugin<Project> {
     target.configure(target) {
 
       //metrics task
-      target.tasks.create(name: 'metrics',
+      target.tasks.add(name: 'metrics',
           description: 'Collects project metrics.',
           group: 'Continuous Integration')
       
@@ -24,13 +24,13 @@ class GapCIPlugin implements Plugin<Project> {
         target.tasks['metrics'].dependsOn(target.getTasksByName('sonarAnalyze', true))      
       
       //precommit task
-      target.tasks.create(name: 'precommit',
+      target.tasks.add(name: 'precommit',
           description: 'Recommended for execution before pushing changes to SCM.',
           group: 'Continuous Integration',
           dependsOn: [target.getTasksByName('test', true), target.getTasksByName('metrics', true)])
       
       //commit stage task
-      target.tasks.create(name: 'commit-stage',
+      target.tasks.add(name: 'commit-stage',
           description: 'Recommended for execution before pushing changes to SCM.',
           group: 'Continuous Integration',
           dependsOn: [target.getTasksByName('test', true), target.getTasksByName('metrics', true), target.getTasksByName('uploadArchives', true)])

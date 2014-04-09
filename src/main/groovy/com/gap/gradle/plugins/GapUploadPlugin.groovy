@@ -15,7 +15,7 @@ class GapUploadPlugin implements Plugin<Project>{
 
     if (project.plugins.hasPlugin('java')) {
 
-      project.tasks.create(name:'packageConfigs', type: Jar)
+      project.tasks.add(name:'packageConfigs', type: Jar)
       {
         classifier = 'config'
         from project.sourceSets.main.resources 
@@ -23,19 +23,19 @@ class GapUploadPlugin implements Plugin<Project>{
         include "${project.sourceSets.main.name}.rb"
       };
 
-      project.tasks.create(name:'packageTests', type: Jar)
+      project.tasks.add(name:'packageTests', type: Jar)
       {
         classifier = 'tests'
         from project.sourceSets.test.output
       }
 
-      project.tasks.create(name:'packageIntegrationTests', type: Jar)
+      project.tasks.add(name:'packageIntegrationTests', type: Jar)
       {
         classifier = 'integrationTests'
         from "src/test/functional"
       }
 
-      project.tasks.create(name:'packageSmokeTests', type: Jar)
+      project.tasks.add(name:'packageSmokeTests', type: Jar)
       {
         classifier = 'smokeTests'
         from "src/test/smoke"

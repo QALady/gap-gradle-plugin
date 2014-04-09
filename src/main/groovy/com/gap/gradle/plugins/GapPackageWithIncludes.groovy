@@ -26,7 +26,7 @@ class GapPackageWithIncludes implements Plugin<Project>{
       visible false
     };
     project.setBuildDir('build');
-    project.tasks.create(
+    project.tasks.add(
       name:'packageWithIncludes',
       type: Zip,
       description: 'Package (zip) this project with all include dependencies (dependencies are unzipped)')
@@ -47,7 +47,7 @@ class GapPackageWithIncludes implements Plugin<Project>{
         inputs.files project.configurations.include
     };
 
-    project.tasks.create(
+    project.tasks.add(
       name:'clean',
       type: Delete,
       description: 'Clean the working directories for the packageWithIncludes task')

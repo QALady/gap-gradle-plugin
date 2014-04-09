@@ -11,7 +11,7 @@ class GapWarPlugin implements Plugin<Project>{
     def tomcatHome = project.hasProperty('tomcatHome') ? project.getProperty('tomcatHome') : System.properties['user.home'] + '/tomcat'
     
     if (project.plugins.hasPlugin('war'))
-      project.tasks.create(
+      project.tasks.add(
        
         name:'deployToTomcat', 
         dependsOn: 'war',

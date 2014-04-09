@@ -1,9 +1,10 @@
 package helpers
-import groovy.mock.interceptor.MockFor
-
 import static junit.framework.Assert.assertFalse
-import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.containsString
+import static org.hamcrest.Matchers.notNullValue
+import static org.junit.Assert.assertThat
+
+import groovy.mock.interceptor.MockFor
 
 class Assert {
     static def shouldExecuteTask(project, taskName, type) {
@@ -19,6 +20,10 @@ class Assert {
         task.use {
             project.tasks.findByName(taskName).execute()
         }
+    }
+
+    static def taskShouldExist(task, project) {
+        assertThat("Task '${task}' does not exist on project", project.tasks.findByName(task), notNullValue())
     }
 
     static void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){

@@ -1,4 +1,10 @@
 package com.gap.pipeline
+import static helpers.Assert.shouldExecuteTask
+import static helpers.Assert.shouldNotExecuteTask
+import static helpers.Assert.taskShouldExist
+import static org.hamcrest.CoreMatchers.is
+import static org.junit.Assert.assertThat
+import static org.junit.Assert.fail
 
 import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.tasks.*
@@ -7,13 +13,6 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
-
-import static helpers.Assert.shouldExecuteTask
-import static org.hamcrest.CoreMatchers.is
-import static org.hamcrest.Matchers.notNullValue
-import static org.junit.Assert.assertThat
-import static org.junit.Assert.fail
-import static helpers.Assert.shouldNotExecuteTask
 
 class GapPipelinePluginTest {
 
@@ -27,22 +26,22 @@ class GapPipelinePluginTest {
 
     @Test
     void ivyIdentifiersTaskShouldBeAddedToProject() {
-        taskShouldExist('ivyIdentifiers')
+        taskShouldExist('ivyIdentifiers', project)
     }
 
     @Test
     void ivyDependenciesTaskShouldBeAddedToProject() {
-        taskShouldExist('ivyDependencies')
+        taskShouldExist('ivyDependencies', project)
     }
 
     @Test
     void unzipIntegrationTestsTaskShouldBeAddedToProject() {
-        taskShouldExist('unzipIntegrationTests')
+        taskShouldExist('unzipIntegrationTests', project)
     }
 
     @Test
     void prepareForProductionDeployTaskIsAddedToTheProject() {
-        taskShouldExist('prepareForProductionDeploy')
+        taskShouldExist('prepareForProductionDeploy', project)
     }
 
     @Test
@@ -70,12 +69,12 @@ class GapPipelinePluginTest {
 
     @Test
     void validatePrepareForProductionInputTaskIsAddedToTheProject() {
-        taskShouldExist('validatePrepareForProductionInput')
+        taskShouldExist('validatePrepareForProductionInput', project)
     }
 
     @Test
     void validateGenerateChangeListReportTaskIsAddedToTheProject() {
-        taskShouldExist('generateChangeListReport')
+        taskShouldExist('generateChangeListReport', project)
     }
 
     @Test
@@ -134,7 +133,7 @@ class GapPipelinePluginTest {
 
     @Test
     void setupBuildDirsTaskIsAddedToTheProject (){
-        taskShouldExist('setupBuildDirectories')
+        taskShouldExist('setupBuildDirectories', project)
     }
 
     @Test
@@ -148,13 +147,13 @@ class GapPipelinePluginTest {
 
     @Test
     void uploadBuildArtifactsTaskIsAddedToTheProject(){
-        taskShouldExist('uploadBuildArtifacts')
+        taskShouldExist('uploadBuildArtifacts', project)
     }
 
 
     @Test
     void downloadArtifactsTaskIsAddedToTheProject(){
-        taskShouldExist('downloadArtifacts')
+        taskShouldExist('downloadArtifacts', project)
     }
 
     @Test
@@ -177,7 +176,7 @@ class GapPipelinePluginTest {
 
     @Test
     void shouldAddPromoteArtifactsTaskToProject(){
-        taskShouldExist("promoteArtifacts")
+        taskShouldExist("promoteArtifacts", project)
     }
 
     def taskShouldDependOn(task, requiredDependency) {
@@ -197,7 +196,7 @@ class GapPipelinePluginTest {
 
     @Test
     void shouldAddPopulateSegmentRegistryTask(){
-        taskShouldExist("populateSegmentRegistry")
+        taskShouldExist("populateSegmentRegistry", project)
     }
 
     @Test
@@ -218,7 +217,4 @@ class GapPipelinePluginTest {
         shouldNotExecuteTask(childProject, 'populateSegmentRegistry', PopulateSegmentRegistryTask)
     }
 
-    def taskShouldExist(task) {
-        assertThat("Task '${task}' does not exist on project", project.tasks.findByName(task), notNullValue())
-    }
 }
