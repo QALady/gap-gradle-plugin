@@ -75,11 +75,23 @@ sourceSets {
             srcDir 'src/integrationTest/groovy'
         }
     }
+    functionalTest {
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = output + sourceSets.main.output + configurations.testRuntime
+        groovy {
+            srcDir 'functionalTests/groovy'
+        }
+    }
 }
 
 task integrationTest(type: Test, dependsOn: 'test') {
     testClassesDir = sourceSets.integrationTest.output.classesDir
     classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+task functionalTest(type: Test) {
+    testClassesDir = sourceSets.functionalTest.output.classesDir
+    classpath = sourceSets.functionalTest.runtimeClasspath
 }
 
 tasks.withType(Test) {
