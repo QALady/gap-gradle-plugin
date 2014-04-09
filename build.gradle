@@ -34,8 +34,11 @@ apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'cobertura'
-apply plugin: 'sonar-runner'
-apply from: 'gradle/sonarQube.gradle'
+
+if (gradle.gradleVersion.equals('1.11')) {
+    apply plugin: 'sonar-runner'
+    apply from: 'gradle/sonarQube.gradle'
+}
 
 cobertura {
     coverageFormats = ['xml', 'html']
@@ -43,7 +46,13 @@ cobertura {
 }
 
 dependencies{
-    compile localGroovy()
+
+    if (gradle.gradleVersion.equals('1.11')) {
+        compile localGroovy()
+    }
+    else {
+        groovy localGroovy()
+    }
     compile gradleApi()
 
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.6'

@@ -1,5 +1,6 @@
 package helpers
 import static junit.framework.Assert.assertFalse
+import static org.hamcrest.CoreMatchers.nullValue
 import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertThat
@@ -24,6 +25,10 @@ class Assert {
 
     static def taskShouldExist(task, project) {
         assertThat("Task '${task}' does not exist on project", project.tasks.findByName(task), notNullValue())
+    }
+
+    static def taskShouldNotExist(task, project) {
+        assertThat("Task '${task}' exists on project", project.tasks.findByName(task), nullValue())
     }
 
     static void assertThrowsExceptionWithMessage(expectedMessage, Closure closure){
