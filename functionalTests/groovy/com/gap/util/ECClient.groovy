@@ -1,9 +1,12 @@
 package com.gap.util
 
+import org.apache.commons.logging.LogFactory
+
 
 class ECClient {
     def environment
     def shellCommand
+    def logger = LogFactory.getLog(ShellCommand)
 
     ECClient() {
         this.shellCommand = new ShellCommand()
@@ -12,7 +15,7 @@ class ECClient {
     def runProcedure(String fullProcedureName, params = []){
         def procedure = parseProcedureName(fullProcedureName)
         def command = buildShellCommand(procedure.projectName,procedure.procedureName,params)
-        shellCommand.execute(command)
+        logger.info("runProcedure: ${command} - " + shellCommand.execute(command))
     }
 
     private parseProcedureName(String fullProcedureName) {

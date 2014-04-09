@@ -6,6 +6,7 @@ import static junit.framework.Assert.assertEquals
 
 public class WMSegmentTest {
 
+
     @Test
     public void sampleTest(){
         assertEquals(true, true)
@@ -16,5 +17,7 @@ public class WMSegmentTest {
         def ec = new ECClient()
         ec.runProcedure("Watchmen Test Segments:Component Segment")
     }
+
+
 
 }
