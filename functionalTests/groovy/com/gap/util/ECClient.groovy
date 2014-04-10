@@ -18,6 +18,20 @@ class ECClient {
         shellCommand.execute(command)
     }
 
+    def getJobStatus(def jobId) {
+        new XmlSlurper().parseText(shellCommand.execute("ectool getJobStatus ${jobId}"))
+    }
+
+    def getProperty(property, jobId = null){
+        def propertyName = jobId == null ? "/myJob/${property}" : "/jobs[${jobId}]/${property}"
+        shellCommand.execute(['ectool', 'getProperty', propertyName])
+    }
+
+    def setProperty(property, value, jobId = null){
+        def propertyName = jobId == null ? "/myJob/${property}" : "/jobs[${jobId}]/${property}"
+        shellCommand.execute(['ectool', 'getProperty', propertyName])
+    }
+
     private parseProcedureName(String fullProcedureName) {
         def parts = fullProcedureName.split(':')
         if (parts.size() < 2) {
@@ -27,7 +41,7 @@ class ECClient {
     }
 
     private def buildShellCommand(projectName, procedureName, params) {
-        def command =  ["ectool", "runProcedure",projectName, "--procedureName", procedureName]
+        def command =  ["ectool", "runProcedure", projectName, "--procedureName", procedureName]
         if (params) {
             command << "--actualParameter"
             params.each { key, value ->
@@ -36,9 +50,5 @@ class ECClient {
             }
         }
         command
-    }
-
-    def getJobStatus(def jobId) {
-        new XmlSlurper().parseText(shellCommand.execute("ectool getJobStatus ${jobId}"))
     }
 }
