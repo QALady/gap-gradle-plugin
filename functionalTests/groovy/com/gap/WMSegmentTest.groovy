@@ -16,13 +16,14 @@ public class WMSegmentTest {
     public void shouldTriggerComponentSegmentSuccessfully() {
 
         def jobId = ec.runProcedure("Watchmen Test Segments:Component Segment")
-        
+
         waitFor(10, {
             ec.getJobStatus(jobId).status == 'completed'
         })
     }
 
     private waitFor(timeToWaitInMinutes, closure){
+        def timeoutMillis = timeToWaitInMinutes * 60000
         def start = System.currentTimeMillis()
         def end  = start + timeoutMillis
 
