@@ -1,5 +1,6 @@
 package com.gap.util
 
+import com.gap.util.Util
 import org.apache.commons.logging.LogFactory
 
 
@@ -12,10 +13,12 @@ class ECClient {
         this.shellCommand = new ShellCommand()
     }
 
-    def runProcedure(String fullProcedureName, params = []){
+    def runProcedureSync(fullProcedureName, params = []){
         def procedure = parseProcedureName(fullProcedureName)
         def command = buildShellCommand(procedure.projectName,procedure.procedureName,params)
-        shellCommand.execute(command)
+        def jobId = shellCommand.execute(command)
+        Util.executeWithRetry(10, 0.5, {getJobStatus(jobId).status == 'completed'})
+        jobId
     }
 
     def getJobStatus(def jobId) {
@@ -32,7 +35,7 @@ class ECClient {
         shellCommand.execute(['ectool', 'getProperty', propertyName])
     }
 
-    private parseProcedureName(String fullProcedureName) {
+    private parseProcedureName(fullProcedureName) {
         def parts = fullProcedureName.split(':')
         if (parts.size() < 2) {
             throw new IllegalArgumentException("The procedure name '${fullProcedureName}' is invalid. It should be of the format '<project name>:<procedure name>'")
