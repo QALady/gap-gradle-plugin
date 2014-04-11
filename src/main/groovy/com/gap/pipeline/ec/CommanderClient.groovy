@@ -78,13 +78,15 @@ class CommanderClient {
 
     public def getECProperty(key) {
         try{
+            log.info("trying to get proeprty ${key}")
             return new Property(key, shellCommand.execute(['ectool', 'getProperty', key.toString()]))
         }
         catch (ShellCommandException e){
-            log.info("caught shell command exception with message: ${e.message}\n")
+            log.info("caught ShellCommandException with message: ${e.message}\n")
             if(e.message.contains('[NoSuchProperty]')){
                 return Property.invalidProperty(key)
             }
+            else throw e
         }
 	}
 

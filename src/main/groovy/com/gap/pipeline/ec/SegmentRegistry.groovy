@@ -14,6 +14,8 @@ class SegmentRegistry {
         def segmentConfig = commander.getCurrentSegmentConfig()
         def segment = commander.getCurrentSegment()
 
+        log.info("populating segment registry for current segment ${segment}")
+
         setSegmentRegistryValue(segment, 'ivyIdentifiers', ivyInfo.identifiers().join('\n'))
         setSegmentRegistryValue(segment, 'ivyDependencies', ivyInfo.dependencies().join('\n'))
         setSegmentRegistryValue(segment, 'svnUrl', segmentConfig.scmUrl)
@@ -28,6 +30,9 @@ class SegmentRegistry {
 
     void registerWithUpstreamSegments(def ivyInfo) {
         def currentSegment = commander.getCurrentSegment()
+
+        log.info("registering current segment \"${currentSegment}\" with upstream segments")
+
         def upstreamSegments = []
         ivyInfo.dependencies().each { upstreamId ->
             if(identifierIsProducedByAnotherSegment(upstreamId, currentSegment)){
@@ -40,7 +45,7 @@ class SegmentRegistry {
         setSegmentRegistryValue(currentSegment, "upstreamSegments", upstreamSegments.join("\n"))
     }
 
-    def unregisterFromRemovedUpstreamSegments(def currentSegment, def newUpstreamSegments) {
+    private def unregisterFromRemovedUpstreamSegments(def currentSegment, def newUpstreamSegments) {
         def priorUpstreamSegments = getSegmentRegistryValue(currentSegment, "upstreamSegments").split("\n") as Set
         priorUpstreamSegments.remove("")
         priorUpstreamSegments.removeAll(newUpstreamSegments)
@@ -50,6 +55,8 @@ class SegmentRegistry {
     }
 
     private void registerWithUpstreamSegment(upstreamSegment, currentSegment) {
+        log.info("adding \"${currentSegment}\" to registered downstream segments of \"${upstreamSegment}\"")
+
         def downstreamSegments = getSegmentRegistryValue(upstreamSegment, 'downstreamSegments').toString().split("\n") as Set
         downstreamSegments.add(currentSegment.toString())
         downstreamSegments.remove("")
@@ -57,17 +64,19 @@ class SegmentRegistry {
     }
 
     private void unregisterFromUpstreamSegment(upstreamSegment, currentSegment) {
+        log.info("removing \"${currentSegment}\" from registered downstream segments of \"${upstreamSegment}\"")
+
         def downstreamSegments = getSegmentRegistryValue(upstreamSegment, 'downstreamSegments').toString().split("\n") as Set
         downstreamSegments.remove(currentSegment.toString())
         setSegmentRegistryValue(upstreamSegment, 'downstreamSegments', downstreamSegments.join("\n"))
     }
 
-    def getSegmentThatProducesIdentifier(identifier) {
+    private def getSegmentThatProducesIdentifier(identifier) {
         def segmentId = commander.getECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment").value
         Segment.fromString(segmentId)
     }
 
-    def identifierIsProducedByAnotherSegment(identifier, currentSegment) {
+    private def identifierIsProducedByAnotherSegment(identifier, currentSegment) {
         def segmentNameProperty = commander.getECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment")
         segmentNameProperty.isValid() && segmentNameProperty.value != currentSegment.toString()
     }
@@ -81,7 +90,8 @@ class SegmentRegistry {
         commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segment}/${key}").value
     }
 
-    def setIdentifierRegistryValue(def identifier, def segment) {
+    private def setIdentifierRegistryValue(def identifier, def segment) {
+        log.info("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment to ${segment}")
         commander.setECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment", segment.toString())
     }
 
