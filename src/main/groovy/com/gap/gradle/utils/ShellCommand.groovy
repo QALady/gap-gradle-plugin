@@ -1,10 +1,10 @@
 package com.gap.gradle.utils
 
-import org.apache.commons.logging.LogFactory
+import org.slf4j.LoggerFactory
 
 class ShellCommand {
 
-    def logger = LogFactory.getLog(ShellCommand)
+    def logger = LoggerFactory.getLogger(ShellCommand)
     def workingDir
 
     def ShellCommand() {
@@ -20,14 +20,13 @@ class ShellCommand {
         def proc = command.execute(environment, workingDir)
         def exitCode = proc.waitFor()
         def output = proc.in.text
-        logger.info("${output}")
+        logger.debug("${output}")
         if (exitCode == 0) {
             logger.info("Command completed successfully")
             output
         } else {
             def errorText = proc.err.text
-            logger.error("Command failed with exit code ${exitCode}")
-            logger.error(errorText)
+            logger.info("throwing ShellCommandException...")
             throw new ShellCommandException("Command execution failed! Exit code ${exitCode}: ${errorText}");
         }
     }

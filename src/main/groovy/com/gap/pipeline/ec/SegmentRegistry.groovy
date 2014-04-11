@@ -1,8 +1,10 @@
 package com.gap.pipeline.ec
 
+import org.slf4j.LoggerFactory
+
 class SegmentRegistry {
 
-    def log = LogFactory.getLog(com.gap.pipeline.ec.SegmentRegistry)
+    def logger = LoggerFactory.getLogger(com.gap.pipeline.ec.SegmentRegistry)
     def commander
 
 
@@ -14,7 +16,7 @@ class SegmentRegistry {
         def segmentConfig = commander.getCurrentSegmentConfig()
         def segment = commander.getCurrentSegment()
 
-        log.info("populating segment registry for current segment ${segment}")
+        logger.info("populating segment registry for current segment ${segment}")
 
         setSegmentRegistryValue(segment, 'ivyIdentifiers', ivyInfo.identifiers().join('\n'))
         setSegmentRegistryValue(segment, 'ivyDependencies', ivyInfo.dependencies().join('\n'))
@@ -31,7 +33,7 @@ class SegmentRegistry {
     void registerWithUpstreamSegments(def ivyInfo) {
         def currentSegment = commander.getCurrentSegment()
 
-        log.info("registering current segment \"${currentSegment}\" with upstream segments")
+        logger.info("registering current segment \"${currentSegment}\" with upstream segments")
 
         def upstreamSegments = []
         ivyInfo.dependencies().each { upstreamId ->
@@ -55,7 +57,7 @@ class SegmentRegistry {
     }
 
     private void registerWithUpstreamSegment(upstreamSegment, currentSegment) {
-        log.info("adding \"${currentSegment}\" to registered downstream segments of \"${upstreamSegment}\"")
+        logger.info("adding \"${currentSegment}\" to registered downstream segments of \"${upstreamSegment}\"")
 
         def downstreamSegments = getSegmentRegistryValue(upstreamSegment, 'downstreamSegments').toString().split("\n") as Set
         downstreamSegments.add(currentSegment.toString())
@@ -64,7 +66,7 @@ class SegmentRegistry {
     }
 
     private void unregisterFromUpstreamSegment(upstreamSegment, currentSegment) {
-        log.info("removing \"${currentSegment}\" from registered downstream segments of \"${upstreamSegment}\"")
+        logger.info("removing \"${currentSegment}\" from registered downstream segments of \"${upstreamSegment}\"")
 
         def downstreamSegments = getSegmentRegistryValue(upstreamSegment, 'downstreamSegments').toString().split("\n") as Set
         downstreamSegments.remove(currentSegment.toString())
@@ -82,7 +84,7 @@ class SegmentRegistry {
     }
 
     private void setSegmentRegistryValue(segment, key, value){
-        log.info("setting /projects[WM Segment Registry]/SegmentRegistry/${segment}/${key} to ${value}")
+        logger.info("setting /projects[WM Segment Registry]/SegmentRegistry/${segment}/${key} to ${value}")
         commander.setECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segment}/${key}", value)
     }
 
@@ -91,10 +93,8 @@ class SegmentRegistry {
     }
 
     private def setIdentifierRegistryValue(def identifier, def segment) {
-        log.info("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment to ${segment}")
+        logger.info("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment to ${segment}")
         commander.setECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment", segment.toString())
     }
 
 }
-
-import org.apache.commons.logging.LogFactory

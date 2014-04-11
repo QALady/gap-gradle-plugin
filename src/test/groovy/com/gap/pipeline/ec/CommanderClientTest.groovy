@@ -31,8 +31,8 @@ public class CommanderClientTest {
     @Test
     public void addLink_shouldInvokeEcToolToCreateLinks(){
         def jobId = "1254321"
-        commander.addLink("changelist.log", jobId)
-        verify(mockShellCommand).execute(['ectool', 'setProperty', '/jobs[1254321]/report-urls/changelist', '/commander/jobs/1254321/default/changelist.log'])
+        commander.addLink("changelist.logger", jobId)
+        verify(mockShellCommand).execute(['ectool', 'setProperty', '/jobs[1254321]/report-urls/changelist', '/commander/jobs/1254321/default/changelist.logger'])
     }
 
     @Test

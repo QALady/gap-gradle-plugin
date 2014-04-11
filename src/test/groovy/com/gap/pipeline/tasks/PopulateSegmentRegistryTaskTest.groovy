@@ -15,14 +15,12 @@ class PopulateSegmentRegistryTaskTest {
     public void execute_shouldPopulateRegistryAndRegisterWithUpstreamSegments(){
         def registry = mock(SegmentRegistry)
         def project = ProjectBuilder.builder().build()
-        def project2 = ProjectBuilder.builder().withName("k").build()
-        def task = new PopulateSegmentRegistryTask(project2, registry)
+        def task = new PopulateSegmentRegistryTask(project, registry)
         def expectedIvyInfo = new IvyInfo(project)
 
         task.execute()
 
         verify(registry).populate(eq(expectedIvyInfo))
         verify(registry).registerWithUpstreamSegments(eq(expectedIvyInfo))
-
     }
 }

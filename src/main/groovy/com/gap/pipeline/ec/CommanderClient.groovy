@@ -1,16 +1,14 @@
 package com.gap.pipeline.ec
-
-
 import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.Environment
 import com.gap.pipeline.utils.ShellCommand
-import org.apache.commons.logging.LogFactory
+import org.slf4j.LoggerFactory
 
 class CommanderClient {
 
     def shellCommand
     def environment
-    def log = LogFactory.getLog(com.gap.pipeline.ec.CommanderClient)
+    def logger = LoggerFactory.getLogger(com.gap.pipeline.ec.CommanderClient)
     private final String PROJECT_NAME_PROPERTY = '/myJob/projectName'
     private final String PROCEDURE_NAME_PROPERTY = '/myJob/liveProcedure'
 
@@ -78,11 +76,11 @@ class CommanderClient {
 
     public def getECProperty(key) {
         try{
-            log.info("trying to get proeprty ${key}")
+            logger.info("trying to get proeprty ${key}")
             return new Property(key, shellCommand.execute(['ectool', 'getProperty', key.toString()]))
         }
         catch (ShellCommandException e){
-            log.info("caught ShellCommandException with message: ${e.message}\n")
+            logger.info("caught ShellCommandException with message: ${e.message}\n")
             if(e.message.contains('[NoSuchProperty]')){
                 return Property.invalidProperty(key)
             }
