@@ -1,6 +1,6 @@
 package com.gap.pipeline
 
-import com.gap.pipeline.utils.ShellCommand
+import com.gap.gradle.utils.ShellCommand
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Ignore

@@ -1,7 +1,7 @@
 package com.gap.pipeline.ec
 import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.Environment
-import com.gap.pipeline.utils.ShellCommand
+import com.gap.gradle.utils.ShellCommand
 import org.slf4j.LoggerFactory
 
 class CommanderClient {

@@ -1,6 +1,6 @@
 package com.gap.pipeline.ec
 
-import com.gap.pipeline.utils.ShellCommand
+import com.gap.gradle.utils.ShellCommand
 
 class CommanderArtifacts {
 

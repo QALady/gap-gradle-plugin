@@ -7,7 +7,7 @@ import static org.mockito.Mockito.*
 
 import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.EnvironmentStub
-import com.gap.pipeline.utils.ShellCommand
+import com.gap.gradle.utils.ShellCommand
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
