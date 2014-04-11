@@ -79,7 +79,7 @@ class CommanderClient {
             new Property(key, shellCommand.execute(['ectool', 'getProperty', key.toString()]))
         }
         catch (ShellCommandException e){
-            if(e.message.contains('InvalidPropertyPath')){
+            if(e.message.contains('NoSuchProperty')){
                 Property.invalidProperty(key)
             }
         }

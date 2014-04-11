@@ -99,7 +99,7 @@ public class CommanderClientTest {
 
     @Test
     public void getECProperty_shouldReturnInvalidPropertyIfPropertyDoesNotExist(){
-        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/idontexist'])).thenThrow(new ShellCommandException("[InvalidPropertyPath]"))
+        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/idontexist'])).thenThrow(new ShellCommandException("[NoSuchProperty]"))
         assertThat(commander.getECProperty('/myJob/idontexist').isValid(), is(false))
     }
 
