@@ -1,5 +1,7 @@
 package com.gap.pipeline.ec
 
+
+import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.Environment
 import com.gap.pipeline.utils.ShellCommand
 
@@ -7,10 +9,20 @@ class CommanderClient {
 
     def shellCommand
     def environment
+    private final String PROJECT_NAME_PROPERTY = '/myJob/projectName'
+    private final String PROCEDURE_NAME_PROPERTY = '/myJob/liveProcedure'
 
     CommanderClient(shellCommand = new ShellCommand(), environment = new Environment()) {
         this.shellCommand = shellCommand
         this.environment = environment
+    }
+
+    private def getCurrentProjectName(){
+        getECProperty(PROJECT_NAME_PROPERTY).value
+    }
+
+    private def getCurrentProcedureName(){
+        getECProperty(PROCEDURE_NAME_PROPERTY).value
     }
 
     def addLink(filename, jobid){
@@ -62,32 +74,43 @@ class CommanderClient {
         shellCommand.execute(['ectool', 'setProperty', name.toString(), value.toString()])
     }
 
-    public def getECProperty(property) {
-		shellCommand.execute(['ectool', 'getProperty', property.toString()])
+    public def getECProperty(key) {
+        try{
+            new Property(key, shellCommand.execute(['ectool', 'getProperty', key.toString()]))
+        }
+        catch (ShellCommandException e){
+            if(e.message.contains('InvalidPropertyPath')){
+                Property.invalidProperty(key)
+            }
+        }
 	}
 
-    def getSegmentConfig(){
+    def getCurrentSegmentConfig(){
         def  segmentPropertySheet = '/myJob/watchmen_config/'
-        new SegmentConfig(getECProperty(segmentPropertySheet + 'configSCMUrl'),
-                          getECProperty(segmentPropertySheet + 'workingDir'),
-                          getECProperty(segmentPropertySheet + 'ciDir'),
-                          getECProperty(segmentPropertySheet + 'gradleFile'))
+        new SegmentConfig(getECProperty(segmentPropertySheet + 'configSCMUrl').value,
+                          getECProperty(segmentPropertySheet + 'workingDir').value,
+                          getECProperty(segmentPropertySheet + 'ciDir').value,
+                          getECProperty(segmentPropertySheet + 'gradleFile').value)
     }
 
 	def getUserId(){
-		getECProperty("/myJob/launchedByUser")
+		getECProperty("/myJob/launchedByUser").value
 	}
 
 	def getUserName(){
-		def jobTriggeredByUserId = getECProperty("/myJob/launchedByUser")
+		def jobTriggeredByUserId = getECProperty("/myJob/launchedByUser").value
         isJobTriggeredManually(jobTriggeredByUserId)? getECProperty("/users[$jobTriggeredByUserId]/fullUserName"): jobTriggeredByUserId
 	}
 
 	def getStartTime(){
-		getECProperty("/myJob/start/")
+		getECProperty("/myJob/start").value
 	}
 
     private static def isJobTriggeredManually(userId){
         !userId.toString().contains(' ')
+    }
+
+    def getCurrentSegment() {
+        return new Segment(getCurrentProjectName(), getCurrentProcedureName())
     }
 }

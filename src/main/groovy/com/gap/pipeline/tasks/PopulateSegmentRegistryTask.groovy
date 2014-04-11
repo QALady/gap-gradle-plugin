@@ -15,7 +15,9 @@ class PopulateSegmentRegistryTask {
     }
 
     def execute(){
-        registry.populate(new IvyInfo(project))
+        def ivyInfo = new IvyInfo(project)
+        registry.populate(ivyInfo)
+        registry.registerWithUpstreamSegments(ivyInfo)
     }
 
 }

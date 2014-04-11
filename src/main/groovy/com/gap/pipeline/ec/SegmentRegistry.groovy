@@ -2,27 +2,89 @@ package com.gap.pipeline.ec
 
 class SegmentRegistry {
 
+    def log = LogFactory.getLog(com.gap.pipeline.ec.SegmentRegistry)
     def commander
+
 
     SegmentRegistry(commander = new CommanderClient()){
         this.commander = commander
     }
 
     void populate(ivyInfo) {
-        def ecProjectName = commander.getECProperty('/myJob/projectName')
-        def ecProcedureName = commander.getECProperty('/myJob/liveProcedure')
-        def segmentConfig = commander.getSegmentConfig()
+        def segmentConfig = commander.getCurrentSegmentConfig()
+        def segment = commander.getCurrentSegment()
 
-        setSegmentRegistryValue(ecProjectName, ecProcedureName, 'ivyIdentifiers', ivyInfo.identifiers().join('\n'))
-        setSegmentRegistryValue(ecProjectName, ecProcedureName, 'ivyDependencies', ivyInfo.dependencies().join('\n'))
-        setSegmentRegistryValue(ecProjectName, ecProcedureName, 'svnUrl', segmentConfig.scmUrl)
-        setSegmentRegistryValue(ecProjectName, ecProcedureName, 'workingDir', segmentConfig.workingDir)
-        setSegmentRegistryValue(ecProjectName, ecProcedureName, 'ciDir', segmentConfig.ciDir)
-        setSegmentRegistryValue(ecProjectName, ecProcedureName, 'gradleFile', segmentConfig.gradleFile)
+        setSegmentRegistryValue(segment, 'ivyIdentifiers', ivyInfo.identifiers().join('\n'))
+        setSegmentRegistryValue(segment, 'ivyDependencies', ivyInfo.dependencies().join('\n'))
+        setSegmentRegistryValue(segment, 'svnUrl', segmentConfig.scmUrl)
+        setSegmentRegistryValue(segment, 'workingDir', segmentConfig.workingDir)
+        setSegmentRegistryValue(segment, 'ciDir', segmentConfig.ciDir)
+        setSegmentRegistryValue(segment, 'gradleFile', segmentConfig.gradleFile)
+
+        ivyInfo.identifiers().each{ ivyId ->
+            setIdentifierRegistryValue(ivyId, segment)
+        }
     }
 
-    private void setSegmentRegistryValue(ecProjectName, ecProcedureName, key, value){
-        commander.setECProperty("/projects[WM Segment Registry]/SegmentRegistry/${ecProjectName}:${ecProcedureName}/${key}", value)
+    void registerWithUpstreamSegments(def ivyInfo) {
+        def currentSegment = commander.getCurrentSegment()
+        def upstreamSegments = []
+        ivyInfo.dependencies().each { upstreamId ->
+            if(identifierIsProducedByAnotherSegment(upstreamId, currentSegment)){
+                def upstreamSegment = getSegmentThatProducesIdentifier(upstreamId)
+                registerWithUpstreamSegment(upstreamSegment, currentSegment)
+                upstreamSegments.add(upstreamSegment)
+            }
+        }
+        unregisterFromRemovedUpstreamSegments(currentSegment, ivyInfo)
+        setSegmentRegistryValue(currentSegment, "upstreamSegments", upstreamSegments.join("\n"))
+    }
+
+    def unregisterFromRemovedUpstreamSegments(def currentSegment, def newUpstreamSegments) {
+        def priorUpstreamSegments = getSegmentRegistryValue(currentSegment, "upstreamSegments").split("\n") as Set
+        priorUpstreamSegments.remove("")
+        priorUpstreamSegments.removeAll(newUpstreamSegments)
+        priorUpstreamSegments.each { upstreamSegment ->
+            unregisterFromUpstreamSegment(upstreamSegment, currentSegment)
+        }
+    }
+
+    private void registerWithUpstreamSegment(upstreamSegment, currentSegment) {
+        def downstreamSegments = getSegmentRegistryValue(upstreamSegment, 'downstreamSegments').toString().split("\n") as Set
+        downstreamSegments.add(currentSegment.toString())
+        downstreamSegments.remove("")
+        setSegmentRegistryValue(upstreamSegment, 'downstreamSegments', downstreamSegments.join("\n"))
+    }
+
+    private void unregisterFromUpstreamSegment(upstreamSegment, currentSegment) {
+        def downstreamSegments = getSegmentRegistryValue(upstreamSegment, 'downstreamSegments').toString().split("\n") as Set
+        downstreamSegments.remove(currentSegment.toString())
+        setSegmentRegistryValue(upstreamSegment, 'downstreamSegments', downstreamSegments.join("\n"))
+    }
+
+    def getSegmentThatProducesIdentifier(identifier) {
+        def segmentId = commander.getECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment").value
+        Segment.fromString(segmentId)
+    }
+
+    def identifierIsProducedByAnotherSegment(identifier, currentSegment) {
+        def segmentNameProperty = commander.getECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment")
+        segmentNameProperty.isValid() && segmentNameProperty.value != currentSegment.toString()
+    }
+
+    private void setSegmentRegistryValue(segment, key, value){
+        log.info("setting /projects[WM Segment Registry]/SegmentRegistry/${segment}/${key} to ${value}")
+        commander.setECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segment}/${key}", value)
+    }
+
+    private def getSegmentRegistryValue(segment, key){
+        commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segment}/${key}").value
+    }
+
+    def setIdentifierRegistryValue(def identifier, def segment) {
+        commander.setECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment", segment.toString())
     }
 
 }
+
+import org.apache.commons.logging.LogFactory

@@ -1,5 +1,11 @@
 package com.gap.pipeline.ec
+import static junit.framework.Assert.assertEquals
+import static org.hamcrest.CoreMatchers.is
+import static org.junit.Assert.assertThat
+import static org.junit.rules.ExpectedException.none
+import static org.mockito.Mockito.*
 
+import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.EnvironmentStub
 import com.gap.pipeline.utils.ShellCommand
 import org.junit.Before
@@ -7,14 +13,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.mockito.Mockito
-
-import static org.hamcrest.CoreMatchers.is
-import static junit.framework.Assert.assertEquals
-import static org.junit.rules.ExpectedException.none
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.verify
-import static org.mockito.Mockito.when
-import static org.junit.Assert.assertThat
 
 public class CommanderClientTest {
     @Rule
@@ -96,8 +94,14 @@ public class CommanderClientTest {
 	@Test
 	public void getStartTimeFromEC_shouldReturnStartJob(){
 		commander.getStartTime()
-		verify(mockShellCommand).execute(['ectool', 'getProperty', '/myJob/start/'])
+		verify(mockShellCommand).execute(['ectool', 'getProperty', '/myJob/start'])
 	}
+
+    @Test
+    public void getECProperty_shouldReturnInvalidPropertyIfPropertyDoesNotExist(){
+        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/idontexist'])).thenThrow(new ShellCommandException("[InvalidPropertyPath]"))
+        assertThat(commander.getECProperty('/myJob/idontexist').isValid(), is(false))
+    }
 
     @Test
     public void getSegmentConfig_ShouldReturnSegmentConfigFromWatchmenConfigECProperties(){
@@ -106,12 +110,22 @@ public class CommanderClientTest {
         when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/ciDir'])).thenReturn('/mnt/electric-commander/workspace/job_id_timestamp')
         when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/gradleFile'])).thenReturn('segment-name.gradle')
 
-        SegmentConfig segmentConfig = commander.getSegmentConfig()
+        SegmentConfig segmentConfig = commander.getCurrentSegmentConfig()
 
         assertThat(segmentConfig.scmUrl, is('http://svn.gap.com/path/to/repo'))
         assertThat(segmentConfig.workingDir, is('/dev/shm/job_id'))
         assertThat(segmentConfig.ciDir, is('/mnt/electric-commander/workspace/job_id_timestamp'))
         assertThat(segmentConfig.gradleFile, is('segment-name.gradle'))
+    }
 
+    @Test
+    public void getCurrentSegment_shouldReturnCurrentlyRunningSegment(){
+        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/projectName'])).thenReturn('Project Name')
+        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/liveProcedure'])).thenReturn('Procedure Name')
+
+        def segment = commander.getCurrentSegment()
+
+        assertThat(segment.projectName, is('Project Name'))
+        assertThat(segment.procedureName, is('Procedure Name'))
     }
 }
