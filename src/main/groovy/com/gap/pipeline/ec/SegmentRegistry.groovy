@@ -43,17 +43,27 @@ class SegmentRegistry {
                 upstreamSegments.add(upstreamSegment)
             }
         }
-        unregisterFromRemovedUpstreamSegments(currentSegment, ivyInfo)
+        unregisterFromRemovedUpstreamSegments(currentSegment, upstreamSegments)
         setSegmentRegistryValue(currentSegment, "upstreamSegments", upstreamSegments.join("\n"))
     }
 
     private def unregisterFromRemovedUpstreamSegments(def currentSegment, def newUpstreamSegments) {
-        def priorUpstreamSegments = getSegmentRegistryValue(currentSegment, "upstreamSegments").split("\n") as Set
+        def priorUpstreamSegments = getSegmentsFromString(getSegmentRegistryValue(currentSegment, "upstreamSegments"))
         priorUpstreamSegments.remove("")
         priorUpstreamSegments.removeAll(newUpstreamSegments)
         priorUpstreamSegments.each { upstreamSegment ->
             unregisterFromUpstreamSegment(upstreamSegment, currentSegment)
         }
+    }
+
+    def getSegmentsFromString(def stringWithNewLines) {
+        def segments = []
+        stringWithNewLines.split('\n').each {segmentId ->
+            if(!segmentId.equals("")){
+                segments.add(Segment.fromString(segmentId))
+            }
+        }
+        return segments as Set
     }
 
     private void registerWithUpstreamSegment(upstreamSegment, currentSegment) {

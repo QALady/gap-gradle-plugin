@@ -172,6 +172,20 @@ class SegmentRegistryTest {
     }
 
     @Test
+    public void registerWithUpstreamSegments_shouldNotChangeCorrectDependencies(){
+        addUpstreamDependency("org.gap.team:component", "Some Team's Project:Component Segment", project)
+        arrangePriorUpstreamSegments("${projectName}:${procedureName}", "Some Team's Project:Component Segment")
+        arrangePriorDownstreamSegments("Some Team's Project:Component Segment", "Another Project:Downstream Segment\n${projectName}:${procedureName}")
+        def ivyInfo = new IvyInfo(project)
+        def registry = new SegmentRegistry(commander)
+
+        registry.registerWithUpstreamSegments(ivyInfo)
+
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Some Team's Project:Component Segment/downstreamSegments"), "Another Project:Downstream Segment\n${projectName}:${procedureName}".toString())
+        verify(commander, never()).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Some Team's Project:Component Segment/downstreamSegments"), "Another Project:Downstream Segment".toString())
+    }
+
+    @Test
     public void populate_shouldCreateEntryForEachIdentifierSegmentProduces(){
         def childProject = ProjectBuilder.builder().withName("anotherIdentifier").withParent(project).build()
         childProject.group = 'com.gap.watchmen'
