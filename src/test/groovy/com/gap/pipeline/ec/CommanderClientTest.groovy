@@ -87,9 +87,10 @@ public class CommanderClientTest {
 
 	@Test
 	public void getUserNameFromEC_shouldReturnUserName(){
-		commander.getUserName()
-		verify(mockShellCommand).execute(['ectool', 'getProperty', '/myJob/launchedByUser'])
-	}
+		when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/launchedByUser'])).thenReturn('us1n3id')
+		when(mockShellCommand.execute(['ectool', 'getProperty', '/users[us1n3id]/fullUserName'])).thenReturn('User Name')
+        assertThat(commander.getUserName(), is('User Name'))
+    }
 
 	@Test
 	public void getStartTimeFromEC_shouldReturnStartJob(){
