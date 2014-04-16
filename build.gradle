@@ -48,10 +48,10 @@ cobertura {
 dependencies{
 
     if (gradle.gradleVersion.equals('1.11')) {
-        compile "org.codehaus.groovy:groovy-all:2.1.9"
+        compile "org.codehaus.groovy:groovy-all:2.2.0"
     }
     else {
-        groovy "org.codehaus.groovy:groovy-all:2.1.9"
+        groovy "org.codehaus.groovy:groovy-all:2.2.0"
     }
     compile gradleApi()
 
