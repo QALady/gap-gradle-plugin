@@ -48,11 +48,14 @@ class SegmentRegistry {
     }
 
     private def unregisterFromRemovedUpstreamSegments(def currentSegment, def newUpstreamSegments) {
-        def priorUpstreamSegments = getSegmentsFromString(getSegmentRegistryValue(currentSegment, "upstreamSegments"))
-        priorUpstreamSegments.remove("")
-        priorUpstreamSegments.removeAll(newUpstreamSegments)
-        priorUpstreamSegments.each { upstreamSegment ->
-            unregisterFromUpstreamSegment(upstreamSegment, currentSegment)
+        def priorUpstreamSegmentsProperty = getSegmentRegistryProperty(currentSegment, "upstreamSegments")
+        if(priorUpstreamSegmentsProperty.isValid()){
+            def priorUpstreamSegments = getSegmentsFromString(priorUpstreamSegmentsProperty.value)
+            priorUpstreamSegments.remove("")
+            priorUpstreamSegments.removeAll(newUpstreamSegments)
+            priorUpstreamSegments.each { upstreamSegment ->
+                unregisterFromUpstreamSegment(upstreamSegment, currentSegment)
+            }
         }
     }
 
@@ -69,7 +72,12 @@ class SegmentRegistry {
     private void registerWithUpstreamSegment(upstreamSegment, currentSegment) {
         logger.info("adding \"${currentSegment}\" to registered downstream segments of \"${upstreamSegment}\"")
 
-        def downstreamSegments = getSegmentRegistryValue(upstreamSegment, 'downstreamSegments').toString().split("\n") as Set
+        def downstreamSegmentsProperty = getSegmentRegistryProperty(upstreamSegment, 'downstreamSegments')
+        def downstreamSegments = [] as Set
+        if(downstreamSegmentsProperty.isValid()){
+            downstreamSegments = downstreamSegmentsProperty.value.toString().split("\n") as Set
+        }
+
         downstreamSegments.add(currentSegment.toString())
         downstreamSegments.remove("")
         setSegmentRegistryValue(upstreamSegment, 'downstreamSegments', downstreamSegments.join("\n"))
@@ -78,9 +86,12 @@ class SegmentRegistry {
     private void unregisterFromUpstreamSegment(upstreamSegment, currentSegment) {
         logger.info("removing \"${currentSegment}\" from registered downstream segments of \"${upstreamSegment}\"")
 
-        def downstreamSegments = getSegmentRegistryValue(upstreamSegment, 'downstreamSegments').toString().split("\n") as Set
-        downstreamSegments.remove(currentSegment.toString())
-        setSegmentRegistryValue(upstreamSegment, 'downstreamSegments', downstreamSegments.join("\n"))
+        def downstreamSegmentsProperty = getSegmentRegistryProperty(upstreamSegment, 'downstreamSegments')
+        if(downstreamSegmentsProperty.isValid()){
+            def downstreamSegments =downstreamSegmentsProperty.value.toString().split("\n") as Set
+            downstreamSegments.remove(currentSegment.toString())
+            setSegmentRegistryValue(upstreamSegment, 'downstreamSegments', downstreamSegments.join("\n"))
+        }
     }
 
     private def getSegmentThatProducesIdentifier(identifier) {
@@ -100,6 +111,10 @@ class SegmentRegistry {
 
     private def getSegmentRegistryValue(segment, key){
         commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segment}/${key}").value
+    }
+
+    private def getSegmentRegistryProperty(segment, key){
+        commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segment}/${key}")
     }
 
     private def setIdentifierRegistryValue(def identifier, def segment) {

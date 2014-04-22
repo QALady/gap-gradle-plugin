@@ -1,12 +1,17 @@
 package com.gap.pipeline.ec
 import static matchers.CustomMatchers.sameString
+import static org.junit.rules.ExpectedException.none
+import static org.mockito.Matchers.anyString
+import static org.mockito.Matchers.eq
 import static org.mockito.Mockito.*
 
 import com.gap.gradle.ivy.IvyInfo
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 
 class SegmentRegistryTest {
 
@@ -15,6 +20,9 @@ class SegmentRegistryTest {
     CommanderClient commander
     def projectName = "Project Name"
     def procedureName = "Procedure Name"
+
+    @Rule
+    public final ExpectedException exception = none()
 
     @Before
     public void setUp(){
@@ -196,6 +204,33 @@ class SegmentRegistryTest {
 
         verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/IdentifierRegistry/com.gap.watchmen:moduleName/segment"), "${projectName}:${procedureName}".toString())
         verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/IdentifierRegistry/com.gap.watchmen:anotherIdentifier/segment"), "${projectName}:${procedureName}".toString())
+    }
+
+    @Test
+    public void registerWithUpstreamSegments_shouldNotFailIfUpstreamSegmentsPropertyDoesNotExists(){
+        when(commander.getECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/${projectName}:${procedureName}/upstreamSegments")))
+            .thenReturn(Property.invalidProperty("/projects[WM Segment Registry]/SegmentRegistry/${projectName}:${procedureName}/upstreamSegments"))
+
+        def ivyInfo = new IvyInfo(project)
+        def registry = new SegmentRegistry(commander)
+
+        registry.registerWithUpstreamSegments(ivyInfo)
+    }
+
+    @Test
+    public void registerWithUpstreamSegments_shouldNotFailIfDownstreamSegmentsPropertyDoesNotExists(){
+        addUpstreamDependency("org.gap.team:component", "Some Team's Project:Component Segment", project)
+        arrangePriorUpstreamSegments("${projectName}:${procedureName}", "Some Team's Project:Component Segment")
+        when(commander.getECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Some Team's Project:Component Segment/downstreamSegments")))
+            .thenReturn(Property.invalidProperty("/projects[WM Segment Registry]/SegmentRegistry/Some Team's Project:Component Segment/downstreamSegments"))
+
+
+        def ivyInfo = new IvyInfo(project)
+        def registry = new SegmentRegistry(commander)
+
+        registry.registerWithUpstreamSegments(ivyInfo)
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Some Team's Project:Component Segment/downstreamSegments"), "${projectName}:${procedureName}".toString())
+
     }
 
     private void addUpstreamDependency(upstreamIdentifier, upStreamSegment, Project project) {
