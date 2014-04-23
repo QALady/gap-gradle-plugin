@@ -13,11 +13,10 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
         project.apply plugin: CoberturaPlugin
 
         project.cobertura {
-            coverageFormat = ['xml', 'html']
+            coverageFormats = ['xml', 'html']
             coverageReportDir = new File("${project.rootDir}/target/reports/coverage")
             project.subprojects.each {
-                println it.name
-                coverageDirs << new File("${it.name}/build/classes/main")
+                coverageDirs <<  it.sourceSets.main.classesDir.path
             }
         }
 
