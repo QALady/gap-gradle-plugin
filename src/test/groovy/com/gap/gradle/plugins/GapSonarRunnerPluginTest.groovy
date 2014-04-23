@@ -13,11 +13,11 @@ class GapSonarRunnerPluginTest {
     @Before
     public void setUp(){
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gap-sonar-runner'
     }
 
     @Test
     public void shouldApplySonarRunnerPlugin(){
+        project.apply plugin: 'gap-sonar-runner'
         assertThat(project.plugins.hasPlugin('sonar-runner'), is(true))
     }
 

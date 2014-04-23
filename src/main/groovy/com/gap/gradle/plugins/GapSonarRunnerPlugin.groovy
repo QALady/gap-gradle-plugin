@@ -12,10 +12,13 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
         project.apply plugin: 'sonar-runner'
         project.apply plugin: CoberturaPlugin
 
-
         project.cobertura {
             coverageFormat = ['xml', 'html']
             coverageReportDir = new File("${project.rootDir}/target/reports/coverage")
+            project.subprojects.each {
+                println it.name
+                coverageDirs << file("${it.name}/build/classes/main")
+            }
         }
 
         project.sonarRunner {
@@ -25,7 +28,6 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
                 property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
                 property "sonar.jdbc.username", "sonar"
                 property "sonar.jdbc.password", "sonar"
-                property "sonar.language", "java"
                 property "sonar.projectName", project.name
                 property "sonar.projectKey", "${project.group}:${project.name}"
                 property "sonar.projectVersion", "$version"
