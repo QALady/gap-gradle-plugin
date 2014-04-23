@@ -17,7 +17,7 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
             coverageReportDir = new File("${project.rootDir}/target/reports/coverage")
             project.subprojects.each {
                 println it.name
-                coverageDirs << file("${it.name}/build/classes/main")
+                coverageDirs << new File("${it.name}/build/classes/main")
             }
         }
 
