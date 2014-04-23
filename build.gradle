@@ -19,7 +19,7 @@ buildscript{
         }
     }
     dependencies {
-        classpath "net.saliman:gradle-cobertura-plugin:1.2.1"
+        classpath 'net.saliman:gradle-cobertura-plugin:2.2.4'
     }
 }
 
@@ -60,13 +60,9 @@ dependencies{
 	}
     compile 'org.apache.httpcomponents:httpclient:4.3.1'
 
-    /* == cobertura deps == */
-//    compile ('gradle_cobertura:gradle_cobertura:1.1') {
-//		exclude(module: 'asm')
-//    }
-    compile ('net.sourceforge.cobertura:cobertura:2.0.3')
-//    compile 'oro:oro:2.0.8'
-    /* ==================== */
+    compile 'net.sourceforge.cobertura:cobertura:2.0.3'
+    compile 'net.saliman:gradle-cobertura-plugin:2.2.4'
+
 
     testCompile ('junit:junit-dep:4.11'){
         exclude group:'org.hamcrest', module:'hamcrest-core'
