@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins
-
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
@@ -32,7 +31,7 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
                 }
         }
 
-        project.tasks.create(name:'jacoco', type:JacocoReport, dependsOn:'jacocoMerge') {
+        project.tasks.create(name:'jacoco', type:JacocoReport, dependsOn:'jacocoMerge', description:'generate code coverge report') {
             executionData project.jacocoMerge.destinationFile
             sourceDirectories = project.files()
             classDirectories = project.files()
@@ -43,7 +42,22 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
                 }
 
             }
+            reports {
+                xml.enabled = true
+            }
         }
+
+        project.subprojects{ subProj ->
+            if(plugins.hasPlugin('java')){
+                sonarRunner{
+                    sonarProperties{
+                        property "sonar.junit.reportsPath", test.reports.junitXml.destination
+                    }
+                }
+            }
+
+        }
+
 
         project.sonarRunner {
             sonarProperties{
@@ -52,12 +66,12 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
                 property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
                 property "sonar.jdbc.username", "sonar"
                 property "sonar.jdbc.password", "sonar"
+                property "sonar.junit.reportsPath", "${project.buildDir}/test-results"
                 property "sonar.projectName", project.name
                 property "sonar.projectKey", "${project.group}:${project.name}"
-                property "sonar.projectVersion", "$version"
                 property "sonar.dynamicAnalysis", "reuseReports"
                 property "sonar.java.coveragePlugin", "jacoco"
-                property "sonar.java.jacoco.reportPath", project.jacocoReport.destinationFile
+                property "sonar.java.jacoco.reportPath", project.jacoco.reportsDir
             }
         }
 

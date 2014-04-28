@@ -1,7 +1,7 @@
 package com.gap.gradle.plugins
 
 import static helpers.Assert.taskShouldExist
-import static junit.framework.TestCase.assertTrue
+import static junit.framework.Assert.assertTrue
 import static org.hamcrest.CoreMatchers.is
 import static org.junit.Assert.assertThat
 
