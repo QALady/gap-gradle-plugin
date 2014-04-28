@@ -1,10 +1,11 @@
 package com.gap.gradle.plugins
-
+import static helpers.Assert.shouldExecuteTask
 import static helpers.Assert.taskShouldExist
 import static junit.framework.Assert.assertTrue
 import static org.hamcrest.CoreMatchers.is
 import static org.junit.Assert.assertThat
 
+import com.gap.pipeline.tasks.SonarLinkTask
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -61,6 +62,24 @@ class GapSonarRunnerPluginTest {
     public void sonarRunner_shouldDependOnJacoco(){
         project.apply plugin: 'gap-sonar-runner'
         assertTrue(project.tasks.sonarRunner.dependsOn.contains('jacoco'))
+    }
+
+    @Test
+    void ivyIdentifiersTaskShouldBeAddedToProject() {
+        project.apply plugin: 'gap-sonar-runner'
+        taskShouldExist('sonar', project)
+    }
+
+    @Test
+    void shouldExecuteSonarLinkTask() {
+        project.apply plugin: 'gap-sonar-runner'
+        shouldExecuteTask(project,'sonar', SonarLinkTask)
+    }
+
+    @Test
+    void sonar_shouldDependOnSonarRunner(){
+        project.apply plugin: 'gap-sonar-runner'
+        assertTrue(project.tasks.sonar.dependsOn.contains('sonarRunner'))
     }
 
 }

@@ -67,6 +67,13 @@ public class CommanderClientTest {
     }
 
     @Test
+    public void addLinkToUrl_shouldAssumeCurrentJobIdIfNoneGiven(){
+        environmentStub.setValue('COMMANDER_JOBID', "99999")
+        commander.addLinkToUrl('new Link', 'http://myurl.com')
+        verify(mockShellCommand).execute(['ectool', 'setProperty', '/jobs[99999]/report-urls/new Link', 'http://myurl.com'])
+    }
+
+    @Test
     public void getRunProcedureUrl_shouldGiveExpectedFullyQualifiedUrl() {
         def expectedProcedureUrl = "https://commander.phx.gapinc.dev/commander/link/runProcedure/projects/My%20Project/procedures/My%20Procedure?s=Projects"
         assertEquals(expectedProcedureUrl, commander.getRunProcedureUrl("My Project:My Procedure"))
@@ -129,4 +136,19 @@ public class CommanderClientTest {
         assertThat(segment.projectName, is('Project Name'))
         assertThat(segment.procedureName, is('Procedure Name'))
     }
+
+    @Test
+    public void isRunningInPipeline_shouldReturnFalseIfCommanderJobIdPropertyDoesNotExist(){
+        def result = commander.isRunningInPipeline()
+        assertThat(result, is(false))
+    }
+
+    @Test
+    public void isRunningInPipeline_shouldReturnTrueIfCommanderJobIdPropertyExists(){
+        environmentStub.setValue('COMMANDER_JOBID', "12345")
+        def result = commander.isRunningInPipeline()
+        assertThat(result, is(true))
+    }
+
+
 }

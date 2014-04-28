@@ -1,4 +1,6 @@
 package com.gap.gradle.plugins
+
+import com.gap.pipeline.tasks.SonarLinkTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
@@ -58,7 +60,6 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
 
         }
 
-
         project.sonarRunner {
             sonarProperties{
                 property "sonar.host.url", "http://sonar001.phx.gapinc.dev:9000/"
@@ -76,5 +77,10 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
         }
 
         project.tasks.sonarRunner.dependsOn << 'jacoco'
+
+
+        project.tasks.create(name: 'sonar', dependsOn:'sonarRunner') << {
+            new SonarLinkTask(project).execute()
+        }
     }
 }

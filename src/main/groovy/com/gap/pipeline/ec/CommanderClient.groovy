@@ -30,7 +30,7 @@ class CommanderClient {
         setECProperty("/jobs[${jobid}]/report-urls/${filenameWithoutExtension}", "/commander/jobs/${jobid}/default/${filename}")
     }
 
-    def addLinkToUrl(linkName, linkUrl, jobId){
+    def addLinkToUrl(linkName, linkUrl, jobId = getJobId()){
         setECProperty("/jobs[${jobId}]/report-urls/${linkName}", linkUrl)
     }
 
@@ -114,5 +114,9 @@ class CommanderClient {
 
     def getCurrentSegment() {
         return new Segment(getCurrentProjectName(), getCurrentProcedureName())
+    }
+
+    def isRunningInPipeline(){
+        getJobId() != null
     }
 }
