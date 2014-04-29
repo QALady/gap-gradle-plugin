@@ -1,10 +1,12 @@
 package com.gap.pipeline.tasks
 import com.gap.pipeline.ec.CommanderClient
+import org.slf4j.LoggerFactory
 
 class SonarLinkTask {
 
     private final def project
     private final def commander
+    private final def logger = LoggerFactory.getLogger(com.gap.pipeline.tasks.SonarLinkTask)
 
     SonarLinkTask(project, commander = new CommanderClient()){
         this.commander = commander
@@ -13,7 +15,12 @@ class SonarLinkTask {
     }
     def execute() {
         if(commander.isRunningInPipeline()){
-            commander.addLinkToUrl("Sonar Dashboard", "${getSonarProperty("sonar.host.url")}dashboard/index/${getSonarProperty("sonar.projectKey")}")
+            def url = "${getSonarProperty("sonar.host.url")}dashboard/index/${getSonarProperty("sonar.projectKey")}"
+            logger.info("creating link to sonar dashboard - ${url}")
+            commander.addLinkToUrl("Sonar Dashboard", url)
+        }
+        else{
+            logger.info("skipping link creation because this task is not running in the context of an EC job.")
         }
     }
 
