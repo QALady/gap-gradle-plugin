@@ -76,7 +76,7 @@ class GapSonarRunnerPlugin implements Plugin<Project>{
             }
         }
 
-        project.tasks.sonarRunner.dependsOn << 'jacoco'
+        project.tasks.sonarRunner.dependsOn << project.tasks.findAll {it.name.equals('test')}
 
 
         project.tasks.create(name: 'sonar', dependsOn:'sonarRunner') << {

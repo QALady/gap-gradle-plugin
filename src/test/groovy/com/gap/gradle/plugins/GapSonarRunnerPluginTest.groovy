@@ -57,12 +57,6 @@ class GapSonarRunnerPluginTest {
     }
 
     @Test
-    public void sonarRunner_shouldDependOnJacoco(){
-        project.apply plugin: 'gap-sonar-runner'
-        assertTrue(project.tasks.sonarRunner.dependsOn.contains('jacoco'))
-    }
-
-    @Test
     void sonarTaskShouldBeAddedToProject() {
         project.apply plugin: 'gap-sonar-runner'
         taskShouldExist('sonar', project)
