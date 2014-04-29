@@ -38,6 +38,29 @@ class GapSonarRunnerPluginTest {
         taskShouldExist('jacocoTestReport', project)
     }
 
+    @Test
+    public void jacoco_shouldDependOnJacocoMerge(){
+        project.apply plugin: 'gap-sonar-runner'
+        assertTrue(project.tasks.jacoco.dependsOn.contains('jacocoMerge'))
+    }
+
+    @Test
+    public void jacocoMerge_shouldDependOnTestTasks(){
+        def childProject = ProjectBuilder.builder().withName('child1').withParent(project).build()
+        childProject.apply plugin: 'java'
+
+        project.apply plugin: 'gap-sonar-runner'
+        def childTest = project.tasks.findByPath(":child1:test")
+
+
+        assertThat(project.tasks.jacocoMerge.taskDependencies.getDependencies().contains(childTest), is(true))
+    }
+
+    @Test
+    public void sonarRunner_shouldDependOnJacoco(){
+        project.apply plugin: 'gap-sonar-runner'
+        assertTrue(project.tasks.sonarRunner.dependsOn.contains('jacoco'))
+    }
 
     @Test
     void sonarTaskShouldBeAddedToProject() {
