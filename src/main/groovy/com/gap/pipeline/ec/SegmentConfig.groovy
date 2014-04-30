@@ -9,27 +9,13 @@ class SegmentConfig {
     def workingDir      //corresponds to /myJob/watchmen_config/workingDir
     def ciDir           //corresponds to /myJob/watchmen_config/ciDir
     def gradleFile      //corresponds to /myJob/watchmen_config/gradleFile
+    def isManual        //corresponds to /myJob/watchmen_config/isManual
 
-    SegmentConfig(scmUrl, workingDir, ciDir, gradleFile) {
+    SegmentConfig(scmUrl, workingDir, ciDir, gradleFile, isManual) {
         this.scmUrl = scmUrl
         this.workingDir = workingDir
         this.ciDir = ciDir
         this.gradleFile = gradleFile
-    }
-
-    def getScmUrl() {
-        return scmUrl
-    }
-
-    def getWorkingDir() {
-        return workingDir
-    }
-
-    def getCiDir() {
-        return ciDir
-    }
-
-    def getGradleFile() {
-        return gradleFile
+        this.isManual = isManual
     }
 }

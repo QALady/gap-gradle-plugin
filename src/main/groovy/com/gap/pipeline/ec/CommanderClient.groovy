@@ -88,14 +88,28 @@ class CommanderClient {
 	}
 
     def getCurrentSegmentConfig(){
-        def  segmentPropertySheet = '/myJob/watchmen_config/'
-        new SegmentConfig(getECProperty(segmentPropertySheet + 'configSCMUrl').value,
-                          getECProperty(segmentPropertySheet + 'workingDir').value,
-                          getECProperty(segmentPropertySheet + 'ciDir').value,
-                          getECProperty(segmentPropertySheet + 'gradleFile').value)
+        new SegmentConfig(getSegmentConfigPropertyValue('configSCMUrl'),
+                          getSegmentConfigPropertyValue('workingDir'),
+                          getSegmentConfigPropertyValue('ciDir'),
+                          getSegmentConfigPropertyValue('gradleFile'),
+                          isManualSegment())
     }
 
-	def getUserId(){
+    private boolean isManualSegment() {
+        def isManualProperty = getSegmentConfigProperty('isManual')
+        def isManual = isManualProperty.isValid() ? Boolean.valueOf(isManualProperty.value) : false;
+        isManual
+    }
+
+    private String getSegmentConfigPropertyValue(String property) {
+        getSegmentConfigProperty(property).value
+    }
+
+    private Property getSegmentConfigProperty(String property) {
+        getECProperty('/myJob/watchmen_config/' + property)
+    }
+
+    def getUserId(){
 		getECProperty("/myJob/launchedByUser").value
 	}
 

@@ -30,7 +30,7 @@ class SegmentRegistryTest {
         project.group = 'com.gap.watchmen'
 
         def segment = new Segment(projectName, procedureName)
-        def segmentConfig = new SegmentConfig('http://svn.gap.dev/path/to/repo', '/dev/shm/1234/job_id', '/mnt/electric-commander/workspace/job_id', 'build.gradle')
+        def segmentConfig = new SegmentConfig('http://svn.gap.dev/path/to/repo', '/dev/shm/1234/job_id', '/mnt/electric-commander/workspace/job_id', 'build.gradle', false)
         commander = mock(CommanderClient)
         when(commander.getCurrentSegmentConfig()).thenReturn(segmentConfig)
         when(commander.getCurrentSegment()).thenReturn(segment)
@@ -48,6 +48,7 @@ class SegmentRegistryTest {
         verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/workingDir"), '/dev/shm/1234/job_id')
         verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/ciDir"), '/mnt/electric-commander/workspace/job_id')
         verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/gradleFile"), 'build.gradle')
+        verify(commander).setECProperty(sameString("/projects[WM Segment Registry]/SegmentRegistry/Project Name:Procedure Name/isManual"), 'false')
     }
 
     @Test
