@@ -117,7 +117,7 @@ public class CommanderClientTest {
         when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/workingDir'])).thenReturn('/dev/shm/job_id')
         when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/ciDir'])).thenReturn('/mnt/electric-commander/workspace/job_id_timestamp')
         when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/gradleFile'])).thenReturn('segment-name.gradle')
-        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/isManual'])).thenReturn('true')
+        when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/watchmen_config/config/isManual'])).thenReturn('true')
 
         SegmentConfig segmentConfig = commander.getCurrentSegmentConfig()
 

@@ -96,7 +96,7 @@ class CommanderClient {
     }
 
     private boolean isManualSegment() {
-        def isManualProperty = getSegmentConfigProperty('isManual')
+        def isManualProperty = getSegmentConfigProperty('config/isManual')
         def isManual = isManualProperty.isValid() ? Boolean.valueOf(isManualProperty.value) : false;
         isManual
     }
