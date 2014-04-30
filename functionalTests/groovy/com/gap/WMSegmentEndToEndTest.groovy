@@ -15,31 +15,17 @@ public class WMSegmentEndToEndTest {
         def upstreamJobId = ec.runProcedureSync("Watchmen Test Segments:Component Segment")
         assertEquals("success", ec.getJobStatus(upstreamJobId).outcome.toString())
 
+        String downstreamSVNJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment")
+        assertTrue(downstreamSVNJobID.length() > 0)
 
-        Thread thread1 = new Thread() {
-            public void run() {
-                String downstreamSVNJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment")
-                assertTrue(downstreamSVNJobID.length() > 0)
+        waitForDownstreamJobToComplete( downstreamSVNJobID)
+        assertEquals("success", ec.getJobStatus(downstreamSVNJobID).outcome.toString())
 
-                waitForDownstreamJobToComplete( downstreamSVNJobID)
-                assertEquals("success", ec.getJobStatus(downstreamSVNJobID).outcome.toString())
-            }
-        }
-        Thread thread2 = new Thread() {
-            public void run() {
-                String downstreamGitJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment Git")
-                assertTrue(downstreamGitJobID.length() > 0)
+        String downstreamGitJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment Git")
+        assertTrue(downstreamGitJobID.length() > 0)
 
-                waitForDownstreamJobToComplete( downstreamGitJobID)
-                assertEquals("success", ec.getJobStatus(downstreamGitJobID).outcome.toString())
-            }
-        }
-
-        thread1.start()
-        thread2.start()
-
-        thread1.join()
-        thread2.join()
+        waitForDownstreamJobToComplete( downstreamGitJobID)
+        assertEquals("success", ec.getJobStatus(downstreamGitJobID).outcome.toString())
     }
 
     private void waitForDownstreamJobToComplete(isoJobID) {
