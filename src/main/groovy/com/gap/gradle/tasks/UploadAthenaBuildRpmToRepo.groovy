@@ -33,7 +33,7 @@ class UploadAthenaBuildRpmToRepo extends WatchmenTask {
 			println this.shellCommand.execute(["ssh", REPO_HOST, "ls -1 $REPO_PATH/s2c_gap-pos*rpm".toString()])
 			println "This project requires that there be 3 or fewer.  Please clean up the repo and try again."
 		} else {
-			def rpmName = new File("${project.athenaLocalRpmBase}/s2c_gap-pos-*.info").text		
+			def rpmName = new File("${project.athenaLocalRpmBase}/s2c_gap-pos-14.041.info").text		
 			if (rpmName) {
 				copyRpmToRepo(rpmName)
 			}
@@ -47,7 +47,7 @@ class UploadAthenaBuildRpmToRepo extends WatchmenTask {
 		this.shellCommand.execute("scp ${project.athenaLocalRpmBase}/${rpmName} ${REPO_HOST}:/mnt/repos/stores/stores-custom-register/${rpmName}")
 
 		// upload gap-pos-database rpm:
-		def dbRpmName = new File("${project.athenaLocalRpmBase}/gap-pos-database-*.info").text
+		def dbRpmName = new File("${project.athenaLocalRpmBase}/gap-pos-database-14.041.info").text
 		println "Copying $dbRpmName to the stores-custom repo"
 		this.shellCommand.execute("scp ${project.athenaLocalRpmBase}/${dbRpmName} ${REPO_HOST}:${REPO_PATH}/${dbRpmName}")
 
