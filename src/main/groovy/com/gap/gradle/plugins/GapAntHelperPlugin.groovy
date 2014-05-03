@@ -16,13 +16,13 @@ class GapAntHelperPlugin implements Plugin<Project>{
 		println project.antDepConf
 		PathElement pathElement
 		Path antPath = project.ant.getReferences().get(project.antPathName)
-		project.configurations[project.antDepConf].each { File f ->
-			pathElement = antPath.createPathElement()
-			pathElement.setLocation(f)
-			pathElement.setPath(f.absolutePath)
+		if (antPath) {
+			project.configurations[project.antDepConf].each { File f ->
+				pathElement = antPath.createPathElement()
+				pathElement.setLocation(f)
+				pathElement.setPath(f.absolutePath)
+			}
 		}
-
-		
 	}
 
 }
