@@ -37,11 +37,10 @@ class PublishCookbookToChefServerTask extends WatchmenTask  {
         CookbookUploader uploader = new CookbookUploader(client)
         def cookbookUtil = new CookbookUtil()
         def cookbookMetadata = project.chef.metadata
-        def cookbookName = project.chef.cookbookName ?: cookbookMetadata.name
         if (cookbookUtil.doesCookbookExist(cookbookMetadata)) {
-            log.info("Skipping triggering of jenkins job as cookbook ${cookbookName} with version ${cookbookMetadata.version} already exists")
+            log.info("Skipping triggering of jenkins job as cookbook ${cookbookMetadata.name} with version ${cookbookMetadata.version} already exists")
         } else {
-            uploader.upload(cookbookName, project.chef.environment)
+            uploader.upload(project.chef.environment, cookbookMetadata)
 
         }
     }

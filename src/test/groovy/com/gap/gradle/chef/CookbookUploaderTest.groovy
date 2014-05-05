@@ -18,11 +18,13 @@ class CookbookUploaderTest {
     public final ExpectedException exception = none()
 
     JenkinsClient jenkinsClient
+    CookbookUtil  cookbookUtil
     def uploader
 
     @Before
     void SetUp() {
         jenkinsClient = mock(JenkinsClient)
+        cookbookUtil = mock(CookbookUtil)
         when(jenkinsClient.startJob(anyString())).thenReturn(204)
         when(jenkinsClient.isFinished(anyString(), eq(204))).thenReturn(true)
         when(jenkinsClient.isSuccessful(anyString(), eq(204))).thenReturn(true)
@@ -32,13 +34,13 @@ class CookbookUploaderTest {
 
     @Test
     void shouldStartJenkinsJobForUploadingCookbook(){
-        uploader.upload("mycookbook", "tdev")
+        uploader.upload("tdev", [name: 'mycookbook' , version: '1.1.13'])
         verify(jenkinsClient).startJob("cookbook-mycookbook-tdev")
     }
 
     @Test
     void shouldReturnSuccessfullyWhenJobSuccessfullyCompleted(){
-        uploader.upload("mycookbook", "tdev")
+        uploader.upload("tdev", [name: 'mycookbook', version: '1.1.13'])
         verify(jenkinsClient).isFinished('cookbook-mycookbook-tdev', 204)
         verify(jenkinsClient).isSuccessful('cookbook-mycookbook-tdev', 204)
     }
@@ -49,16 +51,27 @@ class CookbookUploaderTest {
         exception.expectMessage("Jenkins job failed <http://jenkinsserver/unittest/204>: Console log: oops, you broke it")
         when(jenkinsClient.isSuccessful('cookbook-mycookbook-tdev', 204)).thenReturn(false)
         when(jenkinsClient.getConsole('cookbook-mycookbook-tdev', 204)).thenReturn("oops, you broke it")
-        uploader.upload("mycookbook", "tdev")
+        uploader.upload("tdev", [name: 'mycookbook', version: '1.1.13'])
     }
 
     @Test
     void shouldPollForTheJobToBeFinished(){
         uploader = new CookbookUploader(jenkinsClient, 10)
         when(jenkinsClient.isFinished(anyString(), eq(204))).thenReturn(false).thenReturn(false).thenReturn(true)
-        uploader.upload("mycookbook", "tdev")
+        uploader.upload( "tdev", [name: 'mycookbook', version: '1.1.13'])
         verify(jenkinsClient, times(3)).isFinished('cookbook-mycookbook-tdev', 204)
         verify(jenkinsClient).isSuccessful('cookbook-mycookbook-tdev', 204)
+    }
+
+    @Test
+    void shouldReturnSuccessfullyIfTheJenkinsJobIsNotCompleteButTheCookbookHasBeenUploaded(){
+        def cookbookMetaData = [name: 'mycookbook', version: '1.1.13']
+        uploader = new CookbookUploader(jenkinsClient, 10, 60000, cookbookUtil)
+        when(jenkinsClient.isFinished(anyString(), eq(204))).thenReturn(false)
+        when(jenkinsClient.isSuccessful('cookbook-mycookbook-tdev', 204)).thenReturn(false)
+        when(cookbookUtil.doesCookbookExist(cookbookMetaData)).thenReturn(false).thenReturn(true)
+        uploader.upload( "tdev", cookbookMetaData)
+        verify(cookbookUtil, times(3)).doesCookbookExist(cookbookMetaData)
     }
 
     @Test
@@ -67,6 +80,6 @@ class CookbookUploaderTest {
         exception.expectMessage(containsString("Timed out after 50 ms waiting for job to finish <http://jenkinsserver/unittest/204>"))
         uploader = new CookbookUploader(jenkinsClient, 10, 50)
         when(jenkinsClient.isFinished(anyString(), eq(204))).thenReturn(false)
-        uploader.upload("mycookbook", "tdev")
+        uploader.upload( "tdev", [name: 'mycookbook', version: '1.1.13'])
     }
 }

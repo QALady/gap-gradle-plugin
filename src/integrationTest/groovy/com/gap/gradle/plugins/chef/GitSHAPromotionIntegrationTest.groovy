@@ -1,12 +1,15 @@
 package com.gap.gradle.plugins.chef
 
 import com.gap.gradle.utils.ShellCommand
+import com.gap.pipeline.utils.Environment
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+
+import static org.junit.Assume.assumeTrue
 
 class GitSHAPromotionIntegrationTest {
     private Project project
@@ -34,6 +37,7 @@ class GitSHAPromotionIntegrationTest {
 
     @Test
     void updateShouldSucceed_whenParametersAreValid(){
+        assumeTrue(new Environment().getValue('COMMANDER_HOME') != null) //this ensures that the tests run only in the pipeline and not locally
         updateBerksfileTask.execute()
     }
 

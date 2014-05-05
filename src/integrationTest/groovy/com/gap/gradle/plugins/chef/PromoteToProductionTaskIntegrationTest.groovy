@@ -1,10 +1,13 @@
 package com.gap.gradle.plugins.chef
 
+import com.gap.pipeline.utils.Environment
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import static org.junit.Assume.assumeTrue
 
 class PromoteToProductionTaskIntegrationTest {
 
@@ -15,6 +18,8 @@ class PromoteToProductionTaskIntegrationTest {
 
 	@Test
 	void shouldPromoteChefObjectsToServerUsingJenkinsPipeline() {
+        assumeTrue(new Environment().getValue('COMMANDER_HOME') != null) //this ensures that the tests run only in the pipeline and not locally
+
 		project = ProjectBuilder.builder().build()
 		project.ecUser = "integration-test"
 		project.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
@@ -23,7 +28,7 @@ class PromoteToProductionTaskIntegrationTest {
 		project.tagMessageComment = "this is the comment integration test is triggering with."
 		project.apply plugin: 'gapproddeploy'
 		project.prodDeploy.sha1IdList = ["f06cfb4867a8aafd1fb5c6a01add274ba22f6ddc", "2c8518f1d8b11caaa52fee996f1cb3f1eeb5fc04"]
-		project.jenkins.knifeServerUrl = "http://dgphxaciap014.phx.gapinc.dev:8080/"
+		project.jenkins.knifeServerUrl = "http://dgphxaciap004.phx.gapinc.dev:8080/"
 		project.jenkins.knifeUser = "testUSer"
 		project.jenkins.knifeJobName = "TagProdReady"
 		project.chefJenkinsApiAuthToken = "abcd1234"

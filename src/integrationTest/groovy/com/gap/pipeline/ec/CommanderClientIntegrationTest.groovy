@@ -7,6 +7,7 @@ import org.junit.Test
 
 import static junit.framework.Assert.assertEquals
 import static junit.framework.Assert.assertTrue
+import static org.junit.Assume.assumeTrue
 
 class CommanderClientIntegrationTest {
 
@@ -18,7 +19,7 @@ class CommanderClientIntegrationTest {
     @Before
     def void beforeTests(){
         environment = new Environment()
-        Assume.assumeNotNull(environment.getValue('COMMANDER_HOME')) //this ensures that the tests run only in the pipeline and not locally
+        assumeTrue(environment.getValue('COMMANDER_HOME') != null) //this ensures that the tests run only in the pipeline and not locally
         commander = new CommanderClient()
     }
 

@@ -16,7 +16,7 @@ class PublishCookbookToChefServerTaskIntegrationTest {
         def project = ProjectBuilder.builder().build()
 
         project.apply plugin: 'gapcookbook'
-        project.jenkins.cookbookServerUrl = "http://dgphxaciap014.phx.gapinc.dev:8080"
+        project.jenkins.cookbookServerUrl = "http://dgphxaciap004.phx.gapinc.dev:8080/"
         project.jenkins.cookbookUser = "testUser"
         project.jenkins.cookbookAuthToken = "abcd1234"
         project.chef.cookbookName = "ref-app"

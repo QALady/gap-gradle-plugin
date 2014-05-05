@@ -50,8 +50,8 @@ class PublishCookbookToChefServerTaskTest {
     @Test
     void shouldTriggerUploadOfCookbookUsingJenkinsPipeline_whenTheCookbookDoesNotExistInChefServer(){
         setupTaskProperties()
-        mockCookbookUploader.demand.upload { cookbook, env ->
-            assertEquals("myapp", cookbook)
+        mockCookbookUploader.demand.upload {  env, cookbookMetadata ->
+            assertEquals("myapp", cookbookMetadata.name)
             assertEquals("local", env)
         }
         mockCookbookUtil.demand.doesCookbookExist { return false }
@@ -68,8 +68,8 @@ class PublishCookbookToChefServerTaskTest {
         setupTaskProperties()
 
         mockCookbookUtil.demand.doesCookbookExist {return false}
-        mockCookbookUploader.demand.upload { cookbook, env ->
-            assertEquals("myapp", cookbook)
+        mockCookbookUploader.demand.upload {  env, cookbookMetadata ->
+            assertEquals("myapp", cookbookMetadata.name)
             assertEquals("local", env)
         }
 
@@ -100,7 +100,7 @@ class PublishCookbookToChefServerTaskTest {
         project.jenkins.cookbookUser = "jenkins_user"
         project.jenkins.cookbookAuthToken = "jenkins_password"
         project.chef.environment = "local"
-        project.chef.cookbookName = "myapp"
+        project.chef.metadata.name = "myapp"
 
     }
 }
