@@ -1,11 +1,14 @@
 package com.gap.gradle.plugins
+
 import static helpers.Assert.shouldExecuteTask
 import static helpers.Assert.taskShouldExist
 import static junit.framework.Assert.assertTrue
 import static org.hamcrest.CoreMatchers.is
 import static org.junit.Assert.assertThat
 
+import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.SonarLinkTask
+import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -15,46 +18,29 @@ class GapSonarRunnerPluginTest {
     private Project project
 
     @Before
-    public void setUp(){
+    public void setUp() {
         project = ProjectBuilder.builder().build()
     }
 
     @Test
-    public void shouldApplySonarRunnerPlugin(){
+    public void shouldApplySonarRunnerPlugin() {
         project.apply plugin: 'gap-sonar-runner'
         assertThat(project.plugins.hasPlugin('sonar-runner'), is(true))
     }
 
     @Test
-    public void shouldApplyJaCoCoPlugin(){
+    public void shouldApplyJaCoCoPlugin() {
         project.apply plugin: 'gap-sonar-runner'
         assertThat(project.plugins.hasPlugin('jacoco'), is(true))
     }
 
     @Test
-    public void shouldAddJaCoCoTasks(){
+    public void shouldAddJaCoCoTasks() {
         project.apply plugin: 'java'
         project.apply plugin: 'gap-sonar-runner'
         taskShouldExist('jacocoTestReport', project)
     }
 
-    @Test
-    public void jacoco_shouldDependOnJacocoMerge(){
-        project.apply plugin: 'gap-sonar-runner'
-        assertTrue(project.tasks.jacoco.dependsOn.contains('jacocoMerge'))
-    }
-
-    @Test
-    public void jacocoMerge_shouldDependOnTestTasks(){
-        def childProject = ProjectBuilder.builder().withName('child1').withParent(project).build()
-        childProject.apply plugin: 'java'
-
-        project.apply plugin: 'gap-sonar-runner'
-        def childTest = project.tasks.findByPath(":child1:test")
-
-
-        assertThat(project.tasks.jacocoMerge.taskDependencies.getDependencies().contains(childTest), is(true))
-    }
 
     @Test
     void sonarTaskShouldBeAddedToProject() {
@@ -65,13 +51,36 @@ class GapSonarRunnerPluginTest {
     @Test
     void shouldExecuteSonarLinkTask() {
         project.apply plugin: 'gap-sonar-runner'
-        shouldExecuteTask(project,'sonar', SonarLinkTask)
+        shouldExecuteTask(project, 'sonar', SonarLinkTask)
     }
 
     @Test
-    void sonar_shouldDependOnSonarRunner(){
+    void sonar_shouldDependOnSonarRunner() {
         project.apply plugin: 'gap-sonar-runner'
         assertTrue(project.tasks.sonar.dependsOn.contains('sonarRunner'))
     }
 
+    @Test
+    void sonar_shouldRunInPreviewModeIfRunningOutsideEC() {
+        def commanderMock = new MockFor(CommanderClient)
+        commanderMock.demand.isRunningInPipeline {
+            false
+        }
+        commanderMock.use {
+            project.apply plugin: 'gap-sonar-runner'
+            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.analysis.mode'), is('preview'))
+        }
+    }
+
+    @Test
+    void sonar_shouldRunInAnalysisModeIfRunningInEC() {
+        def commanderMock = new MockFor(CommanderClient)
+        commanderMock.demand.isRunningInPipeline() {
+            true
+        }
+        commanderMock.use {
+            project.apply plugin: 'gap-sonar-runner'
+            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.analysis.mode'), is('analysis'))
+        }
+    }
 }
