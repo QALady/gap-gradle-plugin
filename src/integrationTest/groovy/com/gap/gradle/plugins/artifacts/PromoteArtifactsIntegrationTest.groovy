@@ -1,4 +1,4 @@
-package com.gap.pipeline
+package groovy.com.gap.gradle.plugins.artifacts
 
 import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.tasks.DownloadArtifactsTask

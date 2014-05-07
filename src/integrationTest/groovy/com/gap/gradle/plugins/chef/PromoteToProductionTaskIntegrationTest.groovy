@@ -1,13 +1,12 @@
 package com.gap.gradle.plugins.chef
-
-import com.gap.pipeline.utils.Environment
+import com.gap.pipeline.ec.CommanderClient
+import groovy.com.gap.gradle.plugins.helpers.Util
+import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-
-import static org.junit.Assume.assumeTrue
 
 class PromoteToProductionTaskIntegrationTest {
 
@@ -18,9 +17,7 @@ class PromoteToProductionTaskIntegrationTest {
 
 	@Test
 	void shouldPromoteChefObjectsToServerUsingJenkinsPipeline() {
-        assumeTrue(new Environment().getValue('COMMANDER_HOME') != null) //this ensures that the tests run only in the pipeline and not locally
-
-		project = ProjectBuilder.builder().build()
+	project = ProjectBuilder.builder().build()
 		project.ecUser = "integration-test"
 		project.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
 		project.ecJobId = "9999"
@@ -33,8 +30,26 @@ class PromoteToProductionTaskIntegrationTest {
 		project.jenkins.knifeJobName = "TagProdReady"
 		project.chefJenkinsApiAuthToken = "abcd1234"
 
-        def triggerProdDeployTask = project.tasks.findByName('promoteChefObjectsToProduction')
-
-        triggerProdDeployTask.execute()
+        if (Util.isRunningInPipeline()){
+            executeTask(project)
+        }else{
+            executeTaskWithMockedCommanderClient( project)
+        }
 	}
+
+    private executeTaskWithMockedCommanderClient(project) {
+        def mockCommanderClient = new MockFor(CommanderClient)
+        mockCommanderClient.ignore.with {
+            getUserId {"integration-test-user"}
+            getJobId {"nonexistent-job-id"}
+        }
+        mockCommanderClient.use {
+            executeTask(project)
+        }
+    }
+
+    private executeTask(Project project) {
+        def triggerProdDeployTask = project.tasks.findByName('promoteChefObjectsToProduction')
+        triggerProdDeployTask.execute()
+    }
 }

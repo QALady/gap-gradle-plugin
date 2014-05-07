@@ -1,4 +1,4 @@
-package com.gap.pipeline
+package groovy.com.gap.gradle.plugins.artifacts
 
 import com.gap.gradle.utils.ShellCommand
 import org.gradle.testfixtures.ProjectBuilder
@@ -40,4 +40,3 @@ class PromoteRpmIntegrationTest {
         new ShellCommand().execute(["ssh", "ks64.phx.gapinc.dev", "rm /mnt/repos/gapSoftware/watchmen/testing/ref-app-1161-1.noarch.rpm"])
     }
 }
-

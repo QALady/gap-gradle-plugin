@@ -1,4 +1,4 @@
-package com.gap.pipeline
+package groovy.com.gap.gradle.plugins.artifacts
 
 import com.gap.pipeline.tasks.DownloadArtifactsTask
 import org.gradle.testfixtures.ProjectBuilder
@@ -57,6 +57,3 @@ class ArtifactsUploadDownloadIntegrationTest {
     }
 
 }
-
-
-

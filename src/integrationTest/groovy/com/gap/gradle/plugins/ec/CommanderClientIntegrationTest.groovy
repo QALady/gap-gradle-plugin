@@ -1,13 +1,12 @@
 package com.gap.pipeline.ec
-
-import com.gap.pipeline.utils.Environment
-import org.junit.Assume
-import org.junit.Before
-import org.junit.Test
-
 import static junit.framework.Assert.assertEquals
 import static junit.framework.Assert.assertTrue
 import static org.junit.Assume.assumeTrue
+
+import com.gap.pipeline.utils.Environment
+import groovy.com.gap.gradle.plugins.helpers.Util
+import org.junit.Before
+import org.junit.Test
 
 class CommanderClientIntegrationTest {
 
@@ -19,7 +18,7 @@ class CommanderClientIntegrationTest {
     @Before
     def void beforeTests(){
         environment = new Environment()
-        assumeTrue(environment.getValue('COMMANDER_HOME') != null) //this ensures that the tests run only in the pipeline and not locally
+        assumeTrue(Util.isRunningInPipeline()) //this ensures that the tests run only in the pipeline and not locally
         commander = new CommanderClient()
     }
 
