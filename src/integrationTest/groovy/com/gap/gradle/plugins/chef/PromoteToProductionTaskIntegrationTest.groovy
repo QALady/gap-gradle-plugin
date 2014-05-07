@@ -26,9 +26,9 @@ class PromoteToProductionTaskIntegrationTest {
 		project.apply plugin: 'gapproddeploy'
 		project.prodDeploy.sha1IdList = ["f06cfb4867a8aafd1fb5c6a01add274ba22f6ddc", "2c8518f1d8b11caaa52fee996f1cb3f1eeb5fc04"]
 		project.jenkins.knifeServerUrl = "http://dgphxaciap004.phx.gapinc.dev:8080/"
-		project.jenkins.knifeUser = "testUSer"
+		project.jenkins.knifeUser = "integtest"
 		project.jenkins.knifeJobName = "TagProdReady"
-		project.chefJenkinsApiAuthToken = "abcd1234"
+		project.chefJenkinsApiAuthToken = "15497c7c234c5940a3573672363e692c"
 
         if (Util.isRunningInPipeline()){
             executeTask(project)

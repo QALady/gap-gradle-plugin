@@ -17,8 +17,8 @@ class PublishCookbookToChefServerTaskIntegrationTest {
 
         project.apply plugin: 'gapcookbook'
         project.jenkins.cookbookServerUrl = "http://dgphxaciap004.phx.gapinc.dev:8080/"
-        project.jenkins.cookbookUser = "testUser"
-        project.jenkins.cookbookAuthToken = "abcd1234"
+        project.jenkins.cookbookUser = "integtest"
+        project.jenkins.cookbookAuthToken = "15497c7c234c5940a3573672363e692c"
         project.chef.cookbookName = "ref-app"
 
         def metadataFile = tempFolder.newFile("metadata.rb")
