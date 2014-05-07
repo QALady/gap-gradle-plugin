@@ -48,9 +48,8 @@ class UploadBuildArtifactsTaskTest {
 
 
         assertNotNull(project.configurations.findByName('archives'))
-        artifacts.each { fileName ->
-            assertArchivesHasFile(fileName)
-        }
+        assertArchivesHasFile("report.txt")
+        assertArchivesHasFile("deploy.json")
     }
 
     @Test
