@@ -19,6 +19,7 @@ buildscript{
         }
     }
     dependencies {
+        classpath 'com.gap:gap-gradle-plugin:+'
         classpath 'net.saliman:gradle-cobertura-plugin:2.2.4'
     }
 }
@@ -34,6 +35,7 @@ apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'cobertura'
+apply plugin: 'gappipeline'
 
 if (gradle.gradleVersion.equals('1.11')) {
     apply plugin: 'sonar-runner'
