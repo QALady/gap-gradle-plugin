@@ -59,6 +59,7 @@ dependencies{
     else {
         groovy "org.codehaus.groovy:groovy-all:2.2.0"
     }
+    functionalTest "org.codehaus.groovy:groovy-all:2.2.0"
     compile gradleApi()
 
     compile('org.codehaus.groovy.modules.http-builder:http-builder:0.6') {
