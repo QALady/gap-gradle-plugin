@@ -10,6 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
+import org.slf4j.LoggerFactory
 
 class UploadBuildArtifactsTaskTest {
     @Rule
@@ -21,6 +22,7 @@ class UploadBuildArtifactsTaskTest {
     def project
     def uploadBuildArtifactsTask
     def artifactsDirPath
+    def logger = LoggerFactory.getLogger(com.gap.pipeline.tasks.UploadBuildArtifactsTaskTest)
 
     @Before
     public void setUp() {
@@ -35,7 +37,7 @@ class UploadBuildArtifactsTaskTest {
         def artifactsDir = new File(temporaryFolder.root.path, 'build/artifacts')
         artifactsDir.mkdirs()
         artifactsDirPath = artifactsDir.path
-        println "temporary folder location: ${artifactsDirPath}"
+        logger.info("temporary folder location: ${artifactsDirPath}")
         uploadBuildArtifactsTask = project.tasks.findByName('uploadBuildArtifacts')
     }
 
