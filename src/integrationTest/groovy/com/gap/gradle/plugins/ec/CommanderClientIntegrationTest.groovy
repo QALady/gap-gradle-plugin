@@ -1,6 +1,8 @@
 package com.gap.pipeline.ec
-import static junit.framework.Assert.assertEquals
+
 import static junit.framework.Assert.assertTrue
+import static org.hamcrest.CoreMatchers.containsString
+import static org.junit.Assert.assertThat
 import static org.junit.Assume.assumeTrue
 
 import com.gap.pipeline.utils.Environment
@@ -43,9 +45,7 @@ class CommanderClientIntegrationTest {
     }
 
     @Test
-    public void shouldReturnCurrentDirectoryAsJobWorkingDirectory(){
-        def ecJobName = "Watchmen Framework-Gap Gradle Plugin"
-        def jobDir = "/mnt/electriccommander2/workspace/${ecJobName}-${commander.getJobId()}"
-        assertEquals(jobDir, commander.getCurrentJobDir())
+    public void shouldReturnJobWorkingDirectory(){
+        assertThat(commander.getCurrentJobDir(), containsString(commander.getJobId()))
     }
 }
