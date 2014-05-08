@@ -35,6 +35,7 @@ class UploadBuildArtifactsTaskTest {
         def artifactsDir = new File(temporaryFolder.root.path, 'build/artifacts')
         artifactsDir.mkdirs()
         artifactsDirPath = artifactsDir.path
+        println "temporary folder location: ${artifactsDirPath}"
         uploadBuildArtifactsTask = project.tasks.findByName('uploadBuildArtifacts')
     }
 
