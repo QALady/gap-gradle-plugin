@@ -47,6 +47,10 @@ cobertura {
     coverageReportDir = mkdir('target/reports/coverage')
 }
 
+configurations {
+    functionalTest
+}
+
 dependencies{
 
     if (gradle.gradleVersion.equals('1.11')) {
@@ -69,6 +73,7 @@ dependencies{
     testCompile ('junit:junit-dep:4.11'){
         exclude group:'org.hamcrest', module:'hamcrest-core'
     }
+    functionalTest 'junit:junit-dep:4.11'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile ('org.mockito:mockito-core:1.9.5'){
         exclude group:'org.hamcrest', module:'hamcrest-core'
@@ -104,6 +109,17 @@ task functionalTest(type: Test) {
     classpath = sourceSets.functionalTest.runtimeClasspath
 }
 
+task jarFunctionalTests(type: Jar) {
+    dependsOn 'compileFunctionalTestJava'
+    baseName 'functionalTests'
+    from sourceSets.functionalTest.output
+    destinationDir buildDir
+}
+
+artifacts{
+    functionalTest jarFunctionalTests
+}
+
 tasks.withType(Test) {
     testLogging {
         exceptionFormat 'full'
@@ -117,21 +133,26 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
 }
 
+repositories{
+    ivy {
+        name 'artifactory'
+        layout 'maven'
+        url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
+        credentials {
+            username "admin"
+            password "password"
+        }
+    }
+}
+
 uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(
-                url: "http://artifactory.gapinc.dev/artifactory/local-non-prod",
-                authentication: [userName: "admin", password: "password"]
-            )
-        }
-        ivy {
-            layout 'maven'
-            url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
-            credentials {
-                username "admin"
-                password "password"
-            }
-        }
+    repositories{
+        add project.repositories.artifactory
+    }
+ }
+
+uploadFunctionalTest {
+    repositories{
+        add project.repositories.artifactory
     }
 }
