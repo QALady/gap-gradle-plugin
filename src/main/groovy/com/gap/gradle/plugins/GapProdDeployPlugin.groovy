@@ -21,7 +21,7 @@ import org.gradle.api.Project
  */
 class GapProdDeployPlugin implements Plugin<Project>{
 
-    static def CONFIG_FILE = "${System.getProperty('user.home')}/.watchmen/gapcookbook.properties"
+    static def CONFIG_FILE = "${System.getProperty('user.home')}/.watchmen/gapchef.properties"
     @Override
 	public void apply(Project project) {
 

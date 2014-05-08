@@ -6,7 +6,7 @@ import org.gradle.api.Project
 
 class GapCookbookPlugin implements Plugin<Project> {
 
-    static def CONFIG_FILE = "${System.getProperty('user.home')}/.watchmen/gapcookbook.properties"
+    static def CONFIG_FILE = "${System.getProperty('user.home')}/.watchmen/gapchef.properties"
 
     void apply(Project project) {
         project.extensions.create('jenkins', JenkinsConfig)

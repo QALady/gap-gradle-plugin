@@ -9,7 +9,7 @@ import org.junit.rules.TemporaryFolder
 class PublishCookbookToChefServerTaskIntegrationTest {
 
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public TemporaryFolder tempFolder = new TemporaryFolder()
 
     @Test
     void shouldUploadCookbookUsingJenkinsPipeline() {
