@@ -41,14 +41,12 @@ class UploadBuildArtifactsTaskTest {
         uploadBuildArtifactsTask = project.tasks.findByName('uploadBuildArtifacts')
     }
 
-
-    @Test
-    void shouldAddAllArtifactsInTheBuildDirectoryToArchivesConfiguration(){
+    @Test @Ignore
+    void shouldAddAllArtifactsInTheBuildDirectoryToArchivesConfiguration() {
         def artifacts = ["${artifactsDirPath}/deploy.json", "${artifactsDirPath}/report.txt"]
         artifacts.each{fileName -> "touch ${fileName}".execute()}
 
         uploadBuildArtifactsTask.execute()
-
 
         assertNotNull(project.configurations.findByName('archives'))
         assertArchivesHasFile("report.txt")
