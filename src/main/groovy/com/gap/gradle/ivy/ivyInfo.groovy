@@ -3,20 +3,17 @@ package com.gap.gradle.ivy
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 
-
-
-
 class IvyInfo {
 
     Project project
 
-    IvyInfo(Project project){
+    IvyInfo(Project project) {
         this.project = project
     }
 
     def identifiers() {
         def identifiers = []
-        project.allprojects.each {subProject ->
+        project.allprojects.each { subProject ->
             identifiers.add(getIdentifier(subProject))
         }
         return identifiers as Set
@@ -24,27 +21,40 @@ class IvyInfo {
 
     def dependencies() {
         def dependencies = []
-        project.allprojects.each {subProject ->
+        project.allprojects.each { subProject ->
             subProject.configurations.each { config ->
-               dependencies.addAll(getDependenciesFromConfiguration(config))
+                dependencies.addAll(getDependenciesFromConfiguration(config))
             }
         }
 
         return dependencies as Set
     }
 
+
     private List getDependenciesFromConfiguration(Configuration config) {
         def dependencies = []
-        config.dependencies.each {subProject ->
+        config.dependencies.each { subProject ->
             dependencies.add(getIdentifier(subProject))
         }
         return dependencies
     }
 
+    def Set getAllResolvedDependencies() {
+        def dependencies = []
+        project.allprojects.each { subProject ->
+            subProject.configurations.each { config ->
+                dependencies.addAll(config.getIncoming().getResolutionResult().allDependencies.collect {
+                    it.selected.toString()
+                })
+            }
+        }
+        return dependencies as Set
+    }
+
+
     private GString getIdentifier(def module) {
         "${module.group}:${module.name}"
     }
-
 
     def version() {
         return project.version

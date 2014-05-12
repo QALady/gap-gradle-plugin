@@ -1,11 +1,11 @@
 package com.gap.pipeline
-import static helpers.Assert.shouldExecuteTask
-import static helpers.Assert.shouldNotExecuteTask
-import static helpers.Assert.taskShouldExist
+
+import static helpers.Assert.*
 import static org.hamcrest.CoreMatchers.is
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
 
+import com.gap.gradle.tasks.GetResolvedVersionTask
 import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.tasks.*
 import groovy.mock.interceptor.MockFor
@@ -42,6 +42,11 @@ class GapPipelinePluginTest {
     @Test
     void prepareForProductionDeployTaskIsAddedToTheProject() {
         taskShouldExist('prepareForProductionDeploy', project)
+    }
+
+    @Test
+    void getResolvedVersionTaskIsAddedToTheProject() {
+        taskShouldExist('getResolvedVersion', project)
     }
 
     @Test
@@ -202,6 +207,11 @@ class GapPipelinePluginTest {
     @Test
     void shouldExecutePromoteArtifactsTask() {
         shouldExecuteTask(project,'promoteArtifacts', PromoteArtifactsTask)
+    }
+
+    @Test
+    void shouldExecuteGetResolvedVersionTask() {
+        shouldExecuteTask(project,'getResolvedVersion', GetResolvedVersionTask)
     }
 
     @Test

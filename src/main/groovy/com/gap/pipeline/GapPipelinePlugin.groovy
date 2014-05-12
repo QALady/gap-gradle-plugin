@@ -1,5 +1,6 @@
 package com.gap.pipeline
 import com.gap.gradle.ivy.IvyInfo
+import com.gap.gradle.tasks.GetResolvedVersionTask
 import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
@@ -51,6 +52,10 @@ class GapPipelinePlugin implements Plugin<Project> {
 
         project.task("promoteArtifacts") << {
             new PromoteArtifactsTask(project).execute()
+        }
+
+        project.task("getResolvedVersion") << {
+            new GetResolvedVersionTask(project).execute()
         }
     }
 
