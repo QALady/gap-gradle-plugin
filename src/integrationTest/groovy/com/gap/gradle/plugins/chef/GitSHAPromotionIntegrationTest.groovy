@@ -8,6 +8,7 @@ import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 class GitSHAPromotionIntegrationTest {
@@ -34,6 +35,7 @@ class GitSHAPromotionIntegrationTest {
         project.git.userId = 'Ca9s7i9'
     }
 
+    @Ignore
     @Test
     void updateShouldSucceed_whenParametersAreValid(){
         assumeTrue(Util.isRunningInPipeline()) //this ensures that the tests run only in the pipeline and not locally
