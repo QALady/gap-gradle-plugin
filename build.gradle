@@ -40,7 +40,7 @@ repositories{
 ext.majorVersion = 2
 ext.minorVersion = 0
 
-group 'com.gap.watchmen-dev'
+group 'com.gap'
 version = "${majorVersion}.${minorVersion}.${release}.${counter}"
 
 apply plugin: 'maven'
