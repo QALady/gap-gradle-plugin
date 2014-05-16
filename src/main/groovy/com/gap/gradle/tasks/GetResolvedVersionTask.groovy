@@ -24,7 +24,7 @@ class GetResolvedVersionTask extends WatchmenTask {
         def version = findVersion(project.dependencyGroup, project.dependencyName)
         print "resolved version of ${project.dependencyGroup}:${project.dependencyName} is ${version}"
         if (project.hasProperty('ecProperty')) {
-            commanderClient.setProperty("/myJob/${project.ecProperty}", version)
+            commanderClient.setECProperty("/myJob/${project.ecProperty}", version)
             print "property /myJob/${project.ecProperty} set to value ${version}"
         }
     }
