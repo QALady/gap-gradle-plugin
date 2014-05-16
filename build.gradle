@@ -35,6 +35,15 @@ repositories{
             password "password"
         }
     }
+    ivy {
+        name 'local_non_prod'
+        layout 'maven'
+        url "${artifactoryUrl}/local-non-prod"
+        credentials {
+            username "admin"
+            password "password"
+        }
+    }
 }
 
 ext.majorVersion = 2
@@ -151,12 +160,12 @@ task wrapper(type: Wrapper) {
 
 uploadArchives {
     repositories{
-        add project.repositories.watchmen_dev_local
+        add project.repositories.local_non_prod
     }
  }
 
 uploadFunctionalTest {
     repositories{
-        add project.repositories.watchmen_dev_local
+        add project.repositories.local_non_prod
     }
 }
