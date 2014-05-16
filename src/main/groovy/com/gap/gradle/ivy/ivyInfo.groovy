@@ -43,6 +43,7 @@ class IvyInfo {
         def dependencies = []
         project.allprojects.each { subProject ->
             subProject.configurations.each { config ->
+                config.resolve()
                 dependencies.addAll(config.getIncoming().getResolutionResult().allDependencies.collect {
                     it.selected.toString()
                 })
