@@ -1,7 +1,7 @@
 package com.gap.gradle.tasks
 
 import static org.mockito.Matchers.anyString
-import static org.mockito.Matchers.eq
+import static org.mockito.Matchers.*
 import static org.mockito.Mockito.*
 
 import com.gap.gradle.ivy.IvyInfo
@@ -41,7 +41,7 @@ class GetResolvedVersionTaskTest {
             task.execute()
         }
 
-        verify(commanderClient).setProperty(eq('/myJob/refAppCookbookVersion'), eq('0.0.46.2407750'))
+        verify(commanderClient).setECProperty(eq(GString.EMPTY + "/myJob/refAppCookbookVersion"), eq('0.0.46.2407750'))
     }
 
     @Test
@@ -51,7 +51,7 @@ class GetResolvedVersionTaskTest {
             task.execute()
         }
 
-        verify(commanderClient, never()).setProperty(anyString(), anyString())
+        verify(commanderClient, never()).setECProperty(any(GString), any(GString))
     }
 
 }
