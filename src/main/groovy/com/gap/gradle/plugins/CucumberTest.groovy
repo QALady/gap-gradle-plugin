@@ -11,7 +11,7 @@ class CucumberTest extends DefaultTask {
   def testClasspath
   def Map env
   def String feature
-  def String vmArgs
+  def List vmArgs
 
   @TaskAction
   def run() {
