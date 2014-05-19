@@ -17,7 +17,7 @@ class CucumberTest extends DefaultTask {
   def run() {
     project.javaexec {
       main = 'org.jruby.Main'
-      jvmArgs = vmArgs
+			jvmArgs = vmArgs
       systemProperty 'user.dir', project.projectDir.toString() + userDir
       if (gemHome != null) {
         args = ['-S','cucumber',feature.split()].flatten()
