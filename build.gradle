@@ -29,7 +29,7 @@ repositories{
     ivy {
         name 'local_non_prod'
         layout 'maven'
-        url "${artifactoryUrl}/local_non_prod"
+        url "${artifactoryUrl}/local-non-prod"
         credentials {
             username "admin"
             password "password"
