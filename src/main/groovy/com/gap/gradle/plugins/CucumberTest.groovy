@@ -11,15 +11,13 @@ class CucumberTest extends DefaultTask {
   def testClasspath
   def Map env
   def String feature
-	def String vmArgs
 
   @TaskAction
   def run() {
     project.javaexec {
       main = 'org.jruby.Main'
-			jvmArgs = vmArgs
       systemProperty 'user.dir', project.projectDir.toString() + userDir
-      if (gemHome != null) {
+      if (gemHome != null) { 
         args = ['-S','cucumber',feature.split()].flatten()
         def os = System.getProperty('os.name').toLowerCase()
         if(!os.contains('windows')){
@@ -36,9 +34,9 @@ class CucumberTest extends DefaultTask {
       }
       if (project.collectCoverage == 'true') {
         systemProperty 'net.sourceforge.cobertura.datafile', project.tasks.coberturaPrepare.datafileLocation
-        classpath = project.files(project.tasks.coberturaInstrument.outputDir) +
-                    testClasspath +
-                    project.configurations.coberturaRuntime +
+        classpath = project.files(project.tasks.coberturaInstrument.outputDir) + 
+                    testClasspath + 
+                    project.configurations.coberturaRuntime + 
                     project.configurations.jruby
       } else {
         classpath = testClasspath + project.configurations.jruby
