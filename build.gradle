@@ -27,9 +27,9 @@ repositories{
         url "${artifactoryUrl}/remote-repos"
     }
     ivy {
-        name 'watchmen_dev_local'
+        name 'local_non_prod'
         layout 'maven'
-        url "${artifactoryUrl}/watchmen-dev-local"
+        url "${artifactoryUrl}/local_non_prod"
         credentials {
             username "admin"
             password "password"
@@ -151,12 +151,12 @@ task wrapper(type: Wrapper) {
 
 uploadArchives {
     repositories{
-        add project.repositories.watchmen_dev_local
+        add project.repositories.local_non_prod
     }
  }
 
 uploadFunctionalTest {
     repositories{
-        add project.repositories.watchmen_dev_local
+        add project.repositories.local_non_prod
     }
 }
