@@ -22,7 +22,7 @@ class ECClient {
         new XmlSlurper().parseText(shellCommand.execute("ectool getJobStatus ${jobId}"))
     }
 
-    def getProperty(property, jobId = null){
+    def getECProperty(property, jobId = null){
         def propertyName = jobId == null ? "/myJob/${property}" : "/jobs[${jobId}]/${property}"
         shellCommand.execute(['ectool', 'getProperty', propertyName])
     }

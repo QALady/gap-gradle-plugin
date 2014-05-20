@@ -7,12 +7,12 @@ import com.gap.util.Util
 import org.junit.Test
 
 public class WMSegmentEndToEndTest {
-    def ec = new ECClient()
+    ECClient ec = new ECClient()
 
     @Test
     public void shouldSuccessfullyExecuteTheFullPipeline() {
 
-        def pluginVersionUnderTest = ec.isRunningInPipeline()? ec.getProperty('pluginVersion'):'+'
+        def pluginVersionUnderTest = ec.isRunningInPipeline()? ec.getECProperty('pluginVersion'):'+'
 
         def upstreamJobId = ec.runProcedureSync("Watchmen Test Segments:Component Segment", ['gapGradlePluginVersion': pluginVersionUnderTest])
         assertEquals("success", ec.getJobStatus(upstreamJobId).outcome.toString())
@@ -42,7 +42,7 @@ public class WMSegmentEndToEndTest {
         Util.executeWithRetry(3, 0.5,
                 {
                     try {
-                        isoJobURL = ec.getProperty("report-urls/${ecProcName}", componetJobId)
+                        isoJobURL = ec.getECProperty("report-urls/${ecProcName}", componetJobId)
                         return true;
                     } catch (Exception) {
                         return false;
