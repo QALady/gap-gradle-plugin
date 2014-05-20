@@ -1,11 +1,8 @@
 package com.gap.util
 
-import com.gap.util.Util
 import org.apache.commons.logging.LogFactory
 
-
 class ECClient {
-    def environment
     def shellCommand
     def logger = LogFactory.getLog(ShellCommand)
 
@@ -33,6 +30,14 @@ class ECClient {
     def setProperty(property, value, jobId = null){
         def propertyName = jobId == null ? "/myJob/${property}" : "/jobs[${jobId}]/${property}"
         shellCommand.execute(['ectool', 'getProperty', propertyName])
+    }
+
+    def getJobId() {
+        System.getenv()['COMMANDER_JOBID']
+    }
+
+    def isRunningInPipeline(){
+        getJobId() != null
     }
 
     private parseProcedureName(fullProcedureName) {

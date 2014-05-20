@@ -1,18 +1,20 @@
 package com.gap
-
-import com.gap.util.ECClient;
-import com.gap.util.Util;
-import org.junit.Test
 import static junit.framework.Assert.assertEquals
 import static junit.framework.Assert.assertTrue
-import java.lang.Thread
+
+import com.gap.util.ECClient
+import com.gap.util.Util
+import org.junit.Test
 
 public class WMSegmentEndToEndTest {
     def ec = new ECClient()
 
     @Test
     public void shouldSuccessfullyExecuteTheFullPipeline() {
-        def upstreamJobId = ec.runProcedureSync("Watchmen Test Segments:Component Segment")
+
+        def pluginVersionUnderTest = ec.isRunningInPipeline()? ec.getProperty('pluginVersion'):'+'
+
+        def upstreamJobId = ec.runProcedureSync("Watchmen Test Segments:Component Segment", ['gapGradlePluginVersion': pluginVersionUnderTest])
         assertEquals("success", ec.getJobStatus(upstreamJobId).outcome.toString())
 
         String downstreamSVNJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment")
