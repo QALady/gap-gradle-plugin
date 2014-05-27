@@ -1,14 +1,15 @@
-package com.gap.pipeline.ec
+package com.gap.gradle.plugins.ec
 
 import static junit.framework.Assert.assertTrue
 import static org.hamcrest.CoreMatchers.containsString
 import static org.junit.Assert.assertThat
 import static org.junit.Assume.assumeTrue
 
-import com.gap.pipeline.utils.Environment
-import groovy.com.gap.gradle.plugins.helpers.Util
 import org.junit.Before
 import org.junit.Test
+
+import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.utils.Environment
 
 class CommanderClientIntegrationTest {
 

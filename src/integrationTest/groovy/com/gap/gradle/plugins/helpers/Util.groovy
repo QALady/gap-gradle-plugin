@@ -1,4 +1,4 @@
-package groovy.com.gap.gradle.plugins.helpers
+package com.gap.gradle.plugins.helpers
 
 import com.gap.pipeline.utils.Environment
 

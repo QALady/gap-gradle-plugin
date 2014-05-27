@@ -56,27 +56,34 @@ class InitNAPosBuildTask extends WatchmenTask {
 	}
 	
 	def getClassPath(dependsPropertiesFile) {
-			List jars = new ArrayList<File>()
-			jars.add(project.properties["src.3rdparty.jars"]+"/ingenctl.jar")
-			//read the depends from depends.properties
-			def config = new Properties()
-			def propFile = new File(dependsPropertiesFile)
-			if (propFile.canRead()) {
-				config.load(new FileInputStream(propFile))
-				for(file in project.fileTree(dir : project.properties['src.dir']+'/'+config['classpath.addJar'], include: '*.jar', exclude: "jpos17.jar")) {
-					jars.add(file)
-				}
-				for (Map.Entry property in config) {
-					for(file in project.fileTree(dir : project.properties['src.dir']+'/'+property.value+'/dist', include: '*.jar', exclude: ['*source.jar'])) {
-						jars.add(file)
-					}
-				}
-			}
-			//read the depends from ProductMigration/3rdparty/lib
-			for(file in project.fileTree(dir : project.properties['src.3rdparty.jars'], include: ['**/*.jar','**/*.zip'])) {
+		
+		List jars = new ArrayList<File>()
+	
+		jars.add(project.properties["src.3rdparty.jars"]+"/ingenctl.jar")
+	
+		//read the depends from depends.properties
+		def config = new Properties()
+		def propFile = new File(dependsPropertiesFile)
+		if (propFile.canRead()) {
+			config.load(new FileInputStream(propFile))
+	
+			for(file in fileTree(dir : project.properties['src.dir']+'/'+config['classpath.addJar'], include: '*.jar')) {
 				jars.add(file)
 			}
-			return jars
+	
+			for (Map.Entry property in config) {
+				for(file in fileTree(dir : project.properties['src.dir']+'/'+property.value+'/dist', include: '*.jar', exclude: ['*source.jar'])) {
+					jars.add(file)
+				}
+			}
+		}
+	
+		//read the depends from ProductMigration/3rdparty/lib
+		for(file in fileTree(dir : project.properties['src.3rdparty.jars'], include: ['**/*.jar','**/*.zip'])) {
+			jars.add(file)
+		}
+	
+		return jars
 	}
 		
 
@@ -103,14 +110,11 @@ class InitNAPosBuildTask extends WatchmenTask {
 	
 	
 	def loadProperties() {
-			loadPropertiesFromFile("${project.appCodeBase}/version.properties")
-			loadPropertiesFromFile("${project.appCodeBase}/build.properties")
-			loadPropertiesFromFile("${project.appCodeBase}/config.properties")
-			loadPropertiesFromFile("${project.appCodeBase}/db.properties")
-			loadPropertiesFromFile("${project.appCodeBase}/common.properties")
-			loadPropertiesFromFile("${project.appCodeBase}/examples.properties")
-		
-		
+	
+			for(file in project.fileTree(dir : "${project.appCodeBase}", include: '*.properties')) {
+				loadPropertiesFromFile(file.getAbsolutePath())
+			}
+			
 			project.ext['debuglevel'] = "none"
 		
 			project.ext['src.dir'] = project.appCodeBase

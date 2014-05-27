@@ -1,12 +1,13 @@
-package groovy.com.gap.gradle.plugins.artifacts
+package com.gap.gradle.plugins.artifacts
 
-import com.gap.pipeline.tasks.DownloadArtifactsTask
+import static junit.framework.Assert.assertTrue
+
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static junit.framework.Assert.assertTrue
+import com.gap.pipeline.tasks.DownloadArtifactsTask
 
 class ArtifactsUploadDownloadIntegrationTest {
 
