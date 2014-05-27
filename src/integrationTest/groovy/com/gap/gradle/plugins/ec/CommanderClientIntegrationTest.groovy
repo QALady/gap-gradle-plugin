@@ -10,6 +10,7 @@ import org.junit.Test
 
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.utils.Environment
+import com.gap.gradle.plugins.helpers.Util
 
 class CommanderClientIntegrationTest {
 
