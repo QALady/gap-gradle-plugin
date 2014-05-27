@@ -131,9 +131,11 @@ task jarFunctionalTests(type: Jar) {
     destinationDir buildDir
 }
 
+def runFTScript = file('functionalTests/scripts/runFunctionalTests.sh')
+
 artifacts{
     functionalTest jarFunctionalTests
-    functionalTest file('functionalTests/scripts/runFunctionalTests.sh')
+    functionalTest runFTScript
 }
 
 tasks.withType(Test) {
