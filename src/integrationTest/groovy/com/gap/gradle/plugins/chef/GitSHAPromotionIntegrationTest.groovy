@@ -2,7 +2,7 @@ package com.gap.gradle.plugins.chef
 import static org.junit.Assume.assumeTrue
 
 import com.gap.gradle.utils.ShellCommand
-import groovy.com.gap.gradle.plugins.helpers.Util
+import com.gap.gradle.plugins.helpers.Util
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder

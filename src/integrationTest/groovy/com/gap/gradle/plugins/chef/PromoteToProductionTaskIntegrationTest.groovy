@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins.chef
 import com.gap.pipeline.ec.CommanderClient
-import groovy.com.gap.gradle.plugins.helpers.Util
+import com.gap.gradle.plugins.helpers.Util
 import groovy.mock.interceptor.MockFor
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
