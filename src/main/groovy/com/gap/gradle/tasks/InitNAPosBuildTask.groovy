@@ -67,19 +67,19 @@ class InitNAPosBuildTask extends WatchmenTask {
 		if (propFile.canRead()) {
 			config.load(new FileInputStream(propFile))
 	
-			for(file in fileTree(dir : project.properties['src.dir']+'/'+config['classpath.addJar'], include: '*.jar')) {
+			for(file in project.fileTree(dir : project.properties['src.dir']+'/'+config['classpath.addJar'], include: '*.jar')) {
 				jars.add(file)
 			}
 	
 			for (Map.Entry property in config) {
-				for(file in fileTree(dir : project.properties['src.dir']+'/'+property.value+'/dist', include: '*.jar', exclude: ['*source.jar'])) {
+				for(file in project.fileTree(dir : project.properties['src.dir']+'/'+property.value+'/dist', include: '*.jar', exclude: ['*source.jar'])) {
 					jars.add(file)
 				}
 			}
 		}
 	
 		//read the depends from ProductMigration/3rdparty/lib
-		for(file in fileTree(dir : project.properties['src.3rdparty.jars'], include: ['**/*.jar','**/*.zip'])) {
+		for(file in project.fileTree(dir : project.properties['src.3rdparty.jars'], include: ['**/*.jar','**/*.zip'])) {
 			jars.add(file)
 		}
 	
