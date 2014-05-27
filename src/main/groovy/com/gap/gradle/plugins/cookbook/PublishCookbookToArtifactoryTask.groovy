@@ -25,8 +25,8 @@ class PublishCookbookToArtifactoryTask {
                 layout 'maven'
                 url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
                 credentials {
-                    username 'admin'
-                    password 'password'
+                    username 'ec-build'
+                    password 'EC-art!'
                 }
             }
         }

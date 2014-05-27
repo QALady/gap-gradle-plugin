@@ -31,8 +31,8 @@ repositories{
         layout 'maven'
         url "${artifactoryUrl}/watchmen-dev-local"
         credentials {
-            username "admin"
-            password "password"
+            username "${ivyPublishUsername}"
+            password "${ivyPublishPassword}"
         }
     }
 }
