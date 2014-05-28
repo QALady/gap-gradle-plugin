@@ -36,13 +36,13 @@ class IvyInfoIntegrationTest {
             }
         }
         childProject.dependencies{
-            archives group: 'com.gap.test_wmsegment', name:'test_wmsegment', version: '150', configuration: 'default'
+            archives group: 'com.gap.test_wmsegment', name:'test_wmsegment', version: '254', configuration: 'default'
         }
 
         project.configurations.archives.resolve()
         def ivyInfo = new IvyInfo(project)
         def resolvedDependencies = ivyInfo.allResolvedDependencies
-        def expectedDependencies = ["com.gap.ref-app.iso:ci:1698", "com.gap.ref-app.infra:ci:0.0.46.2407750", "com.gap.test_wmsegment:test_wmsegment:150"] as Set
+        def expectedDependencies = ["com.gap.ref-app.iso:ci:1698", "com.gap.ref-app.infra:ci:0.0.46.2407750", "com.gap.test_wmsegment:test_wmsegment:254"] as Set
         assertThat(resolvedDependencies, is(expectedDependencies))
     }
 }
