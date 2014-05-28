@@ -92,9 +92,9 @@ class InitNAPosBuildTask extends WatchmenTask {
 			project.testDir = new File(project.properties['test.dir']+'/classes')
 			project.deprecation = new File(project.properties['deprecation.dir']+'/classes')
 		
-			project.classesDir.mkdir()
-			project.testDir.mkdir()
-			project.deprecation.mkdir()
+			project.classesDir.mkdirs()
+			project.testDir.mkdirs()
+			project.deprecation.mkdirs()
 
 			project.delete(project.properties['out.javadoc.dir'], project.properties['out.jars.dir'])			
 	}
