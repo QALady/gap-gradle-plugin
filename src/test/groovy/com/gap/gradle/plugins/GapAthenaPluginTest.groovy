@@ -28,6 +28,11 @@ class GapAthenaPluginTest {
 		taskShouldExist('initNAPosBuild')
 	}
 
+    @Test
+    void shouldExistTask_jarNAPosBuild() {
+        taskShouldExist('jarNAPosBuild')
+    }
+
 	def taskShouldExist(task) {
 		assertThat(project.tasks.findByName(task), notNullValue())
 	}

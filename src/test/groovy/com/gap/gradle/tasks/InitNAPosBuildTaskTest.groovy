@@ -21,8 +21,8 @@ class InitNAPosBuildTaskTest {
     @Before
     void setUp() {
         this.project = new ProjectBuilder().builder().build()
-        project.apply plugin: 'gapathena'
         project.apply plugin: 'java'
+        project.apply plugin: 'gapathena'
         task = project.tasks.findByName('initNAPosBuild')
 
         project.appCodeBase = tempFolder.root.path

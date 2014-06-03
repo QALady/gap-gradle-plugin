@@ -111,7 +111,7 @@ class InitNAPosBuildTask extends WatchmenTask {
 	
 	def loadProperties() {
 	
-			for(file in project.fileTree(dir : "${project.appCodeBase}", include: '*.properties')) {
+			for(file in project.fileTree(dir : project.appCodeBase, include: '*.properties')) {
 				loadPropertiesFromFile(file.getAbsolutePath())
 			}
 			
@@ -137,6 +137,8 @@ class InitNAPosBuildTask extends WatchmenTask {
 			project.ext['common.file'] = "${project.appCodeBase}/common.properties"
 		
 			project.ext['src.debug.dir'] = "${project.appCodeBase}/debug"
+
+            project.ext['jdk_compiler'] = project.compileJava.targetCompatibility
 	}
 		
 	def loadPropertiesFromFile(String sourceFileName) {

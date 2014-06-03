@@ -1,5 +1,6 @@
 package com.gap.gradle.plugins
 
+import com.gap.gradle.tasks.JarNAPosBuildTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -13,9 +14,14 @@ class GapAthenaPlugin implements Plugin<Project>{
 		project.task('uploadBuildRpmToRepo') << {
 			new UploadAthenaBuildRpmToRepo(project).execute()
 		}
+
 		project.task('initNAPosBuild') << {
 			new InitNAPosBuildTask(project).execute()
 		}
+
+        project.task('jarNAPosBuild') << {
+            new JarNAPosBuildTask(project).execute()
+        }
 	}
 
 }
