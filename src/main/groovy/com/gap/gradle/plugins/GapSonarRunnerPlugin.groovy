@@ -18,7 +18,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
             toolVersion = "0.7.0.201403182114"
         }
 
-        project.allprojects { proj ->
+        project.allprojects {
             if (plugins.hasPlugin('java')) {
                 sonarRunner {
                     sonarProperties {
@@ -26,7 +26,6 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                     }
                 }
             }
-
         }
 
         project.sonarRunner {
