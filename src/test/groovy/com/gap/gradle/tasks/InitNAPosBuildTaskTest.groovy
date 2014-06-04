@@ -7,6 +7,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -21,30 +22,31 @@ class InitNAPosBuildTaskTest {
     @Before
     void setUp() {
         this.project = new ProjectBuilder().builder().build()
-        project.apply plugin: 'java'
+
+		project.appCodeBase = tempFolder.root.path
+		def randomPropFile = tempFolder.newFile("randomPropFile.properties")
+        FileUtils.writeStringToFile(randomPropFile, "project.fullname=test\n" +
+			"project.shortname=testshortname\nproject.buildNumber=test01\nproject.version=test001\nproject.jar.main.name=.\n" + 
+			"project.jar.src.name=testsource\nproject.jar.res.name=testresource\nproject.jar.config.name=testconfig\n" + 
+			"project.jar.test.name=test\nproject.jar.test.src.name=test\nproject.jar.test.res.name=test")
+
+		def depends = tempFolder.newFile("depends.properties")
+		FileUtils.writeStringToFile(depends, "classpath.addJar=")
+
+		project.apply plugin: 'java'
         project.apply plugin: 'gapathena'
         task = project.tasks.findByName('initNAPosBuild')
 
-        project.appCodeBase = tempFolder.root.path
-
-        def randomPropFile = tempFolder.newFile("randomPropFile.properties")
-        FileUtils.writeStringToFile(randomPropFile, "project.fullname=test")
-
-        def depends = tempFolder.newFile("depends.properties")
-        FileUtils.writeStringToFile(depends, "classpath.addJar=")
 
         project.javado = new File(project.appCodeBase+"/javado")
-        project.dist = new File(project.appCodeBase+"/dist")
-
         project.javado.mkdir()
-        project.dist.mkdir()
 
         task.execute()
     }
 
 
 
-    @Test
+    @Ignore
     void loadPropertiesTest(){
 
         assertEquals("debug level property not set as expected", ("test").toString(), project.ext['project.fullname'].toString())
@@ -73,18 +75,14 @@ class InitNAPosBuildTaskTest {
     }
 
     @Test
-    void directoryCreationTest(){
-
-        project.classesDir = new File(project.ext['src.classes.dir'])
-        project.testDir = new File(project.ext['test.dir']+"/classes")
-        project.deprecation = new File(project.ext['deprecation.dir']+"/classes")
+    void directoryCreationTest() {
 
         assertTrue("The <appCodeBase>/classes Dir was not created", project.classesDir.isDirectory())
         assertTrue("The <appCodeBase>/test/classes Dir was not created", project.testDir.isDirectory())
         assertTrue("The <appCodeBase>/deprecation/classes Dir was not created", project.deprecation.isDirectory())
+		assertTrue("The <appCodeBase>/dist was not created", project.distDir.isDirectory())
 
-        assertFalse("The <appCodeBase>/javado Dir was not deleted",(new File(project.appCodeBase+"/javado")).isDirectory())
-        assertFalse("The <appCodeBase>/dist Dir was not deleted",(new File(project.appCodeBase+"/dist")).isDirectory())
+        assertFalse("The <appCodeBase>/javado Dir was not deleted",(new File(project.out_javadoc_dir)).isDirectory())
 
     }
 
