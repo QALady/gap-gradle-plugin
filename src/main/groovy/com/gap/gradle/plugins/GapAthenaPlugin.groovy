@@ -31,7 +31,8 @@ class GapAthenaPlugin implements Plugin<Project>{
 
 	private void initPOSBuildProperties() {
 		project.ext {
-			for(file in project.fileTree(dir : project.appCodeBase, include: '*.properties')) {
+
+            for(file in project.fileTree(dir : project.appCodeBase, include: '*.properties')) {
 				loadPropertiesFromFile(file.getAbsolutePath())
 			}
 			
@@ -63,7 +64,7 @@ class GapAthenaPlugin implements Plugin<Project>{
 			
 			project.third_jarFiles_manifest = ""
 			for (file in project.fileTree(dir: project.src_3rdparty_jars, include: '**/*.jar')) {
-				project.third_jarFiles_manifest = project.third_jarFiles_manifest + " " + file
+				project.third_jarFiles_manifest = project.third_jarFiles_manifest + " " + file.getPath()
 			}
 			
 		}
@@ -91,13 +92,14 @@ class GapAthenaPlugin implements Plugin<Project>{
 
                 if (manifest_org.isFile()) {
                     manifest_org.eachLine {
-                        if (!it.isEmpty() && it.contains(': ') && !it.contains("Manifest-version:")) {
+                        if (!it.isEmpty() && it.contains(': ')) {
                             attrs.put(it.split(': ')[0], it.split(': ')[1])
                         }
                     }
                 } else if (manifest_mf.isFile()) {
+
                     manifest_mf.eachLine {
-                        if (!it.isEmpty() && it.contains(': ') && !it.contains("Manifest-version:")) {
+                        if (!it.isEmpty() && it.contains(': ')) {
                             attrs.put(it.split(': ')[0], it.split(': ')[1])
                         }
                     }
@@ -107,12 +109,15 @@ class GapAthenaPlugin implements Plugin<Project>{
                 attrs.put('Implementation-Version', project.project_buildNumber)
                 attrs.put('JDK-Compiler', project.jdk_compiler)
 
-                def sectionName = attrs.get("Name")
+                String sectionName = attrs.get('Name')
                 attrs.remove("Name")
+                attrs.remove("Manifest-version")
+                attrs.remove("Manifest-Version")
+
                 attributes(attrs, sectionName)
             }
 
-            project.manifest.writeTo(project.appCodeBase+"/META-INF/MANIFEST.MF")
+            project.sharedManifest.writeTo(project.appCodeBase+"/META-INF/MANIFEST.MF")
 
     }
 	

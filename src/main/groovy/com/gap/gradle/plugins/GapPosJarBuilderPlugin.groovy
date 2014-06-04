@@ -12,6 +12,7 @@ class GapPosJarBuilderPlugin implements Plugin<Project> {
 	@Override
 	public void apply(Project project) {
 		this.project = project
+
 		//jar creation tasks
 		
 		project.task('mainJar', type: Jar) {
@@ -28,10 +29,12 @@ class GapPosJarBuilderPlugin implements Plugin<Project> {
 				exclude "**/shopx/**/*.*"
 			}
 			manifest {
+
 				def attrs = new HashMap<String, String>()
 				attrs.put('Class-Path',project.third_jarFiles_manifest)
 				manifest.attributes(attrs)
-				from project.sharedManifest
+
+                from project.sharedManifest
 			}
 		}
 		

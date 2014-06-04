@@ -53,7 +53,7 @@ class InitNAPosBuildTask extends WatchmenTask {
 		}
 	}
 	
-	def getClassPath(dependsPropertiesFile) {
+	private def getClassPath(dependsPropertiesFile) {
 		
 		List jars = new ArrayList<File>()
 	
@@ -85,7 +85,7 @@ class InitNAPosBuildTask extends WatchmenTask {
 	}
 		
 
-	def createDirectories() {
+	private void createDirectories() {
 			project.classesDir = new File(project.src_classes_dir)
 			project.testDir = new File(project.test_classes_dir)
 			project.deprecation = new File(project.deprecation_dir + '/classes')
@@ -100,7 +100,7 @@ class InitNAPosBuildTask extends WatchmenTask {
 			project.distDir.mkdirs()			
 	}
 		
-	def configJavac() {
+	private void configJavac() {
 		[project.compileJava, project.compileTestJava]*.options.collect {options -> options.encoding = 'ISO-8859-1'}
 		//[compileJava, compileTestJava]*.options.collect {options -> options.debuglevel = project.properties['debuglevel']}
 		//[compileJava, compileTestJava]*.options.collect {options -> options.debug = project.properties['debug']}
