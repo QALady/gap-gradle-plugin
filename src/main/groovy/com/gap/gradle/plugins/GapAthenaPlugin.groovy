@@ -64,7 +64,8 @@ class GapAthenaPlugin implements Plugin<Project>{
 			
 			project.third_jarFiles_manifest = ""
 			for (file in project.fileTree(dir: project.src_3rdparty_jars, include: '**/*.jar')) {
-				project.third_jarFiles_manifest = project.third_jarFiles_manifest + " " + file.getPath()
+                String relativePath = file.toString().split(project.appCodeBase)[1]
+                project.third_jarFiles_manifest = project.third_jarFiles_manifest + " " + ".."+relativePath
 			}
 			
 		}
