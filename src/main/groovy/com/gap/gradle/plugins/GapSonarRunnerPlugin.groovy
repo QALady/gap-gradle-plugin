@@ -18,9 +18,9 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
             toolVersion = "0.7.0.201403182114"
         }
 
-        project.allprojects {
+        project.subprojects { subProj ->
             if (plugins.hasPlugin('java')) {
-                sonarRunner {
+                subProj.sonarRunner {
                     sonarProperties {
                         property "sonar.junit.reportsPath", test.reports.junitXml.destination
                     }
