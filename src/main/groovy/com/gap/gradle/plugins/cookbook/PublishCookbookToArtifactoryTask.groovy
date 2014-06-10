@@ -6,9 +6,11 @@ import org.gradle.api.Project
 
 class PublishCookbookToArtifactoryTask {
     private Project project
+    def shellCommand
 
     PublishCookbookToArtifactoryTask(Project project){
         this.project = project
+        this.shellCommand = new ShellCommand()
     }
 
     void execute() {
@@ -45,8 +47,13 @@ class PublishCookbookToArtifactoryTask {
     void setProjectVersionFromMetadata( ) {
         def metadataJson = new File('metadata.json').text
         def json = new JsonSlurper().parseText(metadataJson)
-        def jobid =    System.getenv()['COMMANDER_JOBID']
-        if (!jobid) jobid = 'local'
-        project.version = "${json['version']}.${jobid}"
+        def timeStamp =  "local"
+        if(!isLocal())
+          timeStamp = shellCommand.execute("date +'%s'")
+        project.version = "${json['version']}.${timeStamp}"
+    }
+
+    private boolean isLocal() {
+        !new CommanderClient().isRunningInPipeline()
     }
 }
