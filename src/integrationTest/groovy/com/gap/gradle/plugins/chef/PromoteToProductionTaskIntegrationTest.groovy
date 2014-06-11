@@ -28,7 +28,7 @@ class PromoteToProductionTaskIntegrationTest {
 		project.jenkins.knifeServerUrl = "http://dgphxaciap004.phx.gapinc.dev:8080/"
 		project.jenkins.knifeUser = "integtest"
 		project.jenkins.knifeJobName = "TagProdReady"
-		project.chefJenkinsApiAuthToken = "15497c7c234c5940a3573672363e692c"
+		project.jenkins.knifeAuthToken = "15497c7c234c5940a3573672363e692c"
 
         if (Util.isRunningInPipeline()){
             executeTask(project)
