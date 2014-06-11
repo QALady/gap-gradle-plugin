@@ -20,13 +20,12 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
 
         project.subprojects { subProj ->
             if (plugins.hasPlugin('java')) {
-                sonarRunner {
+                subProj.sonarRunner {
                     sonarProperties {
                         property "sonar.junit.reportsPath", test.reports.junitXml.destination
                     }
                 }
             }
-
         }
 
         project.sonarRunner {
