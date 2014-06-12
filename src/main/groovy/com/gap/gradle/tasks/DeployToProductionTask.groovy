@@ -29,7 +29,7 @@ class DeployToProductionTask extends WatchmenTask {
     }
 
     def deployToNodes() {
-        if (System.getenv("DISABLE_DEPLOY_TO_PROD")) {
+        if (System.getenv("DISABLE_DEPLOY_TO_PROD")?.toBoolean()) {
             log.info("Skipping deploy to prod (DISABLE_DEPLOY_TO_PROD is set)")
         } else {
             def command = new ShellCommand()
