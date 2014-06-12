@@ -49,8 +49,10 @@ class PublishCookbookToArtifactoryTask {
         def metadataJson = new File('metadata.json').text
         def json = new JsonSlurper().parseText(metadataJson)
         def timeStamp =  "local"
-        if(!isLocal())
-          timeStamp = shellCommand.execute("echo -n `date +%s`")
+        if(!isLocal()) {
+          def today= new Date()
+          timeStamp = today.format("yyyyMMddHHmmss")
+        }
         project.version = "${json['version']}.${timeStamp}"
     }
 
