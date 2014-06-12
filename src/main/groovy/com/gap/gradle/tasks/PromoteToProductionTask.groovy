@@ -14,7 +14,7 @@ import org.gradle.api.Project
 	@Require(parameter = 'ticketId', description = "Approved Service Center Ticket ID."),
     @Require(parameter = 'jenkins.knifeServerUrl', description = "Jenkins Server URL to trigger job to promote chef objects to prod."),
     @Require(parameter = 'jenkins.knifeUser', description = "Jenkins User ID to trigger job"),
-    @Require(parameter = 'chefJenkinsApiAuthToken', description = "Jenkins API Auth token passed from EC job."),
+    @Require(parameter = 'jenkins.knifeAuthToken', description = "Jenkins API Auth token."),
     @Require(parameter = 'jenkins.knifeJobName', description = "Jenkins Job name to trigger.")
 ])
 class PromoteToProductionTask extends WatchmenTask {
@@ -39,7 +39,7 @@ class PromoteToProductionTask extends WatchmenTask {
 	
 	def init() {
 		def jConfig = this.project.jenkins
-		jClient = new JenkinsClient(jConfig.knifeServerUrl, jConfig.knifeUser, project.chefJenkinsApiAuthToken)
+		jClient = new JenkinsClient(jConfig.knifeServerUrl, jConfig.knifeUser, jConfig.knifeAuthToken)
 		jRunner = new JenkinsRunner(jClient)
 		commanderClient = new CommanderClient()
 		ecUserId = commanderClient.getUserId()

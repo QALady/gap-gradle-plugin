@@ -35,6 +35,7 @@ class JenkinsClient {
     def getNextBuildNumber (jobName){
         http.request(GET,JSON) {
             uri.path = "/job/${jobName}/api/json"
+            headers.'Authorization' = getAuthorizationHeader()
             response.success = {resp, json ->
                 json.nextBuildNumber
             }
@@ -94,6 +95,7 @@ class JenkinsClient {
     private def getJobStatus(jobName, buildNumber) {
         http.request(GET, JSON) {
             uri.path = "/job/${jobName}/${buildNumber}/api/json"
+            headers.'Authorization' = getAuthorizationHeader()
             response.success = { resp, json ->
                 if (json.building) {
                     return JobStatus.pending
