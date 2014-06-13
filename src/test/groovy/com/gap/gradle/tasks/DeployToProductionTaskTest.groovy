@@ -37,9 +37,9 @@ class DeployToProductionTaskTest {
             task.execute()
         }
         assertThat(executedCommands, contains(
-            "ssh node1.phx.gapinc.com 'chef-client'",
-            "ssh node2.phx.gapinc.com 'chef-client'",
-            "ssh node3.phx.gapinc.com 'chef-client'"
+            "ssh node1.phx.gapinc.com 'sudo chef-client'",
+            "ssh node2.phx.gapinc.com 'sudo chef-client'",
+            "ssh node3.phx.gapinc.com 'sudo chef-client'"
         ))
     }
 

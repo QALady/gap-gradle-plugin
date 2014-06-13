@@ -36,7 +36,7 @@ class DeployToProductionTask extends WatchmenTask {
             project.prodDeploy.nodes.each { node ->
                 try {
                     log.info("Deploying to '${node}'...")
-                    log.info(command.execute("ssh ${node} 'chef-client'".toString()))
+                    log.info(command.execute("ssh ${node} 'sudo chef-client'".toString()))
                 } catch (ShellCommandException exception) {
                     log.error("Failed to deploy on node '${node}'", exception)
                     throw new DeployToProductionException("Failed to deploy on node '${node}'".toString(), exception)
