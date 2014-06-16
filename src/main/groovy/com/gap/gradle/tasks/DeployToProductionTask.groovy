@@ -30,15 +30,18 @@ class DeployToProductionTask extends WatchmenTask {
 
     def deployToNodes() {
         if (System.getenv("DISABLE_DEPLOY_TO_PROD")?.toBoolean()) {
-            log.info("Skipping deploy to prod (DISABLE_DEPLOY_TO_PROD is set)")
+            log.info("Skipping deploy to prod (DISABLE_DEPLOY_TO_PROD is set...)")
         } else {
             def command = new ShellCommand()
+            def commandToExecute
             project.prodDeploy.nodes.each { node ->
                 try {
+                    commandToExecute = "ssh ${node} 'sudo chef-client'"
                     log.info("Deploying to '${node}'...")
-                    log.info(command.execute("ssh ${node} 'sudo chef-client'".toString()))
+                    log.info("Executing command '${commandToExecute}' on node '${node}' ....")
+                    log.info(command.execute(commandToExecute.toString()))
                 } catch (ShellCommandException exception) {
-                    log.error("Failed to deploy on node '${node}'", exception)
+                    log.error("Failed to deploy on node '${node}'.. Failed to execute command '${commandToExecute}'...", exception)
                     throw new DeployToProductionException("Failed to deploy on node '${node}'".toString(), exception)
                 }
             }
