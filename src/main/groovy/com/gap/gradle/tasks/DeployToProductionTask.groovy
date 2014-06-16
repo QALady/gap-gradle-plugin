@@ -36,7 +36,7 @@ class DeployToProductionTask extends WatchmenTask {
             def commandToExecute
             project.prodDeploy.nodes.each { node ->
                 try {
-                    commandToExecute = "ssh ${node} 'sudo chef-client'"
+                    commandToExecute = "ssh ${node} sudo chef-client"
                     log.info("Deploying to '${node}'...")
                     log.info("Executing command '${commandToExecute}' on node '${node}' ....")
                     log.info(command.execute(commandToExecute.toString()))
