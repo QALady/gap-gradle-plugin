@@ -31,7 +31,7 @@ public class WMSegmentEndToEndTest {
     }
 
     private void waitForDownstreamJobToComplete(isoJobID) {
-        Util.executeWithRetry(10, 2, {
+        Util.executeWithRetry(100, 2, {
             ec.getJobStatus(isoJobID).status == 'completed'
         })
     }
