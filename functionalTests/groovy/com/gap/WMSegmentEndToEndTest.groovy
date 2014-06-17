@@ -17,9 +17,6 @@ public class WMSegmentEndToEndTest {
         def upstreamJobId = ec.runProcedureSync("Watchmen Test Segments:Component Segment", ['gapGradlePluginVersion': pluginVersionUnderTest])
         assertEquals("success", ec.getJobStatus(upstreamJobId).outcome.toString())
 
-        String downstreamSVNJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment")
-        assertTrue(downstreamSVNJobID.length() > 0)
-
         waitForDownstreamJobToComplete( downstreamSVNJobID)
         assertEquals("success", ec.getJobStatus(downstreamSVNJobID).outcome.toString())
 
@@ -34,20 +31,5 @@ public class WMSegmentEndToEndTest {
         Util.executeWithRetry(100, 2, {
             ec.getJobStatus(isoJobID).status == 'completed'
         })
-    }
-
-
-    private String getDownstreamJobId(componetJobId, ecProcName) {
-        def isoJobURL = ""
-        Util.executeWithRetry(3, 0.5,
-                {
-                    try {
-                        isoJobURL = ec.getECProperty("report-urls/${ecProcName}", componetJobId)
-                        return true;
-                    } catch (Exception) {
-                        return false;
-                    }
-                }
-        )    
     }
 }
