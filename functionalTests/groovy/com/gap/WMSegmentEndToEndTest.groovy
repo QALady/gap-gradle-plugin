@@ -17,6 +17,9 @@ public class WMSegmentEndToEndTest {
         def upstreamJobId = ec.runProcedureSync("Watchmen Test Segments:Component Segment", ['gapGradlePluginVersion': pluginVersionUnderTest])
         assertEquals("success", ec.getJobStatus(upstreamJobId).outcome.toString())
 
+        String downstreamSVNJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment")
+        assertTrue(downstreamSVNJobID.length() > 0)
+
         waitForDownstreamJobToComplete( downstreamSVNJobID)
         assertEquals("success", ec.getJobStatus(downstreamSVNJobID).outcome.toString())
 
@@ -31,5 +34,26 @@ public class WMSegmentEndToEndTest {
         Util.executeWithRetry(100, 2, {
             ec.getJobStatus(isoJobID).status == 'completed'
         })
+    }
+
+
+    private String getDownstreamJobId(componetJobId, ecProcName) {
+        def isoJobURL = ""
+        Util.executeWithRetry(3, 0.5,
+                {
+                    try {
+                        isoJobURL = ec.getECProperty("report-urls/${ecProcName}", componetJobId)
+                        return true;
+                    } catch (Exception) {
+                        return false;
+                    }
+                }
+        )
+        // 5dbcc1b4-f5af-11e3-86ad-00505603d653
+        //^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$
+
+        // /commander/link/jobDetails/jobs/2971097
+        def extractJobIdRegexPattern = /[0-9]+$/
+        (isoJobURL =~ extractJobIdRegexPattern)[0]
     }
 }
