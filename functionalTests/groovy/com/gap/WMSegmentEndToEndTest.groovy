@@ -48,9 +48,6 @@ public class WMSegmentEndToEndTest {
                         return false;
                     }
                 }
-        )
-        // /commander/link/jobDetails/jobs/2971097
-        def extractJobIdRegexPattern = /[0-9]+$/
-        (isoJobURL =~ extractJobIdRegexPattern)[0]
+        )    
     }
 }
