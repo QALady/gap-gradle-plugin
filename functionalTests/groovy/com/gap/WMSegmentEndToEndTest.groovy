@@ -53,7 +53,7 @@ public class WMSegmentEndToEndTest {
         //^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$
 
         // /commander/link/jobDetails/jobs/2971097
-        def extractJobIdRegexPattern = /[0-9]+$/
+        def extractJobIdRegexPattern = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/
         (isoJobURL =~ extractJobIdRegexPattern)[0]
     }
 }
