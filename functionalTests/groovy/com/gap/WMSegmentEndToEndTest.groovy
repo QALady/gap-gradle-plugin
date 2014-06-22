@@ -17,7 +17,7 @@ public class WMSegmentEndToEndTest {
         def upstreamJobId = ec.runProcedureSync("Watchmen Test Segments:Component Segment", ['gapGradlePluginVersion': pluginVersionUnderTest])
         assertEquals("success", ec.getJobStatus(upstreamJobId).outcome.toString())
 
-        String downstreamSVNJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment")
+        //String downstreamSVNJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment")
         //assertTrue(downstreamSVNJobID.length() > 0)
 
         waitForDownstreamJobToComplete( downstreamSVNJobID)
