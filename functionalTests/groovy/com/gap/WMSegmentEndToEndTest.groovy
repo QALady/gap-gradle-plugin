@@ -17,14 +17,14 @@ public class WMSegmentEndToEndTest {
         def upstreamJobId = ec.runProcedureSync("Watchmen Test Segments:Component Segment", ['gapGradlePluginVersion': pluginVersionUnderTest])
         assertEquals("success", ec.getJobStatus(upstreamJobId).outcome.toString())
 
-        //String downstreamSVNJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment")
-        //assertTrue(downstreamSVNJobID.length() > 0)
+        String downstreamSVNJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment")
+        assertTrue(downstreamSVNJobID.length() > 0)
 
         waitForDownstreamJobToComplete( downstreamSVNJobID)
         assertEquals("success", ec.getJobStatus(downstreamSVNJobID).outcome.toString())
 
         String downstreamGitJobID = getDownstreamJobId(upstreamJobId, "Watchmen Test Segments:ISO Segment Git")
-        //assertTrue(downstreamGitJobID.length() > 0)
+        assertTrue(downstreamGitJobID.length() > 0)
 
         waitForDownstreamJobToComplete( downstreamGitJobID)
         assertEquals("success", ec.getJobStatus(downstreamGitJobID).outcome.toString())
@@ -52,10 +52,12 @@ public class WMSegmentEndToEndTest {
         // 5dbcc1b4-f5af-11e3-86ad-00505603d653
         
         //^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$
+        //[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+        //[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}
 
         // /commander/link/jobDetails/jobs/2971097
 
-        def extractJobIdRegexPattern = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/
+        def extractJobIdRegexPattern = /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/
         (isoJobURL =~ extractJobIdRegexPattern)[0]
     }
 }
