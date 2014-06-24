@@ -39,7 +39,7 @@ public class WMSegmentEndToEndTest {
 
     private String getDownstreamJobId(componetJobId, ecProcName) {
         def isoJobURL = ""
-        Util.executeWithRetry(3, 0.5,
+        Util.executeWithRetry(8, 0.5,
                 {
                     try {
                         isoJobURL = ec.getECProperty("report-urls/${ecProcName}", componetJobId)
