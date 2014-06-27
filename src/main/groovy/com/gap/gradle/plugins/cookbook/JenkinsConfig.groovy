@@ -10,4 +10,5 @@ class JenkinsConfig {
     def knifeUser
     def knifeAuthToken
     def knifeJobName
+    def knifeCleanUpJobName
 }
