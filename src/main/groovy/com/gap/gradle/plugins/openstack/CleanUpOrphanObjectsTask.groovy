@@ -5,8 +5,6 @@ import com.gap.gradle.jenkins.JenkinsRunner
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 
@@ -19,9 +17,7 @@ import org.gradle.api.Project
 ])
 class CleanUpOrphanObjectsTask extends WatchmenTask  {
     private Project project
-    private Log log = LogFactory.getLog(CleanUpOrphanObjectsTask)
-
-
+    
     CleanUpOrphanObjectsTask(project) {
         super(project)
         this.project = project

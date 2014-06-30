@@ -5,8 +5,6 @@ import org.apache.tools.ant.types.Path.PathElement
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-import com.gap.gradle.extensions.GapAntHelperConfig
-
 class GapAntHelperPlugin implements Plugin<Project>{
 
 	@Override
