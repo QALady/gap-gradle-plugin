@@ -14,7 +14,7 @@ class ECClient {
         def procedure = parseProcedureName(fullProcedureName)
         def command = buildShellCommand(procedure.projectName,procedure.procedureName,params)
         def jobId = shellCommand.execute(command)
-        Util.executeWithRetry(10, 0.5, {getJobStatus(jobId).status == 'completed'})
+        Util.executeWithRetry(30, 0.5, {getJobStatus(jobId).status == 'completed'})
         jobId
     }
 
