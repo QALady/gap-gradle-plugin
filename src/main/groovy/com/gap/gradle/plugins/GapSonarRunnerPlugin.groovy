@@ -42,6 +42,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                 property "sonar.dynamicAnalysis", "reuseReports"
                 property "sonar.java.coveragePlugin", "jacoco"
                 property "sonar.java.jacoco.reportPath", project.jacoco.reportsDir
+                property "sonar.issuesReport.html.enable", "true"
                 if (isLocal()) {
                     property "sonar.analysis.mode", "preview"
                 } else {
