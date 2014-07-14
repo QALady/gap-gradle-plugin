@@ -2,7 +2,7 @@ package com.gap.pipeline
 
 class ProdPrepareConfig {
 	final static String FILE_NAME = "prodDeployParameters.json"
-	final static def SHA1_PATTERN = /\b([a-f0-9]{40})\b/
+	final static def SHA1_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
     def sha1Ids // comma separated list of sha Ids given in as input.
     def roleName
     def cookbookName
