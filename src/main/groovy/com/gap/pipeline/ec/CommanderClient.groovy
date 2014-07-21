@@ -92,9 +92,7 @@ class CommanderClient {
                           getSegmentConfigPropertyValue('workingDir'),
                           getSegmentConfigPropertyValue('ciDir'),
                           getSegmentConfigPropertyValue('gradleFile'),
-                          isManualSegment(),
-                          getSegmentConfigPropertyValue('projectName'),
-                          getSegmentConfigPropertyValue('procedureName'))
+                          isManualSegment())
     }
 
     private boolean isManualSegment() {

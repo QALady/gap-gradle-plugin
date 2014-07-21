@@ -25,8 +25,6 @@ class SegmentRegistry {
         setSegmentRegistryValue(segment, 'ciDir', segmentConfig.ciDir)
         setSegmentRegistryValue(segment, 'gradleFile', segmentConfig.gradleFile)
         setSegmentRegistryValue(segment, 'isManual', segmentConfig.isManual.toString())
-        setSegmentRegistryValue(segment, 'projectName', segmentConfig.projectName)
-        setSegmentRegistryValue(segment, 'procedureName', segmentConfig.procedureName)
 
         ivyInfo.identifiers().each{ ivyId ->
             setIdentifierRegistryValue(ivyId, segment)
