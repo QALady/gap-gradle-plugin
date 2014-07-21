@@ -15,6 +15,8 @@ class SegmentRegistry {
     void populate(ivyInfo) {
         def segmentConfig = commander.getCurrentSegmentConfig()
         def segment = commander.getCurrentSegment()
+        def ecProjectName = commander.getECProperty('/myJob/projectName')
+-       def ecProcedureName = commander.getECProperty('/myJob/liveProcedure')
 
         logger.info("populating segment registry for current segment ${segment}")
 
@@ -25,6 +27,8 @@ class SegmentRegistry {
         setSegmentRegistryValue(segment, 'ciDir', segmentConfig.ciDir)
         setSegmentRegistryValue(segment, 'gradleFile', segmentConfig.gradleFile)
         setSegmentRegistryValue(segment, 'isManual', segmentConfig.isManual.toString())
+        setSegmentRegistryValue(segment, 'projectName', ecProjectName)
+        setSegmentRegistryValue(segment, 'procedureName', ecProcedureName)
 
         ivyInfo.identifiers().each{ ivyId ->
             setIdentifierRegistryValue(ivyId, segment)
