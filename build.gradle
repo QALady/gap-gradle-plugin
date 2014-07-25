@@ -163,7 +163,7 @@ uploadFunctionalTest {
 }
 
 task writeVersionToEC(type: Exec) {
-  commandLine "ectool", "setProperty", "/server/watchmen_config/gradlePluginVersion", "'$version'"
+  commandLine "ectool", "setProperty", "/myProject/gradlePluginVersion", "$version"
 
   standardOutput = new ByteArrayOutputStream()
 
