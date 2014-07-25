@@ -161,3 +161,17 @@ uploadFunctionalTest {
         add project.repositories.watchmen_dev_local
     }
 }
+
+task writeVersionToEC(type: Exec) {
+  commandLine "ectool", "setProperty", "/server/watchmen_config/gradlePluginVersion", "'$version'"
+
+  standardOutput = new ByteArrayOutputStream()
+
+  ext.output = {
+    return standardOutput.toString()
+  }
+}
+
+writeVersionToEC.doLast {
+  println standardOutput;
+}
