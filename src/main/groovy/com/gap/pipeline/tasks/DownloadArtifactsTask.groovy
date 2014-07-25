@@ -44,7 +44,7 @@ class DownloadArtifactsTask extends com.gap.pipeline.tasks.WatchmenTask {
         project.copy {
             from project.configurations._watchmenInternal
             into project.destination
-            rename(/([^-]+).+(\.[a-z]+)/, '$1$2')
+            rename(/(.+)-.+(\.[a-z]+)/, '$1$2')
         }
     }
 
