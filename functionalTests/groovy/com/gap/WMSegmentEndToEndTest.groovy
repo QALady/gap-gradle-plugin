@@ -50,9 +50,8 @@ public class WMSegmentEndToEndTest {
                 }
         )
 
-        // /commander/link/jobDetails/jobs/5dbcc1b4-f5af-11e3-86ad-00505603d653
-
-        def extractJobIdRegexPattern = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+        
+     def extractJobIdRegexPattern = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
 
         (isoJobURL =~ extractJobIdRegexPattern)[0]
     }
