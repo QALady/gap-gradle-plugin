@@ -29,7 +29,8 @@ class DownloadArtifactsTaskTest {
     public void configure_shouldAddWatchmenInternalConfigurationToProject(){
         Project project = ProjectBuilder.builder().build()
         project.destination = 'dest'
-        project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
+        //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
+        project.artifactCoordinates="ivy.group:ivyname:1234"
         project.artifactConfiguration = "ivyConfig"
 
         def task = new DownloadArtifactsTask(project)
@@ -42,7 +43,8 @@ class DownloadArtifactsTaskTest {
     public void configure_shouldAddDependencyToConfiguration_whenRequiredParametersAreGiven(){
         Project project = ProjectBuilder.builder().build()
         project.destination = 'dest'
-        project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
+        //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
+        project.artifactCoordinates="ivy.group:ivyname:1234"
         project.artifactConfiguration = "ivyConfig"
 
         def task = new DownloadArtifactsTask(project)
@@ -50,7 +52,8 @@ class DownloadArtifactsTaskTest {
 
         assertThat(project.configurations._watchmenInternal.dependencies.group, is(["ivy.group"]))
         assertThat(project.configurations._watchmenInternal.dependencies.name, is(["ivyname"]))
-        assertThat(project.configurations._watchmenInternal.dependencies.version, is(["7e184eca-0b87-11e4-8dba-00505625f614"]))
+        //assertThat(project.configurations._watchmenInternal.dependencies.version, is(["7e184eca-0b87-11e4-8dba-00505625f614"]))
+        assertThat(project.configurations._watchmenInternal.dependencies.version, is(["1234"]))
         assertThat(project.configurations._watchmenInternal.dependencies.configuration, is(["ivyConfig"]))
     }
 
@@ -60,7 +63,8 @@ class DownloadArtifactsTaskTest {
         exception.expectMessage("Missing required parameter: 'artifactConfiguration'")
         Project project = ProjectBuilder.builder().build()
         project.destination = 'dest'
-        project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
+        //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
+        project.artifactCoordinates="ivy.group:ivyname:1234"
         def task = new DownloadArtifactsTask(project)
         task.configure()
     }
@@ -83,7 +87,8 @@ class DownloadArtifactsTaskTest {
         exception.expectMessage("Missing required parameter: 'destination'")
 
         Project project = ProjectBuilder.builder().build()
-        project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
+        //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
+        project.artifactCoordinates="ivy.group:ivyname:1234"
         project.artifactConfiguration = "ivyConfig"
         def task = new DownloadArtifactsTask(project)
         task.configure()
@@ -108,7 +113,8 @@ class DownloadArtifactsTaskTest {
         project.destination = destinationFolder.root.path
         project.configurations.create('_watchmenInternal')
 
-        project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile-7e184eca-0b87-11e4-8dba-00505625f614.tmp')
+        //project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile-7e184eca-0b87-11e4-8dba-00505625f614.tmp')
+        project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile.tmp')
 
         def task = new DownloadArtifactsTask(project)
         task.execute()
@@ -122,7 +128,8 @@ class DownloadArtifactsTaskTest {
         project.destination = destinationFolder.root.path
         project.configurations.create('_watchmenInternal')
 
-        project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile-7e184eca-0b87-11e4-8dba-00505625f614.tmp')
+        //project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile-7e184eca-0b87-11e4-8dba-00505625f614.tmp')
+        project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile-123.4.1234.tmp')
 
         def task = new DownloadArtifactsTask(project)
         task.execute()
