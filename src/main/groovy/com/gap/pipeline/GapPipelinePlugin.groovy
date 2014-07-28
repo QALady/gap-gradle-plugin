@@ -57,6 +57,15 @@ class GapPipelinePlugin implements Plugin<Project> {
         project.task("getResolvedVersion") << {
             new GetResolvedVersionTask(project).execute()
         }
+
+        // Apply this to get rid of diamond dependency issue between components
+        /*
+        if(project.hasProperty("failOnVersionConflict")) {
+            project.configurations.all {
+                resolutionStrategy.failOnVersionConflict()
+            }
+        }
+        */
     }
 
     private configureTasksRequiredByWatchmenSegment(Project project) {
