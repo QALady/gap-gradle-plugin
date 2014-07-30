@@ -8,10 +8,12 @@ import com.gap.pipeline.ec.CommanderClient
 class PublishCookbookToArtifactoryTask {
     private Project project
     def shellCommand
+    private def commanderClient
 
     PublishCookbookToArtifactoryTask(Project project){
         this.project = project
         this.shellCommand = new ShellCommand()
+        this.commanderClient = commanderClient
     }
 
     void execute() {
@@ -54,6 +56,7 @@ class PublishCookbookToArtifactoryTask {
           timeStamp = today.format("yyyyMMddHHmmss")
         }
         project.version = "${json['version']}.${timeStamp}"
+        commanderClient.setECProperty("/myJob/version", project.version)
     }
 
     private boolean isLocal() {
