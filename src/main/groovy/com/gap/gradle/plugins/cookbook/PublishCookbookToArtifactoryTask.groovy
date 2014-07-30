@@ -13,7 +13,7 @@ class PublishCookbookToArtifactoryTask {
     PublishCookbookToArtifactoryTask(Project project){
         this.project = project
         this.shellCommand = new ShellCommand()
-        this.commanderClient = commanderClient
+        this.commanderClient = new CommanderClient()
     }
 
     void execute() {
@@ -60,6 +60,6 @@ class PublishCookbookToArtifactoryTask {
     }
 
     private boolean isLocal() {
-        !new CommanderClient().isRunningInPipeline()
+        !commanderClient.isRunningInPipeline()
     }
 }
