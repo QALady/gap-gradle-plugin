@@ -28,6 +28,9 @@ class SegmentRegistry {
 
         ivyInfo.identifiers().each{ ivyId ->
             setIdentifierRegistryValue(ivyId, segment)
+            if(ivyId == 'resolvedDependencies'){
+                commander.setECProperty("resolvedDependencies", segment)
+            }
         }
     }
 
