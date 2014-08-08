@@ -32,6 +32,9 @@ class ConfigUtil {
         def target = project
         // walk until the leaf property
         for (int i = 0; i < segments.size() - 1; i++) {
+            if(!target.hasProperty("${segments[i]}")) {
+                return;
+            }
             target = target."${segments[i]}"
         }
         // set value on leaf property

@@ -10,6 +10,7 @@ import org.junit.Test
 
 import static helpers.Assert.shouldExecuteTask
 import static org.hamcrest.Matchers.*
+import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertThat
 
 class OpenStackCleanUpPluginTest {
@@ -36,14 +37,14 @@ class OpenStackCleanUpPluginTest {
     }
 
     @Test
-    void shouldReadCredentialsFromConfigFile() {
+    void shouldSetConfigurationFromConfigFile() {
         new File(OpenStackCleanUpPlugin.CONFIG_FILE).write(
-            "jenkins.knifeCleanUpJobName=dummyJobName\n"
+            "jenkins.knifeCleanUpJobName=dummyJobName\nchef.environment=tdev"
         )
         def project = ProjectBuilder.builder().build()
         project.apply plugin: 'openstack-cleanup'
+        assertFalse(project.hasProperty("chef"))
         assertThat(project.jenkins.knifeCleanUpJobName, equalTo("dummyJobName"))
-
     }
 
     @Test
