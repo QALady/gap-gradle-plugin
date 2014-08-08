@@ -38,12 +38,11 @@ class OpenStackCleanUpPluginTest {
     @Test
     void shouldReadCredentialsFromConfigFile() {
         new File(OpenStackCleanUpPlugin.CONFIG_FILE).write(
-            "jenkins.knifeCleanUpJobName=dummyJobName\n"
+            "jenkins.knifeCleanUpJobName=dummyJobName\nchef.environment=tdev"
         )
         def project = ProjectBuilder.builder().build()
         project.apply plugin: 'openstack-cleanup'
         assertThat(project.jenkins.knifeCleanUpJobName, equalTo("dummyJobName"))
-
     }
 
     @Test
