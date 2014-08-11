@@ -80,13 +80,13 @@ class PrepareForProductionDeployTaskTest {
         prepareForProductionDeployTask.validate()
     }
 
-    @Test
+    /*@Test
     void shouldThrowException_whenShaIdsIsNotProvided (){
         expectedException.expect(Exception)
         expectedException.expectMessage("Missing required parameter: 'prodPrepare.sha1Ids'")
         project.prodPrepare.sha1Ids = null
         prepareForProductionDeployTask.validate()
-    }
+    }*/
 
     @Test
     void shouldCreateArtifactWithInputParameters () {
