@@ -120,6 +120,10 @@ class GapPipelinePlugin implements Plugin<Project> {
                 getCookbookVersions(project.configurations).each() { name, version -> println name + "," + version }
             }
 
+            project.task('getCookbookShaId') << {
+                getCookbookShaId(project.configurations).each() {sha1ID -> println sha1ID}
+            }
+
         }
 
     }
@@ -165,6 +169,22 @@ class GapPipelinePlugin implements Plugin<Project> {
             }
         }
         return versions
+    }
+
+    def getCookbookShaId(configurations) {
+        def sha1ID = "";
+        if (configurations.hasProperty('cookbooks')) {
+            configurations.cookbooks.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+                // Skip non-txt files
+                if (!(artifact.file.path =~ /\.txt$/)) {
+                    return
+                }
+                String fileContents = new File(artifact.file.path).text
+                def cookbookDetails = fileContents.split ("\n")
+                sha1ID = cookbookDetails[0]
+            }
+        }
+        return sha1ID
     }
 
 }
