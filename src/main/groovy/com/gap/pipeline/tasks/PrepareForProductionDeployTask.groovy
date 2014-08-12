@@ -71,7 +71,7 @@ class PrepareForProductionDeployTask extends WatchmenTask {
 
     def validate() {
         super.validate()
-		def sha1IdList = splitOnCommas(project.prodPrepare.sha1Ids)
+		/*def sha1IdList = splitOnCommas(project.prodPrepare.sha1Ids)
         sha1IdList.findAll {
             if(!(it ==~ ProdPrepareConfig.SHA1_PATTERN)) {
                 throw new InvalidSHA1IDException("Invalid SHA1 id: ${it}")
@@ -80,7 +80,7 @@ class PrepareForProductionDeployTask extends WatchmenTask {
         }
 		if (!(project.prodPrepare.cookbookSha1Id ==~ ProdPrepareConfig.SHA1_PATTERN)) {
 			throw new InvalidSHA1IDException("Invalid SHA1 id: ${project.prodPrepare.cookbookSha1Id}")
-		}
+		}*/
     }
 
     private def splitOnCommas(stringToSplit) {
