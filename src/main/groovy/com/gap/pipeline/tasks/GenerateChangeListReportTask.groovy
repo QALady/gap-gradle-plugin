@@ -8,9 +8,9 @@ import com.gap.pipeline.tasks.annotations.RequiredParameters
 import org.apache.commons.logging.LogFactory
 
 @RequiredParameters([
-@Require(parameter = 'prodPrepare.sha1Ids', description = "SHA ID's of the chef objects to promote"),
+//@Require(parameter = 'prodPrepare.sha1Ids', description = "SHA ID's of the chef objects to promote"),
 @Require(parameter = 'prodPrepare.appVersion', description = "Version of the application that should be deployed in the prod node."),
-@Require(parameter = 'prodPrepare.cookbookSha1Id', description = "Application promoted cookbook sha1Id in git"),
+//@Require(parameter = 'prodPrepare.cookbookSha1Id', description = "Application promoted cookbook sha1Id in git"),
 @Require(parameter = 'prodPrepare.cookbookName', description = "Application cookbook name")
 
 ])
