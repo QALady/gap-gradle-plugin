@@ -122,7 +122,7 @@ class GapPipelinePlugin implements Plugin<Project> {
             }
 
             project.task('resolveCookbookShaId') << {
-                getCookbookShaIdAndGitUrl(project.configurations).each() { name, sha1ID -> println name + "," + sha1ID}
+                getCookbookDetails(project.configurations).each() { name, sha1ID -> println name + "," + sha1ID}
             }
 
         }
