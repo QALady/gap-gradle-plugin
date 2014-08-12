@@ -175,25 +175,26 @@ class GapPipelinePlugin implements Plugin<Project> {
     def getCookbookDetails(configurations) {
         def cookbookInfo = [:]
         def name = ""
+        def sha1ID = ""
         if (configurations.hasProperty('cookbooks')) {
             configurations.cookbooks.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-                // Skip non-txt files
-                if (artifact.file.path =~ /\.json$/) {
-                    def json = new JsonSlurper().parse(new FileReader(artifact.file.path))
-                    //version = json.version
-                    name = json.name
-                }
                 if (artifact.file.path =~ /\.txt$/) {
                     String fileContents = new File(artifact.file.path).text
                     def cookbookDetails = fileContents.split ("\n")
-                    cookbookInfo[name] = cookbookDetails[0]
-                    //gitUrl = cookbookDetails[1]
+                    sha1ID = cookbookDetails[0]
+                }
+                if (artifact.file.path =~ /\.json$/) {
+                    def json = new JsonSlurper().parse(new FileReader(artifact.file.path))
+                    name = json.name
+                }
+                if(name != "" && sha1ID != "") {
+                    cookbookInfo[name] = sha1ID
+                    name = ""
+                    sha1ID = ""
                 }
             }
         }
         return cookbookInfo
     }
-
-
 }
 
