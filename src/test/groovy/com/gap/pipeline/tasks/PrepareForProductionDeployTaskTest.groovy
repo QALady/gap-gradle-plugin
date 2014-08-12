@@ -179,7 +179,7 @@ class PrepareForProductionDeployTaskTest {
 		assertEquals(['node1','node2'], json.nodes)
 	}
 
-	@Test
+	/*@Test
 	void shouldThrowException_whenCreateArtifactWithInvalidShaIdParameters () {
 		String invalidSha1Id = "thisisaninvalidshaid"
 		expectedException.expect(InvalidSHA1IDException)
@@ -192,9 +192,9 @@ class PrepareForProductionDeployTaskTest {
 		mockCommanderArtifacts.demand.publishLinks {}
 		mockUploadBuildArtifactsTask.demand.execute {}
 		executeTask()
-	}
+	}*/
 
-	@Test
+	/*@Test
 	void shouldThrowException_whenCreateArtifactWithInvalidCookbookShaId () {
 		String invalidSha1Id = "thisisaninvalidshaid"
 		expectedException.expect(InvalidSHA1IDException)
@@ -208,7 +208,7 @@ class PrepareForProductionDeployTaskTest {
 		mockCommanderArtifacts.demand.publishLinks {}
 		mockUploadBuildArtifactsTask.demand.execute {}
 		executeTask()
-	}
+	}*/
 
     @Test
     void shouldPutRpmNamesIntoJsonAsArray_whenRpmNamesAreCommaSeparated() {
