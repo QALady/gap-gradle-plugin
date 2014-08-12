@@ -6,6 +6,7 @@ import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+//CookbookConfig cookbookDetail
 
 class GapPipelinePlugin implements Plugin<Project> {
 
@@ -120,8 +121,8 @@ class GapPipelinePlugin implements Plugin<Project> {
                 getCookbookVersions(project.configurations).each() { name, version -> println name + "," + version }
             }
 
-            project.task('getCookbookShaId') << {
-                getCookbookShaId(project.configurations).each() {sha1ID -> println sha1ID}
+            project.task('resolveCookbookShaId') << {
+                getCookbookShaIdAndGitUrl(project.configurations).each() { sha1ID, gitUrl -> println sha1ID + "," + gitUrl}
             }
 
         }
@@ -171,8 +172,8 @@ class GapPipelinePlugin implements Plugin<Project> {
         return versions
     }
 
-    def getCookbookShaId(configurations) {
-        def sha1ID = "";
+    def getCookbookShaIdAndGitUrl(configurations) {
+        def cookbookShaAndGitUrl = [sha1ID : '', gitUrl : '']
         if (configurations.hasProperty('cookbooks')) {
             configurations.cookbooks.resolvedConfiguration.resolvedArtifacts.each { artifact ->
                 // Skip non-txt files
@@ -181,10 +182,11 @@ class GapPipelinePlugin implements Plugin<Project> {
                 }
                 String fileContents = new File(artifact.file.path).text
                 def cookbookDetails = fileContents.split ("\n")
-                sha1ID = cookbookDetails[0]
+                cookbookShaAndGitUrl.sha1ID = cookbookDetails[0]
+                cookbookShaAndGitUrl.gitUrl = cookbookDetails[1]
             }
         }
-        return sha1ID
+        return cookbookShaAndGitUrl
     }
 
 }
