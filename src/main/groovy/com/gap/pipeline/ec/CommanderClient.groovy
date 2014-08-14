@@ -55,7 +55,7 @@ class CommanderClient {
         def procedure = parseProcedureName(fullProcedureName)
         URI uri = new URI(
             "https",
-            "commander.phx.gapinc.dev",
+            "commander.gapinc.dev",
             "/commander/link/runProcedure/projects/${procedure.projectName}/procedures/${procedure.procedureName}",
             null);
         uri.toString()+"?s=Projects"

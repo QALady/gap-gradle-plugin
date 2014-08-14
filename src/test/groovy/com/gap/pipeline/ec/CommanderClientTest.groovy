@@ -75,7 +75,7 @@ public class CommanderClientTest {
 
     @Test
     public void getRunProcedureUrl_shouldGiveExpectedFullyQualifiedUrl() {
-        def expectedProcedureUrl = "https://commander.phx.gapinc.dev/commander/link/runProcedure/projects/My%20Project/procedures/My%20Procedure?s=Projects"
+        def expectedProcedureUrl = "https://commander.gapinc.dev/commander/link/runProcedure/projects/My%20Project/procedures/My%20Procedure?s=Projects"
         assertEquals(expectedProcedureUrl, commander.getRunProcedureUrl("My Project:My Procedure"))
     }
 
@@ -83,7 +83,7 @@ public class CommanderClientTest {
     public void addLinkToRunProcedureInJob_shouldLinkToRunProcedureUrlInCurrentJob(){
         environmentStub.setValue('COMMANDER_JOBID', "1345555")
         commander.addLinkToRunProcedureInJob('Run Procedure Link', 'My Project:My Procedure')
-        verify(mockShellCommand).execute(['ectool', 'setProperty', '/jobs[1345555]/report-urls/Run Procedure Link', 'https://commander.phx.gapinc.dev/commander/link/runProcedure/projects/My%20Project/procedures/My%20Procedure?s=Projects'])
+        verify(mockShellCommand).execute(['ectool', 'setProperty', '/jobs[1345555]/report-urls/Run Procedure Link', 'https://commander.gapinc.dev/commander/link/runProcedure/projects/My%20Project/procedures/My%20Procedure?s=Projects'])
     }
 
 	@Test

@@ -17,7 +17,7 @@ class JenkinsRunner {
 		this.timeoutMillis = timeoutMillis
 		this.commanderClient = new CommanderClient()
 	}
-	
+
 	def runJob(jobName, jobParams = null) {
 		if (jobParams) {
 			buildNumber = jenkinsClient.startJobWithParams(jobName, jobParams)
@@ -54,7 +54,7 @@ class JenkinsRunner {
 	def getECJobDescription() {
         """
             Running on behalf of EC UserID - ${commanderClient.getUserId()?.toString()} and
-            <a href='https://commander.phx.gapinc.dev/commander/link/jobDetails/jobs/${commanderClient.getJobId()}'>triggered by this EC Job</a>
+            <a href='https://commander.gapinc.dev/commander/link/jobDetails/jobs/${commanderClient.getJobId()}'>triggered by this EC Job</a>
         """
 	}
 }
