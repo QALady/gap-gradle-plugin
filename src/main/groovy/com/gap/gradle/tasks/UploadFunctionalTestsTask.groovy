@@ -13,13 +13,13 @@ class UploadFunctionalTestsTask extends WatchmenTask {
         super(project)
         this.project = project
     }
+
     def execute() {
         makeAZip()
     }
 
-
     private void makeAZip(){
-/*
+
         project.task("ZipFT", type: Zip){
             archiveName : "functional-tests.zip"
             destinationDir: "${project.projectDir}"
@@ -30,8 +30,8 @@ class UploadFunctionalTestsTask extends WatchmenTask {
         println project.projectDir
         def task = project.tasks.findByName('ZipFT')
         task.execute()
-
-      */
+    }
+      /*
         String zipFileName = "functional-tests.zip"
         String inputDir = "${project.projectDir}/functional-tests"
 

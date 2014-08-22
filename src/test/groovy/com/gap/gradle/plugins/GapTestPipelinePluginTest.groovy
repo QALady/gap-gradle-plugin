@@ -16,39 +16,12 @@ class GapTestPipelinePluginTest {
     @Before
     void setup() {
         project = ProjectBuilder.builder().build()
+    }
+
+    @Test
+    public void shouldVerify_AllTasksExists(){
+        project.apply plugin: 'base'
         project.apply plugin: 'gap-test-pipeline'
+        taskShouldExist('packageFunctionalTests', project)
     }
-
-    @Test
-    public void UploadFunctionalTestsTaskShouldExist(){
-        taskShouldExist('uploadFunctionalTestsTask', project)
-    }
-
-    @Test
-    public void isZipCreated(){
-
-        def task = project.tasks.findByName('uploadFunctionalTestsTask')
-
-        //we need to create the folder functional test for the test project
-        //and add a dummy file
-        File createFolder = new File("${project.projectDir}/functional-tests")
-        FileUtils.forceMkdir(createFolder)
-        File createFiles = new File("${project.projectDir}/functional-tests/something.txt")
-        FileUtils.writeStringToFile(createFiles,"test")
-
-        task.execute()
-
-        File theZip = new File("${project.projectDir}/functional-tests/functional-tests.zip")
-     //   assertTrue("The functional test artifact file was not created", theZip.isFile())
-    }
-
-
-/*
-    @Test
-    public void isZipUploaded(){
-
-        def task = project.tasks.findByName('watchmenUploadFunctionalTests')
-        task.execute()
-    }
-*/
 }
