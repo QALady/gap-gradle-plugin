@@ -7,27 +7,35 @@ import org.junit.Test
 
 import static helpers.Assert.taskShouldExist
 
-class GapWMFunctionaltestRunnerTest {
+class GapTestPipelinePluginTest {
 
     Project project
 
     @Before
     void setup() {
         project = ProjectBuilder.builder().build()
-        project.apply plugin: 'gap-wm-functionaltest-runner'
+        project.apply plugin: 'gap-test-pipeline'
     }
 
     @Test
-    public void uploadFunctionalTestsShoulExistTask(){
-        taskShouldExist('watchmenUploadFunctionalTests', project)
+    public void UploadFunctionalTestsTaskShouldExist(){
+        taskShouldExist('uploadFunctionalTestsTask', project)
     }
 /*
     @Test
-    public void zipIsCreatedTask(){
+    public void isZipCreated(){
 
         def task = project.tasks.findByName('watchmenUploadFunctionalTests')
         task.execute()
     }
 */
 
+/*
+    @Test
+    public void isZipUploaded(){
+
+        def task = project.tasks.findByName('watchmenUploadFunctionalTests')
+        task.execute()
+    }
+*/
 }

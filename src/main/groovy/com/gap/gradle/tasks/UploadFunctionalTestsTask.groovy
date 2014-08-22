@@ -3,9 +3,9 @@ package com.gap.gradle.tasks
 import com.gap.pipeline.tasks.WatchmenTask
 import org.gradle.api.Project
 
-class WatchmenUploadFunctionalTestsTask extends WatchmenTask {
+class UploadFunctionalTestsTask extends WatchmenTask {
     Project project
-    public WatchmenUploadFunctionalTestsTask(Project project){
+    public UploadFunctionalTestsTask(Project project){
         super(project)
         this.project = project
     }
@@ -24,5 +24,17 @@ class WatchmenUploadFunctionalTestsTask extends WatchmenTask {
         }
 
     }
+
+    private void uploadAZip(){
+        task ZipFT(type: Zip) {
+            archiveName : "functional-test.zip"
+            destinationDir: project.getProjectDir().text
+            from ("${project.projectDir}/functional-tests"){
+                include '** / *'
+            }
+        }
+
+    }
     */
+    
 }
