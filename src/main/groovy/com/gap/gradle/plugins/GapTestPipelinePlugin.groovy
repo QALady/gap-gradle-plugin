@@ -11,11 +11,11 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 
 		project.tasks.add(name:'packageFunctionalTests', type: Zip) {
 	        classifier = 'functionTests'
-	        from ("${project.projectDir}/functional-tests")
+	        from ("${project.projectDir}/functionalTests")
 	        include '**/*'
 	  	}
 
-	    if (project.plugins.hasPlugin('java')) {
+	    if (project.plugins.hasPlugin('base')) {
 	      	project.configure(project) {
                 configurations {
                     functionTests
