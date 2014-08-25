@@ -11,6 +11,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
     void apply(Project project) {
 
 		project.tasks.add(name:'packageFunctionalTests', type: Zip) {
+	        appendix = 'functionalTests'
 	        classifier = 'tests'
 	        from ("${project.projectDir}/functionalTests")
 	        include '**/*'
@@ -18,6 +19,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 
 	  	/*
 	  	project.tasks.add(name:'packageIntegrationTests', type: Zip) {
+	        appendix = 'integrationTests'
 	        classifier = 'tests'
 	        from ("${project.projectDir}/integrationTests")
 	        include '*'
@@ -49,12 +51,17 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 			}
 		}
 		
-		
- 		project.tasks.add(name:'downloadFunctionalTests', type: Copy) {
-	        from project.configurations.each { config ->
-	        	config.filter{ it.name.contains('functionTests')}
-	        }
-	        into 'functionalTests'
-	  	}
-	}
+		//Downloads functionalTests archive by looking at all configuraitons and unzips to functionalTests dir
+ 		project.task('downloadFunctionalTests') << {
+ 			project.configurations.each { config ->
+ 				configurations[config.name].files.each{ file ->
+		         if(file.name ==~ /.*-functionalTests-.*-tests\.zip/ )) {
+		         	copy {
+		         		from zipTree(file.path)
+		            	into 'functionalTests'
+	        		}
+		 		 }
+	  		}
+      	}
+    }
 }
