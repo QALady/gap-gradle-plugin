@@ -1,10 +1,10 @@
 package com.gap.gradle.plugins
 
-//import com.gap.gradle.tasks.UploadFunctionalTestsTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.GradleBuild
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -57,13 +57,19 @@ class GapTestPipelinePlugin implements Plugin<Project> {
  		project.task('downloadFunctionalTests') << {
  			project.configurations.each { config ->
  				configurations[config.name].files.each{ file ->
-		         if(file.name ==~ /.*-functionalTests-.*-tests\.zip/ ) {
-		         	copy {
-		         		from zipTree(file.path)
-		            	into 'functionalTests'
-	        		}
-		 		 }
-	  		}
+		        	if(file.name ==~ /.*-functionalTests-.*-tests\.zip/ ) {
+		         		copy {
+		         			from zipTree(file.path)
+		            		into 'functionalTests'
+	        			}
+		 		 	}
+	  			}
+      		}
       	}
+
+		project.tasks.add(name: 'executeFunctionalTests', type: GradleBuild, dependsOn: 'downloadFunctionalTests') {
+	        buildFile = "functionalTests/build.gradle"
+			tasks << 'runFunctionalTests'
+	  	}
     }
 }

@@ -40,4 +40,19 @@ class Assert {
             assertThat(ex.dump(), containsString(expectedMessage))
         }
     }
+
+    static void taskShouldDependOn(task, requiredDependency, project) {
+        for (def dependency : project.tasks.findByName(task).dependsOn) {
+            if (dependency == requiredDependency) {
+                return
+            } else if (dependency instanceof List) {
+                for (def d : dependency) {
+                    if (d == requiredDependency) {
+                        return
+                    }
+                }
+            }
+        }
+        fail("Task ${task} does not declare a dependency on ${requiredDependency}")
+    }
 }

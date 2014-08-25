@@ -8,6 +8,7 @@ import org.junit.Test
 import static org.junit.Assert.assertTrue
 
 import static helpers.Assert.taskShouldExist
+import static helpers.Assert.taskShouldDependOn
 
 class GapTestPipelinePluginTest {
 
@@ -25,6 +26,8 @@ class GapTestPipelinePluginTest {
         taskShouldExist('packageFunctionalTests', project)
         taskShouldExist('uploadTestArchives', project)
         taskShouldExist('downloadFunctionalTests', project)
+        taskShouldExist('executeFunctionalTests', project)
+        taskShouldDependOn('executeFunctionalTests', 'downloadFunctionalTests', project)
     }
 
  /*   @Test
