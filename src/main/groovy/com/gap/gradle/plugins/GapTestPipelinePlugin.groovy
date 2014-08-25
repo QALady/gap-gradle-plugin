@@ -4,27 +4,32 @@ package com.gap.gradle.plugins
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Zip
+import org.gradle.api.tasks.Copy
 
 class GapTestPipelinePlugin implements Plugin<Project> {
 
     void apply(Project project) {
 
 		project.tasks.add(name:'packageFunctionalTests', type: Zip) {
-	        classifier = 'functionTests'
+	        classifier = 'tests'
 	        from ("${project.projectDir}/functionalTests")
 	        include '**/*'
 	  	}
 
+	  	/*
+	  	project.tasks.add(name:'packageIntegrationTests', type: Zip) {
+	        classifier = 'tests'
+	        from ("${project.projectDir}/integrationTests")
+	        include '*'
+	  	} 
+	  	*/
+
 	    if (project.plugins.hasPlugin('base')) {
 	      	project.configure(project) {
                 configurations {
-                    functionTests
+                    testArchives
                 }
-		        uploadFunctionTests {
-		        	//project.configurations.compile.dependencies.each{
-		            //	if (it instanceof org.gradle.api.artifacts.ProjectDependency)
-		            //  		uploadTests.dependsOn(it.dependencyProject.path + ':uploadTests')
-	              	//}
+		        uploadTestArchives {
 		        	repositories {
 		            	ivy {
 			            	layout 'maven'
@@ -37,12 +42,19 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 		    		}
 				}
 
-
-
 		        artifacts {
-		          functionTests packageFunctionalTests
+		          testArchives packageFunctionalTests
+		          //testArchives packageIntegrationTests
 		        }
 			}
 		}
+		
+		
+ 		project.tasks.add(name:'downloadFunctionalTests', type: Copy) {
+	        from project.configurations.each { config ->
+	        	config.filter{ it.name.contains('functionTests')}
+	        }
+	        into 'functionalTests'
+	  	}
 	}
-	}
+}

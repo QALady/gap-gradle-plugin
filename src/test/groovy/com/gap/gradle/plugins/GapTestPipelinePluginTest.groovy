@@ -16,14 +16,15 @@ class GapTestPipelinePluginTest {
     @Before
     void setup() {
         project = ProjectBuilder.builder().build()
+        project.apply plugin: 'base'
+        project.apply plugin: 'gap-test-pipeline'
     }
 
     @Test
     public void shouldVerify_AllTasksExists(){
-        project.apply plugin: 'java'
-        project.apply plugin: 'gap-test-pipeline'
         taskShouldExist('packageFunctionalTests', project)
-        taskShouldExist('uploadFunctionTests', project)
+        taskShouldExist('uploadTestArchives', project)
+        taskShouldExist('downloadFunctionalTests', project)
     }
 
  /*   @Test
