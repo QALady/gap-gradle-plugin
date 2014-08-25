@@ -20,8 +20,19 @@ class GapTestPipelinePluginTest {
 
     @Test
     public void shouldVerify_AllTasksExists(){
-        project.apply plugin: 'base'
+        project.apply plugin: 'java'
         project.apply plugin: 'gap-test-pipeline'
         taskShouldExist('packageFunctionalTests', project)
+        taskShouldExist('uploadFunctionTests', project)
     }
+
+ /*   @Test
+    public void shouldRun_AllTasks(){
+        project.apply plugin: 'java'
+        project.apply plugin: 'gap-test-pipeline'
+        def task = project.tasks.findByName("uploadFunctionTests")
+        task.execute()
+    }
+
+  */
 }

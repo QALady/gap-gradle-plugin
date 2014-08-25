@@ -17,7 +17,9 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 
 	    if (project.plugins.hasPlugin('java')) {
 	      	project.configure(project) {
-		      	
+                configurations {
+                    functionTests
+                }
 		        uploadFunctionTests {
 		        	//project.configurations.compile.dependencies.each{
 		            //	if (it instanceof org.gradle.api.artifacts.ProjectDependency)
@@ -28,16 +30,14 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 			            	layout 'maven'
 			            	url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
 			            	credentials {
-			                	username "ec-build-snap"
-			                	password "$nap4me"
+			                	username "ec-build"
+			                	password "EC-art!"
 			              	}
 			            }
 		    		}
 				}
 
-				configurations {
-		          functionTests
-		        }
+
 
 		        artifacts {
 		          functionTests packageFunctionalTests
