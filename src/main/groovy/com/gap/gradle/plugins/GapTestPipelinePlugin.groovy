@@ -66,7 +66,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
  			project.configurations.each { config ->
  				project.configurations[config.name].files.each{ file ->
 		        	if(file.name ==~ /.*-functionalTests-.*-tests\.zip/ ) {
-		         		copy {
+		         		project.copy {
 		         			from zipTree(file.path)
 		            		into 'functionalTests'
 	        			}
