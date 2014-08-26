@@ -11,6 +11,24 @@ import java.util.regex.Pattern
 class GapTestPipelinePlugin implements Plugin<Project> {
 
     void apply(Project project) {
+    	def artifactoryUrl = "http://artifactory.gapinc.dev/artifactory"
+    	project.repositories {
+    		ivy {
+				name "artifactory"
+    			url "${artifactoryUrl}/local-non-prod"
+	            credentials {
+                    username 'ec-build'
+                    password 'EC-art!'
+                }
+    		}
+    		maven {
+		        url "${artifactoryUrl}/remote-repos"
+		    }
+		    ivy {
+		        layout "maven"
+		        url "${artifactoryUrl}/remote-repos"
+		    }
+    	}
 
 		project.tasks.add(name:'packageFunctionalTests', type: Zip) {
 	        appendix = 'functionalTests'
@@ -35,14 +53,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
                 }
 		        uploadTestArchives {
 		        	repositories {
-		            	ivy {
-			            	layout 'maven'
-			            	url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
-			            	credentials {
-			                	username "ec-build"
-			                	password "EC-art!"
-			              	}
-			            }
+        				add project.repositories.artifactory
 		    		}
 				}
 
