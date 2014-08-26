@@ -64,7 +64,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 		//Downloads functionalTests archive by looking at all configuraitons and unzips to functionalTests dir
  		project.task('downloadFunctionalTests') << {
  			project.configurations.each { config ->
- 				configurations[config.name].files.each{ file ->
+ 				project.configurations[config.name].files.each{ file ->
 		        	if(file.name ==~ /.*-functionalTests-.*-tests\.zip/ ) {
 		         		copy {
 		         			from zipTree(file.path)
