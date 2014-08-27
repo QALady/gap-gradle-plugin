@@ -77,7 +77,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
       	}
 
 		project.tasks.add(name: 'executeFunctionalTests', type: GradleBuild, dependsOn: 'downloadFunctionalTests') {
-	        buildFile = "functionalTests/build.gradle"
+	        buildFile = "ci/functionalTests/build.gradle"
 			tasks << 'runFunctionalTests'
 	  	}
     }
