@@ -17,6 +17,27 @@ class CommanderClient {
         this.environment = environment
     }
 
+    //ITCI-979[Imaad] Started
+    def numberofarguments = 0
+
+    for (int i = 1; hasProperty("label"+i) && hasProperty("url"+i); i++) {
+        if (hasProperty("label"+i) && hasProperty("url"+i)) {
+            numberofarguments ++
+        }
+    }
+
+    task createLinks {
+    }
+
+    createLinks.doLast {
+        def createLinkValues = [:] 
+        for (int j = 1; j <= numberofarguments; j++) {
+            createLinkValues.put(project.property("label"+j),project.property("url"+j))
+        }
+        createLinkValues.each() { label, url -> addLinkToUrl(label, url) }  
+    }
+    //ITCI-979[Imaad] Completed
+
     private def getCurrentProjectName(){
         getECProperty(PROJECT_NAME_PROPERTY).value
     }
