@@ -67,6 +67,10 @@ class GapPipelinePlugin implements Plugin<Project> {
             }
         }
         */
+
+        project.task('createECLinks') << {
+            new CreateECLinksTask(project).execute()
+        }
     }
 
     private configureTasksRequiredByWatchmenSegment(Project project) {
