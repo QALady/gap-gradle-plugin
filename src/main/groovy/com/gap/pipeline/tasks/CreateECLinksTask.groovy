@@ -9,7 +9,6 @@ import org.gradle.api.Project
 class CreateECLinksTask {
     def log = LogFactory.getLog(com.gap.pipeline.tasks.CreateECLinksTask)
     private project
-    CommanderClinet obj = new CommanderClinet()
 
     CreateECLinksTask(project) {
         super(project)
