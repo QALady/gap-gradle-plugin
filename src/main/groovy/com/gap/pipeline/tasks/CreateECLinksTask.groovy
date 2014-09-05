@@ -1,8 +1,9 @@
 package com.gap.pipeline.tasks
 
+import com.gap.pipeline.ec.CommanderClient
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
-
+ 
 class CreateECLinksTask {
     def log = LogFactory.getLog(com.gap.pipeline.tasks.CreateECLinksTask)
     private project
