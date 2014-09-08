@@ -17,8 +17,8 @@ class CreateECLinksTask {
         for (int i = 1; hasProperty("label" + i) && hasProperty("url" + i); i++) {
             ecclient.addLinkToUrl(project.property("label"+i), project.property("url"+i))
         }
-        if(i == 1) {
-            throw new IllegalArgumentException("Please provide arguments as label1,url1,label2,url2 etc")
-        }
+        //if(i == 1) {
+        //    throw new IllegalArgumentException("Please provide arguments as label1,url1,label2,url2 etc")
+        //}
     }
 }
