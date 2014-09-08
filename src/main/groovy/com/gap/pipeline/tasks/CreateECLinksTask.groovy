@@ -9,7 +9,6 @@ class CreateECLinksTask {
     private project
 
     CreateECLinksTask(project) {
-        super(project)
         this.project = project
     }
 
