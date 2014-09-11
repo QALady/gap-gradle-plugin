@@ -71,6 +71,11 @@ class GapPipelinePlugin implements Plugin<Project> {
         project.task('createECLinks') << {
             new CreateECLinksTask(project).execute()
         }
+
+
+        project.task('buildJsonWithAllResolvedVersions') << {
+            new BuildJsonWithAllResolvedVersionsTask(project).execute()
+        }
     }
 
     private configureTasksRequiredByWatchmenSegment(Project project) {
@@ -128,6 +133,7 @@ class GapPipelinePlugin implements Plugin<Project> {
             project.task('resolveCookbookShaId') << {
                 getCookbookDetails(project.configurations).each() { name, sha1ID -> println name + "," + sha1ID}
             }
+
 
         }
 

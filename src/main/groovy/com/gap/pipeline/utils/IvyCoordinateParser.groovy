@@ -16,4 +16,17 @@ class IvyCoordinateParser {
         def parts = coordinates.split(':')
         [group: parts[0], name: parts[1], version: parts[2]]
     }
+
+    def getAppName(String groupName) {
+        return  groupName.substring(groupName.lastIndexOf(".")+1)
+    }
+
+    def getCookbookName(String groupName) {
+        def groupSubstr = groupName.substring(0,groupName.lastIndexOf("."))
+        return groupSubstr.substring(groupSubstr.lastIndexOf(".")+1)
+    }
+
+    def getCookbookVersion(String groupVersion) {
+        return groupVersion.substring(0,groupVersion.lastIndexOf("."))
+    }
 }
