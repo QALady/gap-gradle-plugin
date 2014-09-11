@@ -227,4 +227,18 @@ class GapPipelinePluginTest {
         shouldNotExecuteTask(childProject, 'populateSegmentRegistry', PopulateSegmentRegistryTask)
     }
 
+    @Test
+    void buildJsonWithAllResolvedVersionsTaskIsAddedToTheProject() {
+        taskShouldExist('buildJsonWithAllResolvedVersions', project)
+    }
+
+    @Test
+    void shouldExecuteBuildJsonWithAllResolvedVersionsTask(){
+        def taskMock = new MockFor(BuildJsonWithAllResolvedVersionsTask)
+        taskMock.demand.execute { }
+        taskMock.use {
+            project.tasks.findByName('buildJsonWithAllResolvedVersions').execute()
+        }
+    }
+
 }

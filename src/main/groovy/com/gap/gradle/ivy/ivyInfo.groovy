@@ -52,6 +52,21 @@ class IvyInfo {
         return dependencies as Set
     }
 
+    def Set getDependenciesFromISO() {
+        def dependencies = []
+        project.allprojects.each { subProject ->
+            subProject.configurations.each { config ->
+                config.getIncoming().getResolutionResult().getAllDependencies().each {
+                    //We're selecting dependencies which are requested from ISO segment.
+                    if (it.from.toString() =~ /\.iso/) {
+                        dependencies.add(it.toString())
+                    }
+                }
+            }
+        }
+        return dependencies as Set
+    }
+
 
     private GString getIdentifier(def module) {
         "${module.group}:${module.name}"
