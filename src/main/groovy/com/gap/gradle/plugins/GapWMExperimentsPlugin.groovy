@@ -9,7 +9,7 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.repositories {
             ivy {
-              name "wm-local-non-prod"
+              name "wm_local_non_prod"
               layout "maven"
               url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
               credentials {
@@ -18,11 +18,11 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
               }
             }
             maven {
-                name "wm-maven-remote-repos"
+                name "wm_maven_remote_repos"
                 url "http://artifactory.gapinc.dev/artifactory/remote-repos"
             }
             ivy {
-                name "wm-ivy-remote-repos"
+                name "wm_ivy_remote_repos"
                 layout "maven"
                 url "http://artifactory.gapinc.dev/artifactory/remote-repos"
             }
