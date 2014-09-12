@@ -17,6 +17,15 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
                 password "Ec-art!"
               }
             }
+            maven {
+                name "wm-maven-remote-repos"
+                url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+            }
+            ivy {
+                name "wm-ivy-remote-repos"
+                layout "maven"
+                url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+            }
         }
     }
 }
