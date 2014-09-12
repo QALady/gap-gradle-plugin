@@ -14,7 +14,7 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
               url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
               credentials {
                 username "ec-build"
-                password "Ec-art!"
+                password "EC-art!"
               }
             }
             maven {
