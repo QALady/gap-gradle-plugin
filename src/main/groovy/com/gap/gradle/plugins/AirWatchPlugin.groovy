@@ -92,7 +92,7 @@ class AirWatchPlugin implements Plugin<Project> {
     transactionId
   }
 
-  void createApp(transactionId, appName, appDescription) {
+  Map createApp(transactionId, appName, appDescription) {
     println "\nWill create app in AirWatch using the uploaded chunks..."
 
     project.awClient.beginInstall(transactionId, appName, appDescription)

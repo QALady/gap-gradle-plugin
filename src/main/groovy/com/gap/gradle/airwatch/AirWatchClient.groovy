@@ -43,7 +43,7 @@ class AirWatchClient {
     response.get("TranscationId")
   }
 
-  void beginInstall(String transactionId, String appName, String appDescription) {
+  Map beginInstall(String transactionId, String appName, String appDescription) {
     def body = [
       "TransactionId": transactionId,
       "ApplicationName": appName,
@@ -96,5 +96,4 @@ class AirWatchClient {
       throw new PublishException("AirWatch response was: {${msg}}", e)
     }
   }
-
 }
