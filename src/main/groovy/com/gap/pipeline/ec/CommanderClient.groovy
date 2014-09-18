@@ -136,10 +136,10 @@ class CommanderClient {
     }
 
     def getCredentialsUserName(){
-        shellCommand.execute(['ectool', 'getFullCredential', '"/projects/WM Segment-ITCI-986/credentials/WMArtifactory"', '--value', '"userName"'])
+        shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Segment-ITCI-986/credentials/WMArtifactory""", "--value", """userName"""])
     }
 
     def getCredentialsPassword(){
-        shellCommand.execute(['ectool', 'getFullCredential', '"/projects/WM Segment-ITCI-986/credentials/WMArtifactory"', '--value "password"'])
+        shellCommand.execute(['ectool', 'getFullCredential', '"/projects/WM Segment-ITCI-986/credentials/WMArtifactory"', 'BEGIN { --value "password" }'])
     }
 }
