@@ -134,4 +134,12 @@ class CommanderClient {
     def isRunningInPipeline(){
         getJobId() != null
     }
+
+    def getCredentialsUserName(){
+        shellCommand.execute(['ectool', 'getFullCredential', '"/projects/WM Segment-ITCI-986/credentials/WMArtifactory"', '--value "userName"'])
+    }
+
+    def getCredentialsPassword(){
+        shellCommand.execute(['ectool', 'getFullCredential', '"/projects/WM Segment-ITCI-986/credentials/WMArtifactory"', '--value "password"'])
+    }
 }
