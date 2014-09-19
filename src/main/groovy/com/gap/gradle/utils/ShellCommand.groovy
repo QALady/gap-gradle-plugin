@@ -15,7 +15,7 @@ class ShellCommand {
         this.workingDir = workingDir instanceof File ? workingDir : new File(workingDir)
     }
 
-    def execute(command, log = true, environment = null, logOutputToDebug = true) {
+    def execute(command, environment = null, logOutputToDebug = true) {
         logger.debug("Executing command ${command} ...")
         def proc = command.execute(environment, workingDir)
         def exitCode = proc.waitFor()
