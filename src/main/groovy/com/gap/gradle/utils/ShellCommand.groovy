@@ -15,12 +15,14 @@ class ShellCommand {
         this.workingDir = workingDir instanceof File ? workingDir : new File(workingDir)
     }
 
-    def execute(command, environment = null) {
+    def execute(command, log = true, environment = null, log = true) {
         logger.debug("Executing command ${command} ...")
         def proc = command.execute(environment, workingDir)
         def exitCode = proc.waitFor()
         def output = proc.in.text
-        logger.debug("${output}")
+        if(log) {
+            logger.debug("${output}")
+        }
         if (exitCode == 0) {
             logger.debug("Command completed successfully")
             output
@@ -32,17 +34,6 @@ class ShellCommand {
     }
 
     def executeNoLog(command, environment = null) {
-        logger.debug("Executing command ${command} ...")
-        def proc = command.execute(environment, workingDir)
-        def exitCode = proc.waitFor()
-        def output = proc.in.text
-        if (exitCode == 0) {
-            logger.debug("Command completed successfully")
-            output
-        } else {
-            def errorText = proc.err.text
-            logger.debug("throwing ShellCommandException...")
-            throw new ShellCommandException("Command execution failed! Exit code ${exitCode}: ${errorText}");
-        }
+        execute(command, environment, false)
     }
 }

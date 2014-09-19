@@ -10,6 +10,8 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
   CommanderClient ecclient = new CommanderClient()
   
   void apply(Project project) {
+      def dynamicUserName = ecclient.getCredentialsUserName()
+      def dynamicPassword = ecclient.getCredentialsPassword()
 
       project.repositories {
           ivy {
@@ -17,8 +19,8 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
             layout "maven"
             url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
             credentials {
-              username "ec-build"
-              password "EC-art!"
+              username "$dynamicUserName"
+              password "$dynamicPassword"
             }
           }
           maven {
