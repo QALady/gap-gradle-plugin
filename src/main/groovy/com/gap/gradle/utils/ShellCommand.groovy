@@ -20,7 +20,7 @@ class ShellCommand {
         def proc = command.execute(environment, workingDir)
         def exitCode = proc.waitFor()
         def output = proc.in.text
-        if(log) {
+        if(logOutputToDebug) {
             logger.debug("${output}")
         }
         if (exitCode == 0) {
