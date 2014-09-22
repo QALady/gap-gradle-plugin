@@ -6,6 +6,7 @@ import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import com.gap.pipeline.ec.CommanderClient
 //CookbookConfig cookbookDetail
 
 class GapPipelinePlugin implements Plugin<Project> {
