@@ -8,12 +8,13 @@ import com.gap.pipeline.ec.CommanderClient
 class GapWMExperimentsPlugin implements Plugin<Project> {
 
   CommanderClient ecclient = new CommanderClient()
-  
+
   void apply(Project project) {
+      
+      println "applying GapWMExperimentsPlugin"
+
       def dynamicUserName = ecclient.getCredentialsUserName()
       def dynamicPassword = ecclient.getCredentialsPassword()
-
-      println "applying GapWMExperimentsPlugin"
 
       project.repositories {
           ivy {
