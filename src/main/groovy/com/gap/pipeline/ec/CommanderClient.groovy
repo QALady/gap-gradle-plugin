@@ -137,7 +137,7 @@ class CommanderClient {
   def getArtifactoryUserName() {
     if(isRunningInPipeline()) {
       try {
-        shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Segment-ITCI-986/credentials/WMArtifactory""", "--value", """userName"""])
+        shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Credentials/credentials/WMArtifactory""", "--value", """userName"""])
       } catch(ShellCommandException se) {
         logger.warn(se.getMessage())
         if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
@@ -155,7 +155,7 @@ class CommanderClient {
   def getArtifactoryPassword(){
     if(isRunningInPipeline()) {
       try {
-        shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Segment-ITCI-986/credentials/WMArtifactory""", "--value", """password"""])
+        shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Credentials/credentials/WMArtifactory""", "--value", """password"""])
       } catch(ShellCommandException se) {
         logger.warn(se.getMessage())
         if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
