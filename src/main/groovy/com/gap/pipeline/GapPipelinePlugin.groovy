@@ -11,6 +11,8 @@ import com.gap.pipeline.ec.CommanderClient
 
 class GapPipelinePlugin implements Plugin<Project> {
 
+    CommanderClient ecclient = new CommanderClient()
+
     void apply(Project project) {
         project.extensions.create('prodPrepare', com.gap.pipeline.ProdPrepareConfig)
         project.extensions.create('ivy', IvyConfig)
