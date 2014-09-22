@@ -10,11 +10,9 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
   CommanderClient ecclient = new CommanderClient()
 
   void apply(Project project) {
-      
-      println "applying GapWMExperimentsPlugin"
 
-      def dynamicUserName = ecclient.getCredentialsUserName()
-      def dynamicPassword = ecclient.getCredentialsPassword()
+      def dynamicUserName = ecclient.getArtifactoryUserName()
+      def dynamicPassword = ecclient.getArtifactoryPassword()
 
       project.repositories {
           ivy {
