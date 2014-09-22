@@ -14,10 +14,34 @@ class GapPipelinePlugin implements Plugin<Project> {
         project.extensions.create('prodPrepare', com.gap.pipeline.ProdPrepareConfig)
         project.extensions.create('ivy', IvyConfig)
 
+        def dynamicUserName = ecclient.getArtifactoryUserName()
+        def dynamicPassword = ecclient.getArtifactoryPassword()
+
 
         loadProperties(project, "prodPrepare", "ivy")
 
         configureTasksRequiredByWatchmenSegment(project)
+
+        project.repositories {
+          ivy {
+            name "wm_local_non_prod"
+            layout "maven"
+            url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
+            credentials {
+              username "$dynamicUserName"
+              password "$dynamicPassword"
+            }
+          }
+          maven {
+              name "wm_maven_remote_repos"
+              url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+          }
+          ivy {
+              name "wm_ivy_remote_repos"
+              layout "maven"
+              url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+          }
+        }
 
         project.task('setupBuildDirectories') <<{
             new SetUpBuildDirectoriesTask(project).execute()
