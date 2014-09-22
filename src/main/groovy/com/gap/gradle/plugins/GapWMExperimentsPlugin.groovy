@@ -36,8 +36,8 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
       }
 
       project.task('testCredentials') <<{
-           def userName = ecclient.getCredentialsUserName()
-           def password = ecclient.getCredentialsPassword()
+           def userName = ecclient.getArtifactoryUserName()
+           def password = ecclient.getArtifactoryPassword()
 
            println userName
            println password

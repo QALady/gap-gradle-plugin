@@ -136,7 +136,17 @@ class CommanderClient {
 
   def getArtifactoryUserName() {
     if(isRunningInPipeline()) {
-      getCredentials('username')
+      try {
+        shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Segment-ITCI-986/credentials/WMArtifactory""", "--value", """userName"""])
+      } catch(ShellCommandException se) {
+        logger.warn(se.getMessage())
+        if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
+          logger.warn("Using dummy credentials - Only WM Gralde:Invoke & WM Exec:Run are approved steps to access artifactory credentails.")
+          return "dummy"
+        } else {
+          throw se
+        }
+      }
     } else {
         logger.warn("Credentials are accesible only in pipline")
     }
@@ -144,23 +154,20 @@ class CommanderClient {
 
   def getArtifactoryPassword(){
     if(isRunningInPipeline()) {
-      getCredentials('password')
+      try {
+        shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Segment-ITCI-986/credentials/WMArtifactory""", "--value", """password"""])
+      } catch(ShellCommandException se) {
+        logger.warn(se.getMessage())
+        if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
+          logger.warn("Using dummy credentials - Only WM Gralde:Invoke & WM Exec:Run are approved steps to access artifactory credentails.")
+          return "dummy"
+        } else {
+          throw se
+        }
+      }
     }
     else {
       logger.warn("Credentials are accesible only in pipline")
-    }
-  }
-
-  private def getCredentials(String value) {
-    try {
-      shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Segment-ITCI-986/credentials/WMArtifactory""", "--value", "\"$value\""])
-    } catch(ShellCommandException se) {
-      if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
-        logger.warn("Using dummy credentials - Only WM Gralde:Invoke & WM Exec:Run are approved steps to access artifactory credentails.")
-        return "dummy"
-      } else {
-        throw se
-      }
     }
   }
 }
