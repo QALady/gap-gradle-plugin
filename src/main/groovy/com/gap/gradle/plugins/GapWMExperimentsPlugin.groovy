@@ -13,6 +13,8 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
       def dynamicUserName = ecclient.getCredentialsUserName()
       def dynamicPassword = ecclient.getCredentialsPassword()
 
+      println "applying GapWMExperimentsPlugin"
+
       project.repositories {
           ivy {
             name "wm_local_non_prod"
