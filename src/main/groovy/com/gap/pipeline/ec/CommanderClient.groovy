@@ -153,7 +153,7 @@ class CommanderClient {
 
   private def getCredentials(String value) {
     try {
-      shellCommand.executeNoLog(["ectool", "getFullCredential", """/projects/WM Segment-ITCI-986/credentials/WMArtifactory""", "--value", """$value"""])
+      shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Segment-ITCI-986/credentials/WMArtifactory""", "--value", "\"$value\""])
     } catch(ShellCommandException se) {
       if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
         logger.warn("Using dummy credentials - Only WM Gralde:Invoke & WM Exec:Run are approved steps to access artifactory credentails.")
