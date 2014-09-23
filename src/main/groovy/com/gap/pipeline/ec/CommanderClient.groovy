@@ -143,16 +143,12 @@ class CommanderClient {
         if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
           logger.warn("Using dummy credentials - Only WM Gralde:Invoke & WM Exec:Run are approved steps to access artifactory credentails.")
           return "dummy"
-        } else if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
-          logger.warn("Using dummy credentials - Credentials are not available outside of Watchmen Abstract Segment")
-          return "dummy"
         } else {
           throw se
         }
       }
     } else {
-        logger.warn("Using dummy credentials - Credentials are accesible only in pipline")
-        return "dummy"
+        logger.warn("Credentials are accesible only in pipline")
     }
   }
 
@@ -165,17 +161,13 @@ class CommanderClient {
         if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
           logger.warn("Using dummy credentials - Only WM Gralde:Invoke & WM Exec:Run are approved steps to access artifactory credentails.")
           return "dummy"
-        } else if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
-          logger.warn("Using dummy credentials - Credentials are not available outside of Watchmen Abstract Segment")
-          return "dummy"
         } else {
           throw se
         }
       }
     }
     else {
-      logger.warn("Using dummy credentials - Credentials are accesible only in pipline")
-      return "dummy"
+      logger.warn("Credentials are accesible only in pipline")
     }
   }
 }
