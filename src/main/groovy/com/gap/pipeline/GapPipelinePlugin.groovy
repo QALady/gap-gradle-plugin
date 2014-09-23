@@ -17,10 +17,6 @@ class GapPipelinePlugin implements Plugin<Project> {
         project.extensions.create('prodPrepare', com.gap.pipeline.ProdPrepareConfig)
         project.extensions.create('ivy', IvyConfig)
 
-        def dynamicUserName = ecclient.getArtifactoryUserName()
-        def dynamicPassword = ecclient.getArtifactoryPassword()
-
-
         loadProperties(project, "prodPrepare", "ivy")
 
         configureTasksRequiredByWatchmenSegment(project)
@@ -31,8 +27,8 @@ class GapPipelinePlugin implements Plugin<Project> {
             layout "maven"
             url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
             credentials {
-              username "$dynamicUserName"
-              password "$dynamicPassword"
+              username "${ecclient.getArtifactoryUserName()}"
+              password "${ecclient.getArtifactoryPassword()}"
             }
           }
           maven {
@@ -234,4 +230,3 @@ class GapPipelinePlugin implements Plugin<Project> {
         return cookbookInfo
     }
 }
-
