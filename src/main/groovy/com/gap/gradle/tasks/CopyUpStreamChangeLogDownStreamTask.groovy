@@ -21,7 +21,7 @@ class CopyUpStreamChangeLogDownStreamTask extends WatchmenTask {
 		//ectool getProperties --path /myProcedure/testsheet --recurse 1
 		def prop
 		try{
-			prop = shellCommand.execute(['ectool', 'getProperty', '--path', '/myProcedure/testsheet', '--recurse', '1'])
+			prop = shellCommand.execute(['ectool', 'getProperty', '--path', '/myJob/ecscm_changeLogs', '--recurse', '1'])
 		  }
 		  catch (ShellCommandException e) {
 			if(e.message.contains('[NoSuchProperty]')){
