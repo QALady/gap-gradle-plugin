@@ -232,6 +232,11 @@ class GapPipelinePluginTest {
         taskShouldExist('buildJsonWithAllResolvedVersions', project)
     }
 
+	@Test
+    void copyUpstreamChangelogDownstreamTaskIsAddedToTheProject() {
+        taskShouldExist('copyUpstreamChangelogDownstream', project)
+    }
+
     @Test
     void shouldExecuteBuildJsonWithAllResolvedVersionsTask(){
         def taskMock = new MockFor(BuildJsonWithAllResolvedVersionsTask)

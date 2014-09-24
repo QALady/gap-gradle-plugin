@@ -1,12 +1,15 @@
 package com.gap.pipeline
-import com.gap.gradle.ivy.IvyInfo
-import com.gap.gradle.tasks.GetResolvedVersionTask
-import com.gap.gradle.tasks.PromoteArtifactsTask
-import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+
+import com.gap.gradle.ivy.IvyInfo
+import com.gap.gradle.tasks.CopyUpStreamChangeLogDownStreamTask
+import com.gap.gradle.tasks.GetResolvedVersionTask
+import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.tasks.*
 //CookbookConfig cookbookDetail
 
 class GapPipelinePlugin implements Plugin<Project> {
@@ -157,6 +160,10 @@ class GapPipelinePlugin implements Plugin<Project> {
                 getCookbookDetails(project.configurations).each() { name, sha1ID -> println name + "," + sha1ID}
             }
 
+			project.task('copyUpstreamChangelogDownstream') << {
+				// ITCI-1170: TODO implement copy of upstream changelog to downstream.
+				new CopyUpStreamChangeLogDownStreamTask(project).execute()
+			}
 
         }
 
