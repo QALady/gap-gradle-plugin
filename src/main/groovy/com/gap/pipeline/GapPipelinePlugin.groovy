@@ -161,8 +161,9 @@ class GapPipelinePlugin implements Plugin<Project> {
             }
 
 			project.task('copyUpstreamChangelogDownstream') << {
-				// ITCI-1170: TODO implement copy of upstream changelog to downstream.
+				println "*** Start: copyUpstreamChangelogDownstream task"
 				new CopyUpStreamChangeLogDownStreamTask(project).execute()
+				println "*** End: copyUpstreamChangelogDownstream task"
 			}
 
         }
