@@ -34,7 +34,7 @@ class CopyUpStreamChangeLogDownStreamTask extends WatchmenTask {
 		  println prop
 		 def data = new XmlSlurper().parseText(prop)
 		 println "printing each prop..."
-		 data.data.propertySheet.property.each { p ->
+		 data.propertySheet.property.each { p ->
 			 println p.propertyId
 			 println p.propertyName
 			 println p.value
