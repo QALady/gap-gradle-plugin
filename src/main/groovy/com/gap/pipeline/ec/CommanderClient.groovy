@@ -139,9 +139,9 @@ class CommanderClient {
       try {
         shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Credentials/credentials/WMArtifactory""", "--value", """userName"""])
       } catch(ShellCommandException se) {
-        logger.warn(se.getMessage())
+        //logger.warn(se.getMessage())
         if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
-          logger.warn("Using dummy credentials - Only WM Gralde:Invoke & WM Exec:Run are approved steps to access artifactory credentails.")
+          logger.warn("WARNING: Using dummy credentials - Only WM Gradle:Invoke & WM Exec:Run are approved steps to access artifactory credentials. This will not impact your job unless you are trying to use the Artifactory credentials in this step")
           return "dummy"
         } else {
           throw se
