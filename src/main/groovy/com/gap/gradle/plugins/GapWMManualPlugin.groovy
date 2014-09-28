@@ -2,20 +2,23 @@
 
 package com.gap.gradle.plugins
 
-import com.gap.gradle.ivy.IvyInfo
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+
+import com.gap.gradle.ivy.IvyInfo
+import com.gap.gradle.utils.ShellCommand
+import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.ec.CommanderClient
 
-import com.gap.gradle.utils.ShellCommand
-
-class GapWMExperimentsPlugin implements Plugin<Project> {
+class GapWMManualPlugin implements Plugin<Project> {
 
   CommanderClient ecclient = new CommanderClient()
+  ShellCommand shellCommand = new ShellCommand()
   def ivyInfo = new IvyInfo(project)
   def dependenciesWMMAN = ""
 
-  void apply(Project project) {
+  @Override
+  public void apply(Project project) {
 
       project.task('WMManualIvyDependencies') <<{
            

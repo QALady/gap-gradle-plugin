@@ -1,15 +1,16 @@
 package com.gap.gradle.plugins
 
-import com.gap.gradle.ivy.IvyInfo
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+
 import com.gap.pipeline.ec.CommanderClient
 
 class GapWMExperimentsPlugin implements Plugin<Project> {
 
   CommanderClient ecclient = new CommanderClient()
 
-  void apply(Project project) {
+  @Override
+  public void apply(Project project) {
 
       project.repositories {
           ivy {
