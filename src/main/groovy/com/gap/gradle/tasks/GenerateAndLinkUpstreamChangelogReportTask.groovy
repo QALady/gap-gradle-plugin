@@ -5,6 +5,7 @@ import org.gradle.api.Project
 
 import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
+import com.gap.pipeline.ec.CommanderArtifacts
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.ec.Property
 import com.gap.pipeline.tasks.WatchmenTask
@@ -14,6 +15,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	ShellCommand shellCommand = new ShellCommand()
 	CommanderClient commanderClient = new CommanderClient(shellCommand)
 	def logger = LogFactory.getLog(com.gap.gradle.tasks.GenerateAndLinkUpstreamChangelogReportTask)
+	def upstream_changelog_file = "${project.buildDir}/reports/UpStream_ChangeList_Report.txt"
 
 	public GenerateAndLinkUpstreamChangelogReportTask(Project project) {
 		super(project);
@@ -22,10 +24,12 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 
 	public def execute() {
 		validate()
-		def upstreamJobId = "290af17d-47ab-11e4-b16c-00505625f614"//getUpstreamJobId()
+		def upstreamJobId = "290af17d-47ab-11e4-b16c-00505625f614"//getUpstreamJobId() // TODO: hardcoded for now for testing in pipeline.
 		if (upstreamJobId) {
 			println "UPSTREAM Job ID: " + upstreamJobId
 			createChangelistFile(getECPropertySheet(upstreamJobId))
+			copyArtifactsForUseByEC()
+			publishArtifactLinksToEC()
 		} else {
 			logger.info("Upstream Job id is not linked to this downstream job. No upstream segments changed to have triggered this downstream job.")
 		}
@@ -61,7 +65,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	}
 
 	def createChangelistFile(upstreamEcscmChangeLogs) {
-		File changeListReport = new File("${project.buildDir}/reports/UpStream_ChangeList_Report.txt")
+		File changeListReport = new File(upstream_changelog_file)
 		def writer = changeListReport.newWriter()
 		writer.append(
 		"""
@@ -84,4 +88,15 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 		log.info("ChangeListReport is in - " + changeListReport.absolutePath)
 		writer.close()
 	}
+
+	private void copyArtifactsForUseByEC () {
+		new CommanderArtifacts(new CommanderClient()).copyToArtifactsDir(upstream_changelog_file)
+	}
+
+
+	private void publishArtifactLinksToEC() {
+		def artifacts = new CommanderArtifacts(new CommanderClient());
+		artifacts.publishLinks()
+	}
+
 }
