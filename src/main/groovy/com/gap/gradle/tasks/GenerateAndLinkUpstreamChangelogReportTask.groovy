@@ -22,7 +22,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 
 	public def execute() {
 		validate()
-		def upstreamJobId = getUpstreamJobId()
+		def upstreamJobId = "290af17d-47ab-11e4-b16c-00505625f614"//getUpstreamJobId()
 		if (upstreamJobId) {
 			println "UPSTREAM Job ID: " + upstreamJobId
 			createChangelistFile(getECPropertySheet(upstreamJobId))
@@ -33,7 +33,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 
 	def getUpstreamJobId() {
 		// get the Upstream Job report-url property and extract upstream JobID.
-		Property upStreamJobProperty =  commanderClient.getECProperty('/myProject/testUpstreamJob')//commanderClient.getReportUrlProperty("Upstream Job")
+		Property upStreamJobProperty = commanderClient.getReportUrlProperty("Upstream Job")
 		if (upStreamJobProperty.isValid()) {
 			def upStreamJob = upStreamJobProperty.value
 			println "upstream job: " + upStreamJob
