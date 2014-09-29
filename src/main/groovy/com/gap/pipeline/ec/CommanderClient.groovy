@@ -170,4 +170,13 @@ class CommanderClient {
       logger.warn("Credentials are accesible only in pipline")
     }
   }
+
+  public String getReportUrlPropertyValue(String property) {
+	  getReportUrlProperty(property).value
+	}
+  
+  public Property getReportUrlProperty(String property) {
+	  getECProperty('/myJob/report-urls/' + property)
+	}
+  
 }
