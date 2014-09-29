@@ -15,11 +15,12 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	ShellCommand shellCommand = new ShellCommand()
 	CommanderClient commanderClient = new CommanderClient(shellCommand)
 	def logger = LogFactory.getLog(com.gap.gradle.tasks.GenerateAndLinkUpstreamChangelogReportTask)
-	def upstream_changelog_file = "${project.buildDir}/reports/UpStream_ChangeList_Report.txt"
+	def upstream_changelog_file = "${project.buildDir}/UpStream_ChangeList_Report.txt"
 
 	public GenerateAndLinkUpstreamChangelogReportTask(Project project) {
 		super(project);
 		this.project = project;
+		new File(upstream_changelog_file).mkdir()
 	}
 
 	public def execute() {
