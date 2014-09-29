@@ -33,11 +33,10 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 		println "upstream job: " + upStreamJob
 		def upStreamJobId = upStreamJob.tokenize("/").last()
 		println "upstream job id after split: " + upStreamJobId
-		return upStreamJobId
-		
+		return upStreamJobId		
 	}
 
-	def getECPropertySheet() {
+	def getECPropertySheet(upstreamJobId) {
 		def prop
 		try{
 			prop = shellCommand.execute(['ectool', 'getProperties', '--path', '/jobs[$upstreamJobId]/ecscm_changeLogs', '--recurse', '1'])
