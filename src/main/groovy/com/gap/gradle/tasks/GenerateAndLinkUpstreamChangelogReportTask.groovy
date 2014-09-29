@@ -20,7 +20,6 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	public GenerateAndLinkUpstreamChangelogReportTask(Project project) {
 		super(project);
 		this.project = project;
-		new File(upstream_changelog_file).mkdir()
 	}
 
 	public def execute() {
