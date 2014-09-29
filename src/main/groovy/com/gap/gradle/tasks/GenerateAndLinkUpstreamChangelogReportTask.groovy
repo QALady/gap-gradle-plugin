@@ -23,17 +23,25 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	public def execute() {
 		validate()
 		def upstreamJobId = getUpstreamJobId()
-		println "UPSTREAM Job ID: " + upstreamJobId
-		createChangelistFile(getECPropertySheet(upstreamJobId))
+		if (upstreamJobId) {
+			println "UPSTREAM Job ID: " + upstreamJobId
+			createChangelistFile(getECPropertySheet(upstreamJobId))
+		} else {
+			logger.info("Upstream Job id is not linked to this downstream job. No upstream segments changed to have triggered this downstream job.")
+		}
 	}
 
 	def getUpstreamJobId() {
 		// get the Upstream Job report-url property and extract upstream JobID.
-		def upStreamJob = commanderClient.getReportUrlPropertyValue("Upstream Job")
-		println "upstream job: " + upStreamJob
-		def upStreamJobId = upStreamJob.tokenize("/").last()
-		println "upstream job id after split: " + upStreamJobId
-		return upStreamJobId		
+		Property upStreamJobProperty = commanderClient.getReportUrlProperty("Upstream Job")
+		if (upStreamJobProperty.isValid()) {
+			def upStreamJob = upStreamJobProperty.value
+			println "upstream job: " + upStreamJob
+			def upStreamJobId = upStreamJob.tokenize("/").last()
+			println "upstream job id after split: " + upStreamJobId
+			return upStreamJobId		
+		}
+		return null
 	}
 
 	def getECPropertySheet(upstreamJobId) {

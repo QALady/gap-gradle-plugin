@@ -1,8 +1,9 @@
 package com.gap.pipeline.ec
+import org.slf4j.LoggerFactory
+
+import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.Environment
-import com.gap.gradle.utils.ShellCommand
-import org.slf4j.LoggerFactory
 
 class CommanderClient {
 
@@ -171,12 +172,8 @@ class CommanderClient {
     }
   }
 
-  public String getReportUrlPropertyValue(String property) {
-	  getReportUrlProperty(property).value
-	}
-  
-  public Property getReportUrlProperty(String property) {
-	  getECProperty('/myJob/report-urls/' + property)
+  public Property getReportUrlProperty(String key) {
+	  return getECProperty('/myJob/report-urls/' + key)
 	}
   
 }
