@@ -51,7 +51,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	def getECPropertySheet(upstreamJobId) {
 		def prop
 		try{
-			prop = shellCommand.execute(['ectool', 'getProperties', '--path', '/jobs[$upstreamJobId]/ecscm_changeLogs', '--recurse', '1'])
+			prop = shellCommand.execute(['ectool', 'getProperties', '--path', "/jobs[$upstreamJobId]/ecscm_changeLogs", '--recurse', '1'])
 		}
 		catch (ShellCommandException e) {
 			if(e.message.contains('[NoSuchProperty]')){
