@@ -61,7 +61,8 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 			else throw e
 		}
 		println "Change Log from Upstream: " + prop
-		return new XmlSlurper().parseText(prop)
+		def response = new XmlSlurper().parseText(prop)
+		return response.propertySheet.property // return all the changelog property records.
 	}
 
 	def createChangelistFile(upstreamEcscmChangeLogs) {
@@ -75,17 +76,19 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
             *                                                                                             *
             ***********************************************************************************************
 		""")
-		upstreamEcscmChangeLogs.propertySheet.property.each { p ->
-			writer.append(p.propertyId)
-			writer.append(p.propertyName)
-			writer.append(p.value)
+		upstreamEcscmChangeLogs.each { p ->
+			println p.propertyName.toString()
+			println p.value.toString()
+			writer.append(p.propertyName.toString())
+			writer.append(p.value.toString())
+			println "Written the same to the file."
 		}
 		writer.append(
 		"""
             ***********************************************************************************************
         """
 		)
-		log.info("ChangeListReport is in - " + changeListReport.absolutePath)
+		logger.info("ChangeListReport is in - " + changeListReport.absolutePath)
 		writer.close()
 	}
 
