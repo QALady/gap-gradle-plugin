@@ -101,7 +101,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 						}
 					}
 				}
-				props.each { prop ->
+				upstreamChangeLogs.each { prop ->
 				p {
 					table {
 						tr {
