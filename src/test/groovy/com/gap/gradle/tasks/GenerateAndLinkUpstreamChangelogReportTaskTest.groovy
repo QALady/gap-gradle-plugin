@@ -32,7 +32,7 @@ class GenerateAndLinkUpstreamChangelogReportTaskTest {
 		task.execute()
 	}
 
-	@Test
+	@Ignore
 	void shouldCreateChangeListFile() {
 		def data = new XmlSlurper().parseText(getECPropertySheetResp())
 		def properties = data.property
@@ -41,7 +41,7 @@ class GenerateAndLinkUpstreamChangelogReportTaskTest {
 		println new File("$temporaryFolder.root.path/UpStream_ChangeList_Report.html").toString()
 	}
 	
-	@Test
+	@Ignore
 	void shouldGenerateHtml() {
 		def props = [[propertyName: "prop1", value: "value1"], [propertyName: "prop2", value: "value2"]]
 		props.each { p ->
