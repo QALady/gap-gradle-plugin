@@ -1,5 +1,7 @@
 package com.gap.gradle.tasks
 
+import groovy.xml.MarkupBuilder
+
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
@@ -15,16 +17,20 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	ShellCommand shellCommand = new ShellCommand()
 	CommanderClient commanderClient = new CommanderClient(shellCommand)
 	def logger = LogFactory.getLog(com.gap.gradle.tasks.GenerateAndLinkUpstreamChangelogReportTask)
-	def upstream_changelog_file = "${project.projectDir}/UpStream_ChangeList_Report.txt"
+	def upstream_changelog_file = "${project.projectDir}/UpStream_ChangeList_Report.html"
+	def thisJobId
+	def upstreamJobId
+	def upstreamJobIds = []
 
 	public GenerateAndLinkUpstreamChangelogReportTask(Project project) {
 		super(project);
 		this.project = project;
+		this.thisJobId = commanderClient.getJobId()
 	}
 
 	public def execute() {
 		validate()
-		def upstreamJobId = "290af17d-47ab-11e4-b16c-00505625f614"//getUpstreamJobId() // TODO: hardcoded for now for testing in pipeline.
+		upstreamJobId = getUpstreamJobId()
 		if (upstreamJobId) {
 			println "UPSTREAM Job ID: " + upstreamJobId
 			createChangelistFile(getECPropertySheet(upstreamJobId))
@@ -68,30 +74,51 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	def createChangelistFile(upstreamEcscmChangeLogs) {
 		File changeListReport = new File(upstream_changelog_file)
 		def writer = changeListReport.newWriter()
-		writer.append(
-		"""
-            ***********************************************************************************************
-            *                                                                                             *
-            *                              Upstream ChangeList Report                        			  *
-            *                                                                                             *
-            ***********************************************************************************************
-		""")
-		upstreamEcscmChangeLogs.each { p ->
-			println p.propertyName.toString()
-			println p.value.toString()
-			writer.append(p.propertyName.toString())
-			writer.append(p.value.toString())
-			println "Written the same to the file."
-		}
-		writer.append(
-		"""
-            ***********************************************************************************************
-        """
-		)
-		logger.info("ChangeListReport is in - " + changeListReport.absolutePath)
+		buildChangelogMarkup(writer, upstreamEcscmChangeLogs)
 		writer.close()
+		logger.info("ChangeListReport generated in - " + changeListReport.absolutePath)
 	}
 
+	void buildChangelogMarkup(def writer, upstreamChangeLogs) {
+		def builder = new MarkupBuilder(writer)
+		builder.html {
+			head {
+				title "EC:Upstream ChangeLog Report:"
+			}
+			body {
+				h1"Upstream ChangeLog Report"
+				h2 {
+					table {
+						tr {
+							td {
+								a(href: "/commander/link/jobDetails/jobs/$upstreamJobId", "Upstream Ecscm ChangeLog Trigger Segment Job Link")
+							}
+						}
+						tr {
+							td {
+								a(href: "/commander/link/jobDetails/jobs/$thisJobId", "Back to this Report Segment Job Link")
+							}
+						}
+					}
+				}
+				props.each { prop ->
+				p {
+					table {
+						tr {
+							td {
+								mkp.yield prop.propertyName.toString()
+							}
+							td {
+								b prop.value.toString()
+							}
+						}
+					}
+				  }
+				}
+			}
+		}
+	}
+	
 	private void copyArtifactsForUseByEC () {
 		new CommanderArtifacts(new CommanderClient()).copyToArtifactsDir(upstream_changelog_file)
 	}

@@ -1,9 +1,10 @@
 package com.gap.gradle.tasks
 
+import static org.junit.Assert.*
+import groovy.xml.MarkupBuilder
+
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
-import static org.junit.Assert.*;
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -37,9 +38,59 @@ class GenerateAndLinkUpstreamChangelogReportTaskTest {
 		def properties = data.property
 		assert 2 == properties.size()
 		task.createChangelistFile(properties)
-		println new File("$temporaryFolder.root.path/UpStream_ChangeList_Report.txt").toString()
+		println new File("$temporaryFolder.root.path/UpStream_ChangeList_Report.html").toString()
 	}
+	
+	@Test
+	void shouldGenerateHtml() {
+		def props = [[propertyName: "prop1", value: "value1"], [propertyName: "prop2", value: "value2"]]
+		props.each { p ->
+			println p.propertyName.toString()
+			println p.value.toString()
+		}
 
+		StringWriter out = new StringWriter()
+		def builder = new MarkupBuilder(out)
+		builder.html {
+			head {
+				title "test html"
+			}
+			body {
+				h1"Upstream ChangeLog Report"
+				h2 {
+					table {
+						tr {
+							td {
+								a(href: '/commander/link/jobDetails/jobs/b406d50c-48e3-11e4-aa20-00505625f614', "Upstream Ecscm ChangeLog Trigger Segment Job Link")
+							}
+						}
+						tr {
+							td {
+								a(href: '/commander/link/jobDetails/jobs/b406d50c-48e3-11e4-aa20-00505625f614', "This Report Segment Job Link")
+							}
+						}
+					}
+				}
+				props.each { prop ->
+				p {
+					table {
+						tr {
+							td {
+								mkp.yield prop.propertyName.toString()
+							}
+							td {
+								b prop.value.toString()
+							}
+						}
+					}
+				  }
+				}
+				p "some more text"
+			}
+		}
+		println out.toString()
+	}
+	
 	private String getECPropertySheetResp() {
 		return 		"""<propertySheet>
       <propertySheetId>c7cade2e-429c-11e4-9966-00505625f614</propertySheetId>
