@@ -111,7 +111,9 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 						}
 						tr {
 							td {
-								b prop.value.toString()
+								b {
+									mkp.yieldUnescaped(prop.value.toString().replaceAll("\n","<br>"))
+								}
 							}
 						}
 					}
