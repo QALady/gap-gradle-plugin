@@ -26,6 +26,16 @@ class CommanderClient {
     getECProperty(PROCEDURE_NAME_PROPERTY).value
   }
 
+  private def getProjectName(jobId){
+	  def projectNameProperty = "/jobs[$jobId]/projectName"
+	  getECProperty(projectNameProperty).value
+	}
+  
+	private def getProcedureName(jobId){
+	  def projectNameProperty = "/jobs[$jobId]/liveProcedure"
+	  getECProperty(projectNameProperty).value
+	}
+
   def addLink(filename, jobid){
     def filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'))
     setECProperty("/jobs[${jobid}]/report-urls/${filenameWithoutExtension}", "/commander/jobs/${jobid}/default/${filename}")
@@ -129,6 +139,10 @@ class CommanderClient {
 
   def getCurrentSegment() {
     return new Segment(getCurrentProjectName(), getCurrentProcedureName())
+  }
+
+  def getSegment(jobId) {
+  	return new Segment(getProjectName(jobId), getProcedureName(jobId))
   }
 
   def isRunningInPipeline(){

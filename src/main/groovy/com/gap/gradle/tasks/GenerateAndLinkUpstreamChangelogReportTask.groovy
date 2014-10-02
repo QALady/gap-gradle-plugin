@@ -91,12 +91,12 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 					table {
 						tr {
 							td {
-								a(href: "/commander/link/jobDetails/jobs/$upstreamJobId", "Upstream Ecscm ChangeLog Trigger Segment Job Link")
+								a(href: "/commander/link/jobDetails/jobs/$upstreamJobId", commanderClient.getSegment(upstreamJobId).toString())
 							}
 						}
 						tr {
 							td {
-								a(href: "/commander/link/jobDetails/jobs/$thisJobId", "Back to this Report Segment Job Link")
+								a(href: "/commander/link/jobDetails/jobs/$thisJobId", commanderClient.getCurrentSegment().toString())
 							}
 						}
 					}
@@ -108,6 +108,8 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 							td {
 								mkp.yield prop.propertyName.toString()
 							}
+						}
+						tr {
 							td {
 								b prop.value.toString()
 							}
