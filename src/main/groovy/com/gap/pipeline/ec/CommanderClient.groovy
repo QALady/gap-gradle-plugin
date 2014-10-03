@@ -190,4 +190,9 @@ class CommanderClient {
 	  return getECProperty('/myJob/report-urls/' + key)
 	}
   
+  public Property getReportUrlPropertyOfJob(jobId, String key) {
+	  return getECProperty("/jobs[$jobId]/report-urls/" + key)
+	}
+
+  
 }

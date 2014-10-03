@@ -13,14 +13,16 @@ import com.gap.pipeline.ec.Property
 import com.gap.pipeline.tasks.WatchmenTask
 
 class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
-	Project project
-	ShellCommand shellCommand = new ShellCommand()
-	CommanderClient commanderClient = new CommanderClient(shellCommand)
 	def logger = LogFactory.getLog(com.gap.gradle.tasks.GenerateAndLinkUpstreamChangelogReportTask)
 	def upstream_changelog_file = "${project.projectDir}/UpStream_ChangeList_Report.html"
 	def thisJobId
-	def upstreamJobId
-	def upstreamJobIds = []
+	Project project
+	ShellCommand shellCommand = new ShellCommand()
+	CommanderClient commanderClient = new CommanderClient(shellCommand)
+	StringWriter changeLogMarkupWriter = new StringWriter()
+	MarkupBuilder changeLogMarkupBuilder = new MarkupBuilder(changeLogMarkupWriter)
+	StringWriter linkMarkupWriter = new StringWriter()
+	MarkupBuilder linkMarkupBuilder = new MarkupBuilder(linkMarkupWriter)
 
 	public GenerateAndLinkUpstreamChangelogReportTask(Project project) {
 		super(project);
@@ -30,31 +32,48 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 
 	public def execute() {
 		validate()
-		upstreamJobId = getUpstreamJobId()
-		if (upstreamJobId) {
-			println "UPSTREAM Job ID: " + upstreamJobId
-			createChangelistFile(getECPropertySheet(upstreamJobId))
-			copyArtifactsForUseByEC()
-			publishArtifactLinksToEC()
+		processUpstreamChangeLog()
+		copyArtifactsForUseByEC()
+		publishArtifactLinksToEC()
+	}
+
+	def processUpstreamChangeLog() {
+		def immediateUpStreamJobId = getUpstreamJobId(thisJobId)
+		if (immediateUpStreamJobId) {
+			File changeListReport = new File(upstream_changelog_file)
+			def writer = changeListReport.newWriter()
+			addUpstreamChangeLogToMarkup(immediateUpStreamJobId)
+			writeChangeLogMarkup(writer)
+			writer.close()
+			logger.info("ChangeListReport generated in - " + changeListReport.absolutePath)
 		} else {
-			logger.info("Upstream Job id is not linked to this downstream job. No upstream segments changed to have triggered this downstream job.")
+			logger.info("No Upstream segment job linked to this segment. No upstream Change Log.")
 		}
 	}
 
-	def getUpstreamJobId() {
+	def addUpstreamChangeLogToMarkup(givenUpStreamJobId) {
+		logger.info("adding ChangeLog of UPSTREAM Job ID: $givenUpStreamJobId")		
+		buildChangelogMarkup(getECSCMPropertySheetRecords(givenUpStreamJobId))
+		buildLinkMarkup(givenUpStreamJobId)
+		// check if this upStreamJob has an upstream to it:
+		def nextUpstreamJobId = getUpstreamJobId(givenUpStreamJobId)
+		if (nextUpstreamJobId) {
+			addUpstreamChangeLogToMarkup(nextUpstreamJobId)
+		}
+	}
+
+	def getUpstreamJobId(givenJobId) {
 		// get the Upstream Job report-url property and extract upstream JobID.
-		Property upStreamJobProperty = commanderClient.getReportUrlProperty("Upstream Job")
+		def upStreamJobId
+		Property upStreamJobProperty = commanderClient.getReportUrlPropertyOfJob(givenJobId, "Upstream Job")
 		if (upStreamJobProperty.isValid()) {
-			def upStreamJob = upStreamJobProperty.value
-			println "upstream job: " + upStreamJob
-			def upStreamJobId = upStreamJob.tokenize("/").last()
-			println "upstream job id after split: " + upStreamJobId
+			upStreamJobId = upStreamJobProperty.value.tokenize("/").last()
 			return upStreamJobId		
 		}
 		return null
 	}
 
-	def getECPropertySheet(upstreamJobId) {
+	def getECSCMPropertySheetRecords(upstreamJobId) {
 		def prop
 		try{
 			prop = shellCommand.execute(['ectool', 'getProperties', '--path', "/jobs[$upstreamJobId]/ecscm_changeLogs", '--recurse', '1'])
@@ -66,20 +85,41 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 			}
 			else throw e
 		}
-		println "Change Log from Upstream: " + prop
+		logger.debug("Change Log from Upstream: " + prop)
 		def response = new XmlSlurper().parseText(prop)
 		return response.propertySheet.property // return all the changelog property records.
 	}
 
-	def createChangelistFile(upstreamEcscmChangeLogs) {
-		File changeListReport = new File(upstream_changelog_file)
-		def writer = changeListReport.newWriter()
-		buildChangelogMarkup(writer, upstreamEcscmChangeLogs)
-		writer.close()
-		logger.info("ChangeListReport generated in - " + changeListReport.absolutePath)
+	def buildLinkMarkup(givenJobId) {
+		linkMarkupBuilder.tr {
+			td {
+				a(href: "/commander/link/jobDetails/jobs/$givenJobId", commanderClient.getSegment(givenJobId).toString())
+			}
+		}
+
 	}
 
-	void buildChangelogMarkup(def writer, upstreamChangeLogs) {
+	def buildChangelogMarkup(upstreamChangeLogs) {
+		upstreamChangeLogs.each { prop ->
+			changeLogMarkupBuilder.p {
+				table {
+					tr {
+						td {
+							mkp.yield prop.propertyName.toString()
+						}
+					}
+					tr {
+						td {
+							b {
+								mkp.yieldUnescaped(prop.value.toString().replaceAll("\n","<br>"))
+							}
+						}
+					}
+				}
+			  }
+			}
+	}
+	void writeChangeLogMarkup(writer) {
 		def builder = new MarkupBuilder(writer)
 		builder.html {
 			head {
@@ -89,36 +129,15 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 				h1"Upstream ChangeLog Report"
 				h2 {
 					table {
+						mkp.yieldUnescaped(linkMarkupWriter.toString())
 						tr {
 							td {
-								a(href: "/commander/link/jobDetails/jobs/$upstreamJobId", commanderClient.getSegment(upstreamJobId).toString())
-							}
-						}
-						tr {
-							td {
-								a(href: "/commander/link/jobDetails/jobs/$thisJobId", commanderClient.getCurrentSegment().toString())
+								a(href: "/commander/link/jobDetails/jobs/$thisJobId", "this Job: " + commanderClient.getCurrentSegment().toString())
 							}
 						}
 					}
 				}
-				upstreamChangeLogs.each { prop ->
-				p {
-					table {
-						tr {
-							td {
-								mkp.yield prop.propertyName.toString()
-							}
-						}
-						tr {
-							td {
-								b {
-									mkp.yieldUnescaped(prop.value.toString().replaceAll("\n","<br>"))
-								}
-							}
-						}
-					}
-				  }
-				}
+				mkp.yieldUnescaped(changeLogMarkupWriter.toString())
 			}
 		}
 	}
