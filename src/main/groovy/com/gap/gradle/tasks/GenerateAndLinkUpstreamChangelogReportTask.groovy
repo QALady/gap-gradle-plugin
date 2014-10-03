@@ -135,12 +135,12 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 				h1"Upstream ChangeLog Report"
 				h2 {
 					table {
-						mkp.yieldUnescaped(linkMarkupWriter.toString())
 						tr {
 							td {
 								a(href: "/commander/link/jobDetails/jobs/$thisJobId", "this Job: " + commanderClient.getCurrentSegment().toString())
 							}
 						}
+						mkp.yieldUnescaped(linkMarkupWriter.toString())
 					}
 				}
 				mkp.yieldUnescaped(changeLogMarkupWriter.toString())

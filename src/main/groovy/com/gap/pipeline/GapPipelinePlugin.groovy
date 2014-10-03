@@ -5,7 +5,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 import com.gap.gradle.ivy.IvyInfo
-import com.gap.gradle.tasks.CopyUpStreamChangeLogDownStreamTask
 import com.gap.gradle.tasks.GenerateAndLinkUpstreamChangelogReportTask
 import com.gap.gradle.tasks.GetResolvedVersionTask
 import com.gap.gradle.tasks.PromoteArtifactsTask
@@ -161,15 +160,8 @@ class GapPipelinePlugin implements Plugin<Project> {
                 getCookbookDetails(project.configurations).each() { name, sha1ID -> println name + "," + sha1ID}
             }
 
-			project.task('copyUpstreamChangelogDownstream') << {
-				println "*** Start: copyUpstreamChangelogDownstream task"
-				new CopyUpStreamChangeLogDownStreamTask(project).execute()
-				println "*** End: copyUpstreamChangelogDownstream task"
-			}
 			project.task("linkUpstreamChangelogReport") << {
-				println "*** Start: linkUpstreamChangelogReport task"
 				new GenerateAndLinkUpstreamChangelogReportTask(project).execute()
-				println "*** End: linkUpstreamChangelogReport task"
 			}
 
         }

@@ -233,8 +233,8 @@ class GapPipelinePluginTest {
     }
 
 	@Test
-    void copyUpstreamChangelogDownstreamTaskIsAddedToTheProject() {
-        taskShouldExist('copyUpstreamChangelogDownstream', project)
+    void linkUpstreamChangelogReportTaskIsAddedToTheProject() {
+        taskShouldExist('linkUpstreamChangelogReport', project)
     }
 
     @Test
