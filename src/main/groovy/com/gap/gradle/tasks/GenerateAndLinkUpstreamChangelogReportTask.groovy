@@ -32,9 +32,12 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 
 	public def execute() {
 		validate()
-		processUpstreamChangeLog()
-		copyArtifactsForUseByEC()
-		publishArtifactLinksToEC()
+		try {
+			processUpstreamChangeLog()			
+		} catch (all) {
+			logger.info("Unable to generate upstream Change Log report.")
+			logger.debug(all.message)
+		}
 	}
 
 	def processUpstreamChangeLog() {
@@ -46,6 +49,9 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 			writeChangeLogMarkup(writer)
 			writer.close()
 			logger.info("ChangeListReport generated in - " + changeListReport.absolutePath)
+			copyArtifactsForUseByEC()
+			publishArtifactLinksToEC()
+			logger.info("Upstream Change Log report linked to EC Job.")
 		} else {
 			logger.info("No Upstream segment job linked to this segment. No upstream Change Log.")
 		}
