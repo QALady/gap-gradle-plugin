@@ -9,6 +9,10 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 
     void apply(Project project) {
     	def artifactoryUrl = "http://artifactory.gapinc.dev/artifactory"
+        def folderFunctionalTest = "functionalTests"
+        if(project.hasProperty('customFunctionalTestsFolder')){
+            folderFunctionalTest = project.customFunctionalTestsFolder
+        }
     	project.repositories {
     		ivy {
 				name "artifactory"
@@ -30,7 +34,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 		project.tasks.add(name:'packageFunctionalTests', type: Zip) {
 	        appendix = 'functionalTests'
 	        classifier = 'tests'
-	        from ("${project.projectDir}/functionalTests")
+	        from ("${project.projectDir}/${folderFunctionalTest}")
 	        include '**/*'
 	  	}
 
@@ -69,7 +73,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 
 		         		project.copy {
 		         			from project.zipTree(file)
-		            		into 'functionalTests'
+		            		into "${folderFunctionalTest}"
 	        			}
 		 		 	}
 	  			}
@@ -77,7 +81,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
       	}
 
 		project.tasks.add(name: 'executeFunctionalTests', type: GradleBuild, dependsOn: 'downloadFunctionalTests') {
-	        buildFile = "functionalTests/build.gradle"
+	        buildFile = "${folderFunctionalTest}/build.gradle"
 			tasks << 'runFunctionalTests'
 	  	}
     }
