@@ -9,7 +9,7 @@ class GapTestPipelinePluginUp implements Plugin<Project> {
 
     void apply(Project project) {
         def artifactoryUrl = "http://artifactory.gapinc.dev/artifactory"
-        def folderFunctionalTest = "functionalTests"
+        def folderFunctionalTest = "acceptance-tests"
         if(project.hasProperty('customFunctionalTestsFolder')){
             folderFunctionalTest = project.customFunctionalTestsFolder
         }
