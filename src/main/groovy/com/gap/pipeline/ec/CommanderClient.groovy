@@ -30,7 +30,7 @@ class CommanderClient {
 	  def projectNameProperty = "/jobs[$jobId]/projectName"
 	  getECProperty(projectNameProperty).value
 	}
-
+  
 	private def getProcedureName(jobId){
 	  def projectNameProperty = "/jobs[$jobId]/liveProcedure"
 	  getECProperty(projectNameProperty).value
@@ -160,7 +160,7 @@ class CommanderClient {
   def getCredential(String credentialName, String valueName) {
     if (isRunningInPipeline()) {
       try {
-        shellCommand.execute(["ectool", "getFullCredential", """${credentialName}""", "--value", """${valueName}"""])
+        shellCommand.execute(['ectool', 'getFullCredential', credentialName, '--value', valueName])
       } catch(ShellCommandException se) {
         if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
           logger.warn('WARNING: Using dummy credentials - Only WM Gradle:Invoke & WM Exec:Run are approved steps to access artifactory credentials. This will not impact your job unless you are trying to use the Artifactory credentials in this step')
@@ -177,10 +177,10 @@ class CommanderClient {
   public Property getReportUrlProperty(String key) {
 	  return getECProperty('/myJob/report-urls/' + key)
 	}
-
+  
   public Property getReportUrlPropertyOfJob(jobId, String key) {
 	  return getECProperty("/jobs[$jobId]/report-urls/" + key)
 	}
 
-
+  
 }

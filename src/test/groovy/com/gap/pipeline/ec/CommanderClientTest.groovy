@@ -173,11 +173,11 @@ public class CommanderClientTest {
     public void getCredential_shouldInvokeEcToolToGetFullCredential() {
         environmentStub.setValue('COMMANDER_JOBID', '12345')
 
-        def credentialName = "myCredential"
-        def valueName = "userName"
+        def credentialName = 'myCredential'
+        def valueName = 'userName'
         commander.getCredential(credentialName, valueName)
 
-        verify(mockShellCommand).execute(["ectool", "getFullCredential", """${credentialName}""", "--value", """${valueName}"""])
+        verify(mockShellCommand).execute(['ectool', 'getFullCredential', credentialName, '--value', valueName])
     }
 
     @Test
@@ -186,7 +186,7 @@ public class CommanderClientTest {
 
         commander.getArtifactoryUserName()
 
-        verify(mockShellCommand).execute(["ectool", "getFullCredential", """/projects/WM Credentials/credentials/WMArtifactory""", "--value", """userName"""])
+        verify(mockShellCommand).execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/WMArtifactory', '--value', 'userName'])
     }
 
     @Test
@@ -195,6 +195,6 @@ public class CommanderClientTest {
 
         commander.getArtifactoryPassword()
 
-        verify(mockShellCommand).execute(["ectool", "getFullCredential", """/projects/WM Credentials/credentials/WMArtifactory""", "--value", """password"""])
+        verify(mockShellCommand).execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/WMArtifactory', '--value', 'password'])
     }
 }
