@@ -9,22 +9,16 @@ import static org.junit.Assert.assertEquals
 import static org.mockito.Mockito.*
 
 import com.gap.gradle.airwatch.AirWatchClient
+import com.gap.gradle.utils.ShellCommand
+import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.utils.EnvironmentStub
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
-import com.gap.pipeline.utils.EnvironmentStub
-import com.gap.gradle.utils.ShellCommand
-import com.gap.pipeline.ec.CommanderClient
 import org.mockito.Mockito
-
-
-import static org.mockito.Mockito.*
-import com.gap.pipeline.utils.EnvironmentStub
-import com.gap.gradle.utils.ShellCommand
 import org.mockito.Mockito
-import com.gap.pipeline.ec.CommanderClient
 
 class AirWatchPluginTest {
 
@@ -41,6 +35,7 @@ class AirWatchPluginTest {
     project.ext.set('awTestHost', 'awHost')
     project.ext.set('awTestCredentialName', 'awCredentialName')
     project.ext.set('awTestTenantCode', 'awTenantCode')
+    project.ext.set('awTestLocationGroupID', 123)
   }
 
   @Test
@@ -68,6 +63,7 @@ class AirWatchPluginTest {
     project.ext.set('awTestHost', null)
     project.ext.set('awTestCredentialName', null)
     project.ext.set('awTestTenantCode', null)
+    project.ext.set('awTestLocationGroupID', null)
 
     def task = project.tasks.findByName('validateProperties')
 

@@ -39,13 +39,14 @@ class AirWatchPlugin implements Plugin<Project> {
 
             if (!project.hasProperty("aw${project.awEnv}Host") ||
                 !project.hasProperty("aw${project.awEnv}CredentialName") ||
-                !project.hasProperty("aw${project.awEnv}TenantCode"))
+                !project.hasProperty("aw${project.awEnv}TenantCode") ||
+                !project.hasProperty("aw${project.awEnv}LocationGroupID"))
 
-                throw new InvalidUserDataException("Environment ${project.awEnv} is not defined." +
-                    "You should have the following entries in your gradle.properties file:\n" +
+                throw new InvalidUserDataException("Environment ${project.awEnv} is not defined. You should have the following entries in your gradle.properties file:\n" +
                     "- aw${project.awEnv}Host\n" +
                     "- aw${project.awEnv}CredentialName\n" +
-                    "- aw${project.awEnv}TenantCode")
+                    "- aw${project.awEnv}TenantCode\n" +
+                    "- aw${project.awEnv}LocationGroupID")
         }
 
         project.task("getCredentials", dependsOn: "validateProperties") << {
@@ -63,7 +64,8 @@ class AirWatchPlugin implements Plugin<Project> {
                 project.get("aw${project.awEnv}Host"),
                 project.tasks.getCredentials.userName(),
                 project.tasks.getCredentials.password(),
-                project.get("aw${project.awEnv}TenantCode"))
+                project.get("aw${project.awEnv}TenantCode"),
+                project.get("aw${project.awEnv}LocationGroupID"))
 
             project.set("awClient", client)
 
