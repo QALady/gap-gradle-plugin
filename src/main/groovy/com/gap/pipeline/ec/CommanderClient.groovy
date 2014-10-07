@@ -150,39 +150,27 @@ class CommanderClient {
   }
 
   def getArtifactoryUserName() {
-    if(isRunningInPipeline()) {
+    getCredential("""/projects/WM Credentials/credentials/WMArtifactory""", """userName""")
+  }
+
+  def getArtifactoryPassword(){
+    getCredential("""/projects/WM Credentials/credentials/WMArtifactory""", """password""")
+  }
+
+  def getCredential(String credentialName, String valueName) {
+    if (isRunningInPipeline()) {
       try {
-        shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Credentials/credentials/WMArtifactory""", "--value", """userName"""])
+        shellCommand.execute(['ectool', 'getFullCredential', credentialName, '--value', valueName])
       } catch(ShellCommandException se) {
-        //logger.warn(se.getMessage())
         if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
-          logger.warn("WARNING: Using dummy credentials - Only WM Gradle:Invoke & WM Exec:Run are approved steps to access artifactory credentials. This will not impact your job unless you are trying to use the Artifactory credentials in this step")
-          return "dummy"
+          logger.warn('WARNING: Using dummy credentials - Only WM Gradle:Invoke & WM Exec:Run are approved steps to access artifactory credentials. This will not impact your job unless you are trying to use the Artifactory credentials in this step')
+          return 'dummy'
         } else {
           throw se
         }
       }
     } else {
-        logger.warn("Credentials are accesible only in pipline")
-    }
-  }
-
-  def getArtifactoryPassword(){
-    if(isRunningInPipeline()) {
-      try {
-        shellCommand.execute(["ectool", "getFullCredential", """/projects/WM Credentials/credentials/WMArtifactory""", "--value", """password"""])
-      } catch(ShellCommandException se) {
-        //logger.warn(se.getMessage())
-        if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
-          logger.warn("WARNING: Using dummy credentials - Only WM Gradle:Invoke & WM Exec:Run are approved steps to access artifactory credentials. This will not impact your job unless you are trying to use the Artifactory credentials in this step")
-          return "dummy"
-        } else {
-          throw se
-        }
-      }
-    }
-    else {
-      logger.warn("Credentials are accesible only in pipline")
+        logger.warn('Credentials are accesible only in pipline')
     }
   }
 

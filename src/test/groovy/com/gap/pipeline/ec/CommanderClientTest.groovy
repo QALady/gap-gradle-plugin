@@ -28,6 +28,7 @@ public class CommanderClientTest {
         environmentStub = new EnvironmentStub()
         commander = new CommanderClient(mockShellCommand,environmentStub)
     }
+
     @Test
     public void addLink_shouldInvokeEcToolToCreateLinks(){
         def jobId = "1254321"
@@ -168,5 +169,32 @@ public class CommanderClientTest {
         assertThat(result, is(true))
     }
 
+    @Test
+    public void getCredential_shouldInvokeEcToolToGetFullCredential() {
+        environmentStub.setValue('COMMANDER_JOBID', '12345')
 
+        def credentialName = 'myCredential'
+        def valueName = 'userName'
+        commander.getCredential(credentialName, valueName)
+
+        verify(mockShellCommand).execute(['ectool', 'getFullCredential', credentialName, '--value', valueName])
+    }
+
+    @Test
+    public void getArtifactoryUserName_shouldInvokeEcToolToGetFullCredential() {
+        environmentStub.setValue('COMMANDER_JOBID', '12345')
+
+        commander.getArtifactoryUserName()
+
+        verify(mockShellCommand).execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/WMArtifactory', '--value', 'userName'])
+    }
+
+    @Test
+    public void getArtifactoryPassword_shouldInvokeEcToolToGetFullCredential() {
+        environmentStub.setValue('COMMANDER_JOBID', '12345')
+
+        commander.getArtifactoryPassword()
+
+        verify(mockShellCommand).execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/WMArtifactory', '--value', 'password'])
+    }
 }
