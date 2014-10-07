@@ -38,14 +38,6 @@ class GapTestPipelinePluginUp implements Plugin<Project> {
             include '**/*'
         }
 
-        /*
-        project.tasks.add(name:'packageIntegrationTests', type: Zip) {
-          appendix = 'integrationTests'
-          classifier = 'tests'
-          from ("${project.projectDir}/integrationTests")
-          include '*'
-        }
-        */
 
         if (project.plugins.hasPlugin('base')) {
             project.configure(project) {
