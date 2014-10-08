@@ -10,10 +10,9 @@ import org.gradle.api.artifacts.ResolveException
 class AirWatchPlugin implements Plugin<Project> {
 
     private Project project
-    private CommanderClient commanderClient
+    private CommanderClient commanderClient = new CommanderClient()
 
-    public AirWatchPlugin(CommanderClient commanderClient = new CommanderClient()) {
-        super()
+    public void setCommanderClient(CommanderClient commanderClient) {
         this.commanderClient = commanderClient
     }
 
