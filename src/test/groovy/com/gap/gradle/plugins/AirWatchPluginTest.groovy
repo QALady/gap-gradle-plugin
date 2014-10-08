@@ -94,7 +94,9 @@ class AirWatchPluginTest {
     environmentStub.setValue('COMMANDER_JOBID', '1')
 
     def commanderClient = new CommanderClient(mockShellCommand, environmentStub)
-    def awPlugin = new AirWatchPlugin(commanderClient)
+
+    def awPlugin = new AirWatchPlugin()
+    awPlugin.setCommanderClient(commanderClient)
 
     def dummyProject = ProjectBuilder.builder().build()
     dummyProject.ext.set('awEnv', 'Test')
