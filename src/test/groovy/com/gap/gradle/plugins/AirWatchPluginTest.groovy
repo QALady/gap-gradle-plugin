@@ -35,7 +35,7 @@ class AirWatchPluginTest {
     project.ext.set('awTestHost', 'awHost')
     project.ext.set('awTestCredentialName', 'awCredentialName')
     project.ext.set('awTestTenantCode', 'awTenantCode')
-    project.ext.set('awTestLocationGroupID', 123)
+    project.ext.set('awTestLocationGroupID', "123")
   }
 
   @Test

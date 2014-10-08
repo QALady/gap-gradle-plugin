@@ -17,7 +17,7 @@ class AirWatchClientTest {
   @Before
   void setUp() {
     mockRESTClient = new MockFor(RESTClient)
-    client = new AirWatchClient("", "", "", "someKey", 123)
+    client = new AirWatchClient("", "", "", "someKey", "123")
   }
 
   @Test
@@ -30,7 +30,7 @@ class AirWatchClientTest {
     }
 
     mockAuthConfig.use {
-      new AirWatchClient("", "someUser", "somePass", "", 123)
+      new AirWatchClient("", "someUser", "somePass", "", "123")
     }
   }
 
@@ -65,7 +65,7 @@ class AirWatchClientTest {
       assertEquals("someId", body.get("TransactionId"))
       assertEquals("someName", body.get("ApplicationName"))
       assertEquals("someDescription", body.get("Description"))
-      assertEquals(123, body.get("LocationGroupId"))
+      assertEquals("123", body.get("LocationGroupId"))
 
       return [data: [:]]
     }
