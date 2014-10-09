@@ -87,8 +87,8 @@ class AirWatchPluginTest {
   @Test
   public void shouldInvokeECToolToRetrieveCredentials() {
     def mockShellCommand = mock(ShellCommand, Mockito.RETURNS_SMART_NULLS)
-    when(mockShellCommand.execute(['ectool', 'getFullCredential', 'myCredential', '--value', 'userName'])).thenReturn('myUser')
-    when(mockShellCommand.execute(['ectool', 'getFullCredential', 'myCredential', '--value', 'password'])).thenReturn('myPass')
+    when(mockShellCommand.execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/myCredential', '--value', 'userName'])).thenReturn('myUser')
+    when(mockShellCommand.execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/myCredential', '--value', 'password'])).thenReturn('myPass')
 
     def environmentStub = new EnvironmentStub()
     environmentStub.setValue('COMMANDER_JOBID', '1')
