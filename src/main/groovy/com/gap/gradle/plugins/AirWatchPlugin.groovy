@@ -49,11 +49,12 @@ class AirWatchPlugin implements Plugin<Project> {
         }
 
         project.task("getCredentials", dependsOn: "validateProperties") << {
+            def credentialPath = "/projects/WM Credentials/credentials"
             def credentialName = project.get("aw${project.awEnv}CredentialName")
 
             ['userName', 'password'].each { valueName ->
                 ext[valueName] = {
-                    commanderClient.getCredential(credentialName, valueName)
+                    commanderClient.getCredential("$credentialPath/$credentialName", valueName)
                 }
             }
         }
