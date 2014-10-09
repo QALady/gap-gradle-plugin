@@ -10,10 +10,9 @@ import org.gradle.api.artifacts.ResolveException
 class AirWatchPlugin implements Plugin<Project> {
 
     private Project project
-    private CommanderClient commanderClient
+    private CommanderClient commanderClient = new CommanderClient()
 
-    public AirWatchPlugin(CommanderClient commanderClient = new CommanderClient()) {
-        super()
+    public void setCommanderClient(CommanderClient commanderClient) {
         this.commanderClient = commanderClient
     }
 
@@ -50,11 +49,12 @@ class AirWatchPlugin implements Plugin<Project> {
         }
 
         project.task("getCredentials", dependsOn: "validateProperties") << {
+            def credentialPath = "/projects/WM Credentials/credentials"
             def credentialName = project.get("aw${project.awEnv}CredentialName")
 
             ['userName', 'password'].each { valueName ->
                 ext[valueName] = {
-                    commanderClient.getCredential(credentialName, valueName)
+                    commanderClient.getCredential("$credentialPath/$credentialName", valueName)
                 }
             }
         }

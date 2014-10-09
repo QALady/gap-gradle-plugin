@@ -35,7 +35,7 @@ class AirWatchPluginTest {
     project.ext.set('awTestHost', 'awHost')
     project.ext.set('awTestCredentialName', 'awCredentialName')
     project.ext.set('awTestTenantCode', 'awTenantCode')
-    project.ext.set('awTestLocationGroupID', 123)
+    project.ext.set('awTestLocationGroupID', "123")
   }
 
   @Test
@@ -87,14 +87,16 @@ class AirWatchPluginTest {
   @Test
   public void shouldInvokeECToolToRetrieveCredentials() {
     def mockShellCommand = mock(ShellCommand, Mockito.RETURNS_SMART_NULLS)
-    when(mockShellCommand.execute(['ectool', 'getFullCredential', 'myCredential', '--value', 'userName'])).thenReturn('myUser')
-    when(mockShellCommand.execute(['ectool', 'getFullCredential', 'myCredential', '--value', 'password'])).thenReturn('myPass')
+    when(mockShellCommand.execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/myCredential', '--value', 'userName'])).thenReturn('myUser')
+    when(mockShellCommand.execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/myCredential', '--value', 'password'])).thenReturn('myPass')
 
     def environmentStub = new EnvironmentStub()
     environmentStub.setValue('COMMANDER_JOBID', '1')
 
     def commanderClient = new CommanderClient(mockShellCommand, environmentStub)
-    def awPlugin = new AirWatchPlugin(commanderClient)
+
+    def awPlugin = new AirWatchPlugin()
+    awPlugin.setCommanderClient(commanderClient)
 
     def dummyProject = ProjectBuilder.builder().build()
     dummyProject.ext.set('awEnv', 'Test')
