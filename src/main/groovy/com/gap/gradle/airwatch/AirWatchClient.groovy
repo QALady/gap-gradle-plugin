@@ -28,6 +28,16 @@ class AirWatchClient {
     this.tenantCode = tenantCode
     this.locationGroupID = locationGroupID
 
+    println """
+AW client params:
+${host}/${API_PATH}
+- $host
+- $username
+- $password
+- $tenantCode
+- $locationGroupID
+    """
+
     restClient.auth.basic username, password
   }
 
@@ -79,9 +89,11 @@ class AirWatchClient {
       "aw-tenant-code": this.tenantCode
     ]
     logger.debug "Request headers: ${headers}"
+    println "Request headers: ${headers}"
 
     def body = new JsonBuilder(requestBody)
     logger.debug "Request body: ${body}"
+    println "Request body: ${body}"
 
     try {
       def response = restClient.post(
