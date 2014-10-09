@@ -4,7 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 import com.gap.pipeline.ec.CommanderClient
-import com.gap.gradle.utils.Constants
+import com.gap.gradle.utils.Constants.*
 
 class GapWMExperimentsPlugin implements Plugin<Project> {
 
