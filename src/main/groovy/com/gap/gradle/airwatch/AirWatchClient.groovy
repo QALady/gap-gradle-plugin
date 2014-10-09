@@ -20,10 +20,10 @@ class AirWatchClient {
 
   private RESTClient restClient
   private String tenantCode
-  private long locationGroupID
+  private String locationGroupID
 
   AirWatchClient(String host, String username, String password, String tenantCode,
-      long locationGroupID) {
+      String locationGroupID) {
     this.restClient = new RESTClient("${host}/${API_PATH}")
     this.tenantCode = tenantCode
     this.locationGroupID = locationGroupID
