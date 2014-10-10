@@ -1,24 +1,21 @@
 package com.gap.gradle.plugins
-
-import static helpers.Assert.taskShouldExist
-import static helpers.Assert.taskShouldDependOn
-import static org.hamcrest.CoreMatchers.instanceOf
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertThat
-import static org.junit.Assert.assertEquals
-import static org.mockito.Mockito.*
-
 import com.gap.gradle.airwatch.AirWatchClient
 import com.gap.gradle.utils.ShellCommand
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.utils.EnvironmentStub
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito
-import org.mockito.Mockito
+
+import static helpers.Assert.taskShouldDependOn
+import static helpers.Assert.taskShouldExist
+import static org.hamcrest.CoreMatchers.instanceOf
+import static org.junit.Assert.*
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 class AirWatchPluginTest {
 
@@ -82,6 +79,21 @@ class AirWatchPluginTest {
     task.execute()
 
     assertThat(project.get('awClient'), instanceOf(AirWatchClient.class));
+  }
+
+  @Test
+  public void shouldThrowExceptionIfIpaNotFoundInArtifacts() {
+    project.configurations.create("archives")
+
+    def pushArtifactsTask = project.tasks.pushArtifactToAirWatch
+    pushArtifactsTask.dependsOn.clear()
+
+    try {
+      pushArtifactsTask.execute()
+      fail("Should have thrown exception because there is no IPA to upload")
+    } catch (GradleException e) {
+      assertEquals("Could not find target specified. See available targets with `xcodebuild -list`.", e.cause.message)
+    }
   }
 
   @Test

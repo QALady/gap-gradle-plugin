@@ -2,10 +2,10 @@ package com.gap.gradle.plugins
 
 import com.gap.gradle.airwatch.AirWatchClient
 import com.gap.pipeline.ec.CommanderClient
+import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolveException
 
 class AirWatchPlugin implements Plugin<Project> {
 
@@ -79,7 +79,7 @@ class AirWatchPlugin implements Plugin<Project> {
             def ipaFile = project.configurations.archives.find { it.name.toLowerCase() =~ project.target.toLowerCase() }
 
             if (ipaFile == null) {
-                throw new ResolveException("Could not find target specified. See available targets with `xcodebuild -list`.")
+                throw new GradleException("Could not find target specified. See available targets with `xcodebuild -list`.")
             }
 
             project.awClient.uploadApp(ipaFile, project.target, project.target, project.get("aw${project.awEnv}LocationGroupID"))
