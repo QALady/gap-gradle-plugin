@@ -60,12 +60,10 @@ class AirWatchPlugin implements Plugin<Project> {
         }
 
         project.task("configureAirWatchEnvironment", dependsOn: "getCredentials") << {
-            def client = new AirWatchClient(
-                project.get("aw${project.awEnv}Host"),
-                project.tasks.getCredentials.userName(),
-                project.tasks.getCredentials.password(),
-                project.get("aw${project.awEnv}TenantCode"),
-                project.get("aw${project.awEnv}LocationGroupID"))
+            def client = new AirWatchClient(project.get("aw${project.awEnv}Host"),
+                                            project.tasks.getCredentials.userName(),
+                                            project.tasks.getCredentials.password(),
+                                            project.get("aw${project.awEnv}TenantCode"))
 
             project.set("awClient", client)
 
@@ -84,40 +82,10 @@ class AirWatchPlugin implements Plugin<Project> {
                 throw new ResolveException("Could not find target specified. See available targets with `xcodebuild -list`.")
             }
 
-            def transactionId = uploadFile(ipaFile)
-            createApp(transactionId, project.target, project.target)
+            project.awClient.uploadApp(ipaFile, project.target, project.target, project.get("aw${project.awEnv}LocationGroupID"))
         }
 
         project.pushArtifactToAirWatch.group = "AirWatch"
         project.pushArtifactToAirWatch.description = "Distributes the app (.ipa) from Artifactory to AirWatch"
-    }
-
-    String uploadFile(File file) {
-        def fileSize = file.size()
-        def chunkSize = 5000
-        def chunkSequenceNumber = 1
-        def transactionId = "0"
-        def totalChunks = "${new BigDecimal( Math.ceil(fileSize / chunkSize) )}"
-
-        println "\nWill upload \"${file.name}\" to AirWatch..."
-
-        file.eachByte(chunkSize) { buffer, sizeRead ->
-            def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
-            def encodedChunk = bufferSlice.encodeBase64().toString()
-
-            println "Uploading chunk ${chunkSequenceNumber} of ${totalChunks}..."
-
-            transactionId = project.awClient.uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize)
-
-            chunkSequenceNumber++
-        }
-
-        transactionId
-    }
-
-    Map createApp(transactionId, appName, appDescription) {
-        println "\nWill create app in AirWatch using the uploaded chunks..."
-
-        project.awClient.beginInstall(transactionId, appName, appDescription)
     }
 }

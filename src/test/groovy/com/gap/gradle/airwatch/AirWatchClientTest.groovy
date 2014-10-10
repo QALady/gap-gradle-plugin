@@ -17,7 +17,7 @@ class AirWatchClientTest {
   @Before
   void setUp() {
     mockRESTClient = new MockFor(RESTClient)
-    client = new AirWatchClient("", "", "", "someKey", "123")
+    client = new AirWatchClient("", "", "", "someKey")
   }
 
   @Test
@@ -30,7 +30,7 @@ class AirWatchClientTest {
     }
 
     mockAuthConfig.use {
-      new AirWatchClient("", "someUser", "somePass", "", "123")
+      new AirWatchClient("", "someUser", "somePass", "")
     }
   }
 
@@ -71,8 +71,7 @@ class AirWatchClientTest {
     }
 
     mockRESTClient.use {
-      client.beginInstall("someId", "someName", "someDescription")
+      client.beginInstall("someId", "someName", "someDescription", "123")
     }
   }
-
 }

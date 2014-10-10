@@ -20,19 +20,46 @@ class AirWatchClient {
 
   private RESTClient restClient
   private String tenantCode
-  private String locationGroupID
 
-  AirWatchClient(String host, String username, String password, String tenantCode,
-      String locationGroupID) {
+  AirWatchClient(String host, String username, String password, String tenantCode) {
     this.restClient = new RESTClient("${host}/${API_PATH}")
     this.tenantCode = tenantCode
-    this.locationGroupID = locationGroupID
 
     restClient.auth.basic username, password
   }
 
-  String uploadChunk(String transactionId, String encodedChunk, int chunkSequenceNumber,
-      long fileSize) {
+  Map uploadApp(File ipaFile, String appName, String appDescription, String locationGroupId) {
+    def transactionId = uploadFile(ipaFile)
+
+    println "\nWill create app in AirWatch using the uploaded chunks..."
+
+    beginInstall(transactionId, appName, appDescription, locationGroupId)
+  }
+
+  String uploadFile(File file) {
+    def fileSize = file.size()
+    def chunkSize = 5000
+    def chunkSequenceNumber = 1
+    def transactionId = "0"
+    def totalChunks = "${new BigDecimal( Math.ceil(fileSize / chunkSize) )}"
+
+    println "\nWill upload \"${file.name}\" to AirWatch..."
+
+    file.eachByte(chunkSize) { buffer, sizeRead ->
+      def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
+      def encodedChunk = bufferSlice.encodeBase64().toString()
+
+      println "Uploading chunk ${chunkSequenceNumber} of ${totalChunks}..."
+
+      transactionId = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize)
+
+      chunkSequenceNumber++
+    }
+
+    transactionId
+  }
+
+  String uploadChunk(String transactionId, String encodedChunk, int chunkSequenceNumber, long fileSize) {
     def body = [
       "TransactionId": transactionId,
       "ChunkData": encodedChunk,
@@ -46,7 +73,7 @@ class AirWatchClient {
     response.get("TranscationId")
   }
 
-  Map beginInstall(String transactionId, String appName, String appDescription) {
+  Map beginInstall(String transactionId, String appName, String appDescription, String locationGroupId) {
     def body = [
       "TransactionId": transactionId,
       "ApplicationName": appName,
@@ -55,7 +82,7 @@ class AirWatchClient {
       "DeviceType": "Apple",
       "PushMode": "Auto",
       "EnableProvisioning": false,
-      "LocationGroupId": locationGroupID,
+      "LocationGroupId": locationGroupId,
       "SupportedModels": [
         "Model": [
           [ "ModelId": 1, "ModelName": "iPhone" ],
