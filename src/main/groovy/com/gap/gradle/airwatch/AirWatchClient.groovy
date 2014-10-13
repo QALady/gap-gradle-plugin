@@ -20,10 +20,13 @@ class AirWatchClient {
 
   private RESTClient restClient
   private String tenantCode
+  private String locationGroupID
 
-  AirWatchClient(String host, String username, String password, String tenantCode) {
+  AirWatchClient(String host, String username, String password, String tenantCode,
+      String locationGroupID) {
     this.restClient = new RESTClient("${host}/${API_PATH}")
     this.tenantCode = tenantCode
+    this.locationGroupID = locationGroupID
 
     restClient.auth.basic username, password
   }
@@ -52,7 +55,7 @@ class AirWatchClient {
       "DeviceType": "Apple",
       "PushMode": "On Demand",
       "EnableProvisioning": false,
-      "LocationGroupId": 33238,
+      "LocationGroupId": locationGroupID,
       "SupportedModels": [
         "Model": [
           [ "ModelId": 1, "ModelName": "iPhone" ],

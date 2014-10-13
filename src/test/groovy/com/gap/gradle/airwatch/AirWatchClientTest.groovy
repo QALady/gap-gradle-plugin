@@ -17,7 +17,7 @@ class AirWatchClientTest {
   @Before
   void setUp() {
     mockRESTClient = new MockFor(RESTClient)
-    client = new AirWatchClient("", "", "", "tenantCode")
+    client = new AirWatchClient("", "", "", "someKey", "123")
   }
 
   @Test
@@ -25,12 +25,12 @@ class AirWatchClientTest {
     def mockAuthConfig = new MockFor(AuthConfig)
 
     mockAuthConfig.demand.basic { String username, String password ->
-      assertEquals("user", username)
-      assertEquals("pass", password)
+      assertEquals("someUser", username)
+      assertEquals("somePass", password)
     }
 
     mockAuthConfig.use {
-      new AirWatchClient("", "user", "pass", "")
+      new AirWatchClient("", "someUser", "somePass", "", "123")
     }
   }
 
@@ -38,11 +38,11 @@ class AirWatchClientTest {
   void shouldCallUploadChunkEndpoint() {
     mockRESTClient.demand.post { Map<String, ?> args ->
       assertEquals("uploadchunk", args.path.toString())
-      assertEquals("tenantCode", args.headers.get("aw-tenant-code"))
+      assertEquals("someKey", args.headers.get("aw-tenant-code"))
 
       def body = new JsonSlurper().parseText(args.body)
-      assertEquals("transactionId", body.get("TransactionId"))
-      assertEquals("encodedChunk", body.get("ChunkData"))
+      assertEquals("someId", body.get("TransactionId"))
+      assertEquals("someEncodedString", body.get("ChunkData"))
       assertEquals(1, body.get("ChunkSequenceNumber"))
       assertEquals(5000, body.get("ChunkSize"))
       assertEquals(10500, body.get("TotalApplicationSize"))
@@ -51,7 +51,7 @@ class AirWatchClientTest {
     }
 
     mockRESTClient.use {
-      client.uploadChunk("transactionId", "encodedChunk", 1, 10500)
+      client.uploadChunk("someId", "someEncodedString", 1, 10500)
     }
   }
 
@@ -59,18 +59,19 @@ class AirWatchClientTest {
   void shouldCallBeginInstallEndpoint() {
     mockRESTClient.demand.post { Map<String, ?> args ->
       assertEquals("begininstall", args.path.toString())
-      assertEquals("tenantCode", args.headers.get("aw-tenant-code"))
+      assertEquals("someKey", args.headers.get("aw-tenant-code"))
 
       def body = new JsonSlurper().parseText(args.body)
-      assertEquals("transactionId", body.get("TransactionId"))
-      assertEquals("applicationName", body.get("ApplicationName"))
-      assertEquals("description", body.get("Description"))
+      assertEquals("someId", body.get("TransactionId"))
+      assertEquals("someName", body.get("ApplicationName"))
+      assertEquals("someDescription", body.get("Description"))
+      assertEquals("123", body.get("LocationGroupId"))
 
       return [data: [:]]
     }
 
     mockRESTClient.use {
-      client.beginInstall("transactionId", "applicationName", "description")
+      client.beginInstall("someId", "someName", "someDescription")
     }
   }
 
