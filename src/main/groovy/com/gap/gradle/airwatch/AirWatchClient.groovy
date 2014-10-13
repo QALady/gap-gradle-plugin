@@ -89,12 +89,7 @@ class AirWatchClient {
           [ "ModelId": 2, "ModelName": "iPad" ],
           [ "ModelId": 3, "ModelName": "iPod Touch" ]
         ]
-      ],
-      "Developer": "Gap, Inc.",
-      "DeveloperEmail": "Snap_Serve@gap.com",
-      "DeveloperPhone": "",
-      "SupportEmail": "Snap_Serve@gap.com",
-      "SupportPhone": ""
+      ]
     ]
 
     doPost(BEGIN_INSTALL_PATH, body)
