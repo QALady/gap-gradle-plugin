@@ -127,13 +127,15 @@ class SegmentRegistry {
         commander.setECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment", segment.toString())
     }
 
+    /*
     private def getIdentifierRegistryValue(segment, key){
         commander.getECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${segment}/${key}").value
     }
-
+    */
     /*
         RETURNS: arrays of strings (version numbers of successfully segment completions)
     */
+    /*
     private def getSuccessfulSegmentVersions(segmentId) {
          def successfulVersions = []
          //def xpath = commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segmentId}/goodVersions")
@@ -143,13 +145,14 @@ class SegmentRegistry {
          //def successfulVersions[] = commander.getECProperties({"propertySheetId => $propertySheetId"})->find('//propertyName')  
          successfulVersions[] = commander.getECProperties("propertySheetId", "$propertySheetId")
     }
-
+    */
     /*
         RETURNS: resolvedDependencies String (Upstream versions of the project)
     */
+    /*
     private def getResolvedDependencies(segmentId, version) {
          def resolvedDependencies = []
          def tmp = commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segmentId}/goodVersions/${version}/resolvedDependencies").value
     }
-
+    */
 }

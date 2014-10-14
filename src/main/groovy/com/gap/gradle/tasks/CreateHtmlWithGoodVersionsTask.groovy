@@ -12,17 +12,15 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 
 	def execute() {
 		try {
-			
+				buildDependenciesHtml()
 		}catch (all) {
-			logger.info("Unable to create HTML with good versions")
-			logger.debug(all.message)
+				logger.info("Unable to create HTML with good versions")
+				
 		}
 	}
 
 	def buildDependenciesHtml() {
-		def ivyDependencies = commanderClient.getECProperty("/myJob/ivyDependencies");
-		def dependenciesHtml = ""
+		
 	}
-
 
 }
