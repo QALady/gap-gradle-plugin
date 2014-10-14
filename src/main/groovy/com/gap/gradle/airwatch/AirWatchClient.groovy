@@ -53,7 +53,7 @@ class AirWatchClient {
       "Description": appDescription,
       "AutoUpdateVersion": true,
       "DeviceType": "Apple",
-      "PushMode": "On Demand",
+      "PushMode": "Auto",
       "EnableProvisioning": false,
       "LocationGroupId": locationGroupID,
       "SupportedModels": [
