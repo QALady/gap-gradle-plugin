@@ -19,21 +19,28 @@ class AirWatchClient {
   private static final CHUNK_SIZE = 5000
 
   private RESTClient restClient
-  private String tenantCode
+  final String host
+  final String username
+  final String password
+  final String tenantCode
 
   AirWatchClient(String host, String username, String password, String tenantCode) {
-    this.restClient = new RESTClient("${host}/${API_PATH}")
+    this.host = host
+    this.username = username
+    this.password = password
     this.tenantCode = tenantCode
+
+    this.restClient = new RESTClient("${host}/${API_PATH}")
 
     restClient.auth.basic username, password
   }
 
-  Map uploadApp(File ipaFile, String appName, String appDescription, String locationGroupId) {
+  Map uploadApp(File ipaFile, BeginInstallConfig config) {
     def transactionId = uploadFile(ipaFile)
 
     println "\nWill create app in AirWatch using the uploaded chunks..."
 
-    beginInstall(transactionId, appName, appDescription, locationGroupId)
+    beginInstall(transactionId, config)
   }
 
   String uploadFile(File file) {
@@ -73,16 +80,16 @@ class AirWatchClient {
     response.get("TranscationId")
   }
 
-  Map beginInstall(String transactionId, String appName, String appDescription, String locationGroupId) {
+  Map beginInstall(String transactionId, BeginInstallConfig config) {
     def body = [
       "TransactionId": transactionId,
-      "ApplicationName": appName,
-      "Description": appDescription,
+      "ApplicationName": config.appName,
+      "Description": config.appDescription,
       "AutoUpdateVersion": true,
       "DeviceType": "Apple",
-      "PushMode": "Auto",
+      "PushMode": config.pushMode,
       "EnableProvisioning": false,
-      "LocationGroupId": locationGroupId,
+      "LocationGroupId": config.locationGroupId,
       "SupportedModels": [
         "Model": [
           [ "ModelId": 1, "ModelName": "iPhone" ],

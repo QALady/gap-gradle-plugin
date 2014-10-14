@@ -1,6 +1,7 @@
 package com.gap.gradle.airwatch
 import org.gradle.api.tasks.Copy
 import org.gradle.internal.reflect.Instantiator
+import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
@@ -9,10 +10,12 @@ import static org.mockito.Mockito.mock
 
 public class AirwatchUploadExtensionTest {
     private extension
+    private project
 
     @Before
     public void setUp() throws Exception {
-        extension = new AirwatchUploadExtension(mock(Instantiator), mock(Copy))
+        project = ProjectBuilder.builder().build()
+        extension = new AirwatchUploadExtension(project, mock(Instantiator), mock(Copy))
     }
 
     @Test

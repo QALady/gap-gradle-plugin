@@ -1,23 +1,31 @@
 package com.gap.gradle.airwatch
-
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.NamedDomainObjectSet
+import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.internal.reflect.Instantiator
 
-class AirwatchUploadExtension {
+class AirwatchUploadExtension implements BeginInstallConfig {
     private Object appNameObj
     private Object appDescriptionObj
     String configFilename
     final ArtifactSpec artifact
+    final NamedDomainObjectSet<Environment> environments
+    Environment targetEnvironment
     File configFile
+    String pushMode
 
     private final Copy extractAirwatchConfigTask
     private final Instantiator instantiator
+    private final Project project
 
-    AirwatchUploadExtension(Instantiator instantiator, Copy extractAirwatchConfigTask) {
+    AirwatchUploadExtension(Project project, Instantiator instantiator, Copy extractAirwatchConfigTask) {
+        this.project = project
         this.instantiator = instantiator
         this.extractAirwatchConfigTask = extractAirwatchConfigTask
         this.artifact = instantiator.newInstance(ArtifactSpec)
+        this.environments = project.container(Environment, { name -> instantiator.newInstance(Environment, name) })
     }
 
     void setAppName(Object appName) {
@@ -42,6 +50,11 @@ class AirwatchUploadExtension {
         appDescriptionObj
     }
 
+    @Override
+    String getLocationGroupId() {
+        targetEnvironment.locationGroupId
+    }
+
     File getConfigFile() {
         if (configFile) {
             return configFile
@@ -51,5 +64,9 @@ class AirwatchUploadExtension {
 
     void artifact(Action<ArtifactSpec> action) {
         action.execute(artifact)
+    }
+
+    void environments(Action<? super NamedDomainObjectCollection<Environment>> action) {
+        action.execute(environments)
     }
 }

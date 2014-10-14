@@ -1,11 +1,6 @@
 package com.gap.gradle.plugins
-
-import com.gap.gradle.airwatch.AirWatchClient
-import com.gap.gradle.airwatch.AirwatchUploadExtension
-import com.gap.gradle.airwatch.ArtifactFinder
-import com.gap.pipeline.ec.CommanderClient
+import com.gap.gradle.airwatch.*
 import org.gradle.api.GradleException
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
@@ -19,12 +14,10 @@ class AirWatchPlugin implements Plugin<Project> {
     private final Instantiator instantiator
     private Project project
     private AirwatchUploadExtension extension
-    private CommanderClient commanderClient = new CommanderClient()
     private Copy extractAirwatchConfigTask
-
-    public void setCommanderClient(CommanderClient commanderClient) {
-        this.commanderClient = commanderClient
-    }
+    private AirWatchClientFactory airWatchClientFactory = new AirWatchClientFactory()
+    private CredentialProvider credentialProvider = new CredentialProvider()
+    private BeginInstallConfigValidator beginInstallConfigValidator = new BeginInstallConfigValidator()
 
     @Inject
     public AirWatchPlugin(Instantiator instantiator) {
@@ -36,7 +29,9 @@ class AirWatchPlugin implements Plugin<Project> {
         this.project = project
         this.extractAirwatchConfigTask = createExtractAirwatchConfigTask()
 
-        this.extension = project.extensions.create("airwatchUpload", AirwatchUploadExtension, instantiator, extractAirwatchConfigTask)
+        this.extension = project.extensions.create("airwatchUpload", AirwatchUploadExtension, project, instantiator, extractAirwatchConfigTask)
+        this.extension.environments.add(preProductionEnv())
+        this.extension.environments.add(productionEnv())
 
         createTasks()
     }
@@ -53,50 +48,7 @@ class AirWatchPlugin implements Plugin<Project> {
     }
 
     void createTasks() {
-        project.task("validateProperties") << {
-            if (!project.hasProperty("awEnv")) {
-                throw new InvalidUserDataException("You need to define the AirWatch environment you want to push to, e.g. -PawEnv=CN11.")
-            }
-
-            if (!project.hasProperty("aw${project.awEnv}Host") ||
-                !project.hasProperty("aw${project.awEnv}CredentialName") ||
-                !project.hasProperty("aw${project.awEnv}TenantCode") ||
-                !project.hasProperty("aw${project.awEnv}LocationGroupID")) {
-
-                throw new InvalidUserDataException("Environment ${project.awEnv} is not defined. You should have the following entries in your gradle.properties file:\n" +
-                        "- aw${project.awEnv}Host\n" +
-                        "- aw${project.awEnv}CredentialName\n" +
-                        "- aw${project.awEnv}TenantCode\n" +
-                        "- aw${project.awEnv}LocationGroupID")
-            }
-        }
-
-        project.task("getCredentials", dependsOn: "validateProperties") << {
-            def credentialPath = "/projects/WM Credentials/credentials"
-            def credentialName = project.get("aw${project.awEnv}CredentialName")
-
-            ['userName', 'password'].each { valueName ->
-                ext[valueName] = {
-                    //commanderClient.getCredential("$credentialPath/$credentialName", valueName)
-                    // TODO undo...
-                    "gapcn11"
-                }
-            }
-        }
-
-        project.task("configureAirWatchEnvironment", dependsOn: "getCredentials") << {
-            def client = new AirWatchClient(project.get("aw${project.awEnv}Host"),
-                                            project.tasks.getCredentials.userName(),
-                                            project.tasks.getCredentials.password(),
-                                            project.get("aw${project.awEnv}TenantCode"))
-
-            project.set("awClient", client)
-
-            project.set("aw${project.awEnv}User", project.tasks.getCredentials.userName())
-            project.set("aw${project.awEnv}Pass", project.tasks.getCredentials.password())
-        }
-
-        def pushArtifactToAirWatchTask = project.task("pushArtifactToAirWatch", dependsOn: "configureAirWatchEnvironment") << {
+        def pushArtifactToAirWatchTask = project.task("pushArtifactToAirWatch") << {
             def artifactFinder = new ArtifactFinder(extension.artifact)
             def resolvedArtifact = project.configurations['archives'].resolvedConfiguration.resolvedArtifacts.find {
                 def matchResult = artifactFinder.matches(it)
@@ -108,7 +60,15 @@ class AirWatchPlugin implements Plugin<Project> {
                 throw new GradleException("Could not find artifact that matches configured artifact in archives configuration.")
             }
 
-            def createdApp = project.awClient.uploadApp(resolvedArtifact.file, extension.appName, extension.appDescription, project.get("aw${project.awEnv}LocationGroupID"))
+            def targetEnvironment = extension.targetEnvironment
+            if (targetEnvironment == null) {
+                throw new RuntimeException("You need to specify to which environment the artifact will be uploaded using `targetEnvironment`.")
+            }
+
+            beginInstallConfigValidator.validate(extension)
+
+            def airwatchClient = airWatchClientFactory.create(targetEnvironment, credentialProvider)
+            def createdApp = airwatchClient.uploadApp(resolvedArtifact.file, extension)
 
             ext.publishedAppId = createdApp["Id"]["Value"]
         }
@@ -122,8 +82,9 @@ class AirWatchPlugin implements Plugin<Project> {
             executable 'bundle'
 
             doFirst {
-                args = ['exec', 'airwatch-app-config', extension.configFile(), pushArtifactToAirWatchTask.publishedAppId, extension.appName]
-                environment AW_URL: project.get("aw${awEnv}WebHost"), AW_USER: project.get("aw${awEnv}User"), AW_PASS: project.get("aw${awEnv}Pass")
+                def credential = credentialProvider.get(extension.targetEnvironment.credentialName)
+                args = ['exec', 'airwatch-app-config', extension.configFile, pushArtifactToAirWatchTask.publishedAppId, extension.appName]
+                environment AW_URL: extension.targetEnvironment.consoleHost, AW_USER: credential.username, AW_PASS: credential.password
             }
 
             onlyIf { extension.configFile.exists() }
@@ -131,5 +92,39 @@ class AirWatchPlugin implements Plugin<Project> {
 
         project.pushArtifactToAirWatch.group = "AirWatch"
         project.pushArtifactToAirWatch.description = "Distributes the app (.ipa) from Artifactory to AirWatch"
+    }
+
+    def productionEnv() {
+        new Environment("production").with {
+            apiHost         = "https://gapstoresds.awmdm.com/"
+            consoleHost     = "https://gapstoresds.awmdm.com/"
+            tenantCode      = "1GEEHIBAAAG6A5DQAEQA"
+            credentialName  = "AirWatchProd"
+            locationGroupId = "570"
+            return it
+        }
+    }
+
+    def preProductionEnv() {
+        new Environment("preProduction").with {
+            apiHost         = "https://as11.airwatchportals.com/"
+            consoleHost     = "https://cn11.airwatchportals.com/"
+            tenantCode      = "1R1G22AQAAG6A6UAAEAB"
+            credentialName  = "AirWatchCN11"
+            locationGroupId = "33238"
+            return it
+        }
+    }
+
+    void setAirWatchClientFactory(AirWatchClientFactory airWatchClientFactory) {
+        this.airWatchClientFactory = airWatchClientFactory
+    }
+
+    void setCredentialProvider(CredentialProvider credentialProvider) {
+        this.credentialProvider = credentialProvider
+    }
+
+    void setBeginInstallConfigValidator(BeginInstallConfigValidator beginInstallConfigValidator) {
+        this.beginInstallConfigValidator = beginInstallConfigValidator
     }
 }
