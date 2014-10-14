@@ -182,5 +182,22 @@ class CommanderClient {
 	  return getECProperty("/jobs[$jobId]/report-urls/" + key)
 	}
 
-  
+  def getECProperties(String key, String id) {
+    try{
+      shellCommand.execute(['ectool', 'getProperties', '--key', id])
+    }
+    catch (ShellCommandException e){
+      if(e.message.contains('[NoSuchProperty]')){
+        logger.debug("Requested property sheet does not exist. ${e.message}\n")
+        return Property.invalidProperty(key)
+      }
+      else throw e
+    }
+  }
+
+  /*public def getPropertyValue(String path, String property) {
+    return new Property(path, shellCommand.execute(['ectool', 'getProperty', path.toString()]))
+  }
+  */
+
 }
