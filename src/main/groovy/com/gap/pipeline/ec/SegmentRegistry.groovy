@@ -6,6 +6,8 @@ class SegmentRegistry {
 
     def logger = LoggerFactory.getLogger(com.gap.pipeline.ec.SegmentRegistry)
     def commander
+    def segmentRegistryPath = "/projects[WM Segment Registry]/SegmentRegistry"
+    def identifierRegistryPath = "/projects[WM Segment Registry]/IdentifierRegistry" 
 
 
     SegmentRegistry(commander = new CommanderClient()){
@@ -127,32 +129,32 @@ class SegmentRegistry {
         commander.setECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment", segment.toString())
     }
 
-    /*
-    private def getIdentifierRegistryValue(segment, key){
-        commander.getECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${segment}/${key}").value
+    
+    public def getIdentifierRegistryValue(segment, key){
+        commander.getECProperty("${identifierRegistryPath}/${segment}/${key}").value
     }
-    */
+    
     /*
         RETURNS: arrays of strings (version numbers of successfully segment completions)
     */
-    /*
-    private def getSuccessfulSegmentVersions(segmentId) {
+    
+    public def getSuccessfulSegmentVersions(segmentId) {
          def successfulVersions = []
          //def xpath = commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segmentId}/goodVersions")
-         def xpath = "/projects[WM Segment Registry]/SegmentRegistry/${segmentId}/goodVersions"
+         def xpath = "${segmentRegistryPath}/${segmentId}/goodVersions"
          //def propertySheetId = $xpath->findvalue('//propertySheetId')->value()
          def propertySheetId = commander.getECProperty("$xpath/propertySheetId")
          //def successfulVersions[] = commander.getECProperties({"propertySheetId => $propertySheetId"})->find('//propertyName')  
          successfulVersions[] = commander.getECProperties("propertySheetId", "$propertySheetId")
     }
-    */
+    
     /*
         RETURNS: resolvedDependencies String (Upstream versions of the project)
     */
-    /*
-    private def getResolvedDependencies(segmentId, version) {
+    
+    public def getResolvedDependencies(segmentId, version) {
          def resolvedDependencies = []
-         def tmp = commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segmentId}/goodVersions/${version}/resolvedDependencies").value
+         def tmp = commander.getECProperty("${segmentRegistryPath}/${segmentId}/goodVersions/${version}/resolvedDependencies").value
     }
-    */
+    
 }
