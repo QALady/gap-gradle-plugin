@@ -27,3 +27,8 @@ buildscript {
 // Check (src/main/resources/META-INF/gradle-plugins/) to see a list of the plugins available.
 apply plugin: 'gappipeline'
 ```
+
+## Plugin documentation
+
+* [Airwatch plugin](docs/airwatch-plugin.md)
+
