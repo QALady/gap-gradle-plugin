@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.Environment
+import groovy.json.JsonSlurper
 
 class CommanderClient {
 
@@ -183,8 +184,11 @@ class CommanderClient {
 	}
 
   def getECProperties(String key, String id) {
+    def propSheet
+    def propName = []
     try{
-      shellCommand.execute(['ectool', 'getProperties', '--key', id])
+      propSheet = shellCommand.execute(['ectool', '--format', 'json', 'getProperties', '--key', id])
+      propName[] = parseJson(propSheet)
     }
     catch (ShellCommandException e){
       if(e.message.contains('[NoSuchProperty]')){
@@ -195,9 +199,12 @@ class CommanderClient {
     }
   }
 
-  /*public def getPropertyValue(String path, String property) {
-    return new Property(path, shellCommand.execute(['ectool', 'getProperty', path.toString()]))
-  }
-  */
 
+  def parseJson(String propSheetJson) {
+    def jsonSupler = new JsonSlurper()
+    def propName = jsonSupler.parseText(propSheetJson)
+    propName.propertySheet.property.each { prop ->
+        return prop.propertyName
+    }
+  }
 }

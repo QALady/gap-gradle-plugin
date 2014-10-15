@@ -140,11 +140,8 @@ class SegmentRegistry {
     
     public def getSuccessfulSegmentVersions(segmentId) {
          def successfulVersions = []
-         //def xpath = commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segmentId}/goodVersions")
          def xpath = "${segmentRegistryPath}/${segmentId}/goodVersions"
-         //def propertySheetId = $xpath->findvalue('//propertySheetId')->value()
          def propertySheetId = commander.getECProperty("$xpath/propertySheetId")
-         //def successfulVersions[] = commander.getECProperties({"propertySheetId => $propertySheetId"})->find('//propertyName')  
          successfulVersions[] = commander.getECProperties("propertySheetId", "$propertySheetId")
     }
     
