@@ -19,20 +19,54 @@ class AirWatchClient {
   private static final CHUNK_SIZE = 5000
 
   private RESTClient restClient
-  private String tenantCode
-  private String locationGroupID
+  final String host
+  final String username
+  final String password
+  final String tenantCode
 
-  AirWatchClient(String host, String username, String password, String tenantCode,
-      String locationGroupID) {
-    this.restClient = new RESTClient("${host}/${API_PATH}")
+  AirWatchClient(String host, String username, String password, String tenantCode) {
+    this.host = host
+    this.username = username
+    this.password = password
     this.tenantCode = tenantCode
-    this.locationGroupID = locationGroupID
+
+    this.restClient = new RESTClient("${host}/${API_PATH}")
 
     restClient.auth.basic username, password
   }
 
-  String uploadChunk(String transactionId, String encodedChunk, int chunkSequenceNumber,
-      long fileSize) {
+  Map uploadApp(File ipaFile, BeginInstallConfig config) {
+    def transactionId = uploadFile(ipaFile)
+
+    println "\nWill create app in AirWatch using the uploaded chunks..."
+
+    beginInstall(transactionId, config)
+  }
+
+  String uploadFile(File file) {
+    def fileSize = file.size()
+    def chunkSize = 5000
+    def chunkSequenceNumber = 1
+    def transactionId = "0"
+    def totalChunks = "${new BigDecimal( Math.ceil(fileSize / chunkSize) )}"
+
+    println "\nWill upload \"${file.name}\" to AirWatch..."
+
+    file.eachByte(chunkSize) { buffer, sizeRead ->
+      def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
+      def encodedChunk = bufferSlice.encodeBase64().toString()
+
+      println "Uploading chunk ${chunkSequenceNumber} of ${totalChunks}..."
+
+      transactionId = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize)
+
+      chunkSequenceNumber++
+    }
+
+    transactionId
+  }
+
+  String uploadChunk(String transactionId, String encodedChunk, int chunkSequenceNumber, long fileSize) {
     def body = [
       "TransactionId": transactionId,
       "ChunkData": encodedChunk,
@@ -46,28 +80,23 @@ class AirWatchClient {
     response.get("TranscationId")
   }
 
-  Map beginInstall(String transactionId, String appName, String appDescription) {
+  Map beginInstall(String transactionId, BeginInstallConfig config) {
     def body = [
       "TransactionId": transactionId,
-      "ApplicationName": appName,
-      "Description": appDescription,
+      "ApplicationName": config.appName,
+      "Description": config.appDescription,
       "AutoUpdateVersion": true,
       "DeviceType": "Apple",
-      "PushMode": "Auto",
+      "PushMode": config.pushMode,
       "EnableProvisioning": false,
-      "LocationGroupId": locationGroupID,
+      "LocationGroupId": config.locationGroupId,
       "SupportedModels": [
         "Model": [
           [ "ModelId": 1, "ModelName": "iPhone" ],
           [ "ModelId": 2, "ModelName": "iPad" ],
           [ "ModelId": 3, "ModelName": "iPod Touch" ]
         ]
-      ],
-      "Developer": "Gap, Inc.",
-      "DeveloperEmail": "Snap_Serve@gap.com",
-      "DeveloperPhone": "",
-      "SupportEmail": "Snap_Serve@gap.com",
-      "SupportPhone": ""
+      ]
     ]
 
     doPost(BEGIN_INSTALL_PATH, body)
