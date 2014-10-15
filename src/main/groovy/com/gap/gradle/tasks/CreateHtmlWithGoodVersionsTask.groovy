@@ -27,7 +27,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 
 		ivyDependencies.each { dependency ->
 			def segmentId = segmentRegistry.getSegmentThatProducesIdentifier(dependency)
-			def versions = ['2234', '555'] //segmentRegistry.getSuccessfulSegmentVersions(segmentId) 
+			def versions = segmentRegistry.getSuccessfulSegmentVersions(segmentId) 
 			dependenciesHtml += createTableRow(dependency, segmentId, versions )
 		}
 		dependenciesHtml += "</table><br>"
@@ -54,16 +54,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 		}
 
         rowHtml += "</select>\n</td>\n</tr>"
-        dynamicData += "\n"
-				//Need to check what its doing
-        dynamicData +="~ s/------------------------------------------------------------//g"
         
-        dynamicData +="~ s/default - Configuration for default artifacts.//g"
-        dynamicData +="~ s/Root project//g"
-        dynamicData +="~ s/pipeline//g"
-        dynamicData +="~ s/No dependencies//g"
-        dynamicData +="~ s/\n *\n/\n/g"
-		
         commanderClient.setProperty("/myJob/dynamicData", dynamicData);
  				return rowHtml;
 			
