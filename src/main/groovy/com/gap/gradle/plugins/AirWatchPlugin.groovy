@@ -62,7 +62,7 @@ class AirWatchPlugin implements Plugin<Project> {
 
             def targetEnvironment = extension.targetEnvironment
             if (targetEnvironment == null) {
-                throw new RuntimeException("You need to specify to which environment the artifact will be uploaded using `targetEnvironment`.")
+                throw new GradleException("You need to specify to which environment the artifact will be uploaded using `targetEnvironment`.")
             }
 
             beginInstallConfigValidator.validate(extension)
