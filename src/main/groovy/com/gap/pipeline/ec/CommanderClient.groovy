@@ -191,7 +191,7 @@ class CommanderClient {
       propName[] = parseJson(propSheet)
     }
     catch (ShellCommandException e){
-      if(e.message.contains('[NoSuchProperty]')){
+      if(e.message.contains('[NoSuchPropertySheet]')){
         logger.debug("Requested property sheet does not exist. ${e.message}\n")
         return Property.invalidProperty(key)
       }
@@ -201,8 +201,8 @@ class CommanderClient {
 
 
   def parseJson(String propSheetJson) {
-    def jsonSupler = new JsonSlurper()
-    def propName = jsonSupler.parseText(propSheetJson)
+    def jsonSlurper = new JsonSlurper()
+    def propName = jsonSlurper.parseText(propSheetJson)
     def propList = []
     propName.propertySheet.property.each { prop ->
          propList.add(prop.propertyName)

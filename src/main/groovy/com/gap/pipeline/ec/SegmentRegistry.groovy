@@ -101,7 +101,7 @@ class SegmentRegistry {
         }
     }
 
-    private def getSegmentThatProducesIdentifier(identifier) {
+    public def getSegmentThatProducesIdentifier(identifier) {
         def segmentId = commander.getECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment").value
         Segment.fromString(segmentId)
     }

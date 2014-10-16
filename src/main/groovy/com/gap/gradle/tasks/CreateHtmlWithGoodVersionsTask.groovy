@@ -1,39 +1,43 @@
 package com.gap.gradle.tasks
 
 import org.apache.commons.logging.LogFactory
-import com.gap.pipeline.tasks.annotations.Require
-import com.gap.pipeline.tasks.annotations.RequiredParameters
 import org.gradle.api.Project
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.ec.CommanderClient
-import com.gap.gradle.utils.ShellCommand
 import com.gap.pipeline.ec.SegmentRegistry
 
-@RequiredParameters([
-        @Require(parameter = 'segmentId', description = '')
-])
 class CreateHtmlWithGoodVersionsTask extends WatchmenTask{
-	def logger = LogFactory.getLog(com.gap.gradle.tasks.CreateHTMLWithGoodVersionsTask)
-	ShellCommand shellCommand = new ShellCommand()
-	CommanderClient commanderClient = new CommanderClient(shellCommand)
-	SegmentRegistry segmentRegistry = new SegmentRegistry()
+	def logger = LogFactory.getLog(com.gap.gradle.tasks.CreateHtmlWithGoodVersionsTask)
+	CommanderClient commanderClient
+	SegmentRegistry segmentRegistry
 
-	CreateHtmlWithGoodVersionsTask(Project project) {
-		super(project);
-		this.project = project;
+	CreateHtmlWithGoodVersionsTask(Project project, commanderClient = new CommanderClient(), segmentRegistry = new SegmentRegistry()) {
+		super(project)
+		this.project = project
+		this.commanderClient = commanderClient
+		this.segmentRegistry = segmentRegistry
 	}
 
 	def execute() {
+		validate()
 		try {
+	
 				buildDependenciesHtml()
+				
 		}catch (all) {
 				logger.info("Unable to create HTML with good versions")
 				//logger.debug(all.message)
 		}
 	}
 
+	def getIvyDependencies() {
+
+		ivyDependencies[] = commanderClient.getECProperty("/myJob/ivyDependencies").split("\n")
+	}
+	
 	def buildDependenciesHtml() {
-		def ivyDependencies = commanderClient.getECProperty("/myJob/ivyDependencies").split("\n")
+
+		ivyDependencies[] = getIvyDependencies()
 		def dependenciesHtml = "<table border=\"0\">"
 
 		ivyDependencies.each { dependency ->

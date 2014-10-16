@@ -26,4 +26,9 @@ class GapWMManualPluginTest {
 		assertThat("Task '${task}' does not exist on project", project.tasks.findByName(task), notNullValue())
 	}
 
+	@Test
+	void shouldExistTaskCreateHtmlWithGoodVersions() {
+		taskShouldExist('createHtmlWithGoodVersions', project)
+	}
+
 }
