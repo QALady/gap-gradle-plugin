@@ -14,7 +14,7 @@ class GapWMManualPluginTest {
 	@Before
 	void setup() {
 		project = ProjectBuilder.builder().build();
-		project.apply plugin: 'gapmanual'
+		project.apply plugin: 'gap-wm-manual'
 	}
 	
 	@Test

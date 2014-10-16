@@ -34,7 +34,7 @@ class UploadGradleWithSelectedDependencyVersionsTaskTest {
 		testGradleFile = "$temporaryFolder.root.path/test.gradle"
 		setupTestGradleFile()
 		mockSegmentRegistry = mock(SegmentRegistry, Mockito.RETURNS_SMART_NULLS)
-		project.apply plugin: 'gapmanual'
+		project.apply plugin: 'gap-wm-manual'
 		task = new UploadGradleWithSelectedDependencyVersionsTask(project, new CommanderClient(), mockSegmentRegistry)
 	}	
 	
