@@ -11,7 +11,7 @@ class GapWMManualPlugin implements Plugin<Project> {
   void apply(Project project) {
 
   		project.task('createHtmlWithGoodVersions') << {
-            new CreateHtmlWithGoodVersionsTask().execute()
+            new CreateHtmlWithGoodVersionsTask(project).execute()
         }
 		  
 		project.task('uploadGradleWithSelectedDependencyVersions') << {

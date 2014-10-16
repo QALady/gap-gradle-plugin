@@ -203,8 +203,10 @@ class CommanderClient {
   def parseJson(String propSheetJson) {
     def jsonSupler = new JsonSlurper()
     def propName = jsonSupler.parseText(propSheetJson)
+    def propList = []
     propName.propertySheet.property.each { prop ->
-        return prop.propertyName
+         propList.add(prop.propertyName)
     }
+    return propList[]
   }
 }
