@@ -116,7 +116,7 @@ class SegmentRegistry {
         commander.setECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segment}/${key}", value)
     }
 
-    private def getSegmentRegistryValue(segment, key){
+    public def getSegmentRegistryValue(segment, key){
         commander.getECProperty("/projects[WM Segment Registry]/SegmentRegistry/${segment}/${key}").value
     }
 

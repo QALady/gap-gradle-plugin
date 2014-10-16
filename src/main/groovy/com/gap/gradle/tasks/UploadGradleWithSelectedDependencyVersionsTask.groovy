@@ -4,6 +4,7 @@ import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.ec.SegmentRegistry
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
@@ -16,17 +17,22 @@ class UploadGradleWithSelectedDependencyVersionsTask extends WatchmenTask {
 	def logger = LogFactory.getLog(com.gap.gradle.tasks.UploadGradleWithSelectedDependencyVersionsTask)
 	Project project
 	CommanderClient commanderClient
+	SegmentRegistry segmentRegistry
 
-	public UploadGradleWithSelectedDependencyVersionsTask(Project project, commanderClient = new CommanderClient()) {
+	public UploadGradleWithSelectedDependencyVersionsTask(Project project, commanderClient = new CommanderClient(), segmentRegistry = new SegmentRegistry()) {
 		super(project);
 		this.project = project
 		this.commanderClient = commanderClient
+		this.segmentRegistry = segmentRegistry
 	}
 
 	def execute() {
 		validate()
 		logger.info("Passed param segmentIdentifier as = " + project.segmentIdentifier)
 		logger.info("Passed param selectedVersions as = " + project.selectedVersions)
+		def gradleFileName = segmentRegistry.getSegmentRegistryValue(project.segmentIdentifier, "gradleFile")
+		logger.info("Gradle file of the segmentIdentifier is = $gradleFileName")
+		
 		/*
 		 * this execute task implements this below ec-perl script on EC in this gradle task:
 		 *
@@ -61,5 +67,9 @@ class UploadGradleWithSelectedDependencyVersionsTask extends WatchmenTask {
 			print {$fh2} $gradleFile;
 		 *
 		 */
+	}
+	
+	def replaceGradleWithSelectedVersions() {
+		
 	}
 }
