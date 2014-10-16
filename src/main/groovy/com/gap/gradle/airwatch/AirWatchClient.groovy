@@ -23,16 +23,16 @@ class AirWatchClient {
   final String username
   final String password
   final String tenantCode
+  final String encodedCredentials
 
   AirWatchClient(String host, String username, String password, String tenantCode) {
     this.host = host
     this.username = username
     this.password = password
     this.tenantCode = tenantCode
+    this.encodedCredentials = "$username:$password".getBytes().encodeBase64().toString()
 
     this.restClient = new RESTClient("${host}/${API_PATH}")
-
-    restClient.auth.basic username, password
   }
 
   Map uploadApp(File ipaFile, BeginInstallConfig config) {
@@ -105,7 +105,8 @@ class AirWatchClient {
   private Map doPost(String resourcePath, Map requestBody) {
     def headers = [
       "Content-Type": "application/json",
-      "aw-tenant-code": this.tenantCode
+      "aw-tenant-code": this.tenantCode,
+      "Authorization": "Basic $encodedCredentials"
     ]
     logger.debug "Request headers: ${headers}"
 
