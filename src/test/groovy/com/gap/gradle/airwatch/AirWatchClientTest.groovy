@@ -17,20 +17,23 @@ class AirWatchClientTest {
     @Before
     void setUp() {
         mockRESTClient = new MockFor(RESTClient)
-        client = new AirWatchClient("", "", "", "someKey")
+        client = new AirWatchClient("", "someUser", "somePass", "someKey")
     }
 
     @Test
-    void shouldAuthenticateOnClientInstantiation() {
-        def mockAuthConfig = new MockFor(AuthConfig)
+    void shouldSendAuthorizationHeaders() {
+        def encodedCredentials = "someUser:somePass".getBytes().encodeBase64().toString()
+        def expectedAuthHeader = "Basic $encodedCredentials"
 
-        mockAuthConfig.demand.basic { String username, String password ->
-            assertEquals("someUser", username)
-            assertEquals("somePass", password)
+        mockRESTClient.demand.post { Map<String, ?> args ->
+            assertEquals("uploadchunk", args.path.toString())
+            assertEquals(expectedAuthHeader, args.headers.get("Authorization"))
+
+            return [data: [:]]
         }
 
-        mockAuthConfig.use {
-            new AirWatchClient("", "someUser", "somePass", "")
+        mockRESTClient.use {
+            client.uploadChunk("someId", "someEncodedString", 1, 10500)
         }
     }
 
