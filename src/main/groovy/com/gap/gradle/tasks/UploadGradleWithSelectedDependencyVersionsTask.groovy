@@ -9,6 +9,7 @@ import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 
+
 @RequiredParameters([
 	@Require(parameter = 'segmentIdentifier', description = 'segmentIdentifier that describes the Project:Procedure to kick off manual segment of. <project name>:<segment name>'),
 	@Require(parameter = 'selectedVersions', description = 'string containing the chosen versions of the segment dependencies. Comma Delimited. ex: <group>:<app>:<version>,<group2>:<app2>:<version2>')
@@ -30,46 +31,37 @@ class UploadGradleWithSelectedDependencyVersionsTask extends WatchmenTask {
 		validate()
 		logger.info("Passed param segmentIdentifier as = " + project.segmentIdentifier)
 		logger.info("Passed param selectedVersions as = " + project.selectedVersions)
-		def gradleFileName = segmentRegistry.getSegmentRegistryValue(project.segmentIdentifier, "gradleFile")
+
+		def gradleFileName = "ci/" + segmentRegistry.getSegmentRegistryValue(project.segmentIdentifier, "gradleFile")
+
 		logger.info("Gradle file of the segmentIdentifier is = $gradleFileName")
-		
-		/*
-		 * this execute task implements this below ec-perl script on EC in this gradle task:
-		 *
-		 *
-		 * use ElectricCommander;
-			use strict;
-			
-			my $gradleFileName = "$[/projects[WM Segment Registry]/SegmentRegistry/$[segmentIdentifier]/gradleFile]";
-			print STDERR "gradleFileName = $gradleFileName\n";
-			
-			open(my $fh1, "<", "ci/$gradleFileName") or die $!;
-			local $/;
-			my $gradleFile = <$fh1>;
-			print STDERR "******************************************************\n";
-			print STDERR "$gradleFile\n";
-			print STDERR "******************************************************\n";
-			my @dependencies = split(",", "$[selectedVersions]");
-			
-			foreach my $dependency(@dependencies){
-			  print STDERR "dependency = $dependency\n";
-			  my ($group, $name, $version) = split(":", $dependency);
-			  my $find = "group: \'$group\', name: \'$name\', version: \'\.*?\'";
-			  my $replace = "group: \'$group\', name: \'$name\', version: \'$version\'";
-			  print STDERR "find = $find\n";
-			  print STDERR "replace = $replace\n";
-			  $gradleFile =~ s/$find/$replace/g or die "Dependency $group:$name could not be updated!";
-			}
-			print STDERR $gradleFile;
-			close($fh1);
-			
-			open(my $fh2, ">", "ci/$gradleFileName") or die $!;
-			print {$fh2} $gradleFile;
-		 *
-		 */
+		logger.info("Segment Gradle file is: " + new File(gradleFileName).getText())
+
+		replaceGradleWithSelectedVersions(gradleFileName, project.selectedVersions.split(","))
+
+		logger.info("Updated segment Gradle file dependencies with selected versions of artifacts given.")
+		logger.info("Gradle file changed to: " + new File(gradleFileName).getText())
 	}
 	
-	def replaceGradleWithSelectedVersions() {
+	def replaceGradleWithSelectedVersions(gradleFileName, selectedVersions) {
+		File gradleFile = new File(gradleFileName)
+		def patterns = [:]
+		selectedVersions.each { selectedVersion ->
+			// example: each selected version is like com.gap.test:test-app:1.0.123
+			def artifact = selectedVersion.split(":")
+			def pattern = ~/group\s*:\s*'${artifact[0]}'\s*,\s*name\s*:\s*'${artifact[1]}'\s*,\s*version\s*:\s*'\d+(\.?\d)*'/
+			def replacement = "group: \'${artifact[0]}\', name: \'${artifact[1]}\', version: \'${artifact[2]}\'"
+			patterns.put(pattern, replacement)
+		}
 		
+	   StringBuffer stringWriter = new StringBuffer()
+	   def ls = System.getProperty('line.separator')
+	   gradleFile.eachLine{ line ->
+		   patterns.each { pattern, replacement ->
+			   line = line.replaceAll(pattern, replacement)
+		   }
+		   stringWriter.append(line).append(ls)
+	   }
+	   gradleFile.write(stringWriter.toString())
 	}
 }
