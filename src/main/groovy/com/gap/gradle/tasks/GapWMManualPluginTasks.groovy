@@ -16,6 +16,7 @@ class GapWMManualPluginTasks extends WatchmenTask {
 	def logger = LogFactory.getLog(com.gap.gradle.tasks.GapWMManualPluginTasks)
 	
 	GapWMManualPluginTasks(Project project, commanderClient = new CommanderClient(), shellCommand = new ShellCommand()) {
+		super(project)
 		this.project = project
 		this.commanderClient = commanderClient
 		this.shellCommand = shellCommand
