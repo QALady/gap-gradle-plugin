@@ -32,12 +32,13 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask{
 
 	def getIvyDependencies() {
 
-		ivyDependencies[] = commanderClient.getECProperty("/myJob/ivyDependencies").split("\n")
+		ivyDependencies = commanderClient.getECProperty("/myJob/ivyDependencies").split("\n")
 	}
 	
 	def buildDependenciesHtml() {
 
-		ivyDependencies[] = getIvyDependencies()
+		//ivyDependencies[] = getIvyDependencies()
+		ivyDependencies = ["com.gap.watchmen.diamondDependency.iso.diamondDependencyC:ci","com.gap.watchmen.diamondDependency.iso.diamondDependencyB:ci"]
 		def dependenciesHtml = "<table border=\"0\">"
 
 		ivyDependencies.each { dependency ->
