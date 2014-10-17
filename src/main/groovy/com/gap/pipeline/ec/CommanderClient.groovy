@@ -81,7 +81,7 @@ class CommanderClient {
   }
 
 
-  private setECProperty(name, value) {
+  public setECProperty(name, value) {
     shellCommand.execute(['ectool', 'setProperty', name.toString(), value.toString()])
   }
 
