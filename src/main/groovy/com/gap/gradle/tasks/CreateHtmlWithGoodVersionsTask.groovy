@@ -46,7 +46,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask{
 			dependenciesHtml += createTableRow(dependency, segmentId, versions )
 		}
 		dependenciesHtml += "</table><br>"
-		commanderClient.setProperty("/myJob/dependenciesHtml", dependenciesHtml)
+		commanderClient.setECProperty("/myJob/dependenciesHtml", dependenciesHtml)
 	}
 
 	def createTableRow(String dependency, String segmentId, versions) {
@@ -70,7 +70,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask{
 
         rowHtml += "</select>\n</td>\n</tr>"
         
-        commanderClient.setProperty("/myJob/dynamicData", dynamicData);
+        commanderClient.setECProperty("/myJob/dynamicData", dynamicData);
  				return rowHtml;
 			
 		}
