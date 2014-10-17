@@ -184,6 +184,7 @@ class CommanderClient {
 	}
 
   def getECProperties(String key, String id) {
+    logger.info("retrieving property sheet for " + id)
     def propSheet
     def propName = []
     try{

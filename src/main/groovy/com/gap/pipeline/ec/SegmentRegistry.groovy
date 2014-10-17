@@ -139,6 +139,7 @@ class SegmentRegistry {
     */
     
     public def getSuccessfulSegmentVersions(segmentId) {
+         logger.info("retrieving successful versions")
          def successfulVersions = []
          def xpath = "${segmentRegistryPath}/${segmentId}/goodVersions"
          def propertySheetId = commander.getECProperty("$xpath/propertySheetId")
@@ -150,6 +151,7 @@ class SegmentRegistry {
     */
     
     public def getResolvedDependencies(segmentId, version) {
+         logger.info("retrieving resolvedDependencies")
          def resolvedDependencies = []
          def tmp = commander.getECProperty("${segmentRegistryPath}/${segmentId}/goodVersions/${version}/resolvedDependencies").value
     }

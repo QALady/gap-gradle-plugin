@@ -33,11 +33,14 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask{
 	def getIvyDependencies() {
 
 		ivyDependencies[] = commanderClient.getECProperty("/myJob/ivyDependencies").split("\n")
+		logger.info("reading ivyDependencies property of job" + ivyDependencies[])
+		return ivyDependencies[]
 	}
 	
 	def buildDependenciesHtml() {
 
 		ivyDependencies[] = getIvyDependencies()
+		logger.info("building dependencieshtml propery")
 		def dependenciesHtml = "<table border=\"0\">"
 
 		ivyDependencies.each { dependency ->
@@ -60,6 +63,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask{
 
 		rowHtml += "<option value=\"$dependency:$latestVersion\">$latestVersion (latest)</option>\n"
         resolvedDependencies = segmentRegistry.getResolvedDependencies(segmentId, latestVersion)
+        logger.info("building dynamicData propery")
         dynamicData += "<h4>Dependencies for the segment: $segmentId</h4><div id=$dependency:$latestVersion style=\"display: block;\"><pre> $resolvedDependencies </pre></div>\n"
 
   		versions.each { version ->
