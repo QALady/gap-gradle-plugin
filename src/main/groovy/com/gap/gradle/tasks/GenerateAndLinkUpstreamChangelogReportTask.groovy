@@ -82,12 +82,12 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	def getECSCMPropertySheetRecords(upstreamJobId) {
 		def prop
 		try{
-			prop = shellCommand.execute(['ectool', 'getProperties', '--path', "/jobs[$upstreamJobId]/ecscm_changeLogs", '--recurse', '1'])
+			prop = shellCommand.execute(['ectool', 'getProperties', '--path', "/jobs[" + upstreamJobId + "]/ecscm_changeLogs", '--recurse', '1'])
 		}
 		catch (ShellCommandException e) {
 			if(e.message.contains('[NoSuchProperty]')){
 				logger.debug("Requested property does not exist. ${e.message}\n")
-				return Property.invalidProperty(key)
+				return Property.invalidProperty("ecscm_changeLogs")
 			}
 			else throw e
 		}
@@ -149,12 +149,12 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	}
 	
 	private void copyArtifactsForUseByEC () {
-		new CommanderArtifacts(new CommanderClient()).copyToArtifactsDir(upstream_changelog_file)
+		new CommanderArtifacts(commanderClient).copyToArtifactsDir(upstream_changelog_file)
 	}
 
 
 	private void publishArtifactLinksToEC() {
-		def artifacts = new CommanderArtifacts(new CommanderClient());
+		def artifacts = new CommanderArtifacts(commanderClient);
 		artifacts.publishLinks()
 	}
 
