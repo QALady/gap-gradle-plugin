@@ -37,6 +37,7 @@ class CommanderClient {
 	  getECProperty(projectNameProperty).value
 	}
 
+
   def addLink(filename, jobid){
     def filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'))
     setECProperty("/jobs[${jobid}]/report-urls/${filenameWithoutExtension}", "/commander/jobs/${jobid}/default/${filename}")
@@ -199,6 +200,10 @@ class CommanderClient {
     }
   }
 
+  def getBaseUrl(){
+    def projectNameProperty = "/server/baseUrl"
+    getECProperty(projectNameProperty).value
+  }
 
   def parseJson(String propSheetJson) {
     def jsonSlurper = new JsonSlurper()
