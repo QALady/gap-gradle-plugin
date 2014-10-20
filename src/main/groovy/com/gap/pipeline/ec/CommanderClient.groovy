@@ -201,8 +201,7 @@ class CommanderClient {
   }
 
   def getBaseUrl(){
-    def projectNameProperty = "/server/baseUrl"
-    getECProperty(projectNameProperty).value
+    return getECProperty("/server/baseUrl")
   }
 
   def parseJson(String propSheetJson) {

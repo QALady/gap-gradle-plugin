@@ -24,7 +24,7 @@ class GapWMManualPluginTasks extends WatchmenTask {
 
 	public void executeCreateLinksForApprovalAndRejection() {
 		try {
-			shellCommand.execute(["ectool", "setProperty", """/myJob/report-urls/Approve""", "" + commanderClient.getBaseUrl() + "commander/runProcedure.phprunNow=1&projectName=" + commanderClient.getCurrentProjectName() + "&procedureName=Set%20approval%20status%20property&numParameters=2&parameters1_name=jobId&parameters1_value=" + commanderClient.getJobId() + "&parameters2_name=approvalStatus&parameters2_value=approved"])
+			shellCommand.execute(["ectool", "setProperty", """/myJob/report-urls/Approve""", commanderClient.getBaseUrl() + "commander/runProcedure.phprunNow=1&projectName=" + commanderClient.getCurrentProjectName() + "&procedureName=Set%20approval%20status%20property&numParameters=2&parameters1_name=jobId&parameters1_value=" + commanderClient.getJobId() + "&parameters2_name=approvalStatus&parameters2_value=approved"])
 			} catch(ShellCommandException se) {
             if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
             logger.warn("WARNING: Using dummy credentials - Only WM Gradle:Invoke & WM Exec:Run are approved steps to access artifactory credentials. This will not impact your job unless you are trying to use the Artifactory credentials in this step")
