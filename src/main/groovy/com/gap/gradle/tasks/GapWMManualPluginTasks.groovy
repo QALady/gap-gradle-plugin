@@ -70,7 +70,7 @@ class GapWMManualPluginTasks extends WatchmenTask {
 		def approvalStatus = commanderClient.getECProperty("/myJob/approvalStatus")
 		def wmManualjobId = commanderClient.getJobId()
 
-		if ("approved".equalsIgnoreCase(approvalStatus)) {
+		if ("approved".equalsIgnoreCase(approvalStatus.value)) {
 			logger.info("Job is approved \n")
 		}else {
 			logger.info("Job is rejected \n")
