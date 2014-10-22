@@ -197,7 +197,7 @@ class CommanderClient {
 		command.add(["--propertySheetId", pConfig.propertySheetId])
 	}
     try{
-	  logger.info(pConfig)
+	  logger.info(pConfig.toString())
 	  logger.info("ectool properties command: " + command)
       property = parseJson(shellCommand.execute(command))
 	  logger.info("Properties of " + pConfig.path + " are: " + property)

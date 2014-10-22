@@ -187,4 +187,17 @@ org.codehaus.groovy:groovy-all"""
 		when(mockShellCommand.execute(['ectool', '--format', 'json', 'getProperties', '--key', "groovy-all"])).thenReturn(groovyAllString)
 		when(mockShellCommand.execute(['ectool', 'getProperty', '/projects[WM Segment Registry]/SegmentRegistry/org.codehaus.groovy:groovy-all/goodVersions/2.14/resolvedDependencies'])).thenReturn("com.gap.watchmen.diamondDependency:diamondDependencyB")
 	}
+	
+	private def testMethod(Map pConfig) {
+		println "TestMethod"
+		println pConfig.path
+		println pConfig.recurse
+		println pConfig.toString()
+		println pConfig.toMapString()
+	}
+	
+	@Test
+	void testTestMethod() {
+		testMethod([path: "abcd", recurse: 1])
+	}
 }
