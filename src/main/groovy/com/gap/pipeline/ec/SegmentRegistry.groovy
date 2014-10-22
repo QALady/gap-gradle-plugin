@@ -138,11 +138,9 @@ class SegmentRegistry {
         RETURNS: arrays of strings (version numbers of successfully segment completions)
     */
     
-    public def getSuccessfulSegmentVersions(segmentId) {
-         def successfulVersions = []
-         def xpath = "${segmentRegistryPath}/${segmentId}/goodVersions"
-         def propertySheetId = commander.getECProperty("$xpath/propertySheetId").getValue()
-         successfulVersions[] = commander.getECProperties("propertySheetId", "$propertySheetId")
+    public def getSuccessfulSegmentVersions(propertSheetName, segmentId) {
+         def propertiesPath = "${segmentRegistryPath}/${segmentId}/${propertSheetName}"
+         return commander.getECProperties([path: propertiesPath, recurse: 1])
     }
     
     /*

@@ -184,20 +184,32 @@ class CommanderClient {
 	  return getECProperty("/jobs[$jobId]/report-urls/" + key)
 	}
 
-  def getECProperties(String key, String id) {
-    def propSheet
-    def propName = []
+  def getECProperties(Map pConfig) {
+    def property = []
+	def command = ['ectool', '--format', 'json', 'getProperties']
+	if (pConfig.path) {
+		command.add(["--path", pConfig.path])
+	}
+	if (pConfig.recurse) {
+		command.add(["--recurse", pConfig.recurse])
+	}
+	if (pConfig.propertySheetId) {
+		command.add(["--propertySheetId", pConfig.propertySheetId])
+	}
     try{
-      propSheet = shellCommand.execute(['ectool', '--format', 'json', 'getProperties', '--key', id])
-      propName[] = parseJson(propSheet)
+	  logger.info(pConfig)
+	  logger.info("ectool properties command: " + command)
+      property = parseJson(shellCommand.execute(command))
+	  logger.info("Properties of " + pConfig.path + " are: " + property)
     }
-    catch (ShellCommandException e){
+    catch (ShellCommandException e) {
       if(e.message.contains('[NoSuchPropertySheet]')){
         logger.debug("Requested property sheet does not exist. ${e.message}\n")
         return Property.invalidProperty(key)
       }
       else throw e
     }
+	return property
   }
 
   def getBaseUrl(){
@@ -207,9 +219,6 @@ class CommanderClient {
 	def parseJson(String propSheetJson) {
 		def jsonSlurper = new JsonSlurper()
 		def propName = jsonSlurper.parseText(propSheetJson)
-		def propList = []
-		ArrayList properties=propName.propertySheet.property.propertyName
-		propList= properties.toArray();
-		return propList
+		return propName.propertySheet.property.propertyName.toArray()
 	}
 }

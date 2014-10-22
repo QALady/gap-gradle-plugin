@@ -60,6 +60,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	def addUpstreamChangeLogToMarkup(givenUpStreamJobId) {
 		logger.info("adding ChangeLog of UPSTREAM Job ID: $givenUpStreamJobId")		
 		buildChangelogMarkup(getECSCMPropertySheetRecords(givenUpStreamJobId))
+		//buildChangelogMarkup(commanderClient.getECProperties([path: "/jobs[" + givenUpStreamJobId + "]/ecscm_changeLogs", recurse: 1]))
 		buildLinkMarkup(givenUpStreamJobId)
 		// check if this upStreamJob has an upstream to it:
 		def nextUpstreamJobId = getUpstreamJobId(givenUpStreamJobId)

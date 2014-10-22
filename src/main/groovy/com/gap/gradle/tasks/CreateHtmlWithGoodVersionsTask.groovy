@@ -70,8 +70,8 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 			logger.info("dependency: " + dependency)
 			def segmentId = segmentRegistry.getSegmentThatProducesIdentifier(dependency).toString()
 			logger.info("segmentId of dependency $dependency is $segmentId")
-			def versions = segmentRegistry.getSuccessfulSegmentVersions(segmentId)
-			logger.info("segmentId of dependency $segmentId is $versions")
+			def versions = segmentRegistry.getSuccessfulSegmentVersions("goodVersions", segmentId)
+			logger.info("versions of segment $segmentId is $versions")
 			dependenciesHtml += createTableRow(dependency, segmentId, versions)
 		}
 		dependenciesHtml += "</table><br/>"
