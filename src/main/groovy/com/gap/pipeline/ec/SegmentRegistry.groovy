@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 class SegmentRegistry {
 
     def logger = LoggerFactory.getLogger(com.gap.pipeline.ec.SegmentRegistry)
-    def commander
+    CommanderClient commander
     def segmentRegistryPath = "/projects[WM Segment Registry]/SegmentRegistry"
     def identifierRegistryPath = "/projects[WM Segment Registry]/IdentifierRegistry" 
 
@@ -141,7 +141,7 @@ class SegmentRegistry {
     public def getSuccessfulSegmentVersions(segmentId) {
          def successfulVersions = []
          def xpath = "${segmentRegistryPath}/${segmentId}/goodVersions"
-         def propertySheetId = commander.getECProperty("$xpath/propertySheetId")
+         def propertySheetId = commander.getECProperty("$xpath/propertySheetId").getValue()
          successfulVersions[] = commander.getECProperties("propertySheetId", "$propertySheetId")
     }
     
@@ -151,7 +151,7 @@ class SegmentRegistry {
     
     public def getResolvedDependencies(segmentId, version) {
          def resolvedDependencies = []
-         def tmp = commander.getECProperty("${segmentRegistryPath}/${segmentId}/goodVersions/${version}/resolvedDependencies").value
+         return commander.getECProperty("${segmentRegistryPath}/${segmentId}/goodVersions/${version}/resolvedDependencies").value
     }
     
 }

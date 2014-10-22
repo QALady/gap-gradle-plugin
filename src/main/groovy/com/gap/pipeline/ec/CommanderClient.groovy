@@ -204,13 +204,12 @@ class CommanderClient {
     return getECProperty("/server/baseUrl").value
   }
 
-  def parseJson(String propSheetJson) {
-    def jsonSlurper = new JsonSlurper()
-    def propName = jsonSlurper.parseText(propSheetJson)
-    def propList = []
-    propName.propertySheet.property.each { prop ->
-         propList.add(prop.propertyName)
-    }
-    return propList[]
-  }
+	def parseJson(String propSheetJson) {
+		def jsonSlurper = new JsonSlurper()
+		def propName = jsonSlurper.parseText(propSheetJson)
+		def propList = []
+		ArrayList properties=propName.propertySheet.property.propertyName
+		propList= properties.toArray();
+		return propList
+	}
 }
