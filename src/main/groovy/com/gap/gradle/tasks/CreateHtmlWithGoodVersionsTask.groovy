@@ -36,22 +36,16 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 	def execute() {
 		validate()
 		try {
-
-			File htmlFile=createHtmlFile()
-
+			File htmlFile = createHtmlFile()
 			def dependenciesHtml = buildDependenciesHtml()
-
 			def htmlContent = buildHtmlPage(dependenciesHtml)
-
 			writeToFile(htmlFile, htmlContent)
-
 			writeJSFile()
-
 			writeCSSFile()
-
 		} catch (ignored) {
+			logger.error(ignored.getCause(), ignored)
+			logger.info(ignored.printStackTrace())
 			logger.info("Unable to create HTML with good versions")
-			//logger.debug(all.message)
 		}
 	}
 
@@ -63,15 +57,15 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 	}
 
 	def buildDependenciesHtml() {
-
 		//ivyDependencies[] = getIvyDependencies()
 		//ivyDependencies = ["com.gap.watchmen.diamondDependency.iso.diamondDependencyC:ci", "com.gap.watchmen.diamondDependency.iso.diamondDependencyB:ci"]
 		def dependenciesHtml = "<table border=\"0\">"
-
 		ivyDependencies.each { dependency ->
-			logger.info("dependency : " + dependency);
+			logger.info("dependency: " + dependency)
 			def segmentId = segmentRegistry.getSegmentThatProducesIdentifier(dependency).toString()
+			logger.info("segmentId of dependency $dependency is $segmentId")
 			def versions = segmentRegistry.getSuccessfulSegmentVersions(segmentId)
+			logger.info("segmentId of dependency $segmentId is $versions")
 			dependenciesHtml += createTableRow(dependency, segmentId, versions)
 		}
 		dependenciesHtml += "</table><br/>"
@@ -121,8 +115,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 		return currentDateStamp
 	}
 
-	def createDirectoryForFiles()
-	{
+	def createDirectoryForFiles() {
 		def shareHtdocsKey = "/server/watchmen_config/sharedHtdocs"
 
 		def sharedHtdocs = commanderClient.getECProperty(shareHtdocsKey).getValue()
@@ -132,23 +125,17 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 		manualSegmentDirObject = new File(manualSegmentDir)
 
 		try {
-
 			manualSegmentDirObject.mkdirs()
-
-			logger.info("Creating directories : " + manualSegmentDirObject.absolutePath)
-
+			logger.info("Ensuring manualSegments directory is created: " + manualSegmentDirObject.absolutePath)
 		}
-		catch(IOException ioe)
-		{
+		catch(IOException ioe) {
 			logger.error(ioe.getCause(), ioe)
-
 			throw ioe
 		}
 
 	}
 
-	def createHtmlFile()
-	{
+	def createHtmlFile() {
 		def dateWithFormat = generateTimeWithFormat()
 		String fileName = segmentIdentifier + dateWithFormat + ".html"
 		fileName = cleanSpacesAndColons(fileName)
@@ -156,15 +143,10 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 	}
 
 	def createFileInManualSegmentDir(String fileName) {
-
 		File fileObject = new File(manualSegmentDirObject, fileName)
-
 		try {
-
 			fileObject.createNewFile()
-
 			logger.info("Creating file : " + fileObject.getAbsoluteFile())
-
 			return fileObject
 		}
 		catch (IOException ioe) {
@@ -177,7 +159,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 
 		def newFileName = fileName.replaceAll("[\\s:]", "_")
 
-		logger.info(" converted FileName is : " + newFileName)
+		logger.info("converted FileName is : " + newFileName)
 
 		return newFileName
 

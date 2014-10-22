@@ -49,7 +49,8 @@ class CreateHtmlWithGoodVersionsTaskTest {
 
 		project.apply plugin: 'gap-wm-manual'
 
-		def ivyDependenciesOut = "net.sourceforge.cobertura:cobertura\norg.codehaus.groovy:groovy-all"
+		def ivyDependenciesOut = """net.sourceforge.cobertura:cobertura
+org.codehaus.groovy:groovy-all"""
 
 		environmentStub = new EnvironmentStub();
 
