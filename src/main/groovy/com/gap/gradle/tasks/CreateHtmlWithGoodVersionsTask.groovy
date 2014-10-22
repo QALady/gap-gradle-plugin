@@ -42,11 +42,17 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 			writeToFile(htmlFile, htmlContent)
 			writeJSFile()
 			writeCSSFile()
+			linkSelectionPageToThisJob(htmlFile.name)
 		} catch (ignored) {
 			logger.error(ignored.getCause(), ignored)
 			logger.info(ignored.printStackTrace())
 			logger.info("Unable to create HTML with good versions")
 		}
+	}
+
+	def linkSelectionPageToThisJob(def file) {
+		def linkUrl = "http://commander.phx.gapinc.dev/manualSegments/$file.html"
+		commanderClient.addLinkToUrl("Selection Page", linkUrl)
 	}
 
 	def getIvyDependencies() {
