@@ -51,7 +51,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 	}
 
 	def linkSelectionPageToThisJob(def file) {
-		def linkUrl = "http://commander.phx.gapinc.dev/manualSegments/$file.html"
+		def linkUrl = "http://commander.phx.gapinc.dev/manualSegments/${file}.html"
 		commanderClient.addLinkToUrl("Selection Page", linkUrl)
 	}
 
@@ -96,13 +96,22 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 
 		versions.each { version ->
 			rowHtml += "<option value=\"$dependency:$version\">$version</option>\n"
-			resolvedDependencies += segmentRegistry.getResolvedDependencies(segmentId, version)
+			resolvedDependencies = segmentRegistry.getResolvedDependencies(segmentId, version)
 			dynamicData += "<div id='$dependency:$version' style=\"display: none;\"><pre> $resolvedDependencies </pre></div>\n"
 		}
 
 		rowHtml += "</select>\n</td>\n</tr>"
 
+		dynamicData += "\n"
+		dynamicData = dynamicData.toString().replaceAll(~/------------------------------------------------------------/,"").
+						replaceAll(~/default - Configuration for default artifacts./, "").
+						replaceAll(~/Root project/,"").
+						replaceAll(~/pipeline/,"").
+						replaceAll(~/No dependencies/,"").
+						replaceAll(~/\n *\n/,"\n")
+		
 		commanderClient.setECProperty("/myJob/dynamicData", dynamicData);
+		
 		logger.info("RowHtml : \n" + rowHtml)
 		return rowHtml;
 
