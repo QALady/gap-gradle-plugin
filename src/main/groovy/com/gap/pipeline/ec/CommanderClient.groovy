@@ -184,46 +184,39 @@ class CommanderClient {
 	  return getECProperty("/jobs[$jobId]/report-urls/" + key)
 	}
 
-  def getECProperties(Map pConfig) {
-    def property = []
+  public def getECProperties(Map pConfig) {
+    def slurpedJson
 	def command = ['ectool', '--format', 'json', 'getProperties']
 	if (pConfig.path) {
 		command.add("--path")
-		command.add("${pConfig.path}")
+		command.add("${pConfig.path}".toString())
 	}
 	if (pConfig.recurse) {
 		command.add("--recurse")
-		command.add("${pConfig.recurse}")
+		command.add("${pConfig.recurse}".toString())
 	}
 	if (pConfig.propertySheetId) {
 		command.add("--propertySheetId")
-		command.add("${pConfig.propertySheetId}")
+		command.add("${pConfig.propertySheetId}".toString())
 	}
     try{
-	  logger.info(pConfig.toString())
-	  logger.info("ectool properties command: " + command)
-      property = parseJson(shellCommand.execute(command))
-	  logger.info("Properties of " + pConfig.path + " are: " + property)
+	  logger.info("ectool getProperties command: " + command)
+	  def output = shellCommand.execute(command)
+      slurpedJson = new JsonSlurper().parseText(output)
+	  logger.info("slurped getProperties data: " + slurpedJson)
     }
     catch (ShellCommandException e) {
       if(e.message.contains('[NoSuchPropertySheet]')){
         logger.debug("Requested property sheet does not exist. ${e.message}\n")
-        return Property.invalidProperty(key)
+        return Property.invalidProperty(pConfig.toString())
       }
       else throw e
     }
-	return property
+	return slurpedJson
   }
 
   def getBaseUrl(){
     return getECProperty("/server/baseUrl").value
   }
 
-	def parseJson(String propSheetJson) {
-		def jsonSlurper = new JsonSlurper()
-		def propName = jsonSlurper.parseText(propSheetJson)
-		logger.info("propSheetJson: " + propSheetJson)
-		logger.info("propName jsonSlurped: " + propName)
-		return propName.propertySheet.property.propertyName.toArray()
-	}
 }

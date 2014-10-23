@@ -4,15 +4,16 @@ import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
+import groovy.json.JsonSlurper
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
 
 import org.apache.commons.logging.LogFactory
+import org.apache.log4j.chainsaw.LoggingReceiver.Slurper;
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -39,6 +40,9 @@ class CreateHtmlWithGoodVersionsTaskTest {
 	private SegmentRegistry segmentRegistry
 
 	private CreateHtmlWithGoodVersionsTask task
+	
+	private static final String goodVersionsMockJsonFile = "src/test/groovy/com/gap/gradle/resources/testSegmentGoodVersionsMock.json"
+	private static final String TEST_SEGMENT_IDENTIFIER = "Dummy Project:Dummy Procedure"
 
 
 	@Rule
@@ -81,7 +85,7 @@ org.codehaus.groovy:groovy-all"""
 		assertEquals(expectedIvyDependencies, actualIvyDependencies)
 	}
 
-	@Ignore
+	@Test
 	void shouldBuildDependenciesHtml() {
 
 		mockForBuildDependenciesHtml()
@@ -90,9 +94,9 @@ org.codehaus.groovy:groovy-all"""
 
 		logger.info("actualDependenciesHtml : " + actualDependenciesHtml)
 
-		def lastIndex = 2934
+		def lastIndex = 5615
 
-		assertEquals("Las index of element </div> must be $lastIndex", actualDependenciesHtml.lastIndexOf("</div>"), lastIndex)
+		assertEquals("Last index of element </div> must be $lastIndex", actualDependenciesHtml.lastIndexOf("</div>"), lastIndex)
 
 	}
 
@@ -116,7 +120,7 @@ org.codehaus.groovy:groovy-all"""
 		}
 	}
 
-	@Ignore
+	@Test
 	void shouldWriteHtmlPage() {
 
 		mockForBuildDependenciesHtml()
@@ -171,21 +175,10 @@ org.codehaus.groovy:groovy-all"""
 
 
 	private void mockForBuildDependenciesHtml() {
-		when(mockShellCommand.execute(['ectool', 'getProperty', "/projects[WM Segment Registry]/IdentifierRegistry/net.sourceforge.cobertura:cobertura/segment"])).thenReturn("net.sourceforge.cobertura:cobertura")
-		when(mockShellCommand.execute(['ectool', 'getProperty', "/projects[WM Segment Registry]/SegmentRegistry/net.sourceforge.cobertura:cobertura/goodVersions/propertySheetId"])).thenReturn("cobertura")
+		when(mockShellCommand.execute(['ectool', 'getProperty', "/projects[WM Segment Registry]/IdentifierRegistry/net.sourceforge.cobertura:cobertura/segment"])).thenReturn(TEST_SEGMENT_IDENTIFIER)
+		when(mockShellCommand.execute(['ectool', 'getProperty', "/projects[WM Segment Registry]/IdentifierRegistry/org.codehaus.groovy:groovy-all/segment"])).thenReturn(TEST_SEGMENT_IDENTIFIER)
 
-		def coberturaString = '{"propertySheet":[{"property":{"propertyName":"1.1"}}, {"property":{"propertyName":"2.2"}}]}'
-
-		when(mockShellCommand.execute(['ectool', '--format', 'json', 'getProperties', '--key', "cobertura"])).thenReturn(coberturaString)
-		when(mockShellCommand.execute(['ectool', 'getProperty', '/projects[WM Segment Registry]/SegmentRegistry/net.sourceforge.cobertura:cobertura/goodVersions/2.2/resolvedDependencies'])).thenReturn("com.gap.watchmen.diamondDependency:diamondDependencyC")
-
-		when(mockShellCommand.execute(['ectool', 'getProperty', "/projects[WM Segment Registry]/IdentifierRegistry/org.codehaus.groovy:groovy-all/segment"])).thenReturn("org.codehaus.groovy:groovy-all")
-		when(mockShellCommand.execute(['ectool', 'getProperty', "/projects[WM Segment Registry]/SegmentRegistry/org.codehaus.groovy:groovy-all/goodVersions/propertySheetId"])).thenReturn("groovy-all")
-
-		def groovyAllString = '{"propertySheet":[{"property":{"propertyName":"1.12"}}, {"property":{"propertyName":"2.14"}}]}'
-
-		when(mockShellCommand.execute(['ectool', '--format', 'json', 'getProperties', '--key', "groovy-all"])).thenReturn(groovyAllString)
-		when(mockShellCommand.execute(['ectool', 'getProperty', '/projects[WM Segment Registry]/SegmentRegistry/org.codehaus.groovy:groovy-all/goodVersions/2.14/resolvedDependencies'])).thenReturn("com.gap.watchmen.diamondDependency:diamondDependencyB")
+		when(mockShellCommand.execute(['ectool', '--format', 'json', 'getProperties', '--path', '/projects[WM Segment Registry]/SegmentRegistry/Dummy Project:Dummy Procedure/goodVersions', '--recurse', '1'])).thenReturn(getMockData())
 	}
 	
 	private def testMethod(Map pConfig) {
@@ -200,4 +193,27 @@ org.codehaus.groovy:groovy-all"""
 	void testTestMethod() {
 		testMethod([path: "abcd", recurse: 1])
 	}
+
+	@Test
+	void testReadingSlurpedJson() {
+		def slurpedJson = getSlurpedMockJson()
+		def versions = slurpedJson.propertySheet.property.propertyName.toArray()
+		def resolvedDependencies = [:]
+		println "Versions Array: " + versions
+		versions.each { version ->
+			def data = slurpedJson.propertySheet.property.find{it.propertyName == version}
+			def propData = data.propertySheet.property.find{it.propertyName == "resolvedDependencies"}
+			resolvedDependencies.put(version, propData.value.toString())
+			println "Resolved Deps: <pre> ${resolvedDependencies[version]} </pre>"
+		}
+	}
+
+	private def getSlurpedMockJson() {
+		return new JsonSlurper().parseText(new File(goodVersionsMockJsonFile).getText())
+	}
+
+	private String getMockData() {
+		return new File(goodVersionsMockJsonFile).getText()
+	}
+	
 }
