@@ -188,13 +188,13 @@ class CommanderClient {
     def property = []
 	def command = ['ectool', '--format', 'json', 'getProperties']
 	if (pConfig.path) {
-		command.add(["--path", pConfig.path])
+		command.add(["--path", "${pConfig.path}"])
 	}
 	if (pConfig.recurse) {
-		command.add(["--recurse", pConfig.recurse])
+		command.add(["--recurse", "${pConfig.recurse}"])
 	}
 	if (pConfig.propertySheetId) {
-		command.add(["--propertySheetId", pConfig.propertySheetId])
+		command.add(["--propertySheetId", "${pConfig.propertySheetId}"])
 	}
     try{
 	  logger.info(pConfig.toString())

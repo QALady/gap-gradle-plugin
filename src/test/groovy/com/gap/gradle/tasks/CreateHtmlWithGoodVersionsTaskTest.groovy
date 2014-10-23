@@ -190,8 +190,8 @@ org.codehaus.groovy:groovy-all"""
 	
 	private def testMethod(Map pConfig) {
 		println "TestMethod"
-		println pConfig.path
-		println pConfig.recurse
+		println "${pConfig.path}"
+		println "${pConfig.recurse}"
 		println pConfig.toString()
 		println pConfig.toMapString()
 	}
