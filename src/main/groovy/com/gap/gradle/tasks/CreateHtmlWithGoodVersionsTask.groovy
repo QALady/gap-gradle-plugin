@@ -51,7 +51,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 	}
 
 	def linkSelectionPageToThisJob(def file) {
-		def linkUrl = "http://commander.phx.gapinc.dev/manualSegments/${file}.html"
+		def linkUrl = "http://commander.phx.gapinc.dev/manualSegments/${file}"
 		commanderClient.addLinkToUrl("Selection Page", linkUrl)
 	}
 
@@ -102,7 +102,6 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 
 		rowHtml += "</select>\n</td>\n</tr>"
 
-		dynamicData += "\n"
 		dynamicData = dynamicData.toString().replaceAll(~/------------------------------------------------------------/,"").
 						replaceAll(~/default - Configuration for default artifacts./, "").
 						replaceAll(~/Root project/,"").
@@ -181,7 +180,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 	}
 
 	def buildHtmlPage(String dependenciesHtml) {
-		def projectName = project.getName()
+		def projectName = commanderClient.getCurrentProjectName()
 
 		def htmlContent = """
         <html>
