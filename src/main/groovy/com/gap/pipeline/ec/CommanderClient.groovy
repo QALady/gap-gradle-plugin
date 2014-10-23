@@ -188,13 +188,16 @@ class CommanderClient {
     def property = []
 	def command = ['ectool', '--format', 'json', 'getProperties']
 	if (pConfig.path) {
-		command.add(["--path", "${pConfig.path}"])
+		command.add("--path")
+		command.add("${pConfig.path}")
 	}
 	if (pConfig.recurse) {
-		command.add(["--recurse", "${pConfig.recurse}"])
+		command.add("--recurse")
+		command.add("${pConfig.recurse}")
 	}
 	if (pConfig.propertySheetId) {
-		command.add(["--propertySheetId", "${pConfig.propertySheetId}"])
+		command.add("--propertySheetId")
+		command.add("${pConfig.propertySheetId}")
 	}
     try{
 	  logger.info(pConfig.toString())
@@ -219,6 +222,8 @@ class CommanderClient {
 	def parseJson(String propSheetJson) {
 		def jsonSlurper = new JsonSlurper()
 		def propName = jsonSlurper.parseText(propSheetJson)
+		logger.info("propSheetJson: " + propSheetJson)
+		logger.info("propName jsonSlurped: " + propName)
 		return propName.propertySheet.property.propertyName.toArray()
 	}
 }
