@@ -70,34 +70,35 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 			logger.info("dependency: " + dependency)
 			def segmentId = segmentRegistry.getSegmentThatProducesIdentifier(dependency).toString()
 			logger.info("segmentId of dependency $dependency is $segmentId")
-			def versions = segmentRegistry.getSuccessfulSegmentVersions("goodVersions", segmentId)
-			logger.info("versions of segment $segmentId is $versions")
-			dependenciesHtml += createTableRow(dependency, segmentId, versions)
+			def goodVersionsDataJson = segmentRegistry.getSegmentRegistryPropertySheetData("goodVersions", segmentId)			
+			dependenciesHtml += createTableRow(dependency, segmentId, goodVersionsDataJson)
 		}
 		dependenciesHtml += "</table><br/>"
 		dependenciesHtml +=dynamicData
 		return dependenciesHtml
 	}
 
-	def createTableRow(String dependency, String segmentId, versions) {
-
-		def resolvedDependencies
-
-		//def dynamicData = commanderClient.getECProperty("/myJob/dynamicData").getValue()
-
+	def createTableRow(String dependency, String segmentId, goodVersionsJson) {
+		def resolvedDependencies = [:]
+		def versions = goodVersionsJson.propertySheet.property.propertyName.toArray()
+		logger.info("versions of segment $segmentId is $versions")
+		versions.each { version ->
+			def dataGraph = goodVersionsJson.propertySheet.property.find{it.propertyName == version}
+			def propData = dataGraph.propertySheet.property.find{it.propertyName == "resolvedDependencies"}
+			resolvedDependencies.put(version, propData.value.toString())
+		}
 		def rowHtml = "<tr>\n<td>\n<label for=\"$segmentId\"> $segmentId </label>\n</td>\n"
 		rowHtml += "<td><select id=\"$segmentId\" name=\"dependency\" onchange=\"showFields(this)\">"
 
 		def latestVersion = Collections.max(Arrays.asList(versions))
-
 		rowHtml += "<option value=\"$dependency:$latestVersion\">$latestVersion (latest)</option>\n"
-		resolvedDependencies = segmentRegistry.getResolvedDependencies(segmentId, latestVersion)
-		dynamicData += "<h4>Dependencies for the segment: $segmentId</h4><div id='$dependency:$latestVersion' style=\"display: block;\"><pre> $resolvedDependencies </pre></div>\n"
+		dynamicData += "<h4>Dependencies for the segment: $segmentId</h4><div id='$dependency:$latestVersion' style=\"display: block;\"><pre> ${resolvedDependencies[latestVersion]} </pre></div>\n"
 
 		versions.each { version ->
-			rowHtml += "<option value=\"$dependency:$version\">$version</option>\n"
-			resolvedDependencies = segmentRegistry.getResolvedDependencies(segmentId, version)
-			dynamicData += "<div id='$dependency:$version' style=\"display: none;\"><pre> $resolvedDependencies </pre></div>\n"
+			if (version != latestVersion) {
+				rowHtml += "<option value=\"$dependency:$version\">$version</option>\n"
+				dynamicData += "<div id='$dependency:$version' style=\"display: none;\"><pre> ${resolvedDependencies[version]} </pre></div>\n"
+			}
 		}
 
 		rowHtml += "</select>\n</td>\n</tr>"
@@ -109,11 +110,8 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 						replaceAll(~/No dependencies/,"").
 						replaceAll(~/\n *\n/,"\n")
 		
-		commanderClient.setECProperty("/myJob/dynamicData", dynamicData);
-		
-		logger.info("RowHtml : \n" + rowHtml)
+		logger.debug("RowHtml : \n" + rowHtml)
 		return rowHtml;
-
 	}
 
 
