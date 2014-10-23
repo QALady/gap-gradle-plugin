@@ -34,6 +34,15 @@ class GapPipelinePlugin implements Plugin<Project> {
               password "${ecclient.getArtifactoryPassword()}"
             }
           }
+          ivy {
+            name "wm_local_prod"
+            layout "maven"
+            url "http://artifactory.gapinc.com/artifactory/local-prod"
+            credentials {
+              username "${ecclient.getArtifactoryUserName()}"
+              password "${ecclient.getArtifactoryPassword()}"
+            }
+          }
           maven {
               name "wm_maven_remote_repos"
               url "http://artifactory.gapinc.dev/artifactory/remote-repos"
