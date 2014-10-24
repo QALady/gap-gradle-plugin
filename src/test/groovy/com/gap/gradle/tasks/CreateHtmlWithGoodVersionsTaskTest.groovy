@@ -1,16 +1,11 @@
 package com.gap.gradle.tasks
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.when
+import com.gap.gradle.utils.ShellCommand
+import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.ec.SegmentRegistry
+import com.gap.pipeline.utils.EnvironmentStub
 import groovy.json.JsonSlurper
-
-import java.text.ParseException
-import java.text.SimpleDateFormat
-
 import org.apache.commons.logging.LogFactory
-import org.apache.log4j.chainsaw.LoggingReceiver.Slurper;
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -19,15 +14,16 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.mockito.Mockito
 
-import com.gap.gradle.utils.ShellCommand
-import com.gap.pipeline.ec.CommanderClient
-import com.gap.pipeline.ec.SegmentRegistry
-import com.gap.pipeline.utils.EnvironmentStub
+import java.text.ParseException
+import java.text.SimpleDateFormat
+
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 class CreateHtmlWithGoodVersionsTaskTest {
 	def logger = LogFactory.getLog(CreateHtmlWithGoodVersionsTaskTest)
-
-	//private def segmentIdentifier = "Test Project:Test Procedure"
 
 	private Project project
 
@@ -40,13 +36,17 @@ class CreateHtmlWithGoodVersionsTaskTest {
 	private SegmentRegistry segmentRegistry
 
 	private CreateHtmlWithGoodVersionsTask task
-	
-	private static final String goodVersionsMockJsonFile = "src/test/groovy/com/gap/gradle/resources/testSegmentGoodVersionsMock.json"
+
+	private static
+	final String goodVersionsMockJsonFile = "src/test/groovy/com/gap/gradle/resources/testSegmentGoodVersionsMock.json"
 	private static final String TEST_SEGMENT_IDENTIFIER = "Dummy Project:Dummy Procedure"
+
+	private static
+	final String createHtmlGoodVersionFile = "src/test/groovy/com/gap/gradle/resources/testCreateHtmlGoodVersionsTask.html"
 
 
 	@Rule
-	public  TemporaryFolder temporaryFolder = new TemporaryFolder()
+	public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
 	@Before
 	void setup() {
@@ -65,7 +65,6 @@ org.codehaus.groovy:groovy-all"""
 		when(mockShellCommand.execute(['ectool', 'getProperty', '/myJob/ivyDependencies'])).thenReturn(ivyDependenciesOut)
 
 		when(mockShellCommand.execute(['ectool', 'getProperty', "/server/watchmen_config/sharedHtdocs"])).thenReturn("/tmp/test/")
-		//when(mockShellCommand.execute(['ectool', 'getProperty', "/server/watchmen_config/sharedHtdocs"])).thenReturn(temporaryFolder)
 
 		commanderClient = new CommanderClient(mockShellCommand, environmentStub)
 
@@ -92,12 +91,13 @@ org.codehaus.groovy:groovy-all"""
 
 		def actualDependenciesHtml = task.buildDependenciesHtml()
 
-		logger.info("actualDependenciesHtml : " + actualDependenciesHtml)
+		def tagsActualDependenciesHtml = new XmlSlurper().parseText("<html>$actualDependenciesHtml</html>")
 
-		def lastIndex = 5615
+		def contentOfCreateHtmlGoodVersionFile = new File(createHtmlGoodVersionFile).getText()
 
-		assertEquals("Last index of element </div> must be $lastIndex", actualDependenciesHtml.lastIndexOf("</div>"), lastIndex)
+		def tagsExpectDependenciesHtml = new XmlSlurper().parseText("<html>$contentOfCreateHtmlGoodVersionFile</html>")
 
+		assertEquals(tagsExpectDependenciesHtml, tagsActualDependenciesHtml)
 	}
 
 	@Test
@@ -180,15 +180,15 @@ org.codehaus.groovy:groovy-all"""
 
 		when(mockShellCommand.execute(['ectool', '--format', 'json', 'getProperties', '--path', '/projects[WM Segment Registry]/SegmentRegistry/Dummy Project:Dummy Procedure/goodVersions', '--recurse', '1'])).thenReturn(getMockData())
 	}
-	
+
 	private def testMethod(Map pConfig) {
-		println "TestMethod"
-		println "${pConfig.path}"
-		println "${pConfig.recurse}"
-		println pConfig.toString()
-		println pConfig.toMapString()
+		logger.info("TestMethod")
+		logger.info("${pConfig.path}")
+		logger.info("${pConfig.recurse}")
+		logger.info(pConfig.toString())
+		logger.info(pConfig.toMapString())
 	}
-	
+
 	@Test
 	void testTestMethod() {
 		testMethod([path: "abcd", recurse: 1])
@@ -199,21 +199,45 @@ org.codehaus.groovy:groovy-all"""
 		def slurpedJson = getSlurpedMockJson()
 		def versions = slurpedJson.propertySheet.property.propertyName.toArray()
 		def resolvedDependencies = [:]
-		println "Versions Array: " + versions
+		logger.info("Versions Array: $versions")
 		versions.each { version ->
-			def data = slurpedJson.propertySheet.property.find{it.propertyName == version}
-			def propData = data.propertySheet.property.find{it.propertyName == "resolvedDependencies"}
+			def data = slurpedJson.propertySheet.property.find { it.propertyName == version }
+			def propData = data.propertySheet.property.find { it.propertyName == "resolvedDependencies" }
 			resolvedDependencies.put(version, propData.value.toString())
-			println "Resolved Deps: <pre> ${resolvedDependencies[version]} </pre>"
+			logger.info("Resolved Deps: <pre> ${resolvedDependencies[version]} </pre>")
 		}
 	}
 
-	private def getSlurpedMockJson() {
+	@Test
+	void shouldPopulateVersionsExceptLatest() {
+		def expectedData = """<root><option value="dummy:1">1</option>
+        <option value="dummy:2">2</option>
+        <option value="dummy:3">3</option>
+        <option value="dummy:5">5</option>
+        <option value="dummy:4">4</option></root>"""
+
+		def versions = ['1', '2', '3', '6', '5', '4']
+		def latestVersion = '6'
+		def dependency = "dummy"
+		def resolvedDependencies = ['1': 'One', '2': 'Two', '3': 'Three', '4': 'Four', '5': 'Five', '6': 'Six']
+		def actualData = task.populateVersionsExceptLatest(versions, latestVersion, dependency, resolvedDependencies)
+		def actualDataWrapped = "<root>$actualData</root>"
+		def expectedDataHtml = new XmlSlurper().parseText(expectedData)
+		def actualDataHtml = new XmlSlurper().parseText(actualDataWrapped)
+
+		logger.info("Row is :$actualData")
+
+		assertEquals(versions.size() - 1, actualData.split("\n").size())
+		assertEquals(expectedDataHtml, actualDataHtml)
+	}
+
+
+	private static def getSlurpedMockJson() {
 		return new JsonSlurper().parseText(new File(goodVersionsMockJsonFile).getText())
 	}
 
-	private String getMockData() {
+	private static String getMockData() {
 		return new File(goodVersionsMockJsonFile).getText()
 	}
-	
+
 }

@@ -20,7 +20,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 	private def ivyDependencies
 	private def dynamicData;
 	private def segmentIdentifier
-	private def manualSegmentDirObject
+	private File manualSegmentDirObject
 
 	CreateHtmlWithGoodVersionsTask(Project project, commanderClient = new CommanderClient(), segmentRegistry = new SegmentRegistry()) {
 		super(project)
@@ -63,8 +63,6 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 	}
 
 	def buildDependenciesHtml() {
-		//ivyDependencies[] = getIvyDependencies()
-		//ivyDependencies = ["com.gap.watchmen.diamondDependency.iso.diamondDependencyC:ci", "com.gap.watchmen.diamondDependency.iso.diamondDependencyB:ci"]
 		def dependenciesHtml = "<table border=\"0\">"
 		ivyDependencies.each { dependency ->
 			logger.info("dependency: " + dependency)
@@ -94,12 +92,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 		rowHtml += "<option value=\"$dependency:$latestVersion\">$latestVersion (latest)</option>\n"
 		dynamicData += "<h4>Dependencies for the segment: $segmentId</h4><div id='$dependency:$latestVersion' style=\"display: block;\"><pre> ${resolvedDependencies[latestVersion]} </pre></div>\n"
 
-		versions.each { version ->
-			if (version != latestVersion) {
-				rowHtml += "<option value=\"$dependency:$version\">$version</option>\n"
-				dynamicData += "<div id='$dependency:$version' style=\"display: none;\"><pre> ${resolvedDependencies[version]} </pre></div>\n"
-			}
-		}
+        rowHtml+=populateVersionsExceptLatest(versions, latestVersion, dependency, resolvedDependencies)
 
 		rowHtml += "</select>\n</td>\n</tr>"
 
@@ -114,8 +107,18 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 		return rowHtml;
 	}
 
+    def populateVersionsExceptLatest(def versions, def latestVersion, String dependency, LinkedHashMap resolvedDependencies) {
+        def rowHtmlTmp=''
+        versions.each { version ->
+            if (version != latestVersion) {
+                rowHtmlTmp += "<option value=\"$dependency:$version\">$version</option>\n"
+                dynamicData += "<div id='$dependency:$version' style=\"display: none;\"><pre> ${resolvedDependencies[version]} </pre></div>\n"
+            }
+        }
+        return rowHtmlTmp
+    }
 
-	def generateTimeWithFormat() {
+    def generateTimeWithFormat() {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddyyyy")
 
 		int secondsFrom1970 = System.currentTimeMillis() / 1000
@@ -216,7 +219,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 		return htmlContent
 	}
 
-	def writeToFile(File fileObject, fileContent) {
+	def writeToFile(File fileObject, String fileContent) {
 
 		def writer = new FileWriter(fileObject)
 

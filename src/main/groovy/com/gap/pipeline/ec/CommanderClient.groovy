@@ -10,7 +10,7 @@ class CommanderClient {
 
   def shellCommand
   def environment
-  def logger = LoggerFactory.getLogger(com.gap.pipeline.ec.CommanderClient)
+  def logger = LoggerFactory.getLogger(CommanderClient)
   private final String PROJECT_NAME_PROPERTY = '/myJob/projectName'
   private final String PROCEDURE_NAME_PROPERTY = '/myJob/liveProcedure'
 
@@ -19,7 +19,7 @@ class CommanderClient {
     this.environment = environment
   }
 
-  private def getCurrentProjectName(){
+  def getCurrentProjectName(){
     getECProperty(PROJECT_NAME_PROPERTY).value
   }
 
@@ -64,7 +64,7 @@ class CommanderClient {
     shellCommand.execute(['ectool', 'modifyFormalParameter', procedure.projectName, procedure.procedureName, parameterName, '--defaultValue', defaultValue])
   }
 
-  def getRunProcedureUrl(fullProcedureName) {
+	static def getRunProcedureUrl(fullProcedureName) {
     def procedure = parseProcedureName(fullProcedureName)
     URI uri = new URI(
       "https",
@@ -73,7 +73,7 @@ class CommanderClient {
     uri.toString()+"?s=Projects"
   }
 
-  private parseProcedureName(String fullProcedureName) {
+  private static parseProcedureName(String fullProcedureName) {
     def parts = fullProcedureName.split(':')
     if (parts.size() < 2) {
       throw new IllegalArgumentException("The procedure name '${fullProcedureName}' is invalid. It should be of the format '<project name>:<procedure name>'")
@@ -176,11 +176,7 @@ class CommanderClient {
     }
   }
 
-  public Property getReportUrlProperty(String key) {
-	  return getECProperty('/myJob/report-urls/' + key)
-	}
-  
-  public Property getReportUrlPropertyOfJob(jobId, String key) {
+	public Property getReportUrlPropertyOfJob(jobId, String key) {
 	  return getECProperty("/jobs[$jobId]/report-urls/" + key)
 	}
 
