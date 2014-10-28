@@ -1,218 +1,225 @@
 package com.gap.pipeline.ec
-import org.slf4j.LoggerFactory
 
 import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.Environment
 import groovy.json.JsonSlurper
+import org.slf4j.LoggerFactory
 
 class CommanderClient {
 
-  def shellCommand
-  def environment
-  def logger = LoggerFactory.getLogger(CommanderClient)
-  private final String PROJECT_NAME_PROPERTY = '/myJob/projectName'
-  private final String PROCEDURE_NAME_PROPERTY = '/myJob/liveProcedure'
+	ShellCommand shellCommand
+	def environment
+	def logger = LoggerFactory.getLogger(CommanderClient)
+	private final String PROJECT_NAME_PROPERTY = '/myJob/projectName'
+	private final String PROCEDURE_NAME_PROPERTY = '/myJob/liveProcedure'
 
-  CommanderClient(shellCommand = new ShellCommand(), environment = new Environment()) {
-    this.shellCommand = shellCommand
-    this.environment = environment
-  }
-
-  def getCurrentProjectName(){
-    getECProperty(PROJECT_NAME_PROPERTY).value
-  }
-
-  private def getCurrentProcedureName(){
-    getECProperty(PROCEDURE_NAME_PROPERTY).value
-  }
-
-  private def getProjectName(jobId){
-	  def projectNameProperty = "/jobs[$jobId]/projectName"
-	  getECProperty(projectNameProperty).value
-	}
-  
-	private def getProcedureName(jobId){
-	  def projectNameProperty = "/jobs[$jobId]/liveProcedure"
-	  getECProperty(projectNameProperty).value
+	CommanderClient(shellCommand = new ShellCommand(), environment = new Environment()) {
+		this.shellCommand = shellCommand
+		this.environment = environment
 	}
 
+	def getPlugins() {
+		String output= shellCommand.execute(['ectool', '--format', 'json', 'getPlugins'])
+		return new JsonSlurper().parseText(output).plugin
+	}
 
-  def addLink(filename, jobid){
-    def filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'))
-    setECProperty("/jobs[${jobid}]/report-urls/${filenameWithoutExtension}", "/commander/jobs/${jobid}/default/${filename}")
-  }
+	def getCurrentProjectName() {
+		getECProperty(PROJECT_NAME_PROPERTY).value
+	}
 
-  def addLinkToUrl(linkName, linkUrl, jobId = getJobId()){
-    setECProperty("/jobs[${jobId}]/report-urls/${linkName}", linkUrl)
-  }
+	private def getCurrentProcedureName() {
+		getECProperty(PROCEDURE_NAME_PROPERTY).value
+	}
 
-  def addLinkToRunProcedureInJob(linkName, procedureName){
-    addLinkToUrl(linkName, getRunProcedureUrl(procedureName), getJobId())
-  }
+	private def getProjectName(jobId) {
+		def projectNameProperty = "/jobs[$jobId]/projectName"
+		getECProperty(projectNameProperty).value
+	}
 
-  def getJobId() {
-    environment.getValue('COMMANDER_JOBID')
-  }
+	private def getProcedureName(jobId) {
+		def projectNameProperty = "/jobs[$jobId]/liveProcedure"
+		getECProperty(projectNameProperty).value
+	}
 
-  def getCurrentJobDir (){
-    environment.getValue('COMMANDER_WORKSPACE_UNIX')
-  }
 
-  def setDefaultParameterValue(fullProcedureName, parameterName, defaultValue) {
-    def procedure = parseProcedureName(fullProcedureName)
-    shellCommand.execute(['ectool', 'modifyFormalParameter', procedure.projectName, procedure.procedureName, parameterName, '--defaultValue', defaultValue])
-  }
+	def addLink(filename, jobid) {
+		def filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'))
+		setECProperty("/jobs[${jobid}]/report-urls/${filenameWithoutExtension}", "/commander/jobs/${jobid}/default/${filename}")
+	}
+
+	def addLinkToUrl(linkName, linkUrl, jobId = getJobId()) {
+		setECProperty("/jobs[${jobId}]/report-urls/${linkName}", linkUrl)
+	}
+
+	def addLinkToRunProcedureInJob(linkName, procedureName) {
+		addLinkToUrl(linkName, getRunProcedureUrl(procedureName), getJobId())
+	}
+
+	def getJobId() {
+		environment.getValue('COMMANDER_JOBID')
+	}
+
+	def getCurrentJobDir() {
+		environment.getValue('COMMANDER_WORKSPACE_UNIX')
+	}
+
+	def setDefaultParameterValue(fullProcedureName, parameterName, defaultValue) {
+		def procedure = parseProcedureName(fullProcedureName)
+		shellCommand.execute(['ectool', 'modifyFormalParameter', procedure.projectName, procedure.procedureName, parameterName, '--defaultValue', defaultValue])
+	}
 
 	static def getRunProcedureUrl(fullProcedureName) {
-    def procedure = parseProcedureName(fullProcedureName)
-    URI uri = new URI(
-      "https",
-      "commander.gapinc.dev",
-      "/commander/link/runProcedure/projects/${procedure.projectName}/procedures/${procedure.procedureName}", null);
-    uri.toString()+"?s=Projects"
-  }
+		def procedure = parseProcedureName(fullProcedureName)
+		URI uri = new URI(
+				"https",
+				"commander.gapinc.dev",
+				"/commander/link/runProcedure/projects/${procedure.projectName}/procedures/${procedure.procedureName}", null);
+		uri.toString() + "?s=Projects"
+	}
 
-  private static parseProcedureName(String fullProcedureName) {
-    def parts = fullProcedureName.split(':')
-    if (parts.size() < 2) {
-      throw new IllegalArgumentException("The procedure name '${fullProcedureName}' is invalid. It should be of the format '<project name>:<procedure name>'")
-    }
-    [projectName: parts[0], procedureName: parts[1]]
-  }
+	private static parseProcedureName(String fullProcedureName) {
+		def parts = fullProcedureName.split(':')
+		if (parts.size() < 2) {
+			throw new IllegalArgumentException("The procedure name '${fullProcedureName}' is invalid. It should be of the format '<project name>:<procedure name>'")
+		}
+		[projectName: parts[0], procedureName: parts[1]]
+	}
 
 
-  public setECProperty(name, value) {
-    shellCommand.execute(['ectool', 'setProperty', name.toString(), value.toString()])
-  }
+	public setECProperty(name, value) {
+		shellCommand.execute(['ectool', 'setProperty', name.toString(), value.toString()])
+	}
 
-  public def getECProperty(key) {
-    try{
-      return new Property(key, shellCommand.execute(['ectool', 'getProperty', key.toString()]))
-    }
-    catch (ShellCommandException e){
-      if(e.message.contains('[NoSuchProperty]')){
-        logger.debug("Requested property does not exist. ${e.message}\n")
-        return Property.invalidProperty(key)
-      }
-      else throw e
-    }
-  }
+	public def getECProperty(key) {
+		try {
+			return new Property(key, shellCommand.execute(['ectool', 'getProperty', key.toString()]))
+		}
+		catch (ShellCommandException e) {
+			if (e.message.contains('[NoSuchProperty]')) {
+				logger.debug("Requested property does not exist. ${e.message}\n")
+				return Property.invalidProperty(key)
+			} else throw e
+		}
+	}
 
-  def getCurrentSegmentConfig(){
-    new SegmentConfig(getSegmentConfigPropertyValue('configSCMUrl'),
-    getSegmentConfigPropertyValue('workingDir'),
-    getSegmentConfigPropertyValue('ciDir'),
-    getSegmentConfigPropertyValue('gradleFile'),
-    getSegmentConfigPropertyValue('scmConfigName'),
-    isManualSegment())
-  }
+	def getCurrentSegmentConfig() {
+		new SegmentConfig(getSegmentConfigPropertyValue('configSCMUrl'),
+				getSegmentConfigPropertyValue('workingDir'),
+				getSegmentConfigPropertyValue('ciDir'),
+				getSegmentConfigPropertyValue('gradleFile'),
+				getSegmentConfigPropertyValue('scmConfigName'),
+				isManualSegment())
+	}
 
-  private boolean isManualSegment() {
-    def isManualProperty = getSegmentConfigProperty('config/isManual')
-    def isManual = isManualProperty.isValid() ? Boolean.valueOf(isManualProperty.value) : false;
-    isManual
-  }
+	private boolean isManualSegment() {
+		def isManualProperty = getSegmentConfigProperty('config/isManual')
+		def isManual = isManualProperty.isValid() ? Boolean.valueOf(isManualProperty.value) : false;
+		isManual
+	}
 
-  private String getSegmentConfigPropertyValue(String property) {
-    getSegmentConfigProperty(property).value
-  }
+	private String getSegmentConfigPropertyValue(String property) {
+		getSegmentConfigProperty(property).value
+	}
 
-  private Property getSegmentConfigProperty(String property) {
-    getECProperty('/myJob/watchmen_config/' + property)
-  }
+	private Property getSegmentConfigProperty(String property) {
+		getECProperty('/myJob/watchmen_config/' + property)
+	}
 
-  def getUserId(){
-    getECProperty("/myJob/launchedByUser").value
-  }
+	def getUserId() {
+		getECProperty("/myJob/launchedByUser").value
+	}
 
-  def getUserName(){
-    def jobTriggeredByUserId = getECProperty("/myJob/launchedByUser").value
-    isJobTriggeredManually(jobTriggeredByUserId)? getECProperty("/users[$jobTriggeredByUserId]/fullUserName").value: jobTriggeredByUserId
-  }
+	def getUserName() {
+		def jobTriggeredByUserId = getECProperty("/myJob/launchedByUser").value
+		isJobTriggeredManually(jobTriggeredByUserId) ? getECProperty("/users[$jobTriggeredByUserId]/fullUserName").value : jobTriggeredByUserId
+	}
 
-  def getStartTime(){
-    getECProperty("/myJob/start").value
-  }
+	def getStartTime() {
+		getECProperty("/myJob/start").value
+	}
 
-  private static def isJobTriggeredManually(userId){
-    !userId.toString().contains(' ')
-  }
+	private static def isJobTriggeredManually(userId) {
+		!userId.toString().contains(' ')
+	}
 
-  def getCurrentSegment() {
-    return new Segment(getCurrentProjectName(), getCurrentProcedureName())
-  }
+	def getCurrentSegment() {
+		return new Segment(getCurrentProjectName(), getCurrentProcedureName())
+	}
 
-  def getSegment(jobId) {
-  	return new Segment(getProjectName(jobId), getProcedureName(jobId))
-  }
+	def getSegment(jobId) {
+		return new Segment(getProjectName(jobId), getProcedureName(jobId))
+	}
 
-  def isRunningInPipeline(){
-    getJobId() != null
-  }
+	def isRunningInPipeline() {
+		getJobId() != null
+	}
 
-  def getArtifactoryUserName() {
-    getCredential("""/projects/WM Credentials/credentials/WMArtifactory""", """userName""")
-  }
+	def getArtifactoryUserName() {
+		getCredential("""/projects/WM Credentials/credentials/WMArtifactory""", """userName""")
+	}
 
-  def getArtifactoryPassword(){
-    getCredential("""/projects/WM Credentials/credentials/WMArtifactory""", """password""")
-  }
+	def getArtifactoryPassword() {
+		getCredential("""/projects/WM Credentials/credentials/WMArtifactory""", """password""")
+	}
 
-  def getCredential(String credentialName, String valueName) {
-    if (isRunningInPipeline()) {
-      try {
-        shellCommand.execute(['ectool', 'getFullCredential', credentialName, '--value', valueName])
-      } catch(ShellCommandException se) {
-        if(se.getMessage().contains('ectool error [InvalidCredentialName]')) {
-          logger.warn('WARNING: Using dummy credentials - Only WM Gradle:Invoke & WM Exec:Run are approved steps to access artifactory credentials. This will not impact your job unless you are trying to use the Artifactory credentials in this step')
-          return 'dummy'
-        } else {
-          throw se
-        }
-      }
-    } else {
-        logger.warn('Credentials are accesible only in pipline')
-    }
-  }
+	def getCredential(String credentialName, String valueName) {
+		if (isRunningInPipeline()) {
+			try {
+				shellCommand.execute(['ectool', 'getFullCredential', credentialName, '--value', valueName])
+			} catch (ShellCommandException se) {
+				if (se.getMessage().contains('ectool error [InvalidCredentialName]')) {
+					logger.warn('WARNING: Using dummy credentials - Only WM Gradle:Invoke & WM Exec:Run are approved steps to access artifactory credentials. This will not impact your job unless you are trying to use the Artifactory credentials in this step')
+					return 'dummy'
+				} else {
+					throw se
+				}
+			}
+		} else {
+			logger.warn('Credentials are accesible only in pipline')
+		}
+	}
 
 	public Property getReportUrlPropertyOfJob(jobId, String key) {
-	  return getECProperty("/jobs[$jobId]/report-urls/" + key)
+		return getECProperty("/jobs[$jobId]/report-urls/" + key)
 	}
 
-  public def getECProperties(Map pConfig) {
-    def slurpedJson
-	def command = ['ectool', '--format', 'json', 'getProperties']
-	if (pConfig.path) {
-		command.add("--path")
-		command.add("${pConfig.path}".toString())
+	public def getECProperties(Map pConfig) {
+		def slurpedJson
+		def command = ['ectool', '--format', 'json', 'getProperties']
+		if (pConfig.path) {
+			command.add("--path")
+			command.add("${pConfig.path}".toString())
+		}
+		if (pConfig.recurse) {
+			command.add("--recurse")
+			command.add("${pConfig.recurse}".toString())
+		}
+		if (pConfig.propertySheetId) {
+			command.add("--propertySheetId")
+			command.add("${pConfig.propertySheetId}".toString())
+		}
+		if (pConfig.expand) {
+			command.add("--expand")
+			command.add("${pConfig.expand}".toString())
+		}
+		try {
+			logger.info("ectool getProperties command: " + command)
+			def output = shellCommand.execute(command)
+			slurpedJson = new JsonSlurper().parseText(output)
+			logger.info("slurped getProperties data: " + slurpedJson)
+		}
+		catch (ShellCommandException e) {
+			if (e.message.contains('[NoSuchPropertySheet]')) {
+				logger.debug("Requested property sheet does not exist. ${e.message}\n")
+				return Property.invalidProperty(pConfig.toString())
+			} else throw e
+		}
+		return slurpedJson
 	}
-	if (pConfig.recurse) {
-		command.add("--recurse")
-		command.add("${pConfig.recurse}".toString())
-	}
-	if (pConfig.propertySheetId) {
-		command.add("--propertySheetId")
-		command.add("${pConfig.propertySheetId}".toString())
-	}
-    try{
-	  logger.info("ectool getProperties command: " + command)
-	  def output = shellCommand.execute(command)
-      slurpedJson = new JsonSlurper().parseText(output)
-	  logger.info("slurped getProperties data: " + slurpedJson)
-    }
-    catch (ShellCommandException e) {
-      if(e.message.contains('[NoSuchPropertySheet]')){
-        logger.debug("Requested property sheet does not exist. ${e.message}\n")
-        return Property.invalidProperty(pConfig.toString())
-      }
-      else throw e
-    }
-	return slurpedJson
-  }
 
-  def getBaseUrl(){
-    return getECProperty("/server/baseUrl").value
-  }
+	def getBaseUrl() {
+		return getECProperty("/server/baseUrl").value
+	}
 
 }
