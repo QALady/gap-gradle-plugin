@@ -35,7 +35,7 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
       }
 
       project.wrapper {
-        distributionUrl "${ARTIFACTORY_REMOTE_REPOS}/gradle-${gradleVersion}-bin.zip"
+        distributionUrl "http://artifactory.gapinc.dev/artifactory/gradle-${gradleVersion}-bin.zip"
       }
 
       project.task('testCredentials') <<{
