@@ -5,7 +5,7 @@ import com.gap.gradle.tasks.CreateECProcedureTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class GapWMDSLPLugin implements Plugin<Project> {
+class GapWMSegmentDslPlugin implements Plugin<Project> {
 
 	Project project
 	WatchmenDSLExtension extension

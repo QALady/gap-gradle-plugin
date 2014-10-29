@@ -20,15 +20,10 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def execute() {
-		def plugins = getPlugins()
+		def plugins = getPromotedPlugins()
 	}
 
-
-
-	/**
-	 * Make promoted plugins hash of key to name
-	 */
-	def getPlugins() {
+	def getPromotedPlugins() {
 		def pluginsJson = commanderClient.getPlugins()
 		logger.info("plugins slurpedJson:" + pluginsJson)
 		def returnHash = [:]
