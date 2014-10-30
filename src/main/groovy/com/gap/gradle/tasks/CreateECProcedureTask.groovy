@@ -27,11 +27,6 @@ class CreateECProcedureTask extends WatchmenTask {
 
 	def execute() {
 		def plugins = getPromotedPlugins()
-		println project.segment.company
-		println project.segment.title
-		
-		println project.segment.myaction.name
-		println project.segment.myaction.age
 	}
 
 	def getPromotedPlugins() {

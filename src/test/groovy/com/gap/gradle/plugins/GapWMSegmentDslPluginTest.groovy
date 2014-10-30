@@ -42,5 +42,39 @@ class GapWMSegmentDslPluginTest {
 	static def taskShouldExist(task, project) {
 		assertThat("Task '${task}' does not exist on project", project.tasks.findByName(task), notNullValue())
 	}
+
+	@Test
+	void shouldAssertSegmentExtensionLoaded() {
+		project.segment {
+			actions {
+				testCommand {
+					command 'echo "Hello"'
+				}
+			}
+		  }
+		assertEquals("Something wrong", 'echo "Hello"', project.segment.actions.testCommand.command)
+	}
+
+	@Test
+	void shouldAssertSegmentExtensionLoadMultipleActions() {
+		project.segment {
+			actions {
+				testAction {
+					command 'echo "Hello"'
+				}
+				anotherTestAction {
+					command 'echo "Again"'
+				}
+				noCommandAction {
+					
+				}
+			}
+		  }
+		assertEquals("testAction segment.action is unable to load", 'echo "Hello"', project.segment.actions.testAction.command)
+		assertEquals("anotherTestAction segment.action is unable to load", 'echo "Again"', project.segment.actions.anotherTestAction.command)
+		assertNull("noCommandAction should not break the dsl load", project.segment.actions.noCommandAction.command)
+		assertEquals(3, project.segment.actions.size())
+	}
+
 	
 }

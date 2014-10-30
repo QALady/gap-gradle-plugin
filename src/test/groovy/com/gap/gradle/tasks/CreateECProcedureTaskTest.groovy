@@ -43,17 +43,4 @@ class CreateECProcedureTaskTest {
 
 		assertEquals(expectedPluginsData.plugin.findAll { it.promoted == '1' }.size(), actualPluginsData.size())
 	}
-
-	@Test
-	void testSomething() {
-		project.segment {
-			company 'nisum'
-			title 'dummy'
-			myaction {
-				name 'francisco'
-				age '10'
-			}
-		  }
-		task.execute()
-	}
 }
