@@ -5,11 +5,14 @@ import static org.mockito.Mockito.*
 import groovy.json.JsonSlurper
 
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.reflect.Instantiator
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
+import com.gap.gradle.plugins.GapWMSegmentDslPlugin
 import com.gap.gradle.utils.ShellCommand
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.utils.EnvironmentStub
@@ -26,6 +29,7 @@ class CreateECProcedureTaskTest {
 	void setup() {
 		project = ProjectBuilder.builder().build()
 		project.apply plugin: 'gap-wm-segmentdsl'
+
 		mockShellCommand = mock(ShellCommand, Mockito.RETURNS_SMART_NULLS)
 		when(mockShellCommand.execute(['ectool', '--format', 'json', 'getPlugins'])).thenReturn(new File(testGetPluginsJsonFileName).getText())
 		commanderClient = new CommanderClient(mockShellCommand, new EnvironmentStub())
@@ -40,4 +44,16 @@ class CreateECProcedureTaskTest {
 		assertEquals(expectedPluginsData.plugin.findAll { it.promoted == '1' }.size(), actualPluginsData.size())
 	}
 
+	@Test
+	void testSomething() {
+		project.segment {
+			company 'nisum'
+			title 'dummy'
+			myaction {
+				name 'francisco'
+				age '10'
+			}
+		  }
+		task.execute()
+	}
 }

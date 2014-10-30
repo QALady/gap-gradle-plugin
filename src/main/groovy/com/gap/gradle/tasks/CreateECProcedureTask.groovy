@@ -2,10 +2,16 @@ package com.gap.gradle.tasks
 
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
+import com.gap.pipeline.tasks.annotations.Require;
+import com.gap.pipeline.tasks.annotations.RequiredParameters;
+
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 
+@RequiredParameters([
+		@Require(parameter = 'segment', description = 'the WM Segment DSL')
+])
 class CreateECProcedureTask extends WatchmenTask {
 	def logger = LogFactory.getLog(CreateECProcedureTask)
 	private Project project
@@ -21,6 +27,11 @@ class CreateECProcedureTask extends WatchmenTask {
 
 	def execute() {
 		def plugins = getPromotedPlugins()
+		println project.segment.company
+		println project.segment.title
+		
+		println project.segment.myaction.name
+		println project.segment.myaction.age
 	}
 
 	def getPromotedPlugins() {
