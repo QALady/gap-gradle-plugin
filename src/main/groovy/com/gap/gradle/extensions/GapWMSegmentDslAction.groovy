@@ -1,11 +1,23 @@
 package com.gap.gradle.extensions
 
+import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.NamedDomainObjectSet
+import org.gradle.api.Project
+import org.gradle.internal.reflect.Instantiator
+
 class GapWMSegmentDslAction {
 	final String name
-	String command
+	def action
+	final NamedDomainObjectSet<GapWMSegmentDslActionParameter> parameters
 	
-	public GapWMSegmentDslAction(String name) {
+	public GapWMSegmentDslAction(String name, Project project, Instantiator instantiator) {
 		this.name = name
+		this.parameters = project.container(GapWMSegmentDslActionParameter, {pName -> instantiator.newInstance(GapWMSegmentDslActionParameter, pName)})
+	}
+
+	void parameters(Action<? super NamedDomainObjectCollection<GapWMSegmentDslActionParameter>> action) {
+		action.execute(parameters)
 	}
 	
 	@Override
@@ -27,7 +39,8 @@ class GapWMSegmentDslAction {
 	public String toString() {
 		return "GapWMSegmentDslAction{" +
 				"name='" + name + '\'' +
-				", command='" + command + '\'' +
+				", action='" + action.toString() + '\'' +
+				", parameters='" + parameters.toString() + '\'' +
 				'}';
 	}
 }

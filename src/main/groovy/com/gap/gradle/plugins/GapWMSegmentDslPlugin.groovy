@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

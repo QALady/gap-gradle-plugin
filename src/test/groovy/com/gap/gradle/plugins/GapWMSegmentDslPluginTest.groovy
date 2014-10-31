@@ -7,11 +7,13 @@ import static org.mockito.Mockito.*
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import com.gap.gradle.extensions.GapWMSegmentDsl
+import com.gap.gradle.extensions.GapWMSegmentDslActionParameter
 
 class GapWMSegmentDslPluginTest {
 	private Project project
@@ -36,7 +38,6 @@ class GapWMSegmentDslPluginTest {
 		def segmentExtension = project.extensions.findByName("segment")
 		assertNotNull(segmentExtension)
 		assert segmentExtension instanceof GapWMSegmentDsl
-		println segmentExtension
 	}
 
 	static def taskShouldExist(task, project) {
@@ -47,34 +48,43 @@ class GapWMSegmentDslPluginTest {
 	void shouldAssertSegmentExtensionLoaded() {
 		project.segment {
 			actions {
-				testCommand {
-					command 'echo "Hello"'
+				smoke {
+					action 'WM Exec:Run'
+					parameters {
+						cmd.value './gradlew tasks --info'
+						abc.value '1234'
+					}
 				}
 			}
 		  }
-		assertEquals("Something wrong", 'echo "Hello"', project.segment.actions.testCommand.command)
+		assertEquals("Something wrong", new GapWMSegmentDslActionParameter('abc', '1234').toString(), project.segment.actions.smoke.parameters.abc.toString())
 	}
 
 	@Test
 	void shouldAssertSegmentExtensionLoadMultipleActions() {
 		project.segment {
 			actions {
+				smoke {
+					action 'WM Exec:Run'
+					parameters {
+						cmd.value './gradlew tasks --info'
+					}
+				}
 				testAction {
-					command 'echo "Hello"'
+					action 'echo "Hello"'
 				}
 				anotherTestAction {
-					command 'echo "Again"'
+					action 'echo "Again"'
 				}
 				noCommandAction {
 					
 				}
 			}
 		  }
-		assertEquals("testAction segment.action is unable to load", 'echo "Hello"', project.segment.actions.testAction.command)
-		assertEquals("anotherTestAction segment.action is unable to load", 'echo "Again"', project.segment.actions.anotherTestAction.command)
-		assertNull("noCommandAction should not break the dsl load", project.segment.actions.noCommandAction.command)
-		assertEquals(3, project.segment.actions.size())
+		assertEquals("testAction segment.action is unable to load", 'echo "Hello"', project.segment.actions.testAction.action)
+		assertEquals("anotherTestAction segment.action is unable to load", 'echo "Again"', project.segment.actions.anotherTestAction.action)
+		assertNull("noCommandAction should not break the dsl load", project.segment.actions.noCommandAction.action)
+		assertEquals(4, project.segment.actions.size())
 	}
-
 	
 }
