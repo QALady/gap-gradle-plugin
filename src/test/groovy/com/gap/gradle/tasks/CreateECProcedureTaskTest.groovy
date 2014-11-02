@@ -43,4 +43,24 @@ class CreateECProcedureTaskTest {
 
 		assertEquals(expectedPluginsData.plugin.findAll { it.promoted == '1' }.size(), actualPluginsData.size())
 	}
+
+	@Test
+	void shouldRunECProcedureActions() {
+		def expectedPluginsData = new JsonSlurper().parseText(new File(testGetPluginsJsonFileName).getText())
+		project.segment {
+			prepare {
+				smoke {
+					action 'WM Exec:Run'
+					parameters {
+						cmd.value './gradlew tasks --info'
+					}
+				}
+			}
+		  }
+
+		task.execute()
+
+		assertEquals(expectedPluginsData.plugin.findAll { it.promoted == '1' }.size(), task.plugins.size())
+	}
+
 }

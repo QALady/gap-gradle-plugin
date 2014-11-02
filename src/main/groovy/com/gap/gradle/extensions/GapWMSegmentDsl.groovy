@@ -8,17 +8,35 @@ import org.gradle.internal.reflect.Instantiator
 
 
 class GapWMSegmentDsl {
-	private final Project project
-	final NamedDomainObjectSet<GapWMSegmentDslAction> actions
+	public static final def segmentPhases = ['prepare', 'test', 'approve', '_finally']
+	final NamedDomainObjectSet<GapWMSegmentDslAction> prepare
+	final NamedDomainObjectSet<GapWMSegmentDslAction> test
+	final NamedDomainObjectSet<GapWMSegmentDslAction> approve
+	final NamedDomainObjectSet<GapWMSegmentDslAction> _finally
 
 	GapWMSegmentDsl(Project project, Instantiator instantiator) {
-		this.project = project
-		this.actions = project.container(GapWMSegmentDslAction, { name -> instantiator.newInstance(GapWMSegmentDslAction, name, project, instantiator) })
+		this.prepare = project.container(GapWMSegmentDslAction, { name -> instantiator.newInstance(GapWMSegmentDslAction, name, project, instantiator) })
+		this.test = project.container(GapWMSegmentDslAction, { name -> instantiator.newInstance(GapWMSegmentDslAction, name, project, instantiator) })
+		this.approve = project.container(GapWMSegmentDslAction, { name -> instantiator.newInstance(GapWMSegmentDslAction, name, project, instantiator) })
+		this._finally = project.container(GapWMSegmentDslAction, { name -> instantiator.newInstance(GapWMSegmentDslAction, name, project, instantiator) })
 	}
 
-	void actions(Action<? super NamedDomainObjectCollection<GapWMSegmentDslAction>> action) {
-		action.execute(actions)
+	void prepare(Action<? super NamedDomainObjectCollection<GapWMSegmentDslAction>> action) {
+		action.execute(prepare)
 	}
+
+	void test(Action<? super NamedDomainObjectCollection<GapWMSegmentDslAction>> action) {
+		action.execute(test)
+	}
+
+	void approve(Action<? super NamedDomainObjectCollection<GapWMSegmentDslAction>> action) {
+		action.execute(approve)
+	}
+
+	void _finally(Action<? super NamedDomainObjectCollection<GapWMSegmentDslAction>> action) {
+		action.execute(_finally)
+	}
+
 }
 
 

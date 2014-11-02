@@ -19,6 +19,75 @@ class CommanderClient {
 		this.environment = environment
 	}
 
+	/**
+	 * Usage: createProcedure <projectName> <procedureName>
+				[--description <description>]
+				[--credentialName <credentialName>]
+				[--resourceName <resourceName>]
+				[--workspaceName <workspaceName>]
+				[--jobNameTemplate <jobNameTemplate>]
+				[--timeLimit <timeLimit>]
+				[--timeLimitUnits <hours|minutes|seconds>]
+	 * @param projectName
+	 * @param procedureName
+	 * @return
+	 */
+	def createProcedure(projectName, procedureName, Map config = [:]) {
+		def command = ['ectool', 'createProcedure', projectName.toString(), procedureName.toString()]
+		if (config.description) {
+			command.add('--description')
+			command.add(config.description.toString())
+		}
+		if (config.resourceName) {
+			command.add('--resourceName')
+			command.add(config.resourceName.toString())
+		}
+		if (config.workspaceName) {
+			command.add('--workspaceName')
+			command.add(config.workspaceName.toString())
+		}
+		logger.info("createProcedure: " + command.toString())
+		//return shellCommand.execute(command)
+	}
+
+	/**
+	 * Usage: createStep <projectName> <procedureName> <stepName>
+				[--description <description>]
+				[--credentialName <credentialName>]
+				[--resourceName <resourceName>]
+				[--command <command>]
+				[--subprocedure <subprocedure>]
+				[--subproject <subproject>]
+				[--workingDirectory <workingDirectory>]
+				[--timeLimit <timeLimit>]
+				[--timeLimitUnits <hours|minutes|seconds>]
+				[--postProcessor <postProcessor>]
+				[--parallel <0|1|true|false>]
+				[--logFileName <logFileName>]
+				[--actualParameter <var1>=<val1> [<var2>=<val2> ...]]
+				[--exclusive <0|1|true|false>]
+				[--exclusiveMode <none|job|step|call>]
+				[--releaseExclusive <0|1|true|false>]
+				[--releaseMode <none|release|releaseToJob>]
+				[--alwaysRun <0|1|true|false>]
+				[--shell <shell>]
+				[--errorHandling <failProcedure|abortProcedure|abortProcedureNow|abortJob|abortJobNow|ignore>]
+				[--condition <condition>]
+				[--broadcast <0|1|true|false>]
+				[--workspaceName <workspaceName>]
+				[--precondition <precondition>]
+				[--commandFile <commandFile>]
+	 * @param projectName
+	 * @param procedureName
+	 * @param stepName
+	 * @return
+	 */
+	def createStep(projectName, procedureName, stepName, Map stepConfig = [:]) {
+		def command = ['ectool', 'createStep', projectName.toString(), procedureName.toString(), stepName.toString()]
+		logger.info("createStep: " + command.toString())
+		//return shellCommand.execute(command)
+	}
+
 	def getPlugins() {
 		String output= shellCommand.execute(['ectool', '--format', 'json', 'getPlugins'])
 		return new JsonSlurper().parseText(output).plugin

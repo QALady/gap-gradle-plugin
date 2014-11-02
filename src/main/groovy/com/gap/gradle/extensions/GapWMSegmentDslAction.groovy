@@ -19,7 +19,19 @@ class GapWMSegmentDslAction {
 	void parameters(Action<? super NamedDomainObjectCollection<GapWMSegmentDslActionParameter>> action) {
 		action.execute(parameters)
 	}
-	
+
+	boolean hasSubProject() {
+		return this.action.toString().find(~/\:/)
+	}
+
+	def getECParameters() {
+		def ecParameters = []
+		this.parameters.each { param ->
+			ecParameters.add(['actualParameterName': param.name, 'value': param.value])
+		}
+		return ecParameters
+	}
+		
 	@Override
 	boolean equals(o) {
 		if (this.is(o)) return true

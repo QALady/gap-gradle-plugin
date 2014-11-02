@@ -47,7 +47,7 @@ class GapWMSegmentDslPluginTest {
 	@Test
 	void shouldAssertSegmentExtensionLoaded() {
 		project.segment {
-			actions {
+			prepare {
 				smoke {
 					action 'WM Exec:Run'
 					parameters {
@@ -57,13 +57,15 @@ class GapWMSegmentDslPluginTest {
 				}
 			}
 		  }
-		assertEquals("Something wrong", new GapWMSegmentDslActionParameter('abc', '1234').toString(), project.segment.actions.smoke.parameters.abc.toString())
+		assertEquals("Something wrong", new GapWMSegmentDslActionParameter('abc', '1234').toString(), project.segment.prepare.smoke.parameters.abc.toString())
+		assertEquals(0, project.segment.approve.size())
+		assertEquals(0, project.segment._finally.size())
 	}
 
 	@Test
 	void shouldAssertSegmentExtensionLoadMultipleActions() {
 		project.segment {
-			actions {
+			prepare {
 				smoke {
 					action 'WM Exec:Run'
 					parameters {
@@ -80,11 +82,15 @@ class GapWMSegmentDslPluginTest {
 					
 				}
 			}
+			test {
+				
+			}
 		  }
-		assertEquals("testAction segment.action is unable to load", 'echo "Hello"', project.segment.actions.testAction.action)
-		assertEquals("anotherTestAction segment.action is unable to load", 'echo "Again"', project.segment.actions.anotherTestAction.action)
-		assertNull("noCommandAction should not break the dsl load", project.segment.actions.noCommandAction.action)
-		assertEquals(4, project.segment.actions.size())
+		assertEquals("testAction segment.action is unable to load", 'echo "Hello"', project.segment.prepare.testAction.action)
+		assertEquals("anotherTestAction segment.action is unable to load", 'echo "Again"', project.segment.prepare.anotherTestAction.action)
+		assertNull("noCommandAction should not break the dsl load", project.segment.prepare.noCommandAction.action)
+		assertEquals(4, project.segment.prepare.size())
+		assertEquals(0, project.segment.test.size())
 	}
 	
 }
