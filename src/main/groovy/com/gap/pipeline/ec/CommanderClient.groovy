@@ -84,8 +84,28 @@ class CommanderClient {
 	 * @param stepName
 	 * @return
 	 */
-	def createStep(projectName, procedureName, stepName, Map stepConfig = [:]) {
+	def createStep(projectName, procedureName, stepName, Map config = [:]) {
 		def command = ['ectool', 'createStep', projectName.toString(), procedureName.toString(), stepName.toString()]
+		if (config.condition) {
+			command.add('--condition')
+			command.add(config.condition)
+		}
+		if (config.parallel) {
+			command.add('--parallel')
+			command.add(config.parallel)		
+		}
+		if (config.subproject) {
+			command.add('--subproject')
+			command.add(config.subproject)
+		}
+		if (config.subprocedure) {
+			command.add('--subprocedure')
+			command.add(config.subprocedure)
+		}
+		if (config.actualParameter) {
+			command.add('--actualParameter')
+			command.add(config.actualParameter)
+		}
 		logger.info("createStep: " + command.toString())
 		return shellCommand.execute(command)
 	}
