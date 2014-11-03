@@ -49,7 +49,7 @@ class CommanderClient {
 			command.add(config.workspaceName.toString())
 		}
 		logger.info("createProcedure: " + command.toString())
-		//return shellCommand.execute(command)
+		return shellCommand.execute(command)
 	}
 
 	/**
