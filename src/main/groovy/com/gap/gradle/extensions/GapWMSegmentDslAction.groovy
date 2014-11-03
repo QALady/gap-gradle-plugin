@@ -9,6 +9,8 @@ import org.gradle.internal.reflect.Instantiator
 class GapWMSegmentDslAction {
 	final String name
 	def action
+	def runCondition
+	def runOrder
 	final NamedDomainObjectSet<GapWMSegmentDslActionParameter> parameters
 	
 	public GapWMSegmentDslAction(String name, Project project, Instantiator instantiator) {
@@ -24,7 +26,15 @@ class GapWMSegmentDslAction {
 		return this.action.toString().find(~/\:/)
 	}
 
-	def getECParameters() {
+	public String getECStepRunCondition() {
+		return (this.runCondition == 'always' || this.runCondition == 'finally') ? '' : '$[/myProject/runCondition]'
+	}
+
+	public String getECParallelStep() {
+		return (this.runOrder == 'parallel') ? 'true' : 'false'
+	}
+
+	public String getECParameters() {
 		def ecParameters = []
 		this.parameters.each { param ->
 			ecParameters.add(['actualParameterName': param.name, 'value': param.value])
