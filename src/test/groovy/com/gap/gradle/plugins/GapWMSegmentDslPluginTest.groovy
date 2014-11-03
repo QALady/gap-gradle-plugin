@@ -55,9 +55,18 @@ class GapWMSegmentDslPluginTest {
 						abc.value '1234'
 					}
 				}
+				testGradleInvoke {
+					action 'WM Gradle:Invoke'
+					parameters {
+						tasks {
+							value 'tasks --info'
+						}
+					}
+				}
 			}
 		  }
 		assertEquals("Something wrong", new GapWMSegmentDslActionParameter('abc', '1234').toString(), project.segment.prepare.smoke.parameters.abc.toString())
+		assertEquals("unable to define tasks as parameter", new GapWMSegmentDslActionParameter('tasks', 'tasks --info').toString(), project.segment.prepare.testGradleInvoke.parameters.tasks.toString())
 		assertEquals(0, project.segment.approve.size())
 		assertEquals(0, project.segment._finally.size())
 	}
