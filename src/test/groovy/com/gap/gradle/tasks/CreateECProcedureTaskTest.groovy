@@ -19,7 +19,7 @@ class CreateECProcedureTaskTest {
 	private Project project
 	private CommanderClient commanderClient
 	private ShellCommand mockShellCommand
-	static final String testGetPluginsJsonFileName = "src/test/groovy/com/gap/gradle/resources/testGetPlugins.json"
+	static final String testGetPluginsXmlFileName = "src/test/groovy/com/gap/gradle/resources/testGetPlugins.xml"
 
 	CreateECProcedureTask task
 	
@@ -29,22 +29,22 @@ class CreateECProcedureTaskTest {
 		project.apply plugin: 'gap-wm-segmentdsl'
 
 		mockShellCommand = mock(ShellCommand, Mockito.RETURNS_SMART_NULLS)
-		when(mockShellCommand.execute(['ectool', '--format', 'json', 'getPlugins'])).thenReturn(new File(testGetPluginsJsonFileName).getText())
+		when(mockShellCommand.execute(['ectool', 'getPlugins'])).thenReturn(new File(testGetPluginsXmlFileName).getText())
 		commanderClient = new CommanderClient(mockShellCommand, new EnvironmentStub())
 		task = new CreateECProcedureTask(project, commanderClient)
 	}
 
-	@Ignore
+	@Test
 	void shouldGetPlugins() {
-		def expectedPluginsData = new JsonSlurper().parseText(new File(testGetPluginsJsonFileName).getText())
+		def expectedPluginsData = new XmlSlurper().parseText(new File(testGetPluginsXmlFileName).getText())
 		def actualPluginsData = task.getPromotedPlugins()
 
 		assertEquals(expectedPluginsData.plugin.findAll { it.promoted == '1' }.size(), actualPluginsData.size())
 	}
 
-	@Ignore
+	@Test
 	void shouldRunECProcedureActions() {
-		def expectedPluginsData = new JsonSlurper().parseText(new File(testGetPluginsJsonFileName).getText())
+		def expectedPluginsData = new XmlSlurper().parseText(new File(testGetPluginsXmlFileName).getText())
 		project.segment {
 			prepare {
 				smoke {

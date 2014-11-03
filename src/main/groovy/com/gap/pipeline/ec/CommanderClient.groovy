@@ -1,10 +1,12 @@
 package com.gap.pipeline.ec
 
+import groovy.json.JsonSlurper
+
+import org.slf4j.LoggerFactory
+
 import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.Environment
-import groovy.json.JsonSlurper
-import org.slf4j.LoggerFactory
 
 class CommanderClient {
 
@@ -85,12 +87,15 @@ class CommanderClient {
 	def createStep(projectName, procedureName, stepName, Map stepConfig = [:]) {
 		def command = ['ectool', 'createStep', projectName.toString(), procedureName.toString(), stepName.toString()]
 		logger.info("createStep: " + command.toString())
-		//return shellCommand.execute(command)
+		return shellCommand.execute(command)
 	}
 
 	def getPlugins() {
-		String output= shellCommand.execute(['ectool', '--format', 'json', 'getPlugins'])
-		return new JsonSlurper().parseText(output).plugin
+		String output= shellCommand.execute(['ectool', 'getPlugins'])
+		logger.debug("ectool getPlugins response: " + output)
+		def response = new XmlSlurper().parseText(output)
+		logger.debug("xml slurped response: " + response)
+		return response.plugin
 	}
 
 	def getCurrentProjectName() {

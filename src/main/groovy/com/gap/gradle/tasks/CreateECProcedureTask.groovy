@@ -31,7 +31,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def execute() {
-		//plugins = getPromotedPlugins()
+		plugins = getPromotedPlugins()
 		segmentPhases.each { phase ->
 			createPhaseProcedure(phase)
 		}
@@ -41,8 +41,11 @@ class CreateECProcedureTask extends WatchmenTask {
 		def procedureName = "perform_${phase}_actions_" + commanderClient.getJobId()
 		def createProcConfig = [description:'dynamic procedure created by gradle task gap_wm_segmentdsl']
 		commanderClient.createProcedure(projectName, procedureName, createProcConfig)
-		commanderClient.setECProperty("/myJob/watchmen_config/${phase}StepProcedureName", procedureName)
+		def phasePropertyName = phase.toString().replaceAll("_", "")
+		commanderClient.setECProperty("/myJob/watchmen_config/${phasePropertyName}StepProcedureName", procedureName)
+		logger.info("segmentdsl phase actions: " + segmentDsl[phase])
 		segmentDsl[phase].each {dslAction ->
+			logger.info("phase dsl action: " + dslAction)
 			runPhaseECStep(procedureName, dslAction)
 		}
 	}
@@ -67,11 +70,11 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def getPromotedPlugins() {
-		def pluginsJson = commanderClient.getPlugins()
-		logger.debug("plugins slurpedJson:" + pluginsJson)
+		def pluginsXml = commanderClient.getPlugins()
+		logger.debug("plugins slurpedXml:" + pluginsXml)
 		def returnHash = [:]
-		pluginsJson.each { plugin ->
-			logger.debug("plugin: ${plugin.pluginName} ${plugin.promoted == '1' ? 'promoted' : 'not promoted'}")
+		pluginsXml.each { plugin ->
+			//logger.debug("plugin: ${plugin.pluginName} ${plugin.promoted == '1' ? 'promoted' : 'not promoted'}")
 			if (plugin.promoted == '1') {
 				returnHash.put(plugin.pluginKey, plugin.pluginName)
 			}
