@@ -90,12 +90,20 @@ class CommanderClient {
 		return shellCommand.execute(command)
 	}
 
-	def getPlugins() {
-		String output= shellCommand.execute(['ectool', 'getPlugins'])
-		logger.debug("ectool getPlugins response: " + output)
-		def response = new XmlSlurper().parseText(output)
-		logger.debug("xml slurped response: " + response)
-		return response.plugin
+	def getPlugin(pluginName) {
+		try {
+			String output= shellCommand.execute(['ectool', 'getPlugin', pluginName])
+			logger.debug("ectool getPlugin response: " + output)
+			def response = new XmlSlurper().parseText(output)
+			logger.debug("xml slurped response: " + response)
+			return response.plugin
+		}
+		catch (ShellCommandException e) {
+			if (e.message.contains('[NoSuchPlugin]')) {
+				logger.debug("Requested plugin does not exist. ${e.message}\n")
+			} 
+			throw e
+		}
 	}
 
 	def getCurrentProjectName() {

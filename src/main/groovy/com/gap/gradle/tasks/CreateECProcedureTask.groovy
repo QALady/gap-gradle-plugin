@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 import com.gap.gradle.extensions.GapWMSegmentDslAction
+import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
@@ -31,7 +32,6 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def execute() {
-		//plugins = getPromotedPlugins()
 		segmentPhases.each { phase ->
 			createPhaseProcedure(phase)
 		}
@@ -46,11 +46,11 @@ class CreateECProcedureTask extends WatchmenTask {
 		logger.info("segmentdsl phase actions: " + segmentDsl[phase])
 		segmentDsl[phase].each {dslAction ->
 			logger.info("phase dsl action: " + dslAction)
-			runPhaseECStep(procedureName, dslAction)
+			createPhaseECStep(procedureName, dslAction)
 		}
 	}
 
-	def runPhaseECStep(procedureName, o) {
+	def createPhaseECStep(procedureName, o) {
 		def subProject, subProcedure
 		assert o instanceof GapWMSegmentDslAction
 		GapWMSegmentDslAction dsl = (GapWMSegmentDslAction) o
@@ -61,7 +61,7 @@ class CreateECProcedureTask extends WatchmenTask {
 		} else {
 			(subProject, subProcedure) = [projectName, dsl.action.toString()]
 		}
-		def subProjectName = plugins.get(subProject) ?: subProject
+		def subProjectName = checkPromotedPlugin(subProject)
 		logger.info("Creating Step in ($projectName:$procedureName). stepName: '$stepName' (Delegating to: ${subProjectName}:${subProcedure})")
 
 		def ecStepConfig = [:]
@@ -69,17 +69,19 @@ class CreateECProcedureTask extends WatchmenTask {
 		commanderClient.createStep(projectName, procedureName, stepName, ecStepConfig)
 	}
 
-	def getPromotedPlugins() {
-		def pluginsXml = commanderClient.getPlugins()
-		logger.debug("plugins slurpedXml:" + pluginsXml)
-		def returnHash = [:]
-		pluginsXml.each { plugin ->
-			//logger.debug("plugin: ${plugin.pluginName} ${plugin.promoted == '1' ? 'promoted' : 'not promoted'}")
-			if (plugin.promoted == '1') {
-				returnHash.put(plugin.pluginKey, plugin.pluginName)
+	def checkPromotedPlugin(givenPlugin) {
+		def promotedPlugin = givenPlugin
+		try {
+			def pluginsXml = commanderClient.getPlugin(givenPlugin)
+			logger.debug("plugins slurpedXml:" + pluginsXml)
+			pluginsXml.each { plugin ->
+				if (plugin.promoted == '1') {
+					promotedPlugin = plugin.pluginName
+				}
 			}
-		}
-		logger.debug("getPlugins promoted Plugins and Versions : $returnHash")
-		return returnHash
+			logger.info("promoted Plugin and Version of given $givenPlugin is: $promotedPlugin")
+		} catch (all) {}
+
+		return promotedPlugin
 	}
 }

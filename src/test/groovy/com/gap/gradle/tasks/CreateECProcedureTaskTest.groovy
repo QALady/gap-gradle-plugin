@@ -29,17 +29,23 @@ class CreateECProcedureTaskTest {
 		project.apply plugin: 'gap-wm-segmentdsl'
 
 		mockShellCommand = mock(ShellCommand, Mockito.RETURNS_SMART_NULLS)
-		when(mockShellCommand.execute(['ectool', 'getPlugins'])).thenReturn(new File(testGetPluginsXmlFileName).getText())
+		when(mockShellCommand.execute(['ectool', 'getPlugin', 'WM Exec'])).thenReturn(new File(testGetPluginsXmlFileName).getText())
 		commanderClient = new CommanderClient(mockShellCommand, new EnvironmentStub())
 		task = new CreateECProcedureTask(project, commanderClient)
 	}
 
-	@Ignore
-	void shouldGetPlugins() {
-		def expectedPluginsData = new XmlSlurper().parseText(new File(testGetPluginsXmlFileName).getText())
-		def actualPluginsData = task.getPromotedPlugins()
+	@Test
+	void shouldGetPromotedPluginDataWhenAvailable() {
+		def expectedPluginsData = 'WM Exec-1.17' // set in testdata testGetPlugins.xml
+		def actualPluginsData = task.checkPromotedPlugin('WM Exec')
+		assertEquals(expectedPluginsData, actualPluginsData.toString())
+	}
 
-		assertEquals(expectedPluginsData.plugin.findAll { it.promoted == '1' }.size(), actualPluginsData.size())
+	@Test
+	void shouldGetSameGivenNameWhenNoPluginDataAvailable() {
+		def expectedPluginsData = 'TestPluginWhichDoesNotExist'
+		def actualPluginsData = task.checkPromotedPlugin(expectedPluginsData)
+		assertEquals(expectedPluginsData, actualPluginsData)
 	}
 
 	@Ignore
@@ -57,8 +63,6 @@ class CreateECProcedureTaskTest {
 		  }
 
 		task.execute()
-
-		assertEquals(expectedPluginsData.plugin.findAll { it.promoted == '1' }.size(), task.plugins.size())
 	}
 
 }
