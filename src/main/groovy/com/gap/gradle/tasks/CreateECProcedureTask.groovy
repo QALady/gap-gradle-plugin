@@ -65,11 +65,11 @@ class CreateECProcedureTask extends WatchmenTask {
 		logger.info("Creating Step in ($projectName:$procedureName). stepName: '$stepName' (Delegating to: ${subProjectName}:${subProcedure})")
 
 		def ecStepConfig = [:]
-		ecStepConfig.put('condition', dsl.eCStepRunCondition)
+		ecStepConfig.put('condition', dsl.getECStepRunCondition())
 		ecStepConfig.put('subproject', subProjectName)
 		ecStepConfig.put('subprocedure', subProcedure)
-		ecStepConfig.put('parallel', dsl.eCParallelStep)
-		ecStepConfig.put('actualParameter', dsl.eCParameters)
+		ecStepConfig.put('parallel', dsl.getECParallelStep())
+		ecStepConfig.put('actualParameter', dsl.getECParameters())
 		logger.info("Step Config: " + ecStepConfig.toString())
 		commanderClient.createStep(projectName, procedureName, stepName, ecStepConfig)
 	}
