@@ -34,7 +34,7 @@ class CreateECProcedureTaskTest {
 		task = new CreateECProcedureTask(project, commanderClient)
 	}
 
-	@Test
+	@Ignore
 	void shouldGetPlugins() {
 		def expectedPluginsData = new XmlSlurper().parseText(new File(testGetPluginsXmlFileName).getText())
 		def actualPluginsData = task.getPromotedPlugins()
@@ -42,7 +42,7 @@ class CreateECProcedureTaskTest {
 		assertEquals(expectedPluginsData.plugin.findAll { it.promoted == '1' }.size(), actualPluginsData.size())
 	}
 
-	@Test
+	@Ignore
 	void shouldRunECProcedureActions() {
 		def expectedPluginsData = new XmlSlurper().parseText(new File(testGetPluginsXmlFileName).getText())
 		project.segment {

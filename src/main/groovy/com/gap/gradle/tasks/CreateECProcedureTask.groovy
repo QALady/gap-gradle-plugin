@@ -31,7 +31,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def execute() {
-		plugins = getPromotedPlugins()
+		//plugins = getPromotedPlugins()
 		segmentPhases.each { phase ->
 			createPhaseProcedure(phase)
 		}
