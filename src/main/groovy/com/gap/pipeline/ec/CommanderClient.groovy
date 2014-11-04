@@ -106,6 +106,10 @@ class CommanderClient {
 			command.add('--actualParameter')
 			command.add(config.actualParameter)
 		}
+		if (config.command) {
+			command.add('--command')
+			command.add(config.command)
+		}
 		logger.info("createStep: " + command.toString())
 		return shellCommand.execute(command)
 	}

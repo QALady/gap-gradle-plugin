@@ -11,6 +11,7 @@ class GapWMSegmentDslAction {
 	def action
 	def runCondition
 	def runOrder
+	def command
 	final NamedDomainObjectSet<GapWMSegmentDslActionParameter> parameters
 	
 	public GapWMSegmentDslAction(String name, Project project, Instantiator instantiator) {
@@ -20,6 +21,10 @@ class GapWMSegmentDslAction {
 
 	void parameters(Action<? super NamedDomainObjectCollection<GapWMSegmentDslActionParameter>> action) {
 		action.execute(parameters)
+	}
+
+	String getStepName() {
+		return this.action ? this.action.toString() : ''
 	}
 
 	boolean hasSubProject() {

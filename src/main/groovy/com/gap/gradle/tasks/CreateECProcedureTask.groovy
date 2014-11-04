@@ -51,25 +51,29 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def createPhaseECStep(procedureName, o) {
+		def ecStepConfig = [:]
 		def subProject, subProcedure
 		assert o instanceof GapWMSegmentDslAction
 		GapWMSegmentDslAction dsl = (GapWMSegmentDslAction) o
 		logger.info("processing segment step:" + dsl.toString())
-		def stepName = "Perform ${dsl.name}: ${dsl.action}"
-		if (dsl.hasSubProject()) {
-			(subProject, subProcedure) = dsl.action.split(":")
-		} else {
-			(subProject, subProcedure) = [projectName, dsl.action.toString()]
+		def stepName = "Perform ${dsl.name}: ${dsl.getStepName()}"
+		if (dsl.action) {
+			if (dsl.hasSubProject()) {
+				(subProject, subProcedure) = dsl.action.split(":")
+			} else {
+				(subProject, subProcedure) = [projectName, dsl.action.toString()]
+			}
+			def subProjectName = checkPromotedPlugin(subProject)
+			logger.info("Creating Step in ($projectName:$procedureName). stepName: '$stepName' (Delegating to: ${subProjectName}:${subProcedure})")
+	
+			ecStepConfig.put('subproject', subProjectName)
+			ecStepConfig.put('subprocedure', subProcedure)
+			ecStepConfig.put('actualParameter', dsl.getECParameters())
+		} else if (dsl.command) {
+			ecStepConfig.put('command', dsl.command)
 		}
-		def subProjectName = checkPromotedPlugin(subProject)
-		logger.info("Creating Step in ($projectName:$procedureName). stepName: '$stepName' (Delegating to: ${subProjectName}:${subProcedure})")
-
-		def ecStepConfig = [:]
 		ecStepConfig.put('condition', dsl.getECStepRunCondition())
-		ecStepConfig.put('subproject', subProjectName)
-		ecStepConfig.put('subprocedure', subProcedure)
-		ecStepConfig.put('parallel', dsl.getECParallelStep())
-		ecStepConfig.put('actualParameter', dsl.getECParameters())
+		ecStepConfig.put('parallel', dsl.getECParallelStep())		
 		logger.info("Step Config: " + ecStepConfig.toString())
 		commanderClient.createStep(projectName, procedureName, stepName, ecStepConfig)
 	}
