@@ -21,6 +21,24 @@ class DbotPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.plugins.apply('liquibase')
         this.project = project
+        project.repositories {
+          add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+            name = 'dbot_repo'
+              validate = false
+              addIvyPattern("http://nfs01.sf.gid.gap.com/build_artifacts/[organisation]/[module]/ivy-[revision].xml")
+              addArtifactPattern("http://nfs01.sf.gid.gap.com/build_artifacts/[organisation]/[module]/[revision]/[type]/[artifact]-[revision].[ext]")
+              addArtifactPattern("http://nfs01.sf.gid.gap.com/build_artifacts/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]")
+              addArtifactPattern("http://nfs01.sf.gid.gap.com/build_artifacts/[organisation]/[module]/[revision]/[organisation]-[artifact]-[revision].[ext]")
+          }
+          maven {
+            url "http://nfs01.sf.gid.gap.com/build_artifacts"
+          }
+          ivy {
+            layout "maven"
+              url "http://nfs01.sf.gid.gap.com/build_artifacts"
+          }
+          mavenCentral()
+        }
 
         project.afterEvaluate {
           createTasks()
