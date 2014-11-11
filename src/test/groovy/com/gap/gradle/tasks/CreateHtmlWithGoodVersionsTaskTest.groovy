@@ -178,7 +178,7 @@ org.codehaus.groovy:groovy-all"""
 		when(mockShellCommand.execute(['ectool', 'getProperty', "/projects[WM Segment Registry]/IdentifierRegistry/net.sourceforge.cobertura:cobertura/segment"])).thenReturn(TEST_SEGMENT_IDENTIFIER)
 		when(mockShellCommand.execute(['ectool', 'getProperty', "/projects[WM Segment Registry]/IdentifierRegistry/org.codehaus.groovy:groovy-all/segment"])).thenReturn(TEST_SEGMENT_IDENTIFIER)
 
-		when(mockShellCommand.execute(['ectool', '--format', 'json', 'getProperties', '--path', '/projects[WM Segment Registry]/SegmentRegistry/Dummy Project:Dummy Procedure/goodVersions', '--recurse', '1'])).thenReturn(getMockData())
+		when(mockShellCommand.execute(['ectool', '--format', 'json', 'getProperties', '--path', "'/projects[WM Segment Registry]/SegmentRegistry/Dummy Project:Dummy Procedure/goodVersions'", '--recurse', "'1'"])).thenReturn(getMockData())
 	}
 
 	private def testMethod(Map pConfig) {
