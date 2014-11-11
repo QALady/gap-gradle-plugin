@@ -42,7 +42,7 @@ class GapWMSegmentDslAction {
 	public String getECParameters() {
 		StringBuffer ecParameters = new StringBuffer()
 		this.parameters.each { param ->
-			ecParameters.append('"' + param.name.toString().trim() + '"')
+			ecParameters.append(param.name.toString().trim())
 			ecParameters.append("=")
 			ecParameters.append('"' + param.value.toString().trim() + '"')
 			ecParameters.append(" ")
