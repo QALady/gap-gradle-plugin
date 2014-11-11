@@ -33,13 +33,21 @@ class CommanderClient {
 	 * @param projectName
 	 * @param procedureName
 	 * @return
-	 * commands: '--description', '--resourceName', '--workspaceName'
 	 */
 	def createProcedure(projectName, procedureName, Map config = [:]) {
 		def command = ['ectool', 'createProcedure', projectName.toString(), procedureName.toString()]
-
-		populateCommand(config, command)
-
+		if (config.description) {
+			command.add('--description')
+			command.add(config.description.toString())
+		}
+		if (config.resourceName) {
+			command.add('--resourceName')
+			command.add(config.resourceName.toString())
+		}
+		if (config.workspaceName) {
+			command.add('--workspaceName')
+			command.add(config.workspaceName.toString())
+		}
 		logger.info("createProcedure: " + command.toString())
 		return shellCommand.execute(command)
 	}
@@ -75,13 +83,33 @@ class CommanderClient {
 	 * @param procedureName
 	 * @param stepName
 	 * @return
-	 * commands: '--condition', '--parallel', '--subproject', '--subprocedure', '--actualParameter', '--command'
 	 */
 	def createStep(projectName, procedureName, stepName, Map config = [:]) {
 		def command = ['ectool', 'createStep', projectName.toString(), procedureName.toString(), stepName.toString()]
-
-		populateCommand(config, command)
-
+		if (config.condition) {
+			command.add('--condition')
+			command.add(config.condition)
+		}
+		if (config.parallel) {
+			command.add('--parallel')
+			command.add(config.parallel)		
+		}
+		if (config.subproject) {
+			command.add('--subproject')
+			command.add(config.subproject)
+		}
+		if (config.subprocedure) {
+			command.add('--subprocedure')
+			command.add(config.subprocedure)
+		}
+		if (config.actualParameter) {
+			command.add('--actualParameter')
+			command.add(config.actualParameter)
+		}
+		if (config.command) {
+			command.add('--command')
+			command.add(config.command)
+		}
 		logger.info("createStep: " + command.toString())
 		return shellCommand.execute(command)
 	}
@@ -262,17 +290,25 @@ class CommanderClient {
 		return getECProperty("/jobs[$jobId]/report-urls/" + key)
 	}
 
-	/**
-	 * @param pConfig
-	 * @return
-	 * commands: "--path", "--recurse", "--propertySheetId", "--expand"
-	 */
 	public def getECProperties(Map pConfig) {
 		def slurpedJson
 		def command = ['ectool', '--format', 'json', 'getProperties']
-
-		populateCommand(pConfig, command)
-
+		if (pConfig.path) {
+			command.add("--path")
+			command.add("${pConfig.path}".toString())
+		}
+		if (pConfig.recurse) {
+			command.add("--recurse")
+			command.add("${pConfig.recurse}".toString())
+		}
+		if (pConfig.propertySheetId) {
+			command.add("--propertySheetId")
+			command.add("${pConfig.propertySheetId}".toString())
+		}
+		if (pConfig.expand) {
+			command.add("--expand")
+			command.add("${pConfig.expand}".toString())
+		}
 		try {
 			logger.info("ectool getProperties command: " + command)
 			def output = shellCommand.execute(command)
@@ -286,15 +322,6 @@ class CommanderClient {
 			} else throw e
 		}
 		return slurpedJson
-	}
-
-	def private  populateCommand(Map pConfig, command) {
-		pConfig.each { key, value ->
-			command.add("--${key.toString().trim()}".toString())
-			command.add("'${value.toString().trim()}'".toString())
-			logger.info("populateCommand: --"+key.toString().trim().toString())
-			logger.info("populateCommand: '"+value.toString().trim().toString()+"'")
-		}
 	}
 
 	def getBaseUrl() {
