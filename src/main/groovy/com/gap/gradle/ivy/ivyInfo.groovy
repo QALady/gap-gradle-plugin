@@ -52,16 +52,24 @@ class IvyInfo {
         return dependencies as Set
     }
 
-    def Set getDependenciesFromISO() {
+    def Set getLeafDepsFromDepGraph() {
         def dependencies = []
         project.allprojects.each { subProject ->
             subProject.configurations.each { config ->
-                config.getIncoming().getResolutionResult().getAllDependencies().each {
+                config.getIncoming().getResolutionResult().getAllComponents().each {
+                    //I thought it would be good to use getAllComponents rather than getAllDependencies because the former method
+                    //will return nodes and the latter will return edges.
+                    //All the leaf dependencies will have 0 dependencies (children) and have more than 0 dependents (parents).
+                    if (!it.dependents.empty && it.dependencies.empty && it.selectionReason.description.equals("requested")) {
+                        dependencies.add(it.id.toString())
+                    }
+                }
+                /*config.getIncoming().getResolutionResult().getAllDependencies().each {
                     //We're selecting dependencies which are requested from ISO segment.
                     if (it.from.toString() =~ /\.iso/) {
                         dependencies.add(it.toString())
                     }
-                }
+                }*/
             }
         }
         return dependencies as Set

@@ -32,12 +32,12 @@ class BuildJsonWithAllResolvedVersionsTask extends WatchmenTask {
 
         def jsonBuilder = new JsonBuilder()
 
-        ivyInfo.getDependenciesFromISO().each {dep ->
+        ivyInfo.getLeafDepsFromDepGraph().each {dep ->
             ivyCoordinates = ivyCoordinateParser.parse(dep)
 
-            if (ivyCoordinates.group =~ /.infra$/){
+            if (ivyCoordinates.group =~ /.infra$/ && ivyCoordinates.name.equals("ci")){
                 cookbookVersionsMap.put(ivyCoordinateParser.getCookbookName(ivyCoordinates.group),ivyCoordinateParser.getCookbookVersion(ivyCoordinates.version))
-            } else {
+            } else if (ivyCoordinates.name.equals("ci")) {
                 appVersionsMap.put(ivyCoordinateParser.getAppName(ivyCoordinates.group),ivyCoordinates.version)
             }
         }
