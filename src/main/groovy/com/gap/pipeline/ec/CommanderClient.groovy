@@ -254,7 +254,7 @@ class CommanderClient {
 				}
 			}
 		} else {
-			logger.warn('Credentials are accesible only in pipline')
+			//logger.warn('Credentials are accesible only in pipline')
 		}
 	}
 
