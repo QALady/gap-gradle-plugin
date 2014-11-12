@@ -107,11 +107,11 @@ class AirWatchPlugin implements Plugin<Project> {
 
     def preProductionEnv() {
         new Environment("preProduction").with {
-            apiHost         = "https://as11.airwatchportals.com/"
-            consoleHost     = "https://cn11.airwatchportals.com/"
-            tenantCode      = "1R1G22AQAAG6A6UAAEAB"
-            credentialName  = "AirWatchCN11"
-            locationGroupId = "33238"
+            apiHost         = "https://cn377.awmdm.com/"
+            consoleHost     = "https://cn377.awmdm.com/"
+            tenantCode      = "1AVBHIBAAAG6A4NQCFAA"
+            credentialName  = "AirWatchPreProd"
+            locationGroupId = "575"
             return it
         }
     }
