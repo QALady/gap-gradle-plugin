@@ -290,10 +290,13 @@ class CommanderClient {
 
 	def private  populateCommand(Map pConfig, command) {
 		pConfig.each { key, value ->
-			command.add("--${key.toString().trim()}".toString())
-			command.add(value.toString().trim())
-			logger.info("populateCommand: --${key.toString().trim()}".toString())
-			logger.info("populateCommand: ${value.toString().trim()}".toString())
+			if(!value.toString().trim().isEmpty())
+			{
+				command.add("--${key.toString().trim()}".toString())
+				command.add(value.toString().trim())
+				logger.info("populateCommand: --${key.toString().trim()}".toString())
+				logger.info("populateCommand: ${value.toString().trim()}".toString())
+			}
 		}
 	}
 
