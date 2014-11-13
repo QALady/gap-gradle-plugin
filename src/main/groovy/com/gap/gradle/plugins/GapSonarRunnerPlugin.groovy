@@ -45,6 +45,10 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                 property "sonar.issuesReport.html.enable", "true"
                 if (isLocal()) {
                     property "sonar.analysis.mode", "preview"
+                    //Hardcoded to resolve issue with timezones.
+                    //Loca Timezone & Pipeline server timezones are different and
+                    //local analysis is running behind latest snapshot time.
+                    property "sonar.projectDate", "2050-12-31"
                 } else {
                     property "sonar.analysis.mode", "analysis"
                 }
@@ -52,7 +56,6 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
         }
 
         project.tasks.sonarRunner.dependsOn << project.tasks.findAll { it.name.equals('test') }
-
 
         project.tasks.create(name: 'sonar', dependsOn: 'sonarRunner') << {
             new SonarLinkTask(project).execute()

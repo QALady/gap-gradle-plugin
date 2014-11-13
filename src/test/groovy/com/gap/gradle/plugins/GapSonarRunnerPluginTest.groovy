@@ -73,6 +73,18 @@ class GapSonarRunnerPluginTest {
     }
 
     @Test
+    void sonar_shouldRunWithFutureDateInLocal() {
+        def commanderMock = new MockFor(CommanderClient)
+        commanderMock.demand.isRunningInPipeline {
+            false
+        }
+        commanderMock.use {
+            project.apply plugin: 'gap-sonar-runner'
+            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.projectDate'), is('2050-12-31'))
+        }
+    }
+
+    @Test
     void sonar_shouldRunInAnalysisModeIfRunningInEC() {
         def commanderMock = new MockFor(CommanderClient)
         commanderMock.demand.isRunningInPipeline() {
