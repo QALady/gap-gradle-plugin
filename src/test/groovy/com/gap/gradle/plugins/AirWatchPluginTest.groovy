@@ -110,6 +110,19 @@ class AirWatchPluginTest {
     }
 
     @Test
+    public void shouldNotInstallAirwatchGemIfConfigFileDoesNotExist() throws Exception {
+        def installGemTask = project.tasks.installAirwatchGem
+
+        def nonExistantFile = mock(File)
+        when(nonExistantFile.exists()).thenReturn(false)
+        project.airwatchUpload.configFile = nonExistantFile
+
+        installGemTask.execute()
+
+        assertEquals(true, installGemTask.state.skipped)
+    }
+
+    @Test
     public void shouldSupportAddingEnvironments() throws Exception {
         project.airwatchUpload.environments {
             example {

@@ -1,6 +1,8 @@
 Airwatch plugin
 ===============
 
+This plugin requires REST API access enabled in the AirWatch instance. Check how to enable it in this [wiki page](http://github.gapinc.dev/watchmen/gap-gradle-plugin/wiki/Enabling-REST-API-access-in-AirWatch).
+
 ## Usage
 
 ```groovy
