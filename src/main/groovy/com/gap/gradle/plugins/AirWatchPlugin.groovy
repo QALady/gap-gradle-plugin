@@ -67,6 +67,8 @@ class AirWatchPlugin implements Plugin<Project> {
 
             beginInstallConfigValidator.validate(extension)
 
+            println "Pushing artifact to Airwatch ${targetEnvironment}..."
+
             def airwatchClient = airWatchClientFactory.create(targetEnvironment, credentialProvider)
             def createdApp = airwatchClient.uploadApp(resolvedArtifact.file, extension)
 
