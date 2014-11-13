@@ -78,6 +78,7 @@ class AirWatchPlugin implements Plugin<Project> {
         project.task("installAirwatchGem", type: Exec) {
             executable 'bundle'
             args = ['install', '--path', '/tmp/bundle']
+            onlyIf { extension.configFile.exists() }
         }
 
         project.task("configureApp", type: Exec, dependsOn: ["installAirwatchGem", "extractAirwatchConfig", "pushArtifactToAirWatch"]) {
