@@ -69,6 +69,7 @@ class CreateECProcedureTask extends WatchmenTask {
 			ecStepConfig.put('subproject', subProjectName)
 			ecStepConfig.put('subprocedure', subProcedure)
 			ecStepConfig.put('actualParameter', dsl.getECParameters())
+			ecStepConfig.put('resourceName', dsl.getResourceName().toString())
 		} else if (dsl.command) {
 			ecStepConfig.put('command', dsl.command)
 		}

@@ -50,7 +50,11 @@ class GapWMSegmentDslAction {
 		}
 		return ecParameters.toString()
 	}
-		
+
+	def getResourceName() {
+		return resourceName
+	}
+
 	@Override
 	boolean equals(o) {
 		if (this.is(o)) return true
