@@ -12,6 +12,7 @@ class GapWMSegmentDslAction {
 	def runCondition
 	def runOrder
 	def command
+	def resourceName
 	final NamedDomainObjectSet<GapWMSegmentDslActionParameter> parameters
 	
 	public GapWMSegmentDslAction(String name, Project project, Instantiator instantiator) {
@@ -64,7 +65,7 @@ class GapWMSegmentDslAction {
 	int hashCode() {
 		return name.hashCode()
 	}
-	
+
 	@Override
 	public String toString() {
 		return "GapWMSegmentDslAction{" +

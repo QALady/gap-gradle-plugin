@@ -49,6 +49,7 @@ class GapWMSegmentDslPluginTest {
 		project.segment {
 			prepare {
 				smoke {
+					resourceName='dgphxaciap003'
 					action 'WM Exec:Run'
 					parameters {
 						cmd.value './gradlew tasks --info'
@@ -69,6 +70,7 @@ class GapWMSegmentDslPluginTest {
 		assertEquals("unable to define tasks as parameter", new GapWMSegmentDslActionParameter('tasks', 'tasks --info').toString(), project.segment.prepare.testGradleInvoke.parameters.tasks.toString())
 		assertEquals(0, project.segment.approve.size())
 		assertEquals(0, project.segment._finally.size())
+		assertEquals("ResourceName Wrong", 'dgphxaciap003', project.segment.prepare.smoke.resourceName)
 	}
 
 	@Test
