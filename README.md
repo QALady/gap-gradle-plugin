@@ -31,4 +31,4 @@ apply plugin: 'gappipeline'
 ## Plugin documentation
 
 * [Airwatch plugin](docs/airwatch-plugin.md)
-
+* [DBot plugin](docs/dbot-plugin.md)
