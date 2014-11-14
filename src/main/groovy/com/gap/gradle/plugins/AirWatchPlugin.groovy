@@ -101,7 +101,7 @@ class AirWatchPlugin implements Plugin<Project> {
         new Environment("production").with {
             apiHost         = "https://gapstoresds.awmdm.com/"
             consoleHost     = "https://gapstoresds.awmdm.com/"
-            tenantCode      = "1GEEHIBAAAG6A5DQAEQA"
+            tenantCode      = "1VOJHIBAAAG6A46QCFAA"
             credentialName  = "AirWatchProd"
             locationGroupId = "570"
             return it
