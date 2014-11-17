@@ -1,5 +1,7 @@
 package com.gap.gradle.plugins
 
+import com.gap.gradle.tasks.CheckDSLFileExistTask
+
 import javax.inject.Inject
 
 import org.gradle.api.Plugin
@@ -24,10 +26,15 @@ class GapWMSegmentDslPlugin implements Plugin<Project> {
 	void apply(Project project) {
 
 		loadSegmentDslConfig(project)
-		
+
 		project.task('createECProcedure') << {
 			new CreateECProcedureTask(project).execute()
 		}
+
+		project.task("checkDSLFileExist") << {
+			new CheckDSLFileExistTask(project).execute()
+		}
+
 	}
 
 	def loadSegmentDslConfig(Project project) {
