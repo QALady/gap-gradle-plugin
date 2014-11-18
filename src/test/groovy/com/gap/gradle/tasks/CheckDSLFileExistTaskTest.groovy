@@ -89,7 +89,7 @@ class CheckDSLFileExistTaskTest {
 	void shouldCheckIfPropertiesFileExists() {
 		task.segmentName = 'other-segment-type'
 
-		File projectDirCi = new File(project.getProjectDir().toString() + "/ci")
+		File projectDirCi = new File(project.getProjectDir().toString() /*+ "/ci"*/)
 		projectDirCi.mkdirs()
 
 		String propertiesFileName = task.segmentName + ".properties"

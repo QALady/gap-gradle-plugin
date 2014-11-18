@@ -62,7 +62,7 @@ class CheckDSLFileExistTask extends WatchmenTask {
 
 		def propertiesFileName = segmentName + ".properties"
 
-		propertiesFileName = projectDir + "/ci/" + propertiesFileName
+		propertiesFileName = projectDir + '/'+ /*"/ci/" +*/ propertiesFileName
 
 		File propertiesFile = new File(propertiesFileName)
 
