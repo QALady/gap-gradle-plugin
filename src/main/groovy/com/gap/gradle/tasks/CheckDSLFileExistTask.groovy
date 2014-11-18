@@ -64,7 +64,7 @@ class CheckDSLFileExistTask extends WatchmenTask {
 
 		propertiesFileName = projectDir + '/' + propertiesFileName
 
-		segmentConfigFile = 'ci/' + propertiesFileName
+		segmentConfigFile = propertiesFileName
 
 		logger.info("<properties_file> : $segmentConfigFile")
 
