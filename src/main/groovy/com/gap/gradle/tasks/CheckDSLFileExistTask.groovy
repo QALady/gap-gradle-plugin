@@ -40,17 +40,17 @@ class CheckDSLFileExistTask extends WatchmenTask {
 
 		if (existsPropertiesFile) {
 			isSegmentProperties = true
-			commanderClient.setProperty(JOB_SHEET + "/segmentConfigFile", segmentConfigFile)
+			commanderClient. setECProperty(JOB_SHEET + "/segmentConfigFile", segmentConfigFile)
 		} else {
 			setupGradleSegmentConfigFile()
 			/*boolean existsGradleFile = checkIfGradleFile()
 			if (existsGradleFile) {*/
 			isDSL = true
-			commanderClient.setProperty(JOB_SHEET + "/segmentConfigFile", segmentConfigFile)
+			commanderClient.setECProperty(JOB_SHEET + "/segmentConfigFile", segmentConfigFile)
 //			}
 		}
-		commanderClient.setProperty(JOB_SHEET + "/isDSL", isDSL)
-		commanderClient.setProperty(JOB_SHEET + "/isSegmentProperties", isSegmentProperties)
+		commanderClient.setECProperty(JOB_SHEET + "/isDSL", isDSL)
+		commanderClient.setECProperty(JOB_SHEET + "/isSegmentProperties", isSegmentProperties)
 
 	}
 
