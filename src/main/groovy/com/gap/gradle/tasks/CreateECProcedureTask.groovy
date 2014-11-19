@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 import com.gap.gradle.extensions.GapWMSegmentDslAction
-import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
@@ -57,11 +56,11 @@ class CreateECProcedureTask extends WatchmenTask {
 		GapWMSegmentDslAction dsl = (GapWMSegmentDslAction) o
 		logger.info("processing segment step:" + dsl.toString())
 		def stepName = "Perform ${dsl.name}: ${dsl.getStepName()}"
-		if (dsl.action) {
+		if (dsl.getAction()) {
 			if (dsl.hasSubProject()) {
-				(subProject, subProcedure) = dsl.action.split(":")
+				(subProject, subProcedure) = dsl.getAction().split(":")
 			} else {
-				(subProject, subProcedure) = [projectName, dsl.action.toString()]
+				(subProject, subProcedure) = [projectName, dsl.getAction().toString()]
 			}
 			def subProjectName = checkPromotedPlugin(subProject)
 			logger.info("Creating Step in ($projectName:$procedureName). stepName: '$stepName' (Delegating to: ${subProjectName}:${subProcedure})")
@@ -70,7 +69,7 @@ class CreateECProcedureTask extends WatchmenTask {
 			ecStepConfig.put('subprocedure', subProcedure)
 			ecStepConfig.put('actualParameter', dsl.getECParameters())
 
-		} else if (dsl.command) {
+		} else if (dsl.getCommand()) {
 			ecStepConfig.put('command', dsl.command)
 		}
 

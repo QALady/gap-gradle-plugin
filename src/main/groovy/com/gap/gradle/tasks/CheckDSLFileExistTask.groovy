@@ -75,8 +75,6 @@ class CheckDSLFileExistTask extends WatchmenTask {
 
 		logger.info("Absolute properties file can be : " + propertiesFile.getAbsoluteFile())
 
-		segmentConfigFile='ci/' + propertiesFileName
-
 		return propertiesFile.exists()
 	}
 

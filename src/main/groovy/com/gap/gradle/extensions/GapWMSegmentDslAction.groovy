@@ -33,6 +33,7 @@ class GapWMSegmentDslAction {
 	}
 
 	public String getECStepRunCondition() {
+		//todo clarified this condition
 		return (this.runCondition == 'always' || this.runCondition == 'finally') ? '' : '$[/myProject/runCondition]'
 	}
 
@@ -52,7 +53,11 @@ class GapWMSegmentDslAction {
 	}
 
 	def getResourceName() {
-		return resourceName
+		return resourceName ? this.resourceName.toString() : ''
+	}
+
+	def getCommand() {
+		return command ? this.command.toString() : ''
 	}
 
 	@Override
