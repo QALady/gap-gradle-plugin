@@ -38,6 +38,8 @@ class CheckDSLFileExistTask extends WatchmenTask {
 	def execute() {
 		boolean existsPropertiesFile = checkIfPropertiesFileExists()
 
+		logger.info("Properties file $segmentConfigFile exists --> $existsPropertiesFile")
+
 		if (existsPropertiesFile) {
 			isSegmentProperties = true
 			commanderClient. setECProperty(JOB_SHEET + "/segmentConfigFile", segmentConfigFile)
@@ -96,6 +98,7 @@ class CheckDSLFileExistTask extends WatchmenTask {
 
 	def setupGradleSegmentConfigFile() {
 //		if (isSvn) {
+		logger.info("currentSegmentType is $currentSegmentType")
 		if (currentSegmentType == SegmentType.normal_segment) {
 			segmentConfigFile = "ci/${segmentName}.gradle"
 			logger.info("<normal_segment> : $segmentConfigFile")
