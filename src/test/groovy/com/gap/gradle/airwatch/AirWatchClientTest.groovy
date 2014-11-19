@@ -1,13 +1,17 @@
 package com.gap.gradle.airwatch
-
 import groovy.json.JsonSlurper
 import groovy.mock.interceptor.MockFor
-import groovyx.net.http.AuthConfig
+import groovyx.net.http.HttpResponseDecorator
+import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
+import org.gradle.api.artifacts.PublishException
 import org.junit.Before
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
+import static org.junit.Assert.fail
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 class AirWatchClientTest {
 
@@ -76,6 +80,51 @@ class AirWatchClientTest {
 
         mockRESTClient.use {
             client.beginInstall("someId", new StubConfig("someName", "someDescription", "123", "auto"))
+        }
+    }
+
+    @Test
+    public void shouldThrowPublishExceptionAndOutputResponseBodyIfAvailable() throws Exception {
+        mockRESTClient.demand.post { Map<String, ?> args ->
+            def httpResponseDecorator = mock(HttpResponseDecorator)
+            def httpResponseException = mock(HttpResponseException)
+
+            when(httpResponseException.response).thenReturn(httpResponseDecorator)
+            when(httpResponseDecorator.status).thenReturn(500)
+            when(httpResponseDecorator.data).thenReturn(new XmlSlurper().parseText("<error><code>500</code><msg>believe me</msg></error>"))
+
+            throw httpResponseException
+        }
+
+        mockRESTClient.use {
+            try {
+                client.uploadChunk("someId", "someEncodedString", 1, 10500)
+                fail("An exception should have been raised")
+            } catch (PublishException e) {
+                assertEquals("AirWatch response was: {\"code\":\"500\", \"msg\":\"believe me\"}", e.message)
+            }
+        }
+    }
+
+    @Test
+    public void shouldThrowPublishExceptionWithoutDetailsIfResponseBodyNotAvailable() throws Exception {
+        mockRESTClient.demand.post { Map<String, ?> args ->
+            def httpResponseDecorator = mock(HttpResponseDecorator)
+            def httpResponseException = mock(HttpResponseException)
+
+            when(httpResponseException.response).thenReturn(httpResponseDecorator)
+            when(httpResponseDecorator.status).thenReturn(500)
+
+            throw httpResponseException
+        }
+
+        mockRESTClient.use {
+            try {
+                client.uploadChunk("someId", "someEncodedString", 1, 10500)
+                fail("An exception should have been raised")
+            } catch (PublishException e) {
+                assertEquals("Airwatch responded with an HTTP error", e.message)
+            }
         }
     }
 
