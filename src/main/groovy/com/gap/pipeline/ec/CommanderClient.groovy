@@ -1,12 +1,10 @@
 package com.gap.pipeline.ec
 
-import groovy.json.JsonSlurper
-
-import org.slf4j.LoggerFactory
-
 import com.gap.gradle.utils.ShellCommand
 import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.utils.Environment
+import groovy.json.JsonSlurper
+import org.slf4j.LoggerFactory
 
 class CommanderClient {
 
@@ -23,13 +21,13 @@ class CommanderClient {
 
 	/**
 	 * Usage: createProcedure <projectName> <procedureName>
-				[--description <description>]
-				[--credentialName <credentialName>]
-				[--resourceName <resourceName>]
-				[--workspaceName <workspaceName>]
-				[--jobNameTemplate <jobNameTemplate>]
-				[--timeLimit <timeLimit>]
-				[--timeLimitUnits <hours|minutes|seconds>]
+	 [--description <description>]
+	 [--credentialName <credentialName>]
+	 [--resourceName <resourceName>]
+	 [--workspaceName <workspaceName>]
+	 [--jobNameTemplate <jobNameTemplate>]
+	 [--timeLimit <timeLimit>]
+	 [--timeLimitUnits <hours|minutes|seconds>]
 	 * @param projectName
 	 * @param procedureName
 	 * @return
@@ -46,31 +44,31 @@ class CommanderClient {
 
 	/**
 	 * Usage: createStep <projectName> <procedureName> <stepName>
-				[--description <description>]
-				[--credentialName <credentialName>]
-				[--resourceName <resourceName>]
-				[--command <command>]
-				[--subprocedure <subprocedure>]
-				[--subproject <subproject>]
-				[--workingDirectory <workingDirectory>]
-				[--timeLimit <timeLimit>]
-				[--timeLimitUnits <hours|minutes|seconds>]
-				[--postProcessor <postProcessor>]
-				[--parallel <0|1|true|false>]
-				[--logFileName <logFileName>]
-				[--actualParameter <var1>=<val1> [<var2>=<val2> ...]]
-				[--exclusive <0|1|true|false>]
-				[--exclusiveMode <none|job|step|call>]
-				[--releaseExclusive <0|1|true|false>]
-				[--releaseMode <none|release|releaseToJob>]
-				[--alwaysRun <0|1|true|false>]
-				[--shell <shell>]
-				[--errorHandling <failProcedure|abortProcedure|abortProcedureNow|abortJob|abortJobNow|ignore>]
-				[--condition <condition>]
-				[--broadcast <0|1|true|false>]
-				[--workspaceName <workspaceName>]
-				[--precondition <precondition>]
-				[--commandFile <commandFile>]
+	 [--description <description>]
+	 [--credentialName <credentialName>]
+	 [--resourceName <resourceName>]
+	 [--command <command>]
+	 [--subprocedure <subprocedure>]
+	 [--subproject <subproject>]
+	 [--workingDirectory <workingDirectory>]
+	 [--timeLimit <timeLimit>]
+	 [--timeLimitUnits <hours|minutes|seconds>]
+	 [--postProcessor <postProcessor>]
+	 [--parallel <0|1|true|false>]
+	 [--logFileName <logFileName>]
+	 [--actualParameter <var1>=<val1> [<var2>=<val2> ...]]
+	 [--exclusive <0|1|true|false>]
+	 [--exclusiveMode <none|job|step|call>]
+	 [--releaseExclusive <0|1|true|false>]
+	 [--releaseMode <none|release|releaseToJob>]
+	 [--alwaysRun <0|1|true|false>]
+	 [--shell <shell>]
+	 [--errorHandling <failProcedure|abortProcedure|abortProcedureNow|abortJob|abortJobNow|ignore>]
+	 [--condition <condition>]
+	 [--broadcast <0|1|true|false>]
+	 [--workspaceName <workspaceName>]
+	 [--precondition <precondition>]
+	 [--commandFile <commandFile>]
 	 * @param projectName
 	 * @param procedureName
 	 * @param stepName
@@ -88,7 +86,7 @@ class CommanderClient {
 
 	def getPlugin(pluginName) {
 		try {
-			String output= shellCommand.execute(['ectool', 'getPlugin', pluginName])
+			String output = shellCommand.execute(['ectool', 'getPlugin', pluginName])
 			logger.debug("ectool getPlugin response: " + output)
 			def response = new XmlSlurper().parseText(output)
 			logger.debug("xml slurped response: " + response)
@@ -97,7 +95,7 @@ class CommanderClient {
 		catch (ShellCommandException e) {
 			if (e.message.contains('[NoSuchPlugin]')) {
 				logger.debug("Requested plugin does not exist. ${e.message}\n")
-			} 
+			}
 			throw e
 		}
 	}
@@ -288,28 +286,26 @@ class CommanderClient {
 		return slurpedJson
 	}
 
-	def private  populateCommand(Map pConfig, command) {
+	def private populateCommand(Map pConfig, command) {
 		pConfig.each { key, value ->
-			if(!value.toString().trim().isEmpty())
-			{
-				if(key.equals('actualParameter'))
-				{
-					value.each {p->
-						command.add("--actualParameter")
-						command.add(p.toString())
-						logger.info("populateCommand key: --actualParameter")
-						logger.info("populateCommand value: ${p.toString().trim()}".toString())
+			if (!value.toString().trim().isEmpty()) {
+				if (key.equals('actualParameter')) {
+					value.each { p ->
+						if (!p.toString().trim().isEmpty()) {
+							command.add("--actualParameter")
+							command.add(p.toString())
+							logger.info("populateCommand key: --actualParameter")
+							logger.info("populateCommand value: ${p.toString().trim()}".toString())
+						}
 					}
 				}
-				else
-				{
-					command.add("--${key.toString().trim()}".toString())
-					command.add(value.toString().trim())
-					logger.info("populateCommand key: --${key.toString().trim()}".toString())
-					logger.info("populateCommand value: ${value.toString().trim()}".toString())
-				}
-
+			} else {
+				command.add("--${key.toString().trim()}".toString())
+				command.add(value.toString().trim())
+				logger.info("populateCommand key: --${key.toString().trim()}".toString())
+				logger.info("populateCommand value: ${value.toString().trim()}".toString())
 			}
+
 		}
 	}
 
