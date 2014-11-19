@@ -2,12 +2,10 @@ package com.gap.gradle.plugins
 
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
-import static org.mockito.Mockito.*
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -80,11 +78,21 @@ class GapWMSegmentDslPluginTest {
 				smoke {
 					action 'WM Exec:Run'
 					parameters {
-						cmd.value './gradlew tasks --info'
+						cmd {
+							value './gradlew tasks --info'
+						}
 					}
 				}
 				testAction {
 					action 'echo "Hello"'
+					parameters {
+						param1 { //--actualParameter:'param1=test' --actualParameter:'param2=test2'
+							value 'test'
+						}
+						param2 {
+							value 'test2'
+						}
+					}
 				}
 				anotherTestAction {
 					action 'echo "Again"'
@@ -102,6 +110,8 @@ class GapWMSegmentDslPluginTest {
 		assertNull("noCommandAction should not break the dsl load", project.segment.prepare.noCommandAction.action)
 		assertEquals(4, project.segment.prepare.size())
 		assertEquals(0, project.segment.test.size())
+
+
 	}
 	
 }

@@ -32,9 +32,8 @@ class GapWMSegmentDslAction {
 		return this.action.toString().find(~/\:/)
 	}
 
-	public String getECStepRunCondition() {
-		//todo clarified this condition
-		return (this.runCondition == 'always' || this.runCondition == 'finally') ? '' : '$[/myProject/runCondition]'
+	public String getECStepRunCondition(String currentRunCondition) {
+		return (this.runCondition == 'always' || this.runCondition == 'finally') ? '' : currentRunCondition
 	}
 
 	public String getECParallelStep() {
@@ -47,7 +46,7 @@ class GapWMSegmentDslAction {
 			ecParameters.append(param.name.toString().trim())
 			ecParameters.append("=")
 			ecParameters.append(param.value.toString().trim())
-			ecParameters.append(" ")
+			ecParameters.append(";")
 		}
 		return ecParameters.toString()
 	}

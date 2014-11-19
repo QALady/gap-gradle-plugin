@@ -292,10 +292,23 @@ class CommanderClient {
 		pConfig.each { key, value ->
 			if(!value.toString().trim().isEmpty())
 			{
-				command.add("--${key.toString().trim()}".toString())
-				command.add(value.toString().trim())
-				logger.info("populateCommand: --${key.toString().trim()}".toString())
-				logger.info("populateCommand: ${value.toString().trim()}".toString())
+				if(key.equals('actualParameter'))
+				{
+					value.each {p->
+						command.add("--actualParameter")
+						command.add(p.toString())
+						logger.info("populateCommand key: --actualParameter")
+						logger.info("populateCommand value: ${p.toString().trim()}".toString())
+					}
+				}
+				else
+				{
+					command.add("--${key.toString().trim()}".toString())
+					command.add(value.toString().trim())
+					logger.info("populateCommand key: --${key.toString().trim()}".toString())
+					logger.info("populateCommand value: ${value.toString().trim()}".toString())
+				}
+
 			}
 		}
 	}

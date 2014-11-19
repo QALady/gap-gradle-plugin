@@ -29,7 +29,8 @@ class CreateECProcedureTaskTest {
 
 		mockShellCommand = mock(ShellCommand, Mockito.RETURNS_SMART_NULLS)
 		when(mockShellCommand.execute(['ectool', 'getPlugin', 'WM Exec'])).thenReturn(new File(testGetPluginsXmlFileName).getText())
-		when(mockShellCommand.execute(['ectool', 'createStep', 'WM Temporary Procedures', 'procedure1', 'Perform myAction: ', '--command', 'ectool test', '--resourceName', 'dgphxaciap003', '--condition', '$[/myProject/runCondition]', '--parallel', 'false'])).thenReturn("OK!")
+		when(mockShellCommand.execute(['ectool', 'createStep', 'WM Temporary Procedures', 'procedure1', 'Perform myAction: ', '--command', 'ectool test', '--resourceName', 'dgphxaciap003', '--parallel', 'false'])).thenReturn("OK!")
+		when(mockShellCommand.execute(['ectool', 'getProperty', '/myProject/runCondition'])).thenReturn('')
 		commanderClient = new CommanderClient(mockShellCommand, new EnvironmentStub())
 		task = new CreateECProcedureTask(project, commanderClient)
 	}
@@ -104,6 +105,55 @@ class CreateECProcedureTaskTest {
 
 		def actualResult=task.createPhaseECStep("procedure1", project.segment.test.myAction)
 		assertEquals("Bad formed command string","OK!",actualResult)
+	}
+
+	@Test
+	void shouldCreateCorrectProcedure()
+	{
+		project.segment {
+			prepare {
+				smoke {
+					action 'WM Exec:Run'
+					parameters {
+						cmd {
+							value './gradlew tasks --info'
+						}
+					}
+				}
+				testAction { // this is the last because order is alphabetical
+					action 'echo "Hello"'
+					parameters {
+						param1 { //--actualParameter:'param1=test' --actualParameter:'param2=test2'
+							value 'test'
+						}
+						param2 {
+							value 'test2'
+						}
+					}
+				}
+				anotherTestAction {
+					action 'echo "Again"'
+				}
+				noCommandAction {
+
+				}
+			}
+			test {
+
+			}
+		}
+
+		task.execute()
+		Map myMap=task.ecStepConfig
+		String[] actualParameters=myMap.get("actualParameter")
+
+		println "actualParameters size : " + actualParameters.size()
+		println "ecStepConfig: " + task.ecStepConfig
+
+		assertEquals(2,actualParameters.size())
+		assertEquals(actualParameters[0],'param1=test')
+		assertEquals(actualParameters[1],'param2=test2')
+
 	}
 
 }

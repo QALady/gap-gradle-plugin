@@ -1,5 +1,7 @@
 package com.gap.gradle.tasks
 
+import com.gap.pipeline.ec.Property
+
 import static com.gap.gradle.extensions.GapWMSegmentDsl.*
 
 import org.apache.commons.logging.LogFactory
@@ -22,6 +24,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	def plugins =[:]
 	def segmentDsl
 	def projectName = "WM Temporary Procedures"
+	def ecStepConfig
 
 	CreateECProcedureTask(Project project, commanderClient = new CommanderClient()) {
 		super(project)
@@ -50,7 +53,8 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def createPhaseECStep(procedureName, o) {
-		def ecStepConfig = [:]
+
+		ecStepConfig = [:]
 		def subProject, subProcedure
 		assert o instanceof GapWMSegmentDslAction
 		GapWMSegmentDslAction dsl = (GapWMSegmentDslAction) o
@@ -67,14 +71,29 @@ class CreateECProcedureTask extends WatchmenTask {
 	
 			ecStepConfig.put('subproject', subProjectName)
 			ecStepConfig.put('subprocedure', subProcedure)
-			ecStepConfig.put('actualParameter', dsl.getECParameters())
+			ecStepConfig.put('actualParameter', dsl.getECParameters().split(";"))
 
 		} else if (dsl.getCommand()) {
 			ecStepConfig.put('command', dsl.command)
 		}
 
 		ecStepConfig.put('resourceName', dsl.getResourceName().toString())
-		ecStepConfig.put('condition', dsl.getECStepRunCondition())
+
+		Property currentRunConditionProperty=null;
+		String currentRunCondition='';
+		try
+		{
+			currentRunConditionProperty=commanderClient.getECProperty("/myProject/runCondition")
+		}
+		finally
+		{
+			if(currentRunConditionProperty.isValid())
+			{
+				currentRunCondition=currentRunConditionProperty.getValue()
+			}
+		}
+
+		ecStepConfig.put('condition', dsl.getECStepRunCondition(currentRunCondition))
 		ecStepConfig.put('parallel', dsl.getECParallelStep())		
 		logger.info("Step Config: " + ecStepConfig.toString())
 		commanderClient.createStep(projectName, procedureName, stepName, ecStepConfig)
@@ -91,7 +110,9 @@ class CreateECProcedureTask extends WatchmenTask {
 				}
 			}
 			logger.info("promoted Plugin and Version of given $givenPlugin is: $promotedPlugin")
-		} catch (all) {}
+		} catch (all) {
+			logger.error(all)
+		}
 
 		return promotedPlugin
 	}
