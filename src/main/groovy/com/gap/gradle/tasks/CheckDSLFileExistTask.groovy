@@ -33,6 +33,7 @@ class CheckDSLFileExistTask extends WatchmenTask {
 		this.project = project
 		this.commanderClient = commanderClient
 		initializeProperties()
+		identifySegmentType()
 	}
 
 	def execute() {
