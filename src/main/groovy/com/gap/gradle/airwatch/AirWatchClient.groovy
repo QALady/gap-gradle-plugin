@@ -108,7 +108,6 @@ class AirWatchClient {
       "aw-tenant-code": this.tenantCode,
       "Authorization": "Basic $encodedCredentials"
     ]
-    logger.debug "Request headers: ${headers}"
 
     def body = new JsonBuilder(requestBody)
     logger.debug "Request body: ${body}"
@@ -124,9 +123,20 @@ class AirWatchClient {
 
         response.data
     } catch(HttpResponseException e) {
-      def iterator = e.response.data.childNodes()
-      def msg = iterator.collect { "\"$it.name\":\"$it\"" }.join(", ")
-      throw new PublishException("AirWatch response was: {${msg}}", e)
+        println "Airwatch responded with an HTTP error, status code: ${e.response.status}"
+        println "Request path: ${resourcePath}"
+        println "Request body: ${body}"
+        println "Response headers: ${e.response.allHeaders}"
+
+        def errorMessage = "Airwatch responded with an HTTP error"
+        def parsedResponse = e.response.data
+        if (parsedResponse != null) {
+            def iterator = parsedResponse.childNodes()
+            def msg = iterator.collect { "\"$it.name\":\"$it\"" }.join(", ")
+            errorMessage = "AirWatch response was: {${msg}}"
+        }
+
+        throw new PublishException(errorMessage, e)
     }
   }
 }
