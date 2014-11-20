@@ -299,11 +299,12 @@ class CommanderClient {
 						}
 					}
 				}
-			} else {
-				command.add("--${key.toString().trim()}".toString())
-				command.add(value.toString().trim())
-				logger.info("populateCommand key: --${key.toString().trim()}".toString())
-				logger.info("populateCommand value: ${value.toString().trim()}".toString())
+				else {
+					command.add("--${key.toString().trim()}".toString())
+					command.add(value.toString().trim())
+					logger.info("populateCommand key: --${key.toString().trim()}".toString())
+					logger.info("populateCommand value: ${value.toString().trim()}".toString())
+				}
 			}
 
 		}

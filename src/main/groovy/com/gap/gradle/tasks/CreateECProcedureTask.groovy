@@ -1,7 +1,5 @@
 package com.gap.gradle.tasks
 
-import com.gap.pipeline.ec.Property
-
 import static com.gap.gradle.extensions.GapWMSegmentDsl.*
 
 import org.apache.commons.logging.LogFactory
@@ -78,22 +76,7 @@ class CreateECProcedureTask extends WatchmenTask {
 		}
 
 		ecStepConfig.put('resourceName', dsl.getResourceName().toString())
-
-		Property currentRunConditionProperty=null;
-		String currentRunCondition='';
-		try
-		{
-			currentRunConditionProperty=commanderClient.getECProperty("/myProject/runCondition")
-		}
-		finally
-		{
-			if(currentRunConditionProperty.isValid())
-			{
-				currentRunCondition=currentRunConditionProperty.getValue()
-			}
-		}
-
-		ecStepConfig.put('condition', dsl.getECStepRunCondition(currentRunCondition))
+		ecStepConfig.put('condition', dsl.getECStepRunCondition(commanderClient))
 		ecStepConfig.put('parallel', dsl.getECParallelStep())		
 		logger.info("Step Config: " + ecStepConfig.toString())
 		commanderClient.createStep(projectName, procedureName, stepName, ecStepConfig)

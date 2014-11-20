@@ -1,5 +1,6 @@
 package com.gap.gradle.extensions
 
+import com.gap.pipeline.ec.CommanderClient
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectSet
@@ -32,8 +33,8 @@ class GapWMSegmentDslAction {
 		return this.action.toString().find(~/\:/)
 	}
 
-	public String getECStepRunCondition(String currentRunCondition) {
-		return (this.runCondition == 'always' || this.runCondition == 'finally') ? '' : currentRunCondition
+	public String getECStepRunCondition(CommanderClient commanderClient) {
+		return (this.runCondition == 'always' || this.runCondition == 'finally') ? '' : commanderClient.getECProperty("/myProject/runCondition").getValue()
 	}
 
 	public String getECParallelStep() {
