@@ -30,6 +30,7 @@ class CreateECProcedureTaskTest {
 		mockShellCommand = mock(ShellCommand, Mockito.RETURNS_SMART_NULLS)
 		when(mockShellCommand.execute(['ectool', 'getPlugin', 'WM Exec'])).thenReturn(new File(testGetPluginsXmlFileName).getText())
 		when(mockShellCommand.execute(['ectool', 'createStep', 'WM Temporary Procedures', 'procedure1', 'Perform myAction: ', '--command', 'ectool test', '--resourceName', 'dgphxaciap003', '--parallel', 'false'])).thenReturn("OK!")
+		when(mockShellCommand.execute(['ectool', 'createStep', 'WM Temporary Procedures', 'procedure1', 'Perform myAction: ', '--condition','' ])).thenReturn("OK!")
 		when(mockShellCommand.execute(['ectool', 'getProperty', '/myProject/runCondition'])).thenReturn('')
 		commanderClient = new CommanderClient(mockShellCommand, new EnvironmentStub())
 		task = new CreateECProcedureTask(project, commanderClient)
