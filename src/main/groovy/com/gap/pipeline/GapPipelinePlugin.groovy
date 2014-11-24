@@ -17,13 +17,15 @@ class GapPipelinePlugin implements Plugin<Project> {
     CommanderClient ecclient = new CommanderClient()
 
     void apply(Project project) {
-        project.extensions.create('prodPrepare', com.gap.pipeline.ProdPrepareConfig)
+		project.apply plugin: 'gap-wm-segmentdsl'
+
+		project.extensions.create('prodPrepare', com.gap.pipeline.ProdPrepareConfig)
         project.extensions.create('ivy', IvyConfig)
 
         loadProperties(project, "prodPrepare", "ivy")
 
         configureTasksRequiredByWatchmenSegment(project)
-
+		
         project.repositories {
           ivy {
             name "wm_local_non_prod"

@@ -13,6 +13,7 @@ class GapWMSegmentDsl {
 	final NamedDomainObjectSet<GapWMSegmentDslAction> test
 	final NamedDomainObjectSet<GapWMSegmentDslAction> approve
 	final NamedDomainObjectSet<GapWMSegmentDslAction> _finally
+	def resourceName // resource definition at segment level.
 
 	GapWMSegmentDsl(Project project, Instantiator instantiator) {
 		this.prepare = project.container(GapWMSegmentDslAction, { name -> instantiator.newInstance(GapWMSegmentDslAction, name, project, instantiator) })
@@ -35,6 +36,10 @@ class GapWMSegmentDsl {
 
 	void _finally(Action<? super NamedDomainObjectCollection<GapWMSegmentDslAction>> action) {
 		action.execute(_finally)
+	}
+
+	def getResourceName() {
+		return resourceName
 	}
 
 }
