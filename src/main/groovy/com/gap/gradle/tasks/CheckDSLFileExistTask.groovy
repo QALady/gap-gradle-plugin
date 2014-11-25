@@ -17,8 +17,6 @@ class CheckDSLFileExistTask extends WatchmenTask {
 	SegmentType currentSegmentType
 
 	String workingDir
-//	boolean isSvn
-//	boolean isGit
 	String segmentName
 	CommanderClient commanderClient
 	boolean isDSL
@@ -46,20 +44,13 @@ class CheckDSLFileExistTask extends WatchmenTask {
 			commanderClient. setECProperty(JOB_SHEET + "/segmentConfigFile", segmentConfigFile)
 		} else {
 			setupGradleSegmentConfigFile()
-			/*boolean existsGradleFile = checkIfGradleFile()
-			if (existsGradleFile) {*/
 			isDSL = true
 			commanderClient.setECProperty(JOB_SHEET + "/segmentConfigFile", segmentConfigFile)
-//			}
 		}
 		commanderClient.setECProperty(JOB_SHEET + "/isDSL", isDSL)
 		commanderClient.setECProperty(JOB_SHEET + "/isSegmentProperties", isSegmentProperties)
 
 	}
-
-//	boolean checkIfGradleFile() {
-//		logger.info("Absolute gradle file can be : " /*+ propertiesFile.getAbsoluteFile()*/)
-//	}
 
 	boolean checkIfPropertiesFileExists() {
 
@@ -79,8 +70,6 @@ class CheckDSLFileExistTask extends WatchmenTask {
 	}
 
 	void initializeProperties() {
-//		isSvn = Boolean.valueOf(commanderClient.getECProperty('/myJob/watchmen_config/svn').getValue())
-//		isGit = Boolean.valueOf(commanderClient.getECProperty('/myJob/watchmen_config/git').getValue())
 		segmentName = commanderClient.getECProperty('/myJob/watchmen_config/segmentName').getValue()
 		workingDir = commanderClient.getECProperty('/myJob/watchmen_config/workingDir').getValue()
 		projectDir = project.getProjectDir().toString()
@@ -98,7 +87,6 @@ class CheckDSLFileExistTask extends WatchmenTask {
 	}
 
 	def setupGradleSegmentConfigFile() {
-//		if (isSvn) {
 		logger.info("currentSegmentType is $currentSegmentType")
 		if (currentSegmentType == SegmentType.normal_segment) {
 			segmentConfigFile = "ci/${segmentName}.gradle"
@@ -107,14 +95,5 @@ class CheckDSLFileExistTask extends WatchmenTask {
 			segmentConfigFile = "build.gradle"
 			logger.info("<app_segment, component_segment> : $segmentConfigFile")
 		}
-////		} else if (isGit) {
-//			if (currentSegmentType == SegmentType.normal_segment) {
-//				segmentConfigFile = "ci/${segmentName}.gradle"
-//				logger.info("<git, normal_segment> : $segmentConfigFile")
-//			} else {
-//				segmentConfigFile = "${wd}/build.gradle"
-//				logger.info("<git, app_segment, component_segment> : $segmentConfigFile")
-//			}
-////		}
 	}
 }
