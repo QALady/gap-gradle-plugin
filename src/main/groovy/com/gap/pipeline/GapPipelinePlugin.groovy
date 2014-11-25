@@ -17,7 +17,7 @@ class GapPipelinePlugin implements Plugin<Project> {
     CommanderClient ecclient = new CommanderClient()
 
     void apply(Project project) {
-		project.apply plugin: 'gap-wm-segmentdsl'
+		//project.apply plugin: 'gap-wm-segmentdsl'
 
 		project.extensions.create('prodPrepare', com.gap.pipeline.ProdPrepareConfig)
         project.extensions.create('ivy', IvyConfig)
