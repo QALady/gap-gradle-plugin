@@ -1,7 +1,7 @@
 package com.gap.gradle.plugins
 
 import com.gap.gradle.tasks.CheckDSLFileExistTask
-import com.gap.gradle.tasks.GradlelizeFileTask
+import com.gap.gradle.tasks.GenerateGradleWMSegmentDslFromPropertiesTask
 
 import javax.inject.Inject
 
@@ -36,8 +36,8 @@ class GapWMSegmentDslPlugin implements Plugin<Project> {
 			new CheckDSLFileExistTask(project).execute()
 		}
 
-		project.task("gradlelize") << {
-			new GradlelizeFileTask(project).execute()
+		project.task("generateGradleWMSegmentDslFromProperties") << {
+			new GenerateGradleWMSegmentDslFromPropertiesTask(project).execute()
 		}
 
 

@@ -12,17 +12,17 @@ import org.gradle.api.Project
 
 import com.gap.pipeline.tasks.WatchmenTask
 
-class GradlelizeFileTask extends WatchmenTask {
+class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 
 	private String propertyFileName
-	def final logger = LogFactory.getLog(GradlelizeFileTask)
+	def final logger = LogFactory.getLog(GenerateGradleWMSegmentDslFromPropertiesTask)
 	List<String> lines
 	String gradlelizedData
 	File propertiesFile
 	Project project
 	File gradlelizedFile
 
-	GradlelizeFileTask(Project project, String propertyFileName = new String()) {
+	GenerateGradleWMSegmentDslFromPropertiesTask(Project project, String propertyFileName = new String()) {
 		super(project)
 		this.project = project
 		this.propertyFileName = propertyFileName

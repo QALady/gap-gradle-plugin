@@ -11,10 +11,10 @@ import org.junit.rules.TemporaryFolder
 
 import static org.testng.Assert.assertEquals
 
-class GradlelizeFileTaskTest {
+class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
 	private Project project
-	GradlelizeFileTask task
-	def logger = LogFactory.getLog(GradlelizeFileTaskTest)
+	GenerateGradleWMSegmentDslFromPropertiesTask task
+	def logger = LogFactory.getLog(GenerateGradleWMSegmentDslFromPropertiesTaskTest)
 	final String propertyFileName = "src/test/groovy/com/gap/gradle/resources/component-segment.properties"
 	final String expectedGradleFileName = "src/test/groovy/com/gap/gradle/resources/component-segment.gradle"
 
@@ -25,7 +25,7 @@ class GradlelizeFileTaskTest {
 	void setup() {
 		project = ProjectBuilder.builder().withProjectDir(new File(temporaryFolder.root.path)).build();
 		project.apply plugin: 'gap-wm-segmentdsl'
-		task = new GradlelizeFileTask(project, propertyFileName)
+		task = new GenerateGradleWMSegmentDslFromPropertiesTask(project, propertyFileName)
 	}
 
 	@Test
