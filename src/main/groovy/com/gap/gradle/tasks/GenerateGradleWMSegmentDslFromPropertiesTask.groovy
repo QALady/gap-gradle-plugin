@@ -11,7 +11,12 @@ import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 import com.gap.pipeline.tasks.WatchmenTask
+import com.gap.pipeline.tasks.annotations.Require
+import com.gap.pipeline.tasks.annotations.RequiredParameters
 
+@RequiredParameters([
+	@Require(parameter = 'segmentPropertiesFile', description = 'relative or absolute path of the <segment>.properties file of the pipeline <segment> ci folder.')
+])
 class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 
 	private String propertyFileName
@@ -22,10 +27,10 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 	Project project
 	File gradlelizedFile
 
-	GenerateGradleWMSegmentDslFromPropertiesTask(Project project, String propertyFileName = new String()) {
+	GenerateGradleWMSegmentDslFromPropertiesTask(Project project) {
 		super(project)
 		this.project = project
-		this.propertyFileName = propertyFileName
+		this.propertyFileName = project.segmentPropertiesFile
 	}
 
 	def execute() {

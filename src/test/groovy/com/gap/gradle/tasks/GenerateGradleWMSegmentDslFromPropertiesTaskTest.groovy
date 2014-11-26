@@ -25,7 +25,8 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
 	void setup() {
 		project = ProjectBuilder.builder().withProjectDir(new File(temporaryFolder.root.path)).build();
 		project.apply plugin: 'gap-wm-segmentdsl'
-		task = new GenerateGradleWMSegmentDslFromPropertiesTask(project, propertyFileName)
+		project.segmentPropertiesFile = propertyFileName
+		task = new GenerateGradleWMSegmentDslFromPropertiesTask(project)
 	}
 
 	@Test
