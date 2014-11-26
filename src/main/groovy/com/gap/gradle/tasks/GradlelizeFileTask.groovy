@@ -1,10 +1,16 @@
 package com.gap.gradle.tasks
 
-import com.gap.gradle.utils.GradleOutput
-import com.gap.pipeline.tasks.WatchmenTask
+import static groovy.json.JsonTokenType.*
+import groovy.json.JsonLexer
+import groovy.json.JsonOutput
+import groovy.json.JsonToken
+import groovy.json.StringEscapeUtils
+
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
+
+import com.gap.pipeline.tasks.WatchmenTask
 
 class GradlelizeFileTask extends WatchmenTask {
 
@@ -80,3 +86,52 @@ class GradlelizeFileTask extends WatchmenTask {
 		logger.info "File should be : " + gradlelizedFile.getAbsolutePath()
 	}
 }
+
+private class GradleOutput extends JsonOutput {
+
+	static String prettyPrint(String jsonPayload) {
+		int indent = 0
+		def output = new StringBuilder()
+		def lexer = new JsonLexer(new StringReader(jsonPayload))
+
+		while (lexer.hasNext()) {
+			JsonToken token = lexer.next()
+			if (token.type == OPEN_CURLY) {
+				indent += 4
+				output.append('{\n')
+				output.append(' ' * indent)
+			} else if (token.type == CLOSE_CURLY) {
+				indent -= 4
+				output.append('\n')
+				output.append(' ' * indent)
+				output.append('}')
+			} else if(token.type == OPEN_BRACKET) {
+				indent += 4
+				output.append('[\n')
+				output.append(' ' * indent)
+			} else if(token.type == CLOSE_BRACKET) {
+				indent -= 4
+				output.append('\n')
+				output.append(' ' * indent)
+				output.append(']')
+			} else if (token.type == COMMA) {
+				output.append('\n')
+				output.append(' ' * indent)
+			} else if (token.type == COLON) {
+				output.append(' ')
+			} else if (token.type == STRING) {
+				// Cannot use a range (1..-2) here as it will reverse for a string of
+				// length 2 (i.e. textStr=/""/ ) and will not strip the leading/trailing
+				// quotes (just reverses them).
+				String textStr = token.text
+				String textWithoutQuotes = textStr.substring( 1, textStr.size()-1 )
+				output.append("'" + StringEscapeUtils.escapeJava( textWithoutQuotes ) + "'")
+			} else {
+				output.append(token.text)
+			}
+		}
+
+		return output.toString()
+	}
+}
+
