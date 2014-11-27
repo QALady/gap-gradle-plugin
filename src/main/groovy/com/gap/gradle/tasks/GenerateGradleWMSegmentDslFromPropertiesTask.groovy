@@ -1,21 +1,21 @@
 package com.gap.gradle.tasks
 
-import static groovy.json.JsonTokenType.*
+import com.gap.pipeline.tasks.WatchmenTask
+import com.gap.pipeline.tasks.annotations.Require
+import com.gap.pipeline.tasks.annotations.RequiredParameters
 import groovy.json.JsonLexer
 import groovy.json.JsonOutput
 import groovy.json.JsonToken
 import groovy.json.StringEscapeUtils
-
-import org.apache.commons.io.FilenameUtils
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
-import com.gap.pipeline.tasks.WatchmenTask
-import com.gap.pipeline.tasks.annotations.Require
-import com.gap.pipeline.tasks.annotations.RequiredParameters
+import java.text.SimpleDateFormat
+
+import static groovy.json.JsonTokenType.*
 
 @RequiredParameters([
-	@Require(parameter = 'segmentPropertiesFile', description = 'relative or absolute path of the <segment>.properties file of the pipeline <segment> ci folder.')
+		@Require(parameter = 'segmentPropertiesFile', description = 'relative or absolute path of the <segment>.properties file of the pipeline <segment> ci folder.')
 ])
 class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 
@@ -85,10 +85,19 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 	}
 
 	def writeToGradleFile() {
-		String gradleFileBaseName = FilenameUtils.getBaseName(propertiesFile.getAbsoluteFile().toString())
-		gradlelizedFile = new File(project.getProjectDir(), "${gradleFileBaseName}.gradle")
+		String gradleFileBaseName = getBaseName(propertiesFile.getAbsoluteFile().toString())
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddssSS")
+		String timeStamp = simpleDateFormat.format(new Date())
+		gradlelizedFile = new File(project.getProjectDir(), "${gradleFileBaseName}${timeStamp}.gradle")
 		gradlelizedFile.write(gradlelizedData)
 		logger.info "File should be : " + gradlelizedFile.getAbsolutePath()
+	}
+
+	private static String getBaseName(String absoluteFile) {
+		String[] fileTokens = absoluteFile.split("/")
+		String name = fileTokens.last()
+		int lastIndexOfDot = name.lastIndexOf(".")
+		return name.substring(0, lastIndexOfDot)
 	}
 }
 
@@ -110,11 +119,11 @@ private class GradleOutput extends JsonOutput {
 				output.append('\n')
 				output.append(' ' * indent)
 				output.append('}')
-			} else if(token.type == OPEN_BRACKET) {
+			} else if (token.type == OPEN_BRACKET) {
 				indent += 4
 				output.append('[\n')
 				output.append(' ' * indent)
-			} else if(token.type == CLOSE_BRACKET) {
+			} else if (token.type == CLOSE_BRACKET) {
 				indent -= 4
 				output.append('\n')
 				output.append(' ' * indent)
@@ -129,8 +138,8 @@ private class GradleOutput extends JsonOutput {
 				// length 2 (i.e. textStr=/""/ ) and will not strip the leading/trailing
 				// quotes (just reverses them).
 				String textStr = token.text
-				String textWithoutQuotes = textStr.substring( 1, textStr.size()-1 )
-				output.append("'" + StringEscapeUtils.escapeJava( textWithoutQuotes ) + "'")
+				String textWithoutQuotes = textStr.substring(1, textStr.size() - 1)
+				output.append("'" + StringEscapeUtils.escapeJava(textWithoutQuotes) + "'")
 			} else {
 				output.append(token.text)
 			}
