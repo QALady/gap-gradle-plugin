@@ -33,6 +33,10 @@ class GapWMSegmentDslAction {
 		return this.action.toString().find(~/\:/)
 	}
 
+	def getProjectAndProcedure() {
+		return this.getAction().split(":")
+	}
+
 	public String getECStepRunCondition(CommanderClient commanderClient) {
 		return (this.runCondition == 'always' || this.runCondition == 'finally') ? '' : commanderClient.getECProperty("/myProject/runCondition").getValue()
 	}

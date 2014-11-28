@@ -5,6 +5,7 @@ import static com.gap.gradle.extensions.GapWMSegmentDsl.*
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
+import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
 import com.gap.gradle.extensions.GapWMSegmentDslAction
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
@@ -51,7 +52,6 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def createPhaseECStep(procedureName, o) {
-
 		ecStepConfig = [:]
 		def subProject, subProcedure
 		assert o instanceof GapWMSegmentDslAction
@@ -60,7 +60,7 @@ class CreateECProcedureTask extends WatchmenTask {
 		def stepName = "Perform ${dsl.name}: ${dsl.getStepName()}"
 		if (dsl.getAction()) {
 			if (dsl.hasSubProject()) {
-				(subProject, subProcedure) = dsl.getAction().split(":")
+				(subProject, subProcedure) = dsl.getProjectAndProcedure()
 			} else {
 				(subProject, subProcedure) = [projectName, dsl.getAction().toString()]
 			}
@@ -71,6 +71,8 @@ class CreateECProcedureTask extends WatchmenTask {
 			ecStepConfig.put('subprocedure', subProcedure)
 			ecStepConfig.put('actualParameter', dsl.getECParameters().split(";"))
 
+			// check Lock Resource on local 
+			checkLockResourceOnLocal(dsl)
 		} else if (dsl.getCommand()) {
 			ecStepConfig.put('command', dsl.command)
 		}
@@ -80,6 +82,27 @@ class CreateECProcedureTask extends WatchmenTask {
 		ecStepConfig.put('parallel', dsl.getECParallelStep())		
 		logger.info("Step Config: " + ecStepConfig.toString())
 		commanderClient.createStep(projectName, procedureName, stepName, ecStepConfig)
+	}
+
+	def checkLockResourceOnLocal(GapWMSegmentDslAction dsl) {
+		if (!dsl.hasSubProject()) return
+		def errorMsg = "Cannot use local resource for locking. Local Resource used. Please define a non-local resource for locking."
+		def (project, procedure) = dsl.getProjectAndProcedure()
+		if('WM Segment'.equalsIgnoreCase(project) && 'Lock Resource'.equalsIgnoreCase(procedure)) {
+			if (dsl.getParameters().isEmpty()) {
+				logger.error(errorMsg)
+				throw new WMSegmentDslLockResourceOnLocalException(errorMsg)
+			}
+			dsl.getParameters().each { param ->
+				if ('host'.equalsIgnoreCase(param.name.toString())) {
+					def definedHost = param.value.toString().trim()
+					if (definedHost.isEmpty() || 'local'.equalsIgnoreCase(definedHost)) {
+						logger.error(errorMsg)
+						throw new WMSegmentDslLockResourceOnLocalException(errorMsg)
+					}
+				}
+			}
+		}
 	}
 
 	def checkPromotedPlugin(givenPlugin) {
