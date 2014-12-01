@@ -6,7 +6,6 @@ import com.gap.pipeline.tasks.annotations.RequiredParameters
 import groovy.json.JsonLexer
 import groovy.json.JsonOutput
 import groovy.json.JsonToken
-import groovy.json.StringEscapeUtils
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
@@ -65,23 +64,35 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 				logger.info "line -> " + line
 				String[] tokens = line.toString().split("=", 2)
 				logger.info "tokens $tokens ${tokens.size()}"
-				String[] tokenKeys = tokens[0].split('\\.')
+				String[] tokenKeys = tokens[0].replaceAll('-','_').split('\\.')
 				if (tokenKeys[0].equals('finally')) {
 					tokenKeys[0] = '_finally'
 				}
 				switch (tokenKeys.size()) {
 					case 2:
-						segment."${tokenKeys[0]}"."${tokenKeys[1]}" = tokens[1]
+						segment."${quoteIfSpaces(tokenKeys[0])}"."${quoteIfSpaces(tokenKeys[1])}" = formatQuotes(tokens[1])
 						break;
 					case 3:
-						segment."${tokenKeys[0]}"."${tokenKeys[1]}"."${tokenKeys[2]}" = tokens[1]
+						segment."${quoteIfSpaces(tokenKeys[0])}"."${quoteIfSpaces(tokenKeys[1])}"."${quoteIfSpaces(tokenKeys[2])}" = formatQuotes(tokens[1])
 						break;
 					case 4:
-						segment."${tokenKeys[0]}"."${tokenKeys[1]}"."${tokenKeys[2]}"."${tokenKeys[3]}".value = tokens[1]
+						segment."${quoteIfSpaces(tokenKeys[0])}"."${quoteIfSpaces(tokenKeys[1])}"."${quoteIfSpaces(tokenKeys[2])}"."${quoteIfSpaces(tokenKeys[3])}".value =  formatQuotes(tokens[1])
 						break;
 				}
 		}
 		gradlelizedData = "segment " + GradleOutput.prettyPrint(GradleOutput.toJson(segment))
+	}
+
+	static def quoteIfSpaces(String tokenKey) {
+		if(tokenKey.contains(' '))
+		{
+			return "'"+tokenKey+"'"
+		}
+		return tokenKey
+	}
+
+	private static String formatQuotes(String token) {
+		return "'" + token.replaceAll("'", '"') + "'"
 	}
 
 	def writeToGradleFile() {
@@ -139,7 +150,7 @@ private class GradleOutput extends JsonOutput {
 				// quotes (just reverses them).
 				String textStr = token.text
 				String textWithoutQuotes = textStr.substring(1, textStr.size() - 1)
-				output.append("'" + StringEscapeUtils.escapeJava(textWithoutQuotes) + "'")
+				output.append((textWithoutQuotes))
 			} else {
 				output.append(token.text)
 			}
