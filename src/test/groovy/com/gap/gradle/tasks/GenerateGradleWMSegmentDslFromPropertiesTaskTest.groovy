@@ -60,7 +60,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
         }
     }
     approve {
-        0_sonar {
+        '0_sonar' {
             action 'WM Exec:Run'
             parameters {
                 cmd {
@@ -68,7 +68,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
                 }
             }
         }
-        1_createLink {
+        '1_createLink' {
             action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
@@ -84,7 +84,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
                 }
             }
         }
-        2_createLink {
+        '2_createLink' {
             action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
@@ -100,7 +100,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
                 }
             }
         }
-        3_createLink {
+        '3_createLink' {
             action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
@@ -116,7 +116,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
                 }
             }
         }
-        4_createLink {
+        '4_createLink' {
             action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
@@ -132,7 +132,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
                 }
             }
         }
-        5_publish {
+        '5_publish' {
             action 'WM Exec:Run'
             parameters {
                 cmd {
@@ -140,7 +140,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
                 }
             }
         }
-        6_publish {
+        '6_publish' {
             action 'WM Publish:RPM'
             parameters {
                 channel {
@@ -164,7 +164,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
         }
     }
     _finally {
-        0_final {
+        '0_final' {
             action 'test_final'
         }
     }
@@ -182,6 +182,46 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
 		task.writeToGradleFile()
 		File expectedGradleFile = new File(expectedGradleFileName)
 		assertEquals(task.gradlelizedFile.getText(), expectedGradleFile.getText())
+	}
+
+	@Test
+	void shouldQuoteIfSpaceOrNumber()
+	{
+		String case1='0-case'
+		String expected1="'0-case'"
+		String actual1=task.quoteIfSpacesOrNumber(case1)
+		logger.info("$actual1==$expected1")
+		assertEquals(actual1, expected1)
+
+		String case2='case'
+		String expected2="case"
+		String actual2=task.quoteIfSpacesOrNumber(case2)
+		logger.info("$actual2==$expected2")
+		assertEquals(actual2, expected2)
+
+		String case3='02case'
+		String expected3="'02case'"
+		String actual3=task.quoteIfSpacesOrNumber(case3)
+		logger.info("$actual3==$expected3")
+		assertEquals(actual3, expected3)
+
+		String case4='case1'
+		String expected4="case1"
+		String actual4=task.quoteIfSpacesOrNumber(case4)
+		logger.info("$actual4==$expected4")
+		assertEquals(actual4, expected4)
+
+		String case5='2 case'
+		String expected5="'2 case'"
+		String actual5=task.quoteIfSpacesOrNumber(case5)
+		logger.info("$actual5==$expected5")
+		assertEquals(actual5, expected5)
+
+		String case6='case 1'
+		String expected6="'case 1'"
+		String actual6=task.quoteIfSpacesOrNumber(case6)
+		logger.info("$actual6==$expected6")
+		assertEquals(actual6, expected6)
 	}
 
 }

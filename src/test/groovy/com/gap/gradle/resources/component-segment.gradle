@@ -20,7 +20,7 @@ segment {
         }
     }
     approve {
-        0_sonar {
+        '0_sonar' {
             action 'WM Exec:Run'
             parameters {
                 cmd {
@@ -28,7 +28,7 @@ segment {
                 }
             }
         }
-        1_createLink {
+        '1_createLink' {
             action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
@@ -44,7 +44,7 @@ segment {
                 }
             }
         }
-        2_createLink {
+        '2_createLink' {
             action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
@@ -60,7 +60,7 @@ segment {
                 }
             }
         }
-        3_createLink {
+        '3_createLink' {
             action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
@@ -76,7 +76,7 @@ segment {
                 }
             }
         }
-        4_createLink {
+        '4_createLink' {
             action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
@@ -92,7 +92,7 @@ segment {
                 }
             }
         }
-        5_publish {
+        '5_publish' {
             action 'WM Exec:Run'
             parameters {
                 cmd {
@@ -100,7 +100,7 @@ segment {
                 }
             }
         }
-        6_publish {
+        '6_publish' {
             action 'WM Publish:RPM'
             parameters {
                 channel {
@@ -124,7 +124,7 @@ segment {
         }
     }
     _finally {
-        0_final {
+        '0_final' {
             action 'test_final'
         }
     }

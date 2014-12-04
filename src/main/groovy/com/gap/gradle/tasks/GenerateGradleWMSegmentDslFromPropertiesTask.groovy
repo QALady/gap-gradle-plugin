@@ -70,21 +70,21 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 				}
 				switch (tokenKeys.size()) {
 					case 2:
-						segment."${quoteIfSpaces(tokenKeys[0])}"."${quoteIfSpaces(tokenKeys[1])}" = formatQuotes(tokens[1])
+						segment."${quoteIfSpacesOrNumber(tokenKeys[0])}"."${quoteIfSpacesOrNumber(tokenKeys[1])}" = formatQuotes(tokens[1])
 						break;
 					case 3:
-						segment."${quoteIfSpaces(tokenKeys[0])}"."${quoteIfSpaces(tokenKeys[1])}"."${quoteIfSpaces(tokenKeys[2])}" = formatQuotes(tokens[1])
+						segment."${quoteIfSpacesOrNumber(tokenKeys[0])}"."${quoteIfSpacesOrNumber(tokenKeys[1])}"."${quoteIfSpacesOrNumber(tokenKeys[2])}" = formatQuotes(tokens[1])
 						break;
 					case 4:
-						segment."${quoteIfSpaces(tokenKeys[0])}"."${quoteIfSpaces(tokenKeys[1])}"."${quoteIfSpaces(tokenKeys[2])}"."${quoteIfSpaces(tokenKeys[3])}".value =  formatQuotes(tokens[1])
+						segment."${quoteIfSpacesOrNumber(tokenKeys[0])}"."${quoteIfSpacesOrNumber(tokenKeys[1])}"."${quoteIfSpacesOrNumber(tokenKeys[2])}"."${quoteIfSpacesOrNumber(tokenKeys[3])}".value =  formatQuotes(tokens[1])
 						break;
 				}
 		}
 		gradlelizedData = "segment " + GradleOutput.prettyPrint(GradleOutput.toJson(segment))
 	}
 
-	static def quoteIfSpaces(String tokenKey) {
-		if(tokenKey.contains(' '))
+	static def quoteIfSpacesOrNumber(String tokenKey) {
+		if(tokenKey.contains(' ') || tokenKey.matches("^[0-9].*"))
 		{
 			return "'"+tokenKey+"'"
 		}
