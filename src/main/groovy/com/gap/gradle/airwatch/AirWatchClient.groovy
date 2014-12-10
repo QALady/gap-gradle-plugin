@@ -45,14 +45,13 @@ class AirWatchClient {
 
   String uploadFile(File file) {
     def fileSize = file.size()
-    def chunkSize = 5000
     def chunkSequenceNumber = 1
     def transactionId = "0"
-    def totalChunks = "${new BigDecimal( Math.ceil(fileSize / chunkSize) )}"
+    def totalChunks = "${new BigDecimal( Math.ceil(fileSize / CHUNK_SIZE) )}"
 
     println "\nWill upload \"${file.name}\" to AirWatch..."
 
-    file.eachByte(chunkSize) { buffer, sizeRead ->
+    file.eachByte(CHUNK_SIZE) { buffer, sizeRead ->
       def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
       def encodedChunk = bufferSlice.encodeBase64().toString()
 
