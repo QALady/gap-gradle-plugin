@@ -47,6 +47,7 @@ class DbotPlugin implements Plugin<Project> {
 
     void createTasks() {
         project.task("generateChangeLogDBOT", type: JavaExec) {
+          description 'generateChangeLog of the database obejcts to files'
           classpath project.configurations.runtime
             main = 'com.gap.gid.dbot.Main'
             doFirst {
@@ -57,6 +58,22 @@ class DbotPlugin implements Plugin<Project> {
                 "--schema=" + project.ext.schema,
                 "--driver=" + project.ext.driver,
                 "--flavor=" + project.ext.flavor,
+                ].toList()
+            }
+        }
+        project.task("runSQL", type: JavaExec) {
+          description 'run a sql file in the database'
+          classpath project.configurations.runtime
+            main = 'com.gap.gid.dbot.tasks.RunSQL'
+            doFirst {
+              args = [
+                "--username=" + project.ext.username,
+                "--password=" + project.ext.password,
+                "--url=" + project.ext.url,
+                "--schema=" + project.ext.schema,
+                "--driver=" + project.ext.driver,
+                "--flavor=" + project.ext.flavor,
+                "--fileName=" + project.ext.filename
                 ].toList()
             }
         }
