@@ -1,31 +1,31 @@
 package com.gap.gradle.tasks
 
-import static org.junit.Assert.*
-import static org.junit.rules.ExpectedException.*
-import static org.mockito.Mockito.*
-
+import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
+import com.gap.gradle.utils.ShellCommand
+import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.utils.EnvironmentStub
+import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.mockito.Mockito
 
-import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException;
-import com.gap.gradle.utils.ShellCommand
-import com.gap.pipeline.ec.CommanderClient
-import com.gap.pipeline.utils.EnvironmentStub
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertNull
+import static org.junit.rules.ExpectedException.none
+import static org.mockito.Mockito.*
 
 class CreateECProcedureTaskTest {
 	private Project project
 	private CommanderClient commanderClient
 	private ShellCommand mockShellCommand
 	static final String testGetPluginsXmlFileName = "src/test/groovy/com/gap/gradle/resources/testGetPlugins.xml"
-
+	def logger = LogFactory.getLog(CreateECProcedureTaskTest)
 	CreateECProcedureTask task
-	
+
 	@Rule
 	public final ExpectedException expectedException = none()
 
@@ -38,6 +38,8 @@ class CreateECProcedureTaskTest {
 		when(mockShellCommand.execute(['ectool', 'getPlugin', 'WM Exec'])).thenReturn(new File(testGetPluginsXmlFileName).getText())
 		when(mockShellCommand.execute(['ectool', 'createStep', 'WM Temporary Procedures', 'procedure1', 'Perform myAction: ', '--command', 'ectool test', '--resourceName', 'dgphxaciap003', '--condition', 'always', '--parallel', 'false'])).thenReturn("OK!")
 		when(mockShellCommand.execute(['ectool', 'getProperty', '/myProject/runCondition'])).thenReturn('always')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', '--actualParameter', 'openstackTenant=tenant-name1', 'chefRole=the-chef-role-to-apply-on-the-node1'])).thenReturn(1)
+		when(mockShellCommand.execute(['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', '--actualParameter', 'openstackTenant=tenant-name2', 'chefRole=the-chef-role-to-apply-on-the-node2'])).thenReturn(2)
 		EnvironmentStub env = new EnvironmentStub()
 		env.setValue('COMMANDER_JOBID', '1234') // sets the job ID
 		commanderClient = new CommanderClient(mockShellCommand, env)
@@ -70,7 +72,7 @@ class CreateECProcedureTaskTest {
 					}
 				}
 			}
-		  }
+		}
 
 		task.execute()
 	}
@@ -97,10 +99,10 @@ class CreateECProcedureTaskTest {
 			}
 			test {
 				myAction
-				{
-					resourceName 'dgphxaciap003'
-					command 'ectool test'
-				}
+						{
+							resourceName 'dgphxaciap003'
+							command 'ectool test'
+						}
 
 			}
 		}
@@ -112,13 +114,12 @@ class CreateECProcedureTaskTest {
 		assertEquals("Problem with command", 'ectool test', project.segment.test.myAction.command)
 		assertEquals("Problem with resourceName", 'dgphxaciap003', project.segment.test.myAction.resourceName)
 
-		def actualResult=task.createPhaseECStep("procedure1", project.segment.test.myAction)
-		assertEquals("Bad formed command string","OK!",actualResult)
+		def actualResult = task.createPhaseECStep("procedure1", project.segment.test.myAction)
+		assertEquals("Bad formed command string", "OK!", actualResult)
 	}
 
 	@Test
-	void shouldCreateCorrectProcedure()
-	{
+	void shouldCreateCorrectProcedure() {
 		project.segment {
 			prepare {
 				smoke {
@@ -153,15 +154,15 @@ class CreateECProcedureTaskTest {
 		}
 
 		task.execute()
-		Map myMap=task.ecStepConfig
-		String[] actualParameters=myMap.get("actualParameter")
+		Map myMap = task.ecStepConfig
+		String[] actualParameters = myMap.get("actualParameter")
 
 		println "actualParameters size : " + actualParameters.size()
 		println "ecStepConfig: " + task.ecStepConfig
 
-		assertEquals(2,actualParameters.size())
-		assertEquals(actualParameters[0],'param1=test')
-		assertEquals(actualParameters[1],'param2=test2')
+		assertEquals(2, actualParameters.size())
+		assertEquals(actualParameters[0], 'param1=test')
+		assertEquals(actualParameters[1], 'param2=test2')
 
 	}
 
@@ -178,9 +179,9 @@ class CreateECProcedureTaskTest {
 		verifyPhaseProcedures("prepare")
 
 		verifyPhaseProcedures("test")
-		verify(mockShellCommand).execute(["ectool", "getProperty",  "/myProject/runCondition"])
+		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 		verify(mockShellCommand).execute(["ectool", "createStep", "WM Temporary Procedures", "perform_test_actions_1234", "Perform test-simple-command: ",
-			"--command", 'echo "Hello Test"', "--condition", "always", "--parallel", "false"])
+		                                  "--command", 'echo "Hello Test"', "--condition", "always", "--parallel", "false"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
@@ -204,10 +205,10 @@ class CreateECProcedureTaskTest {
 		verifyPhaseProcedures("prepare")
 
 		verifyPhaseProcedures("test")
-		verify(mockShellCommand).execute(["ectool", "getPlugin",  "WM Exec"])
-		verify(mockShellCommand).execute(["ectool", "getProperty",  "/myProject/runCondition"])
+		verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Exec"])
+		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 		verify(mockShellCommand).execute(["ectool", "createStep", "WM Temporary Procedures", "perform_test_actions_1234", "Perform test-simple-plugin: WM Exec:Run",
-			"--subproject", "WM Exec-1.17", "--subprocedure", "Run", "--actualParameter", "cmd=./gradlew tasks --info", "--condition", "always", "--parallel", "false"])
+		                                  "--subproject", "WM Exec-1.17", "--subprocedure", "Run", "--actualParameter", "cmd=./gradlew tasks --info", "--condition", "always", "--parallel", "false"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
@@ -229,10 +230,10 @@ class CreateECProcedureTaskTest {
 		verifyPhaseProcedures("prepare")
 
 		verifyPhaseProcedures("test")
-		verify(mockShellCommand).execute(["ectool", "getPlugin",  "WM Segment"])
-		verify(mockShellCommand).execute(["ectool", "getProperty",  "/myProject/runCondition"])
+		verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Segment"])
+		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 		verify(mockShellCommand).execute(["ectool", "createStep", "WM Temporary Procedures", "perform_test_actions_1234", "Perform test-local-resource-defined: WM Segment:Lock Resource",
-			"--subproject", "WM Segment", "--subprocedure", "Lock Resource", "--actualParameter", "host=my-dummy-resource-host", "--condition", "always", "--parallel", "false"])
+		                                  "--subproject", "WM Segment", "--subprocedure", "Lock Resource", "--actualParameter", "host=my-dummy-resource-host", "--condition", "always", "--parallel", "false"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
@@ -252,8 +253,8 @@ class CreateECProcedureTaskTest {
 		verifyPhaseProcedures("prepare")
 
 		verifyPhaseProcedures("test")
-		verify(mockShellCommand).execute(["ectool", "getPlugin",  "WM Segment"])
-		verify(mockShellCommand).execute(["ectool", "getProperty",  "/myProject/runCondition"])
+		verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Segment"])
+		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
@@ -276,8 +277,8 @@ class CreateECProcedureTaskTest {
 		verifyPhaseProcedures("prepare")
 
 		verifyPhaseProcedures("test")
-		verify(mockShellCommand).execute(["ectool", "getPlugin",  "WM Segment"])
-		verify(mockShellCommand).execute(["ectool", "getProperty",  "/myProject/runCondition"])
+		verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Segment"])
+		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
@@ -300,8 +301,8 @@ class CreateECProcedureTaskTest {
 		verifyPhaseProcedures("prepare")
 
 		verifyPhaseProcedures("test")
-		verify(mockShellCommand).execute(["ectool", "getPlugin",  "WM Segment"])
-		verify(mockShellCommand).execute(["ectool", "getProperty",  "/myProject/runCondition"])
+		verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Segment"])
+		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
@@ -324,19 +325,73 @@ class CreateECProcedureTaskTest {
 		verifyPhaseProcedures("prepare")
 
 		verifyPhaseProcedures("test")
-		verify(mockShellCommand).execute(["ectool", "getPlugin",  "WM Segment"])
-		verify(mockShellCommand).execute(["ectool", "getProperty",  "/myProject/runCondition"])
+		verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Segment"])
+		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
 	}
+
 	private verifyPhaseProcedures(phase) {
 		def phaseConfig = '_finally'.equals(phase) ? 'finally' : phase
 		def procName = "perform_${phase}_actions_1234".toString()
 		def configName = "/myJob/watchmen_config/${phaseConfig}StepProcedureName".toString()
-		verify(mockShellCommand).execute(["ectool", "createProcedure",  "WM Temporary Procedures", procName, "--description", "dynamic procedure created by gradle task gap_wm_segmentdsl"])
-		verify(mockShellCommand).execute(["ectool", "setProperty",  configName, procName])
+		verify(mockShellCommand).execute(["ectool", "createProcedure", "WM Temporary Procedures", procName, "--description", "dynamic procedure created by gradle task gap_wm_segmentdsl"])
+		verify(mockShellCommand).execute(["ectool", "setProperty", configName, procName])
 	}
-	
-	
+
+	@Test
+	void shouldExecuteCreateDynamicBuildNode() {
+		task.executeCreateDynamicBuildNodes(mockShellCommand)
+	}
+
+	@Test
+	void shouldRunWithDynamicNodes() {
+
+		project.segment {
+			resourceName 'resourceTest01'
+			prepare {
+				smoke {
+					action 'WM Exec:Run'
+					parameters {
+						cmd {
+							value './gradlew tasks --info'
+						}
+					}
+				}
+				testAction { // this is the last because order is alphabetical
+					action 'echo "Hello"'
+					parameters {
+						param1 { //--actualParameter:'param1=test' --actualParameter:'param2=test2'
+							value 'test'
+						}
+						param2 {
+							value 'test2'
+						}
+					}
+				}
+				anotherTestAction {
+					action 'echo "Again"'
+				}
+				noCommandAction {
+
+				}
+			}
+			test {
+
+			}
+			dynamicNodes {
+				node1 {
+					openstackTenant 'tenant-name1'
+					chefRole 'the-chef-role-to-apply-on-the-node1'
+				}
+				node2 {
+					openstackTenant 'tenant-name2'
+					chefRole 'the-chef-role-to-apply-on-the-node2'
+				}
+			}
+		}
+		task.execute()
+	}
+
 }

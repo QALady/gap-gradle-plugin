@@ -1,17 +1,16 @@
 package com.gap.gradle.tasks
 
-import static com.gap.gradle.extensions.GapWMSegmentDsl.*
-
-import org.apache.commons.logging.LogFactory
-import org.gradle.api.Project
-
 import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
 import com.gap.gradle.extensions.GapWMSegmentDslAction
+import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
+import org.apache.commons.logging.LogFactory
+import org.gradle.api.Project
 
+import static com.gap.gradle.extensions.GapWMSegmentDsl.segmentPhases
 
 @RequiredParameters([
 		@Require(parameter = 'segment', description = 'the WM Segment DSL')
@@ -20,7 +19,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	def logger = LogFactory.getLog(CreateECProcedureTask)
 	private Project project
 	private CommanderClient commanderClient
-	def plugins =[:]
+	def plugins = [:]
 	def segmentDsl
 	def projectName = "WM Temporary Procedures"
 	def ecStepConfig
@@ -33,6 +32,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def execute() {
+		executeCreateDynamicBuildNodes()
 		segmentPhases.each { phase ->
 			createPhaseProcedure(phase)
 		}
@@ -40,12 +40,12 @@ class CreateECProcedureTask extends WatchmenTask {
 
 	def createPhaseProcedure(phase) {
 		def procedureName = "perform_${phase}_actions_" + commanderClient.getJobId()
-		def createProcConfig = [description:'dynamic procedure created by gradle task gap_wm_segmentdsl']
+		def createProcConfig = [description: 'dynamic procedure created by gradle task gap_wm_segmentdsl']
 		commanderClient.createProcedure(projectName, procedureName, createProcConfig)
 		def phasePropertyName = phase.toString().replaceAll("_", "")
 		commanderClient.setECProperty("/myJob/watchmen_config/${phasePropertyName}StepProcedureName", procedureName)
 		logger.info("segmentdsl phase actions: " + segmentDsl[phase])
-		segmentDsl[phase].each {dslAction ->
+		segmentDsl[phase].each { dslAction ->
 			logger.info("phase dsl action: " + dslAction)
 			createPhaseECStep(procedureName, dslAction)
 		}
@@ -66,7 +66,7 @@ class CreateECProcedureTask extends WatchmenTask {
 			}
 			def subProjectName = checkPromotedPlugin(subProject)
 			logger.info("Creating Step in ($projectName:$procedureName). stepName: '$stepName' (Delegating to: ${subProjectName}:${subProcedure})")
-	
+
 			ecStepConfig.put('subproject', subProjectName)
 			ecStepConfig.put('subprocedure', subProcedure)
 			ecStepConfig.put('actualParameter', dsl.getECParameters().split(";"))
@@ -79,7 +79,7 @@ class CreateECProcedureTask extends WatchmenTask {
 
 		ecStepConfig.put('resourceName', dsl.getResourceName().toString())
 		ecStepConfig.put('condition', dsl.getECStepRunCondition(commanderClient))
-		ecStepConfig.put('parallel', dsl.getECParallelStep())		
+		ecStepConfig.put('parallel', dsl.getECParallelStep())
 		logger.info("Step Config: " + ecStepConfig.toString())
 		commanderClient.createStep(projectName, procedureName, stepName, ecStepConfig)
 	}
@@ -88,7 +88,7 @@ class CreateECProcedureTask extends WatchmenTask {
 		if (!dsl.hasSubProject()) return
 		def errorMsg = "Cannot use local resource for locking. Local Resource used. Please define a non-local resource for locking."
 		def (project, procedure) = dsl.getProjectAndProcedure()
-		if('WM Segment'.equalsIgnoreCase(project) && 'Lock Resource'.equalsIgnoreCase(procedure)) {
+		if ('WM Segment'.equalsIgnoreCase(project) && 'Lock Resource'.equalsIgnoreCase(procedure)) {
 			if (dsl.getParameters().isEmpty()) {
 				logger.error(errorMsg)
 				throw new WMSegmentDslLockResourceOnLocalException(errorMsg)
@@ -121,5 +121,27 @@ class CreateECProcedureTask extends WatchmenTask {
 		}
 
 		return promotedPlugin
+	}
+
+	def executeCreateDynamicBuildNodes() {
+		def shellCommand = commanderClient.getShellCommand()
+		if (!segmentDsl.dynamicNodes.isEmpty()) {
+			segmentDsl.dynamicNodes.each {
+				node ->
+					println "node:  ${node.name} ${node.openstackTenant} ${node.chefRole}"
+					def command = ['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', "--actualParameter"]
+					command.add("openstackTenant=${node.openstackTenant}".toString())
+					command.add("chefRole=${node.chefRole}".toString())
+					def createDynamicBuildNodeId
+					try {
+						createDynamicBuildNodeId = shellCommand.execute(command)
+						logger.info("Create Dynamic Nodes Job run with Id: $createDynamicBuildNodeId")
+					}
+					catch (ShellCommandException sce) {
+						logger.error("Problem running Create Dynamic Nodes", sce)
+					}
+			}
+		}
+
 	}
 }

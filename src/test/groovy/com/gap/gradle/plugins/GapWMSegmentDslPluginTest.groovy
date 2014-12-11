@@ -15,7 +15,7 @@ import com.gap.gradle.extensions.GapWMSegmentDslActionParameter
 
 class GapWMSegmentDslPluginTest {
 	private Project project
-	GapWMSegmentDsl extension
+
 	
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder()
@@ -113,5 +113,64 @@ class GapWMSegmentDslPluginTest {
 
 
 	}
-	
+
+	@Test
+	void shouldCreateDynamicNode()
+	{
+		project.segment {
+			resourceName 'resourceTest01'
+			prepare {
+				smoke {
+					action 'WM Exec:Run'
+					parameters {
+						cmd {
+							value './gradlew tasks --info'
+						}
+					}
+				}
+				testAction { // this is the last because order is alphabetical
+					action 'echo "Hello"'
+					parameters {
+						param1 { //--actualParameter:'param1=test' --actualParameter:'param2=test2'
+							value 'test'
+						}
+						param2 {
+							value 'test2'
+						}
+					}
+				}
+				anotherTestAction {
+					action 'echo "Again"'
+				}
+				noCommandAction {
+
+				}
+			}
+			test {
+
+			}
+			dynamicNodes {
+					node1 {
+						openstackTenant 'tenant-name1'
+						chefRole 'the-chef-role-to-apply-on-the-node1'
+					}
+					node2 {
+						openstackTenant 'tenant-name2'
+						chefRole 'the-chef-role-to-apply-on-the-node2'
+					}
+			}
+		}
+
+		assertEquals('test',project.segment.prepare.testAction.parameters.param1.value)
+		assertEquals("resourceTest01",project.segment.resourceName)
+
+		assertEquals('tenant-name1', project.segment.dynamicNodes.node1.openstackTenant)
+		assertEquals('the-chef-role-to-apply-on-the-node1', project.segment.dynamicNodes.node1.chefRole)
+
+
+		assertEquals('tenant-name2', project.segment.dynamicNodes.node2.openstackTenant)
+		assertEquals('the-chef-role-to-apply-on-the-node2', project.segment.dynamicNodes.node2.chefRole)
+	}
+
+
 }
