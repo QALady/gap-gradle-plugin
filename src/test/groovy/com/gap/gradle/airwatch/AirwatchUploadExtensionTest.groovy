@@ -45,4 +45,18 @@ public class AirwatchUploadExtensionTest {
 
         assertEquals("foobar", extension.appDescription)
     }
+
+    @Test
+    public void shouldSupportSmartGroupAsClosure() throws Exception {
+        extension.smartGroups = { "foobar" }
+
+        assertEquals("foobar", extension.smartGroups)
+    }
+
+    @Test
+    public void shouldSupportSmartGroupAsString() throws Exception {
+        extension.smartGroups = "foobar"
+
+        assertEquals("foobar", extension.smartGroups)
+    }
 }

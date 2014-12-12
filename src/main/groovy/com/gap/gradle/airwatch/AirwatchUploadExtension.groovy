@@ -9,9 +9,10 @@ import org.gradle.internal.reflect.Instantiator
 class AirwatchUploadExtension implements BeginInstallConfig {
     private Object appNameObj
     private Object appDescriptionObj
-    String configFilename
+    private Object smartGroupsObj
     final ArtifactSpec artifact
     final NamedDomainObjectSet<Environment> environments
+    String configFilename
     Environment targetEnvironment
     File configFile
     String pushMode
@@ -50,6 +51,17 @@ class AirwatchUploadExtension implements BeginInstallConfig {
             return appDescriptionObj.call()
         }
         appDescriptionObj
+    }
+
+    void setSmartGroups(Object smartGroup) {
+        this.smartGroupsObj = smartGroup
+    }
+
+    String getSmartGroups() {
+        if (smartGroupsObj instanceof Closure) {
+            return smartGroupsObj.call()
+        }
+        return smartGroupsObj
     }
 
     @Override
