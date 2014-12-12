@@ -341,11 +341,6 @@ class CreateECProcedureTaskTest {
 	}
 
 	@Test
-	void shouldExecuteCreateDynamicBuildNode() {
-		task.executeCreateDynamicBuildNodes(mockShellCommand)
-	}
-
-	@Test
 	void shouldRunWithDynamicNodes() {
 
 		project.segment {
