@@ -5,4 +5,5 @@ public interface BeginInstallConfig {
     String getAppDescription()
     String getPushMode()
     String getLocationGroupId()
+    Integer getTotalChunks()
 }

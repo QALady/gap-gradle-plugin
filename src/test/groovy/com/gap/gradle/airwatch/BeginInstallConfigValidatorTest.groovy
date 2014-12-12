@@ -75,5 +75,6 @@ class BeginInstallConfigValidatorTest {
         String appDescription = "bar"
         String locationGroupId = "123"
         String pushMode = "auto"
+        Integer totalChunks = 1
     }
 }

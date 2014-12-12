@@ -9,6 +9,8 @@ import org.gradle.api.artifacts.PublishException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import static java.lang.Math.ceil
+
 class AirWatchClient {
 
   private static final Logger logger = LoggerFactory.getLogger(AirWatchClient)
@@ -16,7 +18,6 @@ class AirWatchClient {
   private static final API_PATH = "API/v1/mam/apps/internal/"
   private static final UPLOAD_CHUNK_PATH = "uploadchunk"
   private static final BEGIN_INSTALL_PATH = "begininstall"
-  private static final CHUNK_SIZE = 5000
 
   private RESTClient restClient
   final String host
@@ -36,18 +37,18 @@ class AirWatchClient {
   }
 
   Map uploadApp(File ipaFile, BeginInstallConfig config) {
-    def transactionId = uploadFile(ipaFile)
+    def transactionId = uploadFile(ipaFile, config)
 
     println "\nWill create app in AirWatch using the uploaded chunks..."
 
     beginInstall(transactionId, config)
   }
 
-  String uploadFile(File file) {
+  String uploadFile(File file, BeginInstallConfig config) {
     def fileSize = file.size()
     def chunkSequenceNumber = 1
     def transactionId = "0"
-    def totalChunks = "${new BigDecimal( Math.ceil(fileSize / CHUNK_SIZE) )}"
+    def chunkSize = (ceil(fileSize / config.totalChunks)).intValue()
 
     println "\nWill upload \"${file.name}\" to AirWatch..."
 
@@ -55,9 +56,9 @@ class AirWatchClient {
       def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
       def encodedChunk = bufferSlice.encodeBase64().toString()
 
-      println "Uploading chunk ${chunkSequenceNumber} of ${totalChunks}..."
+      println "Uploading chunk ${chunkSequenceNumber} of ${config.totalChunks}..."
 
-      transactionId = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize)
+      transactionId = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize, chunkSize)
 
       chunkSequenceNumber++
     }
@@ -65,13 +66,13 @@ class AirWatchClient {
     transactionId
   }
 
-  String uploadChunk(String transactionId, String encodedChunk, int chunkSequenceNumber, long fileSize) {
+  String uploadChunk(String transactionId, String encodedChunk, int chunkSequenceNumber, long fileSize, int chunkSize) {
     def body = [
       "TransactionId": transactionId,
       "ChunkData": encodedChunk,
       "ChunkSequenceNumber": chunkSequenceNumber,
       "TotalApplicationSize": fileSize,
-      "ChunkSize": CHUNK_SIZE
+      "ChunkSize": chunkSize
     ]
 
     def response = doPost(UPLOAD_CHUNK_PATH, body)

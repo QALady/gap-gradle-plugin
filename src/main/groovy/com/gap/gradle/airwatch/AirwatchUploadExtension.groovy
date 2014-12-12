@@ -15,6 +15,7 @@ class AirwatchUploadExtension implements BeginInstallConfig {
     Environment targetEnvironment
     File configFile
     String pushMode
+    Integer totalChunks
 
     private final Copy extractAirwatchConfigTask
     private final Instantiator instantiator
@@ -26,6 +27,7 @@ class AirwatchUploadExtension implements BeginInstallConfig {
         this.extractAirwatchConfigTask = extractAirwatchConfigTask
         this.artifact = instantiator.newInstance(ArtifactSpec)
         this.environments = project.container(Environment, { name -> instantiator.newInstance(Environment, name) })
+        this.totalChunks = 25
     }
 
     void setAppName(Object appName) {

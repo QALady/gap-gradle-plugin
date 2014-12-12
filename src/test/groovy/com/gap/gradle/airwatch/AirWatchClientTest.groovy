@@ -37,7 +37,7 @@ class AirWatchClientTest {
         }
 
         mockRESTClient.use {
-            client.uploadChunk("someId", "someEncodedString", 1, 10500)
+            client.uploadChunk("someId", "someEncodedString", 1, 10500, 420)
         }
     }
 
@@ -51,14 +51,14 @@ class AirWatchClientTest {
             assertEquals("someId", body.get("TransactionId"))
             assertEquals("someEncodedString", body.get("ChunkData"))
             assertEquals(1, body.get("ChunkSequenceNumber"))
-            assertEquals(5000, body.get("ChunkSize"))
+            assertEquals(420, body.get("ChunkSize"))
             assertEquals(10500, body.get("TotalApplicationSize"))
 
             return [data: [:]]
         }
 
         mockRESTClient.use {
-            client.uploadChunk("someId", "someEncodedString", 1, 10500)
+            client.uploadChunk("someId", "someEncodedString", 1, 10500, 420)
         }
     }
 
@@ -98,7 +98,7 @@ class AirWatchClientTest {
 
         mockRESTClient.use {
             try {
-                client.uploadChunk("someId", "someEncodedString", 1, 10500)
+                client.uploadChunk("someId", "someEncodedString", 1, 10500, 420)
                 fail("An exception should have been raised")
             } catch (PublishException e) {
                 assertEquals("AirWatch response was: {\"code\":\"500\", \"msg\":\"believe me\"}", e.message)
@@ -120,7 +120,7 @@ class AirWatchClientTest {
 
         mockRESTClient.use {
             try {
-                client.uploadChunk("someId", "someEncodedString", 1, 10500)
+                client.uploadChunk("someId", "someEncodedString", 1, 10500, 420)
                 fail("An exception should have been raised")
             } catch (PublishException e) {
                 assertEquals("Airwatch responded with an HTTP error", e.message)
@@ -133,6 +133,7 @@ class AirWatchClientTest {
         String appDescription
         String locationGroupId
         String pushMode
+        Integer totalChunks
 
         StubConfig(String appName, String appDescription, String locationGroupId, String pushMode) {
             this.appName = appName

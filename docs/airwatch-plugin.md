@@ -21,6 +21,7 @@ airwatchUpload {
   appDescription 'Some nice description about it'
   configFilename 'production.yml'
   pushMode 'auto'
+  totalChunks 25
 
   artifact {
     groupId 'com.gap.something'
@@ -40,6 +41,7 @@ airwatchUpload {
 * `appDescription` specifies the application description in Airwatch
 * `configFilename` specifies the file name from the "airwatchConfig" artifact that will be used for the configuration of the app in Airwatch
 * `pushMode` should be "auto" or "ondemand"
+* `totalChunks` specifies in how many chunks the ipa is going to be uploaded. If omitted, the default value is used (25).
 * `environments` allows the addition of other Airwatch environments that you might want to push artifacts to. There are pre-configured ones: preProduction (aka CN11) and production. You can also add a custom one or overwrite.
    * Adding a new one, called "myEnv":
 
