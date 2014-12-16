@@ -77,5 +77,29 @@ class DbotPlugin implements Plugin<Project> {
                 ].toList()
             }
         }
+        project.task("initDatabase", type: JavaExec) {
+          description 'runs the sql file init.sql to initializes a database i.e. create database, user and schema'
+          classpath project.configurations.runtime
+            def m = project.ext.url =~ /(.*?)\/([\w\d]+$)/
+            def urlAdminDB
+            def dbName
+            if (m.matches()) {
+              urlAdminDB = m[0][1] + "/postgres"
+              dbName = m[0][2]
+            }
+            main = 'com.gap.gid.dbot.tasks.CreateDatabase'
+            doFirst {
+              args = [
+                "--username=" + project.ext.username,
+                "--password=" + project.ext.password,
+                "--url=" + urlAdminDB,
+                "--driver=" + project.ext.driver,
+                "--flavor=" + project.ext.flavor,
+                "--dbName=" + dbName,
+                "--schema=SYSTEM",
+                "--fileName=./_INIT/init.sql"
+                ].toList()
+            }
+        }
     }
 }
