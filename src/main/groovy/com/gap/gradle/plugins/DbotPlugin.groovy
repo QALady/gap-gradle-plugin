@@ -81,8 +81,12 @@ class DbotPlugin implements Plugin<Project> {
           description 'runs the sql file init.sql to initializes a database i.e. create database, user and schema'
           classpath project.configurations.runtime
             def m = project.ext.url =~ /(.*?)\/([\w\d]+$)/
-            def urlAdminDB = m[0][1] + "/postgres"
-            def dbName = m[0][2]
+            def urlAdminDB
+            def dbName
+            if (m.matches()) {
+              urlAdminDB = m[0][1] + "/postgres"
+              dbName = m[0][2]
+            }
             main = 'com.gap.gid.dbot.tasks.CreateDatabase'
             doFirst {
               args = [
