@@ -121,54 +121,6 @@ class CreateECProcedureTaskTest {
 	}
 
 	@Test
-	void shouldCreateCorrectProcedure() {
-		project.segment {
-			prepare {
-				smoke {
-					action 'WM Exec:Run'
-					parameters {
-						cmd {
-							value './gradlew tasks --info'
-						}
-					}
-				}
-				testAction { // this is the last because order is alphabetical
-					action 'echo "Hello"'
-					parameters {
-						param1 { //--actualParameter:'param1=test' --actualParameter:'param2=test2'
-							value 'test'
-						}
-						param2 {
-							value 'test2'
-						}
-					}
-				}
-				anotherTestAction {
-					action 'echo "Again"'
-				}
-				noCommandAction {
-
-				}
-			}
-			test {
-
-			}
-		}
-
-		task.execute()
-		Map myMap = task.ecStepConfig
-		String[] actualParameters = myMap.get("actualParameter")
-
-		println "actualParameters size : " + actualParameters.size()
-		println "ecStepConfig: " + task.ecStepConfig
-
-		assertEquals(2, actualParameters.size())
-		assertEquals(actualParameters[0], 'param1=test')
-		assertEquals(actualParameters[1], 'param2=test2')
-
-	}
-
-	@Test
 	void shouldCreateProcedureSimpleCommandDsl() {
 		project.segment {
 			test {

@@ -19,10 +19,8 @@ class CreateECProcedureTask extends WatchmenTask {
 	def logger = LogFactory.getLog(CreateECProcedureTask)
 	private Project project
 	private CommanderClient commanderClient
-	def plugins = [:]
 	def segmentDsl
 	def projectName = "WM Temporary Procedures"
-	def ecStepConfig
 
 	CreateECProcedureTask(Project project, commanderClient = new CommanderClient()) {
 		super(project)
@@ -36,7 +34,6 @@ class CreateECProcedureTask extends WatchmenTask {
 		segmentPhases.each { phase ->
 			createPhaseProcedure(phase)
 		}
-		executeDeleteDynamicNodes()
 	}
 
 	def createPhaseProcedure(phase) {
@@ -53,7 +50,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def createPhaseECStep(procedureName, o) {
-		ecStepConfig = [:]
+		def ecStepConfig = [:]
 		def subProject, subProcedure
 		assert o instanceof GapWMSegmentDslAction
 		GapWMSegmentDslAction dsl = (GapWMSegmentDslAction) o
@@ -126,8 +123,8 @@ class CreateECProcedureTask extends WatchmenTask {
 
 	def executeCreateDynamicNodes() {
 		def easyCreateParams
-		def projectName = "Watchmen Experimental"
-		def procedureName = "Create Dynamic Build Node"
+		def projectName = "Nova-CLI"
+		def procedureName = "Easy Create"
 		if (!segmentDsl.dynamicNodes.isEmpty()) {
 			segmentDsl.dynamicNodes.each { node ->
 					easyCreateParams = [:]
@@ -145,8 +142,4 @@ class CreateECProcedureTask extends WatchmenTask {
 			}
 		}
 	}
-	
-	def executeDeleteDynamicNodes() {
-		// TODO.
-	}	
 }
