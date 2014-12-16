@@ -1,22 +1,24 @@
 package com.gap.gradle.tasks
 
-import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
-import com.gap.gradle.utils.ShellCommand
-import com.gap.pipeline.ec.CommanderClient
-import com.gap.pipeline.utils.EnvironmentStub
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertNull
+import static org.junit.rules.ExpectedException.none
+import static org.mockito.Mockito.*
+
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.mockito.Mockito
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNull
-import static org.junit.rules.ExpectedException.none
-import static org.mockito.Mockito.*
+import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
+import com.gap.gradle.utils.ShellCommand
+import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.utils.EnvironmentStub
 
 class CreateECProcedureTaskTest {
 	private Project project
@@ -340,41 +342,10 @@ class CreateECProcedureTaskTest {
 		verify(mockShellCommand).execute(["ectool", "setProperty", configName, procName])
 	}
 
-	@Test
+	@Ignore
 	void shouldRunWithDynamicNodes() {
 
 		project.segment {
-			resourceName 'resourceTest01'
-			prepare {
-				smoke {
-					action 'WM Exec:Run'
-					parameters {
-						cmd {
-							value './gradlew tasks --info'
-						}
-					}
-				}
-				testAction { // this is the last because order is alphabetical
-					action 'echo "Hello"'
-					parameters {
-						param1 { //--actualParameter:'param1=test' --actualParameter:'param2=test2'
-							value 'test'
-						}
-						param2 {
-							value 'test2'
-						}
-					}
-				}
-				anotherTestAction {
-					action 'echo "Again"'
-				}
-				noCommandAction {
-
-				}
-			}
-			test {
-
-			}
 			dynamicNodes {
 				node1 {
 					openstackTenant 'tenant-name1'

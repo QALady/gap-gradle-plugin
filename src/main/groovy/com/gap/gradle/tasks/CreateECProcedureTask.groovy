@@ -1,16 +1,16 @@
 package com.gap.gradle.tasks
 
+import static com.gap.gradle.extensions.GapWMSegmentDsl.segmentPhases
+
+import org.apache.commons.logging.LogFactory
+import org.gradle.api.Project
+
 import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
 import com.gap.gradle.extensions.GapWMSegmentDslAction
-import com.gap.gradle.utils.ShellCommandException
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
-import org.apache.commons.logging.LogFactory
-import org.gradle.api.Project
-
-import static com.gap.gradle.extensions.GapWMSegmentDsl.segmentPhases
 
 @RequiredParameters([
 		@Require(parameter = 'segment', description = 'the WM Segment DSL')
@@ -32,10 +32,11 @@ class CreateECProcedureTask extends WatchmenTask {
 	}
 
 	def execute() {
-		executeCreateDynamicBuildNodes()
+		executeCreateDynamicNodes()
 		segmentPhases.each { phase ->
 			createPhaseProcedure(phase)
 		}
+		executeDeleteDynamicNodes()
 	}
 
 	def createPhaseProcedure(phase) {
@@ -123,25 +124,29 @@ class CreateECProcedureTask extends WatchmenTask {
 		return promotedPlugin
 	}
 
-	def executeCreateDynamicBuildNodes() {
-		def shellCommand = commanderClient.getShellCommand()
+	def executeCreateDynamicNodes() {
+		def easyCreateParams
+		def projectName = "Watchmen Experimental"
+		def procedureName = "Create Dynamic Build Node"
 		if (!segmentDsl.dynamicNodes.isEmpty()) {
-			segmentDsl.dynamicNodes.each {
-				node ->
-					println "node:  ${node.name} ${node.openstackTenant} ${node.chefRole}"
-					def command = ['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', "--actualParameter"]
-					command.add("openstackTenant=${node.openstackTenant}".toString())
-					command.add("chefRole=${node.chefRole}".toString())
-					def createDynamicBuildNodeId
-					try {
-						createDynamicBuildNodeId = shellCommand.execute(command)
-						logger.info("Create Dynamic Nodes Job run with Id: $createDynamicBuildNodeId")
-					}
-					catch (ShellCommandException sce) {
-						logger.error("Problem running Create Dynamic Nodes", sce)
-					}
+			segmentDsl.dynamicNodes.each { node ->
+					easyCreateParams = [:]
+					easyCreateParams.put("tenant", "${node.openstackTenant}".toString())
+					easyCreateParams.put("roleName", "${node.chefRole}".toString())
+					easyCreateParams.put("hostname", "${node.name}".toString())
+
+					easyCreateParams.put("network", "public".toString())
+					easyCreateParams.put("autoPurge", "true")
+					easyCreateParams.put("createResource", "true")
+					easyCreateParams.put("type", "${node.imageType}".toString())
+
+					commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
+					logger.info("created Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
 			}
 		}
-
 	}
+	
+	def executeDeleteDynamicNodes() {
+		// TODO.
+	}	
 }

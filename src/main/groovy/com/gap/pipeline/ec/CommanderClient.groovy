@@ -314,4 +314,15 @@ class CommanderClient {
 		return getECProperty("/server/baseUrl").value
 	}
 
+	def runProcedure(projectName, procedureName, params = []) {
+		def command =  ["ectool", "runProcedure", projectName, "--procedureName", procedureName]
+		if (params) {
+			command << "--actualParameter"
+			params.each { key, value ->
+				def parameter = "${key}=${value}".toString() //tostring makes junit asserts happy
+				command << parameter
+			}
+		}
+		return shellCommand.execute(command)
+	}
 }

@@ -4,6 +4,7 @@ class GapWMSegmentDslDynamicNodes {
 	def name
 	def openstackTenant
 	def chefRole
+	def imageType
 
 	public GapWMSegmentDslDynamicNodes(String name) {
 		this.name = name
@@ -31,6 +32,7 @@ class GapWMSegmentDslDynamicNodes {
 				"name=" + name +
 				", openstackTenant=" + openstackTenant +
 				", chefRole=" + chefRole +
+				", imageType=" + imageType +
 				'}';
 	}
 }
