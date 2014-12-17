@@ -131,7 +131,7 @@ class AirWatchPlugin implements Plugin<Project> {
             consoleHost = "https://cn377.awmdm.com/"
             tenantCode = "1AVBHIBAAAG6A4NQCFAA"
             credentialName = "AirWatchPreProd"
-            locationGroupId = "575"
+            locationGroupId = "570"
             return it
         }
     }
