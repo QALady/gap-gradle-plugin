@@ -15,11 +15,11 @@ class CredentialProvider {
         new Credential(getUsername(credentialName), getPassword(credentialName))
     }
 
-    private String getPassword(String credentialName) {
-        commanderClient.getCredential("${CREDENTIAL_PATH}/$credentialName", 'password')
-    }
-
     private String getUsername(String credentialName) {
         commanderClient.getCredential("${CREDENTIAL_PATH}/$credentialName", 'userName')
+    }
+
+    private String getPassword(String credentialName) {
+        commanderClient.getCredential("${CREDENTIAL_PATH}/$credentialName", 'password')
     }
 }

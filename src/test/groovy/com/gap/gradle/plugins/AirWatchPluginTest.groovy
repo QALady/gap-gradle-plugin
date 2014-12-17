@@ -1,4 +1,5 @@
 package com.gap.gradle.plugins
+
 import com.gap.gradle.airwatch.*
 import com.google.common.collect.Sets
 import org.gradle.api.GradleException
@@ -40,9 +41,9 @@ class AirWatchPluginTest {
         when(archivesConfiguration.resolvedConfiguration).thenReturn(resolvedConfiguration)
         when(resolvedConfiguration.resolvedArtifacts).thenReturn(Sets.newHashSet(resolvedArtifact(name: 'target')))
         when(mockConfigurations.getAt("archives")).thenReturn(archivesConfiguration)
-        ((DefaultProject)project).setConfigurationContainer(mockConfigurations)
+        ((DefaultProject) project).setConfigurationContainer(mockConfigurations)
 
-        def airWatchPlugin = new AirWatchPlugin(((ProjectInternal)project).getServices().get(Instantiator))
+        def airWatchPlugin = new AirWatchPlugin(((ProjectInternal) project).getServices().get(Instantiator))
         airWatchPlugin.airWatchClientFactory = airWatchClientFactory
         airWatchPlugin.credentialProvider = credentialProvider
         airWatchPlugin.beginInstallConfigValidator = beginInstallConfigValidator
@@ -54,6 +55,7 @@ class AirWatchPluginTest {
         taskShouldExist('pushArtifactToAirWatch', project)
         taskShouldExist('installAirwatchGem', project)
         taskShouldExist('extractAirwatchConfig', project)
+        taskShouldExist('autoAssignSmartGroups', project)
 
         taskShouldExist('configureApp', project)
         ["installAirwatchGem", "extractAirwatchConfig", "pushArtifactToAirWatch"].each {
@@ -81,7 +83,7 @@ class AirWatchPluginTest {
     public void shouldExposePublishedAppIdAsTaskProperty() throws Exception {
         def airWatchClient = mock(AirWatchClient)
         when(airWatchClientFactory.create(project.airwatchUpload.environments.preProduction, credentialProvider)).thenReturn(airWatchClient)
-        when(airWatchClient.uploadApp(Mockito.any(File), any(BeginInstallConfig))).thenReturn(["Id": ["Value": "456"]])
+        when(airWatchClient.uploadApp(any(File), any(BeginInstallConfig))).thenReturn(["Id": ["Value": "456"]])
 
         project.airwatchUpload {
             artifact.name = 'target'
@@ -93,6 +95,24 @@ class AirWatchPluginTest {
         pushArtifactsTask.execute()
 
         assertEquals("456", pushArtifactsTask.publishedAppId)
+    }
+
+    @Test
+    public void shouldExposeAirwatchClientAsTaskProperty() throws Exception {
+        def airWatchClient = mock(AirWatchClient)
+        when(airWatchClientFactory.create(project.airwatchUpload.environments.preProduction, credentialProvider)).thenReturn(airWatchClient)
+        when(airWatchClient.uploadApp(Mockito.any(File), any(BeginInstallConfig))).thenReturn(["Id": ["Value": "456"]])
+
+        project.airwatchUpload {
+            artifact.name = 'target'
+            targetEnvironment environments.preProduction
+        }
+
+        def pushArtifactsTask = project.tasks.pushArtifactToAirWatch
+
+        pushArtifactsTask.execute()
+
+        assertEquals(airWatchClient, pushArtifactsTask.airwatchClient)
     }
 
     @Test
@@ -189,5 +209,23 @@ class AirWatchPluginTest {
         project.tasks.pushArtifactToAirWatch.execute()
 
         verify(airWatchClientFactory).create(project.airwatchUpload.environments.preProduction, credentialProvider)
+    }
+
+    @Test
+    public void shouldNotAssignSmartGroupsIfNoSmartGroupIsConfigured() throws Exception {
+        project.airwatchUpload {
+            artifact.name = 'target'
+            targetEnvironment environments.preProduction
+            smartGroups = ''
+        }
+
+        def pushArtifactsTask = project.tasks.pushArtifactToAirWatch
+        pushArtifactsTask.airwatchClient = mock(AirWatchClient)
+        pushArtifactsTask.publishedAppId = '123'
+
+        def autoAssignSmartGroups = project.tasks.autoAssignSmartGroups
+        autoAssignSmartGroups.execute()
+
+        assertEquals(true, autoAssignSmartGroups.state.skipped)
     }
 }

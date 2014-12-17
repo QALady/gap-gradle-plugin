@@ -9,12 +9,14 @@ import org.gradle.internal.reflect.Instantiator
 class AirwatchUploadExtension implements BeginInstallConfig {
     private Object appNameObj
     private Object appDescriptionObj
-    String configFilename
+    private Object smartGroupsObj
     final ArtifactSpec artifact
     final NamedDomainObjectSet<Environment> environments
+    String configFilename
     Environment targetEnvironment
     File configFile
     String pushMode
+    Integer totalChunks
 
     private final Copy extractAirwatchConfigTask
     private final Instantiator instantiator
@@ -26,6 +28,7 @@ class AirwatchUploadExtension implements BeginInstallConfig {
         this.extractAirwatchConfigTask = extractAirwatchConfigTask
         this.artifact = instantiator.newInstance(ArtifactSpec)
         this.environments = project.container(Environment, { name -> instantiator.newInstance(Environment, name) })
+        this.totalChunks = 25
     }
 
     void setAppName(Object appName) {
@@ -48,6 +51,17 @@ class AirwatchUploadExtension implements BeginInstallConfig {
             return appDescriptionObj.call()
         }
         appDescriptionObj
+    }
+
+    void setSmartGroups(Object smartGroup) {
+        this.smartGroupsObj = smartGroup
+    }
+
+    String getSmartGroups() {
+        if (smartGroupsObj instanceof Closure) {
+            return smartGroupsObj.call()
+        }
+        return smartGroupsObj
     }
 
     @Override

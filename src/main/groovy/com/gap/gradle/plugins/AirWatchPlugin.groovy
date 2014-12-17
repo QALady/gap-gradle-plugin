@@ -1,4 +1,5 @@
 package com.gap.gradle.plugins
+
 import com.gap.gradle.airwatch.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -72,7 +73,26 @@ class AirWatchPlugin implements Plugin<Project> {
             def airwatchClient = airWatchClientFactory.create(targetEnvironment, credentialProvider)
             def createdApp = airwatchClient.uploadApp(resolvedArtifact.file, extension)
 
+            ext.airwatchClient = airwatchClient
+            ext.targetEnvironment = targetEnvironment
             ext.publishedAppId = createdApp["Id"]["Value"]
+        }
+
+        project.pushArtifactToAirWatch.group = "AirWatch"
+        project.pushArtifactToAirWatch.description = "Distributes the app (.ipa) from Artifactory to AirWatch"
+
+        project.task("autoAssignSmartGroups", dependsOn: "pushArtifactToAirWatch") {
+            doFirst {
+                String smartGroups = extension.smartGroups
+                String locationGroupId = extension.targetEnvironment.locationGroupId
+                String appId = pushArtifactToAirWatchTask.publishedAppId
+
+                def airwatchClient = pushArtifactToAirWatchTask.airwatchClient
+
+                airwatchClient.assignSmartGroupToApplication(smartGroups, appId, locationGroupId)
+            }
+
+            onlyIf { extension.smartGroups }
         }
 
         project.task("installAirwatchGem", type: Exec) {
@@ -92,17 +112,14 @@ class AirWatchPlugin implements Plugin<Project> {
 
             onlyIf { extension.configFile.exists() }
         }
-
-        project.pushArtifactToAirWatch.group = "AirWatch"
-        project.pushArtifactToAirWatch.description = "Distributes the app (.ipa) from Artifactory to AirWatch"
     }
 
     def productionEnv() {
         new Environment("production").with {
-            apiHost         = "https://gapstoresds.awmdm.com/"
-            consoleHost     = "https://gapstoresds.awmdm.com/"
-            tenantCode      = "1VOJHIBAAAG6A46QCFAA"
-            credentialName  = "AirWatchProd"
+            apiHost = "https://gapstoresds.awmdm.com/"
+            consoleHost = "https://gapstoresds.awmdm.com/"
+            tenantCode = "1VOJHIBAAAG6A46QCFAA"
+            credentialName = "AirWatchProd"
             locationGroupId = "570"
             return it
         }
@@ -110,11 +127,11 @@ class AirWatchPlugin implements Plugin<Project> {
 
     def preProductionEnv() {
         new Environment("preProduction").with {
-            apiHost         = "https://cn377.awmdm.com/"
-            consoleHost     = "https://cn377.awmdm.com/"
-            tenantCode      = "1AVBHIBAAAG6A4NQCFAA"
-            credentialName  = "AirWatchPreProd"
-            locationGroupId = "575"
+            apiHost = "https://cn377.awmdm.com/"
+            consoleHost = "https://cn377.awmdm.com/"
+            tenantCode = "1AVBHIBAAAG6A4NQCFAA"
+            credentialName = "AirWatchPreProd"
+            locationGroupId = "570"
             return it
         }
     }

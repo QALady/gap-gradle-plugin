@@ -1,141 +1,186 @@
 package com.gap.gradle.airwatch
 
-import static groovyx.net.http.ContentType.JSON
-
-import groovy.json.JsonBuilder
-import groovyx.net.http.HttpResponseException
-import groovyx.net.http.RESTClient
-import org.gradle.api.artifacts.PublishException
+import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.Method
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import static groovyx.net.http.ContentType.JSON
+import static groovyx.net.http.Method.GET
+import static groovyx.net.http.Method.POST
+import static java.lang.Math.ceil
+import static java.lang.String.format
+
 class AirWatchClient {
 
-  private static final Logger logger = LoggerFactory.getLogger(AirWatchClient)
+    private static final Logger logger = LoggerFactory.getLogger(AirWatchClient)
 
-  private static final API_PATH = "API/v1/mam/apps/internal/"
-  private static final UPLOAD_CHUNK_PATH = "uploadchunk"
-  private static final BEGIN_INSTALL_PATH = "begininstall"
-  private static final CHUNK_SIZE = 5000
+    private static final API_V1_PATH = "API/v1"
 
-  private RESTClient restClient
-  final String host
-  final String username
-  final String password
-  final String tenantCode
-  final String encodedCredentials
+    private static final MAM_APPS_PATH = "${API_V1_PATH}/mam/apps/internal"
+    private static final UPLOAD_CHUNK_PATH = "${MAM_APPS_PATH}/uploadchunk"
+    private static final BEGIN_INSTALL_PATH = "${MAM_APPS_PATH}/begininstall"
+    private static final ADD_SMARTGROUP_PATH = "${MAM_APPS_PATH}/%s/addsmartgroup/%s"
 
-  AirWatchClient(String host, String username, String password, String tenantCode) {
-    this.host = host
-    this.username = username
-    this.password = password
-    this.tenantCode = tenantCode
-    this.encodedCredentials = "$username:$password".getBytes().encodeBase64().toString()
+    private static final MDM_SMARTGROUPS_PATH = "${API_V1_PATH}/mdm/smartgroups"
+    private static final SMARTGROUPS_SEARCH_PATH = "${MDM_SMARTGROUPS_PATH}/search"
 
-    this.restClient = new RESTClient("${host}/${API_PATH}")
-  }
+    private HTTPBuilder http
+    final String host
+    final String username
+    final String password
+    final String tenantCode
+    final String encodedCredentials
 
-  Map uploadApp(File ipaFile, BeginInstallConfig config) {
-    def transactionId = uploadFile(ipaFile)
+    AirWatchClient(String host, String username, String password, String tenantCode) {
+        this.host = host
+        this.username = username
+        this.password = password
+        this.tenantCode = tenantCode
+        this.encodedCredentials = "$username:$password".getBytes().encodeBase64().toString()
 
-    println "\nWill create app in AirWatch using the uploaded chunks..."
-
-    beginInstall(transactionId, config)
-  }
-
-  String uploadFile(File file) {
-    def fileSize = file.size()
-    def chunkSequenceNumber = 1
-    def transactionId = "0"
-    def totalChunks = "${new BigDecimal( Math.ceil(fileSize / CHUNK_SIZE) )}"
-
-    println "\nWill upload \"${file.name}\" to AirWatch..."
-
-    file.eachByte(CHUNK_SIZE) { buffer, sizeRead ->
-      def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
-      def encodedChunk = bufferSlice.encodeBase64().toString()
-
-      println "Uploading chunk ${chunkSequenceNumber} of ${totalChunks}..."
-
-      transactionId = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize)
-
-      chunkSequenceNumber++
+        this.http = new HTTPBuilder(host)
     }
 
-    transactionId
-  }
+    Map uploadApp(File ipaFile, BeginInstallConfig config) {
+        def transactionId = uploadFile(ipaFile, config)
 
-  String uploadChunk(String transactionId, String encodedChunk, int chunkSequenceNumber, long fileSize) {
-    def body = [
-      "TransactionId": transactionId,
-      "ChunkData": encodedChunk,
-      "ChunkSequenceNumber": chunkSequenceNumber,
-      "TotalApplicationSize": fileSize,
-      "ChunkSize": CHUNK_SIZE
-    ]
+        println "\nCreating the app in AirWatch using the uploaded chunks..."
 
-    def response = doPost(UPLOAD_CHUNK_PATH, body)
+        beginInstall(transactionId, config)
+    }
 
-    response.get("TranscationId")
-  }
+    String uploadFile(File file, BeginInstallConfig config) {
+        def fileSize = file.size()
+        def chunkSequenceNumber = 1
+        def transactionId = "0"
+        def chunkSize = (ceil(fileSize / config.totalChunks)).intValue()
 
-  Map beginInstall(String transactionId, BeginInstallConfig config) {
-    def body = [
-      "TransactionId": transactionId,
-      "ApplicationName": config.appName,
-      "Description": config.appDescription,
-      "AutoUpdateVersion": true,
-      "DeviceType": "Apple",
-      "PushMode": config.pushMode,
-      "EnableProvisioning": false,
-      "LocationGroupId": config.locationGroupId,
-      "SupportedModels": [
-        "Model": [
-          [ "ModelId": 1, "ModelName": "iPhone" ],
-          [ "ModelId": 2, "ModelName": "iPad" ],
-          [ "ModelId": 3, "ModelName": "iPod Touch" ]
-        ]
-      ]
-    ]
+        println "\nWill upload \"${file.name}\" to AirWatch..."
 
-    doPost(BEGIN_INSTALL_PATH, body)
-  }
+        file.eachByte(chunkSize) { buffer, sizeRead ->
+            def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
+            def encodedChunk = bufferSlice.encodeBase64().toString()
 
-  private Map doPost(String resourcePath, Map requestBody) {
-    def headers = [
-      "Content-Type": "application/json",
-      "aw-tenant-code": this.tenantCode,
-      "Authorization": "Basic $encodedCredentials"
-    ]
+            println "\nUploading chunk ${chunkSequenceNumber} of ${config.totalChunks}..."
 
-    def body = new JsonBuilder(requestBody)
-    logger.debug "Request body: ${body}"
+            def response = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize, chunkSize)
+            transactionId = response.get("TranscationId")
 
-    try {
-      def response = restClient.post(
-        path: resourcePath,
-        headers: headers,
-        body: body.toString(),
-        requestContentType: JSON)
-
-        println "AirWatch response was ${response.data}"
-
-        response.data
-    } catch(HttpResponseException e) {
-        println "Airwatch responded with an HTTP error, status code: ${e.response.status}"
-        println "Request path: ${resourcePath}"
-        println "Request body: ${body}"
-        println "Response headers: ${e.response.allHeaders}"
-
-        def errorMessage = "Airwatch responded with an HTTP error"
-        def parsedResponse = e.response.data
-        if (parsedResponse != null) {
-            def iterator = parsedResponse.childNodes()
-            def msg = iterator.collect { "\"$it.name\":\"$it\"" }.join(", ")
-            errorMessage = "AirWatch response was: {${msg}}"
+            chunkSequenceNumber++
         }
 
-        throw new PublishException(errorMessage, e)
+        transactionId
     }
-  }
+
+    Map uploadChunk(String transactionId, String encodedChunk, int chunkSequenceNumber, long fileSize, int chunkSize) {
+        Map args = [
+                "path": UPLOAD_CHUNK_PATH,
+                "body": [
+                        "TransactionId"       : transactionId,
+                        "ChunkData"           : encodedChunk,
+                        "ChunkSequenceNumber" : chunkSequenceNumber,
+                        "TotalApplicationSize": fileSize,
+                        "ChunkSize"           : chunkSize
+                ]
+        ]
+
+        doRequest(POST, args)
+    }
+
+    Map beginInstall(String transactionId, BeginInstallConfig config) {
+        Map args = [
+                "path": BEGIN_INSTALL_PATH,
+                "body": [
+                        "TransactionId"     : transactionId,
+                        "ApplicationName"   : config.appName,
+                        "Description"       : config.appDescription,
+                        "AutoUpdateVersion" : true,
+                        "DeviceType"        : "Apple",
+                        "PushMode"          : config.pushMode,
+                        "EnableProvisioning": false,
+                        "LocationGroupId"   : config.locationGroupId,
+                        "SupportedModels"   : [
+                                "Model": [
+                                        ["ModelId": 1, "ModelName": "iPhone"],
+                                        ["ModelId": 2, "ModelName": "iPad"],
+                                        ["ModelId": 3, "ModelName": "iPod Touch"]
+                                ]
+                        ]
+                ]
+        ]
+
+        doRequest(POST, args)
+    }
+
+    void assignSmartGroupToApplication(String smartGroups, String appId, String locationGroupId) {
+        def smartGroupNames = smartGroups.split(/,\s?/)
+
+        smartGroupNames.each { name ->
+            def searchResult = smartGroupSearch(name, locationGroupId)
+            String smartGroupId = searchResult["SmartGroups"]["SmartGroupID"].get(0)
+
+            addSmartGroup(appId, smartGroupId)
+        }
+    }
+
+    Map smartGroupSearch(String smartGroupName, String locationGroupId) {
+        println "\nSearching for Smart Group \"${smartGroupName}\"..."
+
+        Map args = [
+                "path" : SMARTGROUPS_SEARCH_PATH,
+                "query": ["name": smartGroupName, "organizationgroupid": locationGroupId]
+        ]
+
+        doRequest(GET, args)
+    }
+
+    void addSmartGroup(String appId, String smartGroupId) {
+        println "\nAssigning Smart Group id \"${smartGroupId}\" to app id \"${appId}\"..."
+
+        Map args = [
+                "path": format(ADD_SMARTGROUP_PATH, appId, smartGroupId)
+        ]
+
+        doRequest(POST, args)
+    }
+
+    private Map doRequest(Method method, Map params) {
+
+        http.request(method, JSON) { req ->
+            uri.path = params.get("path")
+            headers = defaultHeaders()
+
+            if (params.containsKey("body")) {
+                body = params.get("body")
+                logger.debug("Request body: {}", params.get("body"))
+            }
+
+            if (params.containsKey("query")) {
+                uri.query = params.get("query")
+            }
+
+            response.success = { resp, json ->
+                println "AirWatch returned a successful response: ${resp.statusLine}"
+                println "Response body is: ${json}"
+                return json
+            }
+
+            response.failure = { resp, json ->
+                def errorMessage = "AirWatch returned an unexpected error: ${resp.statusLine}" +
+                        "\n" +
+                        "Response body is: ${json}"
+
+                throw new AirWatchClientException(errorMessage)
+            }
+        }
+    }
+
+    private Map<String, String> defaultHeaders() {
+        [
+                "Content-Type"  : "application/json",
+                "aw-tenant-code": this.tenantCode,
+                "Authorization" : "Basic $encodedCredentials"
+        ]
+    }
 }
