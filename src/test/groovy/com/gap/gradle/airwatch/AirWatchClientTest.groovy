@@ -7,6 +7,7 @@ import groovyx.net.http.Method
 import org.junit.Before
 import org.junit.Test
 
+import static groovy.json.JsonOutput.toJson
 import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.Method.GET
 import static groovyx.net.http.Method.POST
@@ -31,7 +32,7 @@ class AirWatchClientTest {
         httpBuilderMock.demand.request(1) { Method method, ContentType contentType, Closure req ->
             req.delegate = [response: [:], uri: [:]]
             req.call()
-            params = [method: method, type: contentType, path: req.uri.path,
+            params = [method : method, type: contentType, path: req.uri.path,
                       headers: req.headers, query: req.uri.query, body: req.body]
         }
     }
@@ -171,7 +172,7 @@ class AirWatchClientTest {
                 client.uploadChunk("", "", 1, 1, 1)
             } catch (AirWatchClientException e) {
                 assertTrue("Should contain HTTP statusLine", e.message.contains(errorResponse.statusLine.toString()))
-                assertTrue("Should contain response JSON", e.message.contains(errorJson.toString()))
+                assertTrue("Should contain response JSON", e.message.contains(toJson(errorJson)))
             }
         }
     }

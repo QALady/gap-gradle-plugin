@@ -5,6 +5,7 @@ import groovyx.net.http.Method
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import static groovy.json.JsonOutput.toJson
 import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.Method.GET
 import static groovyx.net.http.Method.POST
@@ -160,20 +161,30 @@ class AirWatchClient {
                 uri.query = params.get("query")
             }
 
-            response.success = { resp, json ->
-                println "AirWatch returned a successful response: ${resp.statusLine}"
-                println "Response body is: ${json}"
-                return json
+            response.success = { resp, body ->
+                println "AirWatch returned a successful response: ${resp.statusLine}" +
+                        "\n" +
+                        formattedResponseBody(body)
+
+                return body
             }
 
-            response.failure = { resp, json ->
+            response.failure = { resp, body ->
                 def errorMessage = "AirWatch returned an unexpected error: ${resp.statusLine}" +
                         "\n" +
-                        "Response body is: ${json}"
+                        formattedResponseBody(body)
 
                 throw new AirWatchClientException(errorMessage)
             }
         }
+    }
+
+    private String formattedResponseBody(Map body) {
+        def message = "Response body is"
+
+        message <<= (body == null) ? ' empty' : ": ${toJson(body)}"
+
+        return message
     }
 
     private Map<String, String> defaultHeaders() {
