@@ -54,7 +54,7 @@ class AirWatchClient {
         def fileSize = file.size()
         def chunkSequenceNumber = 1
         def transactionId = "0"
-        def chunkSize = (ceil(fileSize / config.totalChunks)).intValue()
+        def chunkSize = (ceil(fileSize / config.uploadChunks)).intValue()
 
         println "\nWill upload \"${file.name}\" to AirWatch..."
 
@@ -62,7 +62,7 @@ class AirWatchClient {
             def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
             def encodedChunk = bufferSlice.encodeBase64().toString()
 
-            println "\nUploading chunk ${chunkSequenceNumber} of ${config.totalChunks}..."
+            println "\nUploading chunk ${chunkSequenceNumber} of ${config.uploadChunks}..."
 
             def response = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize, chunkSize)
             transactionId = response.get("TranscationId")

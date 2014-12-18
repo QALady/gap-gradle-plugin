@@ -181,7 +181,7 @@ class AirWatchClientTest {
         String appDescription
         String locationGroupId
         String pushMode
-        Integer totalChunks
+        Integer uploadChunks
 
         StubConfig(String appName, String appDescription, String locationGroupId, String pushMode) {
             this.appName = appName

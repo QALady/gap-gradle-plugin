@@ -21,7 +21,7 @@ airwatchUpload {
   appDescription 'Some nice description about it'
   configFilename 'production.yml'
   pushMode 'auto'
-  totalChunks 25
+  uploadChunks 25
 
   smartGroups 'group1,group2'
 
@@ -42,7 +42,7 @@ airwatchUpload {
 * `appDescription` specifies the application description in Airwatch
 * `configFilename` specifies the file name from the "airwatchConfig" artifact that will be used for the configuration of the app in Airwatch
 * `pushMode` should be "auto" or "ondemand"
-* `totalChunks` specifies in how many chunks the ipa is going to be uploaded. If omitted, the default value is used (25).
+* `uploadChunks` specifies in how many chunks the ipa is going to be uploaded. If omitted, the default value is used (25).
 * `environments` allows the addition of other Airwatch environments that you might want to push artifacts to. There are pre-configured ones: preProduction (aka CN11) and production.
 * `smartGroups` used to configure which Smart Groups are going to be automatically assigned to the ipa
 * `artifact` specifies which artifact from the "archives" configuration will be uploaded to Airwatch. You can see this as a criteria filter, you can specify some or all of the artifact's attributes to narrow down the artifact that you want to upload. Matching only using classifier, will grab the first artifact found in archives with that classifier:
