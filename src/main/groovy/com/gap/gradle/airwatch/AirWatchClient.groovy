@@ -6,6 +6,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import static groovy.json.JsonOutput.toJson
+import static groovyx.net.http.ContentType.ANY
 import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.Method.GET
 import static groovyx.net.http.Method.POST
@@ -28,20 +29,19 @@ class AirWatchClient {
     private static final SMARTGROUPS_SEARCH_PATH = "${MDM_SMARTGROUPS_PATH}/search"
 
     private HTTPBuilder http
-    final String host
-    final String username
-    final String password
-    final String tenantCode
-    final String encodedCredentials
 
     AirWatchClient(String host, String username, String password, String tenantCode) {
-        this.host = host
-        this.username = username
-        this.password = password
-        this.tenantCode = tenantCode
-        this.encodedCredentials = "$username:$password".getBytes().encodeBase64().toString()
+        def encodedCredentials = "${username}:${password}".getBytes().encodeBase64().toString()
 
-        this.http = new HTTPBuilder(host)
+        def headers = [
+                'aw-tenant-code': tenantCode,
+                'Authorization' : "Basic ${encodedCredentials}",
+                'Accept'        : 'application/json'
+        ]
+
+        http = new HTTPBuilder(host)
+        http.contentType = ANY
+        http.headers = headers
     }
 
     Map uploadApp(File ipaFile, BeginInstallConfig config) {
@@ -149,13 +149,13 @@ class AirWatchClient {
 
     private Map doRequest(Method method, Map params) {
 
-        http.request(method, JSON) { req ->
+        http.request(method) { req ->
             uri.path = params.get("path")
-            headers = defaultHeaders()
+            requestContentType = JSON
 
             if (params.containsKey("body")) {
                 body = params.get("body")
-                logger.debug("Request body: {}", params.get("body"))
+                logger.debug("Request body: {}", toJson(params.get("body")))
             }
 
             if (params.containsKey("query")) {
@@ -163,36 +163,31 @@ class AirWatchClient {
             }
 
             response.success = { resp, body ->
-                println "AirWatch returned a successful response: ${resp.statusLine}" +
-                        "\n" +
-                        formattedResponseBody(body)
+                println "AirWatch returned a successful response: ${resp.statusLine}\n" +
+                        parsedResponseBody(body, resp.contentType)
 
                 return body
             }
 
             response.failure = { resp, body ->
-                def errorMessage = "AirWatch returned an unexpected error: ${resp.statusLine}" +
-                        "\n" +
-                        formattedResponseBody(body)
+                def errorMessage = "AirWatch returned an unexpected error: ${resp.statusLine}\n" +
+                        parsedResponseBody(body, resp.contentType)
 
                 throw new AirWatchClientException(errorMessage)
             }
         }
     }
 
-    private String formattedResponseBody(Map body) {
-        def message = "Response body is"
+    private String parsedResponseBody(Object body, String responseContentType) {
+        def message = ''
 
-        message <<= (body == null) ? ' empty' : ": ${toJson(body)}"
+        if (JSON.toString().equals(responseContentType)) {
+            message <<= 'Response body is'
+            message <<= (body == null) ? ' empty' : ": ${toJson(body)}"
+        } else {
+            message <<= body
+        }
 
         return message
-    }
-
-    private Map<String, String> defaultHeaders() {
-        [
-                "Content-Type"  : "application/json",
-                "aw-tenant-code": this.tenantCode,
-                "Authorization" : "Basic $encodedCredentials"
-        ]
     }
 }

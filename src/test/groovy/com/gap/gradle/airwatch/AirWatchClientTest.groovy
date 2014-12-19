@@ -1,13 +1,13 @@
 package com.gap.gradle.airwatch
 
 import groovy.mock.interceptor.MockFor
-import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import org.junit.Before
 import org.junit.Test
 
 import static groovy.json.JsonOutput.toJson
+import static groovyx.net.http.ContentType.HTML
 import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.Method.GET
 import static groovyx.net.http.Method.POST
@@ -23,29 +23,22 @@ class AirWatchClientTest {
 
     @Before
     void setUp() {
-        client = new AirWatchClient("", "someUser", "somePass", "someKey")
+        client = new AirWatchClient("", "someUser", "somePass", "someApiKey")
 
         httpBuilderMock = new MockFor(HTTPBuilder)
 
         params = []
 
-        httpBuilderMock.demand.request(1) { Method method, ContentType contentType, Closure req ->
+        httpBuilderMock.demand.request(1) { Method method, Closure req ->
             req.delegate = [response: [:], uri: [:]]
             req.call()
-            params = [method : method, type: contentType, path: req.uri.path,
-                      headers: req.headers, query: req.uri.query, body: req.body]
+            params = [method : method,
+                      path   : req.uri.path,
+                      type   : req.requestContentType,
+                      headers: req.headers,
+                      query  : req.uri.query,
+                      body   : req.body]
         }
-    }
-
-    @Test
-    void shouldSendAuthorizationHeaders() {
-        def encodedCredentials = "someUser:somePass".getBytes().encodeBase64().toString()
-
-        httpBuilderMock.use {
-            client.uploadChunk("someId", "someEncodedString", 1, 10500, 420)
-        }
-
-        assertEquals("Basic ${encodedCredentials}", params["headers"]["Authorization"])
     }
 
     @Test
@@ -57,8 +50,6 @@ class AirWatchClientTest {
         assertEquals("API/v1/mam/apps/internal/uploadchunk", params["path"].toString())
         assertEquals(POST, params["method"])
         assertEquals(JSON, params["type"])
-
-        assertEquals("someKey", params["headers"]["aw-tenant-code"])
 
         assertEquals("someId", params["body"]["TransactionId"])
         assertEquals("someEncodedString", params["body"]["ChunkData"])
@@ -76,8 +67,6 @@ class AirWatchClientTest {
         assertEquals("API/v1/mam/apps/internal/begininstall", params["path"].toString())
         assertEquals(POST, params["method"])
         assertEquals(JSON, params["type"])
-
-        assertEquals("someKey", params["headers"]["aw-tenant-code"])
 
         assertEquals("someId", params["body"]["TransactionId"])
         assertEquals("someName", params["body"]["ApplicationName"])
@@ -99,8 +88,6 @@ class AirWatchClientTest {
         assertEquals(GET, params["method"])
         assertEquals(JSON, params["type"])
 
-        assertEquals("someKey", params["headers"]["aw-tenant-code"])
-
         assertEquals(smartGroupName, params["query"]["name"])
         assertEquals(locationGroupId, params["query"]["organizationgroupid"])
     }
@@ -118,9 +105,6 @@ class AirWatchClientTest {
         assertEquals(path, params["path"].toString())
         assertEquals(POST, params["method"])
         assertEquals(JSON, params["type"])
-
-        assertEquals("someKey", params["headers"]["aw-tenant-code"])
-
         assertEquals(null, params["body"])
     }
 
@@ -135,7 +119,7 @@ class AirWatchClientTest {
         def successResponse = ['statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 200, 'status': 'OK']]
         def responseJson = ['SmartGroups': ['SmartGroupID': ["someGroupId"]]]
 
-        httpMock.demand.request(6) { Method method, ContentType contentType, Closure req ->
+        httpMock.demand.request(6) { Method method, Closure req ->
             req.delegate = [response: [:], uri: [:]]
             req.call()
 
@@ -155,16 +139,19 @@ class AirWatchClientTest {
     }
 
     @Test
-    void shouldThrowAirWatchClientExceptionAndOutputResponseBodyIfAvailable() throws Exception {
+    void shouldThrowAirWatchClientExceptionAndParseJsonResponse() throws Exception {
         def httpMock = new MockFor(HTTPBuilder)
 
-        def errorResponse = ['statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 500, 'status': 'Internal Server Error']]
-        def errorJson = ['anError': 'An error message']
+        def errorResponse = [
+                'statusLine' : ['protocol': 'HTTP/1.1', 'statusCode': 500, 'status': 'Internal Server Error'],
+                'contentType': JSON.toString()
+        ]
+        def errorBody = ['anError': 'An error message']
 
-        httpMock.demand.request { Method method, ContentType contentType, Closure req ->
+        httpMock.demand.request { Method method, Closure req ->
             req.delegate = [uri: [:], response: [:]]
             req.call()
-            req.delegate.response.failure(errorResponse, errorJson)
+            req.delegate.response.failure(errorResponse, errorBody)
         }
 
         httpMock.use {
@@ -172,7 +159,33 @@ class AirWatchClientTest {
                 client.uploadChunk("", "", 1, 1, 1)
             } catch (AirWatchClientException e) {
                 assertTrue("Should contain HTTP statusLine", e.message.contains(errorResponse.statusLine.toString()))
-                assertTrue("Should contain response JSON", e.message.contains(toJson(errorJson)))
+                assertTrue("Should contain response JSON", e.message.contains(toJson(errorBody)))
+            }
+        }
+    }
+
+    @Test
+    void shouldNotParseResponseBodyIfContentTypeNotJSON() throws Exception {
+        def httpMock = new MockFor(HTTPBuilder)
+
+        def response = [
+                'statusLine' : ['protocol': 'HTTP/1.1', 'statusCode': 401, 'status': 'Unauthorized'],
+                'contentType': HTML.toString()
+        ]
+        def body = 'Some text body'
+
+        httpMock.demand.request { Method method, Closure req ->
+            req.delegate = [uri: [:], response: [:]]
+            req.call()
+            req.delegate.response.failure(response, body)
+        }
+
+        httpMock.use {
+            try {
+                client.uploadChunk("", "", 1, 1, 1)
+            } catch (AirWatchClientException e) {
+                assertTrue("Should contain HTTP statusLine", e.message.contains(response.statusLine.toString()))
+                assertTrue("Should contain text response body", e.message.contains(body))
             }
         }
     }
