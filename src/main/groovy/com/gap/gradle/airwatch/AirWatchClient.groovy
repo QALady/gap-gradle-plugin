@@ -11,6 +11,7 @@ import static groovyx.net.http.Method.GET
 import static groovyx.net.http.Method.POST
 import static java.lang.Math.ceil
 import static java.lang.String.format
+import static java.util.Arrays.copyOfRange
 
 class AirWatchClient {
 
@@ -52,16 +53,16 @@ class AirWatchClient {
     }
 
     String uploadFile(File file, BeginInstallConfig config) {
-        def fileSize = file.size()
-        def chunkSequenceNumber = 1
-        def transactionId = "0"
-        def chunkSize = (ceil(fileSize / config.uploadChunks)).intValue()
+        long fileSize = file.size()
+        int chunkSequenceNumber = 1
+        String transactionId = "0"
+        int chunkSize = (ceil(fileSize / config.uploadChunks)).intValue()
 
         println "\nWill upload \"${file.name}\" to AirWatch..."
 
-        file.eachByte(chunkSize) { buffer, sizeRead ->
-            def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
-            def encodedChunk = bufferSlice.encodeBase64().toString()
+        file.eachByte(chunkSize) { byte[] buffer, int sizeRead ->
+            byte[] bufferSlice = copyOfRange(buffer, 0, sizeRead)
+            String encodedChunk = bufferSlice.encodeBase64().toString()
 
             println "\nUploading chunk ${chunkSequenceNumber} of ${config.uploadChunks}..."
 
