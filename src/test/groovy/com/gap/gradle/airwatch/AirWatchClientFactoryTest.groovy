@@ -1,24 +1,41 @@
 package com.gap.gradle.airwatch
 
-import org.junit.Assert
 import org.junit.Test
 
+import static groovyx.net.http.ContentType.ANY
+import static groovyx.net.http.ContentType.JSON
+import static org.junit.Assert.assertEquals
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
 public class AirWatchClientFactoryTest {
+
+    def static credentialProvider
+
     @Test
     public void shouldCreateAnAirwatchClientInstanceWithTheCorrectCredentials() throws Exception {
-        def factory = new AirWatchClientFactory()
-        def credentialProvider = mock(CredentialProvider)
+        credentialProvider = mock(CredentialProvider)
         when(credentialProvider.get("testCredential")).thenReturn(new Credential("testUser", "testPass"))
 
+        def factory = new AirWatchClientFactory()
         def airWatchClient = factory.create(testEnvironment(), credentialProvider)
 
-        Assert.assertEquals("http://api.example.com", airWatchClient.host)
-        Assert.assertEquals("testUser", airWatchClient.username)
-        Assert.assertEquals("testPass", airWatchClient.password)
-        Assert.assertEquals("ABC123", airWatchClient.tenantCode)
+        def http = airWatchClient.http
+        assertEquals('http://api.example.com'.toString(), http.defaultURI.toString())
+        assertEquals(ANY, http.defaultContentType)
+
+        def headers = http.headers
+        assertEquals('ABC123', headers['aw-tenant-code'])
+        assertEquals("Basic ${encodedCredentials()}".toString(), headers['Authorization'])
+        assertEquals(JSON.toString(), headers['Accept'])
+    }
+
+    private static String encodedCredentials() {
+        def credential = credentialProvider.get('testCredential')
+        def user = credential.username
+        def pass = credential.password
+
+        "${user}:${pass}".getBytes().encodeBase64().toString()
     }
 
     private static Environment testEnvironment() {

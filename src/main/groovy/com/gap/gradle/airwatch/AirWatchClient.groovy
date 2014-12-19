@@ -5,11 +5,14 @@ import groovyx.net.http.Method
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import static groovy.json.JsonOutput.toJson
+import static groovyx.net.http.ContentType.ANY
 import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.Method.GET
 import static groovyx.net.http.Method.POST
 import static java.lang.Math.ceil
 import static java.lang.String.format
+import static java.util.Arrays.copyOfRange
 
 class AirWatchClient {
 
@@ -25,21 +28,22 @@ class AirWatchClient {
     private static final MDM_SMARTGROUPS_PATH = "${API_V1_PATH}/mdm/smartgroups"
     private static final SMARTGROUPS_SEARCH_PATH = "${MDM_SMARTGROUPS_PATH}/search"
 
+    private static final STATUS_CODE_OK = 200
+
     private HTTPBuilder http
-    final String host
-    final String username
-    final String password
-    final String tenantCode
-    final String encodedCredentials
 
     AirWatchClient(String host, String username, String password, String tenantCode) {
-        this.host = host
-        this.username = username
-        this.password = password
-        this.tenantCode = tenantCode
-        this.encodedCredentials = "$username:$password".getBytes().encodeBase64().toString()
+        def encodedCredentials = "${username}:${password}".getBytes().encodeBase64().toString()
 
-        this.http = new HTTPBuilder(host)
+        def headers = [
+                'aw-tenant-code': tenantCode,
+                'Authorization' : "Basic ${encodedCredentials}",
+                'Accept'        : 'application/json'
+        ]
+
+        http = new HTTPBuilder(host)
+        http.contentType = ANY
+        http.headers = headers
     }
 
     Map uploadApp(File ipaFile, BeginInstallConfig config) {
@@ -51,18 +55,18 @@ class AirWatchClient {
     }
 
     String uploadFile(File file, BeginInstallConfig config) {
-        def fileSize = file.size()
-        def chunkSequenceNumber = 1
-        def transactionId = "0"
-        def chunkSize = (ceil(fileSize / config.totalChunks)).intValue()
+        long fileSize = file.size()
+        int chunkSequenceNumber = 1
+        String transactionId = "0"
+        int chunkSize = (ceil(fileSize / config.uploadChunks)).intValue()
 
         println "\nWill upload \"${file.name}\" to AirWatch..."
 
-        file.eachByte(chunkSize) { buffer, sizeRead ->
-            def bufferSlice = Arrays.copyOfRange(buffer, 0, sizeRead)
-            def encodedChunk = bufferSlice.encodeBase64().toString()
+        file.eachByte(chunkSize) { byte[] buffer, int sizeRead ->
+            byte[] bufferSlice = copyOfRange(buffer, 0, sizeRead)
+            String encodedChunk = bufferSlice.encodeBase64().toString()
 
-            println "\nUploading chunk ${chunkSequenceNumber} of ${config.totalChunks}..."
+            println "\nUploading chunk ${chunkSequenceNumber} of ${config.uploadChunks}..."
 
             def response = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize, chunkSize)
             transactionId = response.get("TranscationId")
@@ -147,40 +151,52 @@ class AirWatchClient {
 
     private Map doRequest(Method method, Map params) {
 
-        http.request(method, JSON) { req ->
+        http.request(method) { req ->
             uri.path = params.get("path")
-            headers = defaultHeaders()
+            requestContentType = JSON
 
             if (params.containsKey("body")) {
                 body = params.get("body")
-                logger.debug("Request body: {}", params.get("body"))
+                logger.debug("Request body: {}", toJson(params.get("body")))
             }
 
             if (params.containsKey("query")) {
                 uri.query = params.get("query")
             }
 
-            response.success = { resp, json ->
-                println "AirWatch returned a successful response: ${resp.statusLine}"
-                println "Response body is: ${json}"
-                return json
+            response.success = { resp, body ->
+                validateResponseCode(resp, body)
+
+                return body
             }
 
-            response.failure = { resp, json ->
-                def errorMessage = "AirWatch returned an unexpected error: ${resp.statusLine}" +
-                        "\n" +
-                        "Response body is: ${json}"
-
-                throw new AirWatchClientException(errorMessage)
+            response.failure = { resp, body ->
+                throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n" +
+                        parseResponseBody(body, resp.contentType))
             }
         }
     }
 
-    private Map<String, String> defaultHeaders() {
-        [
-                "Content-Type"  : "application/json",
-                "aw-tenant-code": this.tenantCode,
-                "Authorization" : "Basic $encodedCredentials"
-        ]
+    private void validateResponseCode(resp, body) {
+        if (resp.statusLine.statusCode != STATUS_CODE_OK) {
+            throw new AirWatchClientException("AirWatch returned a response different than ${STATUS_CODE_OK}: " +
+                    "${resp.statusLine}")
+        }
+
+        println "AirWatch returned a successful response: ${resp.statusLine}\n" +
+                parseResponseBody(body, resp.contentType)
+    }
+
+    private String parseResponseBody(body, responseContentType) {
+        def message = ''
+
+        if (JSON.toString().equals(responseContentType)) {
+            message <<= 'Response body is'
+            message <<= (body == null) ? ' empty' : ": ${toJson(body)}"
+        } else {
+            message <<= body
+        }
+
+        return message
     }
 }
