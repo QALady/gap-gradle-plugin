@@ -28,6 +28,8 @@ class AirWatchClient {
     private static final MDM_SMARTGROUPS_PATH = "${API_V1_PATH}/mdm/smartgroups"
     private static final SMARTGROUPS_SEARCH_PATH = "${MDM_SMARTGROUPS_PATH}/search"
 
+    private static final STATUS_CODE_OK = 200
+
     private HTTPBuilder http
 
     AirWatchClient(String host, String username, String password, String tenantCode) {
@@ -163,22 +165,29 @@ class AirWatchClient {
             }
 
             response.success = { resp, body ->
-                println "AirWatch returned a successful response: ${resp.statusLine}\n" +
-                        parsedResponseBody(body, resp.contentType)
+                validateResponseCode(resp, body)
 
                 return body
             }
 
             response.failure = { resp, body ->
-                def errorMessage = "AirWatch returned an unexpected error: ${resp.statusLine}\n" +
-                        parsedResponseBody(body, resp.contentType)
-
-                throw new AirWatchClientException(errorMessage)
+                throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n" +
+                        parseResponseBody(body, resp.contentType))
             }
         }
     }
 
-    private String parsedResponseBody(Object body, String responseContentType) {
+    private void validateResponseCode(resp, body) {
+        if (resp.statusLine.statusCode != STATUS_CODE_OK) {
+            throw new AirWatchClientException("AirWatch returned a response different than ${STATUS_CODE_OK}: " +
+                    "${resp.statusLine}")
+        }
+
+        println "AirWatch returned a successful response: ${resp.statusLine}\n" +
+                parseResponseBody(body, resp.contentType)
+    }
+
+    private String parseResponseBody(body, responseContentType) {
         def message = ''
 
         if (JSON.toString().equals(responseContentType)) {

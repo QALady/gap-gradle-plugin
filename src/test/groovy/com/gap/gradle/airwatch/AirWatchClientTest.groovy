@@ -190,6 +190,27 @@ class AirWatchClientTest {
         }
     }
 
+    @Test
+    void shouldThrowAirwatchExceptionIfStatusCodeNotOK() throws Exception {
+        def httpMock = new MockFor(HTTPBuilder)
+
+        def response = ['statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 204, 'status': 'No Content']]
+
+        httpMock.demand.request { Method method, Closure req ->
+            req.delegate = [uri: [:], response: [:]]
+            req.call()
+            req.delegate.response.success(response, null)
+        }
+
+        httpMock.use {
+            try {
+                client.uploadChunk("", "", 1, 1, 1)
+            } catch (AirWatchClientException e) {
+                assertTrue("Should contain HTTP statusLine", e.message.contains(response.statusLine.toString()))
+            }
+        }
+    }
+
     private class StubConfig implements BeginInstallConfig {
         String appName
         String appDescription
