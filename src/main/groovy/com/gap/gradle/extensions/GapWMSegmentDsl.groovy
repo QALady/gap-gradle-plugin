@@ -15,6 +15,7 @@ class GapWMSegmentDsl {
 	final NamedDomainObjectSet<GapWMSegmentDslAction> _finally
 	def resourceName // resource definition at segment level.
 	final NamedDomainObjectSet<GapWMSegmentDslDynamicNodes> dynamicNodes
+	final NamedDomainObjectSet<GapWMSegmentDslJobLink> jobLinks
 
 	GapWMSegmentDsl(Project project, Instantiator instantiator) {
 		this.prepare = project.container(GapWMSegmentDslAction, { name -> instantiator.newInstance(GapWMSegmentDslAction, name, project, instantiator) })
@@ -22,6 +23,7 @@ class GapWMSegmentDsl {
 		this.approve = project.container(GapWMSegmentDslAction, { name -> instantiator.newInstance(GapWMSegmentDslAction, name, project, instantiator) })
 		this._finally = project.container(GapWMSegmentDslAction, { name -> instantiator.newInstance(GapWMSegmentDslAction, name, project, instantiator) })
 		this.dynamicNodes= project.container(GapWMSegmentDslDynamicNodes, {name -> instantiator.newInstance(GapWMSegmentDslDynamicNodes, name)})
+		this.jobLinks= project.container(GapWMSegmentDslJobLink, {name -> instantiator.newInstance(GapWMSegmentDslJobLink, name)})
 	}
 
 	void prepare(Action<? super NamedDomainObjectCollection<GapWMSegmentDslAction>> action) {
@@ -42,6 +44,10 @@ class GapWMSegmentDsl {
 
 	void dynamicNodes(Action<? super NamedDomainObjectCollection<GapWMSegmentDslDynamicNodes>> action) {
 		action.execute(dynamicNodes)
+	}
+
+	void jobLinks(Action<? super NamedDomainObjectCollection<GapWMSegmentDslJobLink>> action) {
+		action.execute(jobLinks)
 	}
 
 	def getResourceName() {

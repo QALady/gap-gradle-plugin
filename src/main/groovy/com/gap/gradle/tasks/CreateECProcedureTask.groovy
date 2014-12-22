@@ -31,8 +31,16 @@ class CreateECProcedureTask extends WatchmenTask {
 
 	def execute() {
 		executeCreateDynamicNodes()
+		executeCreateJobLinks() // sets the job links at the beginning, TODO: we need to revisit this if the project teams need the job Links to be set at the end.
 		segmentPhases.each { phase ->
 			createPhaseProcedure(phase)
+		}
+	}
+
+	def executeCreateJobLinks() {
+		segmentDsl.jobLinks.each { jobLink ->
+			logger.info("Creating EC JobLink urlLabel: ${jobLink.name}, urlLink: ${jobLink.link}")
+			commanderClient.setECProperty("/myJob/report-urls/${jobLink.name}","${jobLink.link}")
 		}
 	}
 
@@ -125,21 +133,19 @@ class CreateECProcedureTask extends WatchmenTask {
 		def easyCreateParams
 		def projectName = "Nova-CLI"
 		def procedureName = "Easy Create"
-		if (!segmentDsl.dynamicNodes.isEmpty()) {
-			segmentDsl.dynamicNodes.each { node ->
-					easyCreateParams = [:]
-					easyCreateParams.put("tenant", "${node.openstackTenant}".toString())
-					easyCreateParams.put("roleName", "${node.chefRole}".toString())
-					easyCreateParams.put("hostname", "${node.name}".toString())
+		segmentDsl.dynamicNodes.each { node ->
+				easyCreateParams = [:]
+				easyCreateParams.put("tenant", "${node.openstackTenant}".toString())
+				easyCreateParams.put("roleName", "${node.chefRole}".toString())
+				easyCreateParams.put("hostname", "${node.name}".toString())
 
-					easyCreateParams.put("network", "public".toString())
-					easyCreateParams.put("autoPurge", "true")
-					easyCreateParams.put("createResource", "true")
-					easyCreateParams.put("type", "${node.imageType}".toString())
+				easyCreateParams.put("network", "public".toString())
+				easyCreateParams.put("autoPurge", "true")
+				easyCreateParams.put("createResource", "true")
+				easyCreateParams.put("type", "${node.imageType}".toString())
 
-					commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
-					logger.info("created Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
-			}
+				commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
+				logger.info("created Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
 		}
 	}
 }

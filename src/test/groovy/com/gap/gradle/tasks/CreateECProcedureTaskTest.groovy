@@ -1,10 +1,9 @@
 package com.gap.gradle.tasks
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNull
-import static org.junit.rules.ExpectedException.none
-import static org.mockito.Mockito.*
-
+import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
+import com.gap.gradle.utils.ShellCommand
+import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.utils.EnvironmentStub
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -15,10 +14,10 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.mockito.Mockito
 
-import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
-import com.gap.gradle.utils.ShellCommand
-import com.gap.pipeline.ec.CommanderClient
-import com.gap.pipeline.utils.EnvironmentStub
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertNull
+import static org.junit.rules.ExpectedException.none
+import static org.mockito.Mockito.*
 
 class CreateECProcedureTaskTest {
 	private Project project
@@ -42,6 +41,8 @@ class CreateECProcedureTaskTest {
 		when(mockShellCommand.execute(['ectool', 'getProperty', '/myProject/runCondition'])).thenReturn('always')
 		when(mockShellCommand.execute(['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', '--actualParameter', 'openstackTenant=tenant-name1', 'chefRole=the-chef-role-to-apply-on-the-node1'])).thenReturn(1)
 		when(mockShellCommand.execute(['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', '--actualParameter', 'openstackTenant=tenant-name2', 'chefRole=the-chef-role-to-apply-on-the-node2'])).thenReturn(2)
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'WM Link', '--procedureName', 'Create Link', '--actualParameter', 'urlLabel=SonarPrepare', 'urlLink=http://sonar001.phx.gapinc.dev:9000/dashboard/index/prepare'])).thenReturn("OK")
+
 		EnvironmentStub env = new EnvironmentStub()
 		env.setValue('COMMANDER_JOBID', '1234') // sets the job ID
 		commanderClient = new CommanderClient(mockShellCommand, env)
@@ -105,7 +106,6 @@ class CreateECProcedureTaskTest {
 							resourceName 'dgphxaciap003'
 							command 'ectool test'
 						}
-
 			}
 		}
 
@@ -118,6 +118,57 @@ class CreateECProcedureTaskTest {
 
 		def actualResult = task.createPhaseECStep("procedure1", project.segment.test.myAction)
 		assertEquals("Bad formed command string", "OK!", actualResult)
+	}
+
+	@Test
+	void shouldAssertCreateECJobLinkIsFilledAndRunWithoutException() {
+		project.segment {
+			test {
+				myAction {
+					command 'ectool test'
+				}
+			}
+			jobLinks {
+				SonarPrepare {
+					link "http://sonar001.phx.gapinc.dev:9000/dashboard/index/prepare"
+				}
+				SonarTest {
+					link "http://sonar001.phx.gapinc.dev:9000/dashboard/index/test"
+				}
+				MyTestLink {
+					link "http://dummytest.com/"
+				}
+				"MyTestLink With Space" {
+					link "http://dummytest.com/"
+				}
+
+			}
+		}
+		task.execute()
+
+		assertEquals("jobLinks unable to load", "SonarPrepare", project.segment.jobLinks.SonarPrepare.name)
+		assertEquals("jobLinks unable to load", "http://sonar001.phx.gapinc.dev:9000/dashboard/index/prepare",
+				project.segment.jobLinks.SonarPrepare.link)
+
+		assertEquals("jobLinks unable to load", "SonarTest", project.segment.jobLinks.SonarTest.name)
+		assertEquals("jobLinks unable to load", "http://sonar001.phx.gapinc.dev:9000/dashboard/index/test",
+				project.segment.jobLinks.SonarTest.link)
+
+		assertEquals(4, project.segment.jobLinks.size())
+		
+		verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/SonarPrepare", "http://sonar001.phx.gapinc.dev:9000/dashboard/index/prepare"])
+		verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/SonarTest", "http://sonar001.phx.gapinc.dev:9000/dashboard/index/test"])
+		verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/MyTestLink", "http://dummytest.com/"])
+		verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/MyTestLink With Space", "http://dummytest.com/"])
+
+		verifyPhaseProcedures("prepare")
+		verifyPhaseProcedures("test")
+		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])		
+		verify(mockShellCommand).execute(["ectool", "createStep", "WM Temporary Procedures", "perform_test_actions_1234", "Perform myAction: ",
+			"--command", 'ectool test', "--condition", "always", "--parallel", "false"])
+
+		verifyPhaseProcedures("approve")
+		verifyPhaseProcedures("_finally")		
 	}
 
 	@Test
@@ -135,7 +186,7 @@ class CreateECProcedureTaskTest {
 		verifyPhaseProcedures("test")
 		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 		verify(mockShellCommand).execute(["ectool", "createStep", "WM Temporary Procedures", "perform_test_actions_1234", "Perform test-simple-command: ",
-		                                  "--command", 'echo "Hello Test"', "--condition", "always", "--parallel", "false"])
+										  "--command", 'echo "Hello Test"', "--condition", "always", "--parallel", "false"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
@@ -162,7 +213,7 @@ class CreateECProcedureTaskTest {
 		verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Exec"])
 		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 		verify(mockShellCommand).execute(["ectool", "createStep", "WM Temporary Procedures", "perform_test_actions_1234", "Perform test-simple-plugin: WM Exec:Run",
-		                                  "--subproject", "WM Exec-1.17", "--subprocedure", "Run", "--actualParameter", "cmd=./gradlew tasks --info", "--condition", "always", "--parallel", "false"])
+										  "--subproject", "WM Exec-1.17", "--subprocedure", "Run", "--actualParameter", "cmd=./gradlew tasks --info", "--condition", "always", "--parallel", "false"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
@@ -187,7 +238,7 @@ class CreateECProcedureTaskTest {
 		verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Segment"])
 		verify(mockShellCommand).execute(["ectool", "getProperty", "/myProject/runCondition"])
 		verify(mockShellCommand).execute(["ectool", "createStep", "WM Temporary Procedures", "perform_test_actions_1234", "Perform test-local-resource-defined: WM Segment:Lock Resource",
-		                                  "--subproject", "WM Segment", "--subprocedure", "Lock Resource", "--actualParameter", "host=my-dummy-resource-host", "--condition", "always", "--parallel", "false"])
+										  "--subproject", "WM Segment", "--subprocedure", "Lock Resource", "--actualParameter", "host=my-dummy-resource-host", "--condition", "always", "--parallel", "false"])
 
 		verifyPhaseProcedures("approve")
 		verifyPhaseProcedures("_finally")
