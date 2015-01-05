@@ -32,6 +32,11 @@ class GapWMSegmentDslPluginTest {
 	}
 
 	@Test
+	void shouldExistTaskPostWMSegmentPhases() {
+		taskShouldExist('postWMSegmentPhases', project)
+	}
+
+	@Test
 	void shouldloadSegmentExtension() {
 		def segmentExtension = project.extensions.findByName("segment")
 		assertNotNull(segmentExtension)

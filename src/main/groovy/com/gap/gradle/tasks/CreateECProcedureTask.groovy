@@ -31,16 +31,8 @@ class CreateECProcedureTask extends WatchmenTask {
 
 	def execute() {
 		executeCreateDynamicNodes()
-		executeCreateJobLinks() // sets the job links at the beginning, TODO: we need to revisit this if the project teams need the job Links to be set at the end.
 		segmentPhases.each { phase ->
 			createPhaseProcedure(phase)
-		}
-	}
-
-	def executeCreateJobLinks() {
-		segmentDsl.jobLinks.each { jobLink ->
-			logger.info("Creating EC JobLink urlLabel: ${jobLink.name}, urlLink: ${jobLink.link}")
-			commanderClient.setECProperty("/myJob/report-urls/${jobLink.name}","${jobLink.link}")
 		}
 	}
 
@@ -77,7 +69,7 @@ class CreateECProcedureTask extends WatchmenTask {
 			ecStepConfig.put('subprocedure', subProcedure)
 			ecStepConfig.put('actualParameter', dsl.getECParameters().split(";"))
 
-			// check Lock Resource on local 
+			// check Lock Resource on local
 			checkLockResourceOnLocal(dsl)
 		} else if (dsl.getCommand()) {
 			ecStepConfig.put('command', dsl.command)

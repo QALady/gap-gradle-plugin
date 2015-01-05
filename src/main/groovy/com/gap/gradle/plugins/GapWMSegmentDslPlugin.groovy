@@ -1,8 +1,5 @@
 package com.gap.gradle.plugins
 
-import com.gap.gradle.tasks.CheckDSLFileExistTask
-import com.gap.gradle.tasks.GenerateGradleWMSegmentDslFromPropertiesTask
-
 import javax.inject.Inject
 
 import org.gradle.api.Plugin
@@ -10,7 +7,10 @@ import org.gradle.api.Project
 import org.gradle.internal.reflect.Instantiator
 
 import com.gap.gradle.extensions.GapWMSegmentDsl
+import com.gap.gradle.tasks.CheckDSLFileExistTask
 import com.gap.gradle.tasks.CreateECProcedureTask
+import com.gap.gradle.tasks.GenerateGradleWMSegmentDslFromPropertiesTask
+import com.gap.gradle.tasks.PostWMSegmentPhasesTask
 
 class GapWMSegmentDslPlugin implements Plugin<Project> {
 
@@ -32,6 +32,10 @@ class GapWMSegmentDslPlugin implements Plugin<Project> {
 			new CreateECProcedureTask(project).execute()
 		}
 
+		project.task('postWMSegmentPhases') << {
+			new PostWMSegmentPhasesTask(project).execute()
+		}
+
 		project.task("checkDSLFileExist") << {
 			new CheckDSLFileExistTask(project).execute()
 		}
@@ -39,7 +43,6 @@ class GapWMSegmentDslPlugin implements Plugin<Project> {
 		project.task("generateGradleWMSegmentDslFromProperties") << {
 			new GenerateGradleWMSegmentDslFromPropertiesTask(project).execute()
 		}
-
 
 	}
 
