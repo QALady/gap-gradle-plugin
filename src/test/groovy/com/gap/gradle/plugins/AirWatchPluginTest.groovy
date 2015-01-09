@@ -12,6 +12,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito
 
@@ -115,6 +116,7 @@ class AirWatchPluginTest {
         assertEquals(airWatchClient, pushArtifactsTask.airwatchClient)
     }
 
+    @Ignore // TODO Re-enable after AirWarch feature pack 6 upgrade (MPL-342)
     @Test
     public void shouldNotConfigureAppIfAirwatchUploadConfigFileDoesNotExist() throws Exception {
         def configureAppTask = project.tasks.configureApp
@@ -129,6 +131,7 @@ class AirWatchPluginTest {
         assertEquals(true, configureAppTask.state.skipped)
     }
 
+    @Ignore // TODO Re-enable after AirWarch feature pack 6 upgrade (MPL-342)
     @Test
     public void shouldNotInstallAirwatchGemIfConfigFileDoesNotExist() throws Exception {
         def installGemTask = project.tasks.installAirwatchGem
