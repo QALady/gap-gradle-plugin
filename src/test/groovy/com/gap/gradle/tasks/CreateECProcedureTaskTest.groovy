@@ -80,7 +80,7 @@ class CreateECProcedureTaskTest {
 	}
 
 	@Test
-	void shouldAssertResourNameIsFilled() {
+	void shouldAssertResourceNameIsFilled() {
 		project.segment {
 			prepare {
 				smoke {
@@ -310,5 +310,24 @@ class CreateECProcedureTaskTest {
 		}
 		task.execute()
 	}
+
+    @Test
+    void shouldCreateProcedureWithCopyReports() {
+        project.segment {
+            test {
+                'anyName' {
+                    action 'WM Gradle:Copy Reports'
+                    parameters {
+                        reportsDir.value '/tmp/'
+                    }
+                }
+            }
+        }
+
+        task.execute()
+
+        verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Gradle"])
+        assertEquals("/tmp/", project.segment.test.anyName.parameters.reportsDir.value)
+    }
 
 }
