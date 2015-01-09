@@ -2,6 +2,7 @@ package com.gap.gradle.airwatch
 
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import org.apache.commons.lang.StringUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -27,6 +28,9 @@ class AirWatchClient {
 
     private static final MDM_SMARTGROUPS_PATH = "${API_V1_PATH}/mdm/smartgroups"
     private static final SMARTGROUPS_SEARCH_PATH = "${MDM_SMARTGROUPS_PATH}/search"
+
+    private static final MDM_QUERY_DEVICE_BY_UDID_PATH = "${API_V1_PATH}/mdm/devices/udid/%s/query"
+    private static final MDM_DEVICE_APPS_BY_UDID_PATH = "${API_V1_PATH}/mdm/devices/udid/%s/apps"
 
     private static final STATUS_CODE_OK = 200
 
@@ -128,6 +132,21 @@ class AirWatchClient {
         }
     }
 
+    void queryDevice(String udid) {
+        println "\nSending query command to device with UDID $udid..."
+
+        doRequest(POST, ["path": format(MDM_QUERY_DEVICE_BY_UDID_PATH, udid)])
+    }
+
+    Map getDeviceApps(String udid) {
+        def response = doRequest(GET, ["path": format(MDM_DEVICE_APPS_BY_UDID_PATH, udid)])
+
+        response["DeviceApps"].inject([:]) { result, appInfo ->
+            result[appInfo["ApplicationIdentifier"]] = appInfo
+            return result
+        }
+    }
+
     Map smartGroupSearch(String smartGroupName, String locationGroupId) {
         println "\nSearching for Smart Group \"${smartGroupName}\"..."
 
@@ -136,7 +155,13 @@ class AirWatchClient {
                 "query": ["name": smartGroupName, "organizationgroupid": locationGroupId]
         ]
 
-        doRequest(GET, args)
+        def response = doRequest(GET, args)
+
+        if (response.isEmpty()) {
+            throw new AirWatchClientException("No smart group found with name '$smartGroupName'.")
+        }
+
+        response
     }
 
     void addSmartGroup(String appId, String smartGroupId) {
@@ -165,7 +190,12 @@ class AirWatchClient {
             }
 
             response.success = { resp, body ->
-                validateResponseCode(resp, body)
+                println "AirWatch returned a successful response: ${resp.statusLine}\n" +
+                        parseResponseBody(body, resp.contentType)
+
+                if (body == null || (body instanceof String && StringUtils.isBlank(body))) {
+                    return [:]
+                }
 
                 return body
             }
@@ -177,22 +207,16 @@ class AirWatchClient {
         }
     }
 
-    private void validateResponseCode(resp, body) {
-        if (resp.statusLine.statusCode != STATUS_CODE_OK) {
-            throw new AirWatchClientException("AirWatch returned a response different than ${STATUS_CODE_OK}: " +
-                    "${resp.statusLine}")
-        }
-
-        println "AirWatch returned a successful response: ${resp.statusLine}\n" +
-                parseResponseBody(body, resp.contentType)
-    }
-
     private String parseResponseBody(body, responseContentType) {
         def message = ''
 
         if (JSON.toString().equals(responseContentType)) {
             message <<= 'Response body is'
-            message <<= (body == null) ? ' empty' : ": ${toJson(body)}"
+            if (body == null || (body instanceof String && StringUtils.isBlank(body))) {
+                message <<= ' empty'
+            } else {
+                message <<= ": ${toJson(body)}"
+            }
         } else {
             message <<= body
         }
