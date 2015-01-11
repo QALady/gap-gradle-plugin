@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -37,7 +36,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
 		Assert.assertEquals("Line count does not match",task.lines.size(), 39)
 	}
 
-	@Ignore
+	@Test
 	void shouldGradlelizeData() {
 		def expectedData="""segment {
     prepare {
@@ -70,41 +69,65 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
             }
         }
         '1_createLink' {
-            action 'WM Gradle:Copy Reports'
+            action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
             parameters {
-                reportsDir {
+                'Link Label' {
+                    value 'domain-a Junit Results'
+                }
+                'Link Location' {
+                    value '/reports/\$[jobId]_domain_a'
+                }
+                reportSourceDirectory {
                     value '\$[/myJob/watchmen_config/workingDir]/app-a/domain-a/build/reports/tests'
                 }
             }
         }
         '2_createLink' {
-            action 'WM Gradle:Copy Reports'
+            action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
             parameters {
-                reportsDir {
+                'Link Label' {
+                    value 'app-a Junit Results'
+                }
+                'Link Location' {
+                    value '/reports/\$[jobId]_app_a'
+                }
+                reportSourceDirectory {
                     value '\$[/myJob/watchmen_config/workingDir]/app-a/webapp-a/build/reports/tests'
                 }
             }
         }
         '3_createLink' {
-            action 'WM Gradle:Copy Reports'
+            action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
             parameters {
-                reportsDir {
+                'Link Label' {
+                    value 'domain-b Junit Results'
+                }
+                'Link Location' {
+                    value '/reports/\$[jobId]_domain_b'
+                }
+                reportSourceDirectory {
                     value '\$[/myJob/watchmen_config/workingDir]/app-b/domain-b/build/reports/tests'
                 }
             }
         }
         '4_createLink' {
-            action 'WM Gradle:Copy Reports'
+            action 'WM Publish:Apache Reports Copy'
             runOrder 'parallel'
             runCondition 'always'
             parameters {
-                reportsDir {
+                'Link Label' {
+                    value 'app-b Junit Results'
+                }
+                'Link Location' {
+                    value '/reports/\$[jobId]_app_b'
+                }
+                reportSourceDirectory {
                     value '\$[/myJob/watchmen_config/workingDir]/app-b/webapp-b/build/reports/tests'
                 }
             }
@@ -152,7 +175,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
 		assertEquals(task.gradlelizedData, expectedData)
 	}
 
-	@Ignore
+	@Test
 	void shouldWriteToFile() {
 		task.readPropertiesFile()
 		task.parseToGradle()
