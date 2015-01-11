@@ -14,6 +14,7 @@ class GapWMSegmentDslAction {
 	def runOrder
 	def command
 	def resourceName
+	def workspaceName
 	final NamedDomainObjectSet<GapWMSegmentDslActionParameter> parameters
 	
 	public GapWMSegmentDslAction(String name, Project project, Instantiator instantiator) {
@@ -58,6 +59,10 @@ class GapWMSegmentDslAction {
 
 	def getResourceName() {
 		return resourceName ? this.resourceName.toString() : ''
+	}
+
+	def getWorkspaceName() {
+		return workspaceName ? this.workspaceName.toString() : ''
 	}
 
 	def getCommand() {

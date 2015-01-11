@@ -76,6 +76,7 @@ class CreateECProcedureTask extends WatchmenTask {
 		}
 
 		ecStepConfig.put('resourceName', dsl.getResourceName().toString())
+		ecStepConfig.put('workspaceName', dsl.getWorkspaceName().toString())
 		ecStepConfig.put('condition', dsl.getECStepRunCondition(commanderClient))
 		ecStepConfig.put('parallel', dsl.getECParallelStep())
 		logger.info("Step Config: " + ecStepConfig.toString())

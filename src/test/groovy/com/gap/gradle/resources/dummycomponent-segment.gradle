@@ -1,0 +1,35 @@
+segment {
+	jobLinks {
+		'domain-a Junit Results' {
+			link '/reports/$[jobId]_domain_a'
+		}
+	}
+    approve {
+        '1_createLink' {
+            action 'EC-FileOps:Remote Copy - Native'
+            runOrder 'parallel'
+            runCondition 'always'
+			workspaceName 'chefLocalAgents'
+			parameters {
+			    'Source Resource' {
+			         value '$[/myJobStep/resourceName]'
+			    }
+			    'Source Workspace' {
+			          value 'chefLocalAgents'
+			    }
+			    'Source Path' {
+			          value '$[/myJob/watchmen_config/workingDir]/app-a/webapp-a/build/reports/tests/*'
+			    }
+			    'Destination Resource' {
+			          value 'local'
+			    }
+			    'Destination Workspace' {
+			          value 'nfs'
+			    }
+			    'Destination Path' {
+			          value '$[/server/watchmen_config/sharedHtdocs]//reports/$[jobId]_app_a'
+			    }
+            }
+        }
+    }
+}
