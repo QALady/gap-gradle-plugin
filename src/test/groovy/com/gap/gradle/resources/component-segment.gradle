@@ -29,66 +29,118 @@ segment {
             }
         }
         '1_createLink' {
-            action 'WM Publish:Apache Reports Copy'
+            action 'EC-FileOps:Remote Copy - Native'
+            workspaceName 'chefLocalAgents'
             runOrder 'parallel'
             runCondition 'always'
             parameters {
                 'Link Label' {
                     value 'domain-a Junit Results'
                 }
-                'Link Location' {
-                    value '/reports/$[jobId]_domain_a'
+                'Source Resource' {
+                    value '$[/myJobStep/resourceName]'
                 }
-                reportSourceDirectory {
+                'Source Workspace' {
+                    value 'chefLocalAgents'
+                }
+                'Source Path' {
                     value '$[/myJob/watchmen_config/workingDir]/app-a/domain-a/build/reports/tests'
+                }
+                'Destination Resource' {
+                    value 'local'
+                }
+                'Destination Workspace' {
+                    value 'nfs'
+                }
+                'Destination Path' {
+                    value '$[/server/watchmen_config/sharedHtdocs]/reports/$[jobId]_domain_a'
                 }
             }
         }
         '2_createLink' {
-            action 'WM Publish:Apache Reports Copy'
+            action 'EC-FileOps:Remote Copy - Native'
+            workspaceName 'chefLocalAgents'
             runOrder 'parallel'
             runCondition 'always'
             parameters {
                 'Link Label' {
                     value 'app-a Junit Results'
                 }
-                'Link Location' {
-                    value '/reports/$[jobId]_app_a'
+                'Source Resource' {
+                    value '$[/myJobStep/resourceName]'
                 }
-                reportSourceDirectory {
+                'Source Workspace' {
+                    value 'chefLocalAgents'
+                }
+                'Source Path' {
                     value '$[/myJob/watchmen_config/workingDir]/app-a/webapp-a/build/reports/tests'
+                }
+                'Destination Resource' {
+                    value 'local'
+                }
+                'Destination Workspace' {
+                    value 'nfs'
+                }
+                'Destination Path' {
+                    value '$[/server/watchmen_config/sharedHtdocs]/reports/$[jobId]_app_a'
                 }
             }
         }
         '3_createLink' {
-            action 'WM Publish:Apache Reports Copy'
+            action 'EC-FileOps:Remote Copy - Native'
+            workspaceName 'chefLocalAgents'
             runOrder 'parallel'
             runCondition 'always'
             parameters {
                 'Link Label' {
                     value 'domain-b Junit Results'
                 }
-                'Link Location' {
-                    value '/reports/$[jobId]_domain_b'
+                'Source Resource' {
+                    value '$[/myJobStep/resourceName]'
                 }
-                reportSourceDirectory {
+                'Source Workspace' {
+                    value 'chefLocalAgents'
+                }
+                'Source Path' {
                     value '$[/myJob/watchmen_config/workingDir]/app-b/domain-b/build/reports/tests'
+                }
+                'Destination Resource' {
+                    value 'local'
+                }
+                'Destination Workspace' {
+                    value 'nfs'
+                }
+                'Destination Path' {
+                    value '$[/server/watchmen_config/sharedHtdocs]/reports/$[jobId]_domain_b'
                 }
             }
         }
         '4_createLink' {
-            action 'WM Publish:Apache Reports Copy'
+            action 'EC-FileOps:Remote Copy - Native'
+            workspaceName 'chefLocalAgents'
             runOrder 'parallel'
             runCondition 'always'
             parameters {
                 'Link Label' {
                     value 'app-b Junit Results'
                 }
-                'Link Location' {
-                    value '/reports/$[jobId]_app_b'
+                'Source Resource' {
+                    value '$[/myJobStep/resourceName]'
                 }
-                reportSourceDirectory {
+                'Source Workspace' {
+                    value 'chefLocalAgents'
+                }
+                'Source Path' {
                     value '$[/myJob/watchmen_config/workingDir]/app-b/webapp-b/build/reports/tests'
+                }
+                'Destination Resource' {
+                    value 'local'
+                }
+                'Destination Workspace' {
+                    value 'nfs'
+                }
+                'Destination Path' {
+                    value '$[/server/watchmen_config/sharedHtdocs]/reports/$[jobId]_app_b'
                 }
             }
         }
@@ -121,6 +173,20 @@ segment {
                     value './gradlew uploadArchives -Pversion=$[/myJob/version]'
                 }
             }
+        }
+    }
+    jobLinks {
+        'domain-a Junit Results' {
+            link '/reports/$[jobId]_domain_a'
+        }
+        'app-a Junit Results' {
+            link '/reports/$[jobId]_app_a'
+        }
+        'domain-b Junit Results' {
+            link '/reports/$[jobId]_domain_b'
+        }
+        'app-b Junit Results' {
+            link '/reports/$[jobId]_app_b'
         }
     }
     _finally {

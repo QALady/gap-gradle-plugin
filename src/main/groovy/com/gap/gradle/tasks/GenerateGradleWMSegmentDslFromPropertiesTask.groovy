@@ -25,6 +25,8 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 	File propertiesFile
 	Project project
 	File gradlelizedFile
+	def tree = { [:].withDefault { owner.call() } }
+	def segment = tree()
 
 	GenerateGradleWMSegmentDslFromPropertiesTask(Project project) {
 		super(project)
@@ -56,73 +58,89 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 	}
 
 	def parseToGradle() {
-		def tree = { [:].withDefault { owner.call() } }
-		def segment = tree()
 
-        String tokenForJobLinks=''
-        String labelForJobLinks=''
-        String locationForJobLinks=''
+		String tokenForJobLinks = ''
+		String labelForJobLinks = ''
+		String locationForJobLinks = ''
+		def linkMap = [:]
+
 
 		lines.each {
-            line ->
-                logger.info "line -> " + line
-                String[] tokens = line.toString().split("=", 2)
-                logger.info "tokens $tokens ${tokens.size()}"
-                tokens[0]=tokens[0].replaceAll('-', '_')
-                String[] tokenKeys = tokens[0].split('\\.')
-                if (tokenKeys[0].equals('finally')) {
-                    tokenKeys[0] = '_finally'
-                }
-                if(!tokenForJobLinks.isEmpty() && tokens[0].startsWith(tokenForJobLinks))
-                {
-                    if(tokenKeys.length==4 && tokenKeys[3].equalsIgnoreCase('Link Label'))
-                    {
-                        labelForJobLinks=tokens[1]
-                    }
-                    else if(tokenKeys.length==4 && tokenKeys[3].equalsIgnoreCase('Link Location'))
-                    {
-                        locationForJobLinks=tokens[1]
-                    }
+			line ->
+				logger.info "line -> " + line
+				String[] tokens = line.toString().split("=", 2)
+				logger.info "tokens $tokens ${tokens.size()}"
+				tokens[0] = tokens[0].replaceAll('-', '_')
+				String[] tokenKeys = tokens[0].split('\\.')
 
-                    if(!tokenForJobLinks.isEmpty() && !labelForJobLinks.isEmpty() && !locationForJobLinks.isEmpty())
-                    {
-                        tokenKeys=['jobLinks', labelForJobLinks, 'link']
-                        tokenForJobLinks=''
-                        labelForJobLinks=''
-                        locationForJobLinks=''
-                    }
-                    else
-                    {
-                        tokenKeys=[]
-                    }
-                }
-
-                if (tokenKeys.length==3 && "action".equalsIgnoreCase(tokenKeys[2]) && "WM Publish:Apache Reports Copy".equalsIgnoreCase(tokens[1]))
-                {
-                    tokenForJobLinks=tokenKeys[0]+'.'+tokenKeys[1]
-                    tokenKeys= []
-                }
-
-				switch (tokenKeys.size()) {
-					case 2:
-						segment."${quoteIfSpacesOrNumber(tokenKeys[0])}"."${quoteIfSpacesOrNumber(tokenKeys[1])}" = formatQuotes(tokens[1])
-						break;
-					case 3:
-						segment."${quoteIfSpacesOrNumber(tokenKeys[0])}"."${quoteIfSpacesOrNumber(tokenKeys[1])}"."${quoteIfSpacesOrNumber(tokenKeys[2])}" = formatQuotes(tokens[1])
-						break;
-					case 4:
-						segment."${quoteIfSpacesOrNumber(tokenKeys[0])}"."${quoteIfSpacesOrNumber(tokenKeys[1])}"."${quoteIfSpacesOrNumber(tokenKeys[2])}"."${quoteIfSpacesOrNumber(tokenKeys[3])}".value =  formatQuotes(tokens[1])
-						break;
+				if (tokenKeys[0].equals('finally')) {
+					tokenKeys[0] = '_finally'
 				}
+
+				if (!tokenForJobLinks.isEmpty() && tokens[0].startsWith(tokenForJobLinks)) {
+					if (tokenKeys.length == 4 && tokenKeys[3].equalsIgnoreCase('Link Label')) {
+						labelForJobLinks = tokens[1]
+					} else if (tokenKeys.length == 4 && tokenKeys[3].equalsIgnoreCase('Link Location')) {
+						locationForJobLinks = tokens[1]
+						linkMap.put(tokenKeys[1], locationForJobLinks)
+					}
+
+					if (!tokenForJobLinks.isEmpty() && !labelForJobLinks.isEmpty() && !locationForJobLinks.isEmpty()) {
+						tokenKeys = ['jobLinks', labelForJobLinks, 'link']
+						tokenForJobLinks = ''
+						labelForJobLinks = ''
+						locationForJobLinks = ''
+					} else if ("runOrder".equalsIgnoreCase(tokenKeys[2])) {
+						createGradleLine([tokenKeys[0], tokenKeys[1], 'action'] as String[], 'EC-FileOps:Remote Copy - Native')
+						createGradleLine([tokenKeys[0], tokenKeys[1], 'workspaceName'] as String[], 'chefLocalAgents')
+					}
+				}
+
+
+
+				if (tokenKeys.length == 3 && "action".equalsIgnoreCase(tokenKeys[2]) && "WM Publish:Apache Reports Copy".equalsIgnoreCase(tokens[1])) {
+					tokenForJobLinks = tokenKeys[0] + '.' + tokenKeys[1]
+					tokenKeys = []
+				}
+
+				boolean lineCreated = false
+				if (tokenKeys.length == 4 && "reportSourceDirectory".equalsIgnoreCase(tokenKeys[3])) {
+					String sourcePath = tokens[1]
+					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Source Resource'] as String[], '$[/myJobStep/resourceName]')
+					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Source Workspace'] as String[], 'chefLocalAgents')
+					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Source Path'] as String[], sourcePath)
+					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Destination Resource'] as String[], 'local')
+					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Destination Workspace'] as String[], 'nfs')
+					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Destination Path'] as String[], '$[/server/watchmen_config/sharedHtdocs]' + linkMap.get(tokenKeys[1]))
+					lineCreated = true
+				}
+
+				if (!lineCreated) {
+					createGradleLine(tokenKeys, tokens[1])
+				}
+
 		}
 
 		gradlelizedData = "segment " + GradleOutput.prettyPrint(GradleOutput.toJson(segment))
 	}
 
-    static def quoteIfSpacesOrNumber(String tokenKey) {
-		if(tokenKey.contains(' ') || tokenKey.matches("^[0-9].*"))
-		{
-			return "'"+tokenKey+"'"
+	private void createGradleLine(String[] tokenKeys, String tokens) {
+		switch (tokenKeys.size()) {
+			case 2:
+				segment."${quoteIfSpacesOrNumber(tokenKeys[0])}"."${quoteIfSpacesOrNumber(tokenKeys[1])}" = formatQuotes(tokens)
+				break;
+			case 3:
+				segment."${quoteIfSpacesOrNumber(tokenKeys[0])}"."${quoteIfSpacesOrNumber(tokenKeys[1])}"."${quoteIfSpacesOrNumber(tokenKeys[2])}" = formatQuotes(tokens)
+				break;
+			case 4:
+				segment."${quoteIfSpacesOrNumber(tokenKeys[0])}"."${quoteIfSpacesOrNumber(tokenKeys[1])}"."${quoteIfSpacesOrNumber(tokenKeys[2])}"."${quoteIfSpacesOrNumber(tokenKeys[3])}".value = formatQuotes(tokens)
+				break;
+		}
+	}
+
+	static def quoteIfSpacesOrNumber(String tokenKey) {
+		if (tokenKey.contains(' ') || tokenKey.matches("^[0-9].*")) {
+			return "'" + tokenKey + "'"
 		}
 		return tokenKey
 	}
@@ -137,7 +155,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 		String timeStamp = simpleDateFormat.format(new Date())
 		gradlelizedFile = new File(project.getProjectDir(), "${gradleFileBaseName}-${timeStamp}.gradle")
 		gradlelizedFile.write(gradlelizedData)
-		println ("File location is : " + gradlelizedFile.getAbsolutePath())
+		println("File location is : " + gradlelizedFile.getAbsolutePath())
 	}
 
 	private static String getBaseName(String absoluteFile) {
