@@ -64,7 +64,6 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 		String locationForJobLinks = ''
 		def linkMap = [:]
 
-
 		lines.each {
 			line ->
 				logger.info "line -> " + line
@@ -80,22 +79,35 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 				if (!tokenForJobLinks.isEmpty() && tokens[0].startsWith(tokenForJobLinks)) {
 					if (tokenKeys.length == 4 && tokenKeys[3].equalsIgnoreCase('Link Label')) {
 						labelForJobLinks = tokens[1]
-					} else if (tokenKeys.length == 4 && tokenKeys[3].equalsIgnoreCase('Link Location')) {
+					} else if (tokenKeys.length == 4 && tokenKeys[3].equalsIgnoreCase('reportSourceDirectory')) {
 						locationForJobLinks = tokens[1]
-						linkMap.put(tokenKeys[1], locationForJobLinks)
+						linkMap.put('parameters.reportsDir', locationForJobLinks)
+
 					}
 
 					if (!tokenForJobLinks.isEmpty() && !labelForJobLinks.isEmpty() && !locationForJobLinks.isEmpty()) {
-						tokenKeys = ['jobLinks', labelForJobLinks, 'link']
+						tokenKeys = [tokenKeys[0], labelForJobLinks, 'action']
+						tokens[1] = 'WM Gradle:Copy reports'
+						createGradleLine([tokenKeys[0], labelForJobLinks, 'action'] as String[], tokens[1])
+						linkMap.each { key, value ->
+							if (key.toString().indexOf(".") > 0) {
+								String[] keys = key.toString().split("\\.")
+								createGradleLine([tokenKeys[0].toString(), labelForJobLinks, keys[0], keys[1]] as String[], value.toString())
+							} else {
+								createGradleLine([tokenKeys[0], labelForJobLinks, key] as String[], value.toString())
+							}
+						}
+						linkMap = [:]
 						tokenForJobLinks = ''
 						labelForJobLinks = ''
 						locationForJobLinks = ''
 					} else if ("runOrder".equalsIgnoreCase(tokenKeys[2])) {
-						createGradleLine([tokenKeys[0], tokenKeys[1], 'action'] as String[], 'EC-FileOps:Remote Copy - Native')
-						createGradleLine([tokenKeys[0], tokenKeys[1], 'workspaceName'] as String[], 'chefLocalAgents')
+						linkMap.put("runOrder", tokens[1])
+					} else if ("runCondition".equalsIgnoreCase(tokenKeys[2])) {
+						linkMap.put("runCondition", tokens[1])
 					}
+					tokenKeys = []
 				}
-
 
 
 				if (tokenKeys.length == 3 && "action".equalsIgnoreCase(tokenKeys[2]) && "WM Publish:Apache Reports Copy".equalsIgnoreCase(tokens[1])) {
@@ -103,21 +115,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 					tokenKeys = []
 				}
 
-				boolean lineCreated = false
-				if (tokenKeys.length == 4 && "reportSourceDirectory".equalsIgnoreCase(tokenKeys[3])) {
-					String sourcePath = tokens[1]
-					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Source Resource'] as String[], '$[/myJobStep/resourceName]')
-					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Source Workspace'] as String[], 'chefLocalAgents')
-					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Source Path'] as String[], sourcePath)
-					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Destination Resource'] as String[], 'local')
-					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Destination Workspace'] as String[], 'nfs')
-					createGradleLine([tokenKeys[0], tokenKeys[1], tokenKeys[2], 'Destination Path'] as String[], '$[/server/watchmen_config/sharedHtdocs]' + linkMap.get(tokenKeys[1]))
-					lineCreated = true
-				}
-
-				if (!lineCreated) {
-					createGradleLine(tokenKeys, tokens[1])
-				}
+				createGradleLine(tokenKeys, tokens[1])
 
 		}
 
