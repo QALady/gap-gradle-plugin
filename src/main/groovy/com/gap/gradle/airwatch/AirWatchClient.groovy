@@ -32,8 +32,6 @@ class AirWatchClient {
     private static final MDM_QUERY_DEVICE_BY_UDID_PATH = "${API_V1_PATH}/mdm/devices/udid/%s/query"
     private static final MDM_DEVICE_APPS_BY_UDID_PATH = "${API_V1_PATH}/mdm/devices/udid/%s/apps"
 
-    private static final STATUS_CODE_OK = 200
-
     private HTTPBuilder http
 
     AirWatchClient(String host, String username, String password, String tenantCode) {
