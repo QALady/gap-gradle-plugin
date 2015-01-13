@@ -3,6 +3,7 @@ package com.gap.gradle.airwatch
 import com.gap.gradle.airwatch.util.Barrier
 import com.gap.gradle.airwatch.util.CaptureExecOutput
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
 import java.util.concurrent.TimeUnit
@@ -50,7 +51,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
                 hasRequiredVersion && isAppInstalled
             }
         } catch (Barrier.MaxNumberOfTriesReached e) {
-            throw new RuntimeException("Device did not receive the required application version number " +
+            throw new GradleException("Device did not receive the required application version number " +
                     "(bundle identifier = $appBundleIdentifier, build version = $appBundleVersion).", e)
         }
     }
@@ -67,7 +68,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
         def deviceUdid = capture.outputOf("bash", "-c", "system_profiler SPUSBDataType | sed -n -e '/iPod/,/Serial/p' | grep 'Serial Number:' | cut -d ':' -f 2").trim()
 
         if (deviceUdid.isEmpty()) {
-            throw new RuntimeException("No iPod device detected.")
+            throw new GradleException("No iPod device detected.")
         }
 
         println "\n\nConnected device UDID = $deviceUdid \n\n"
