@@ -1,5 +1,4 @@
 package com.gap.gradle.airwatch
-
 import groovy.mock.interceptor.MockFor
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
@@ -12,8 +11,7 @@ import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.Method.GET
 import static groovyx.net.http.Method.POST
 import static java.lang.String.format
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 class AirWatchClientTest {
 
@@ -93,6 +91,29 @@ class AirWatchClientTest {
     }
 
     @Test
+    public void shouldThrowExceptionIfSmartGroupNotFound() throws Exception {
+        def httpMock = new MockFor(HTTPBuilder)
+
+        def successResponse = ['statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 204, 'status': 'No smart group found']]
+        def response = ''
+
+        httpMock.demand.request(1) { Method method, Closure req ->
+            req.delegate = [response: [:], uri: [:]]
+            req.call()
+
+            req.delegate.response.success(successResponse, response)
+        }
+
+        httpMock.use {
+            try {
+                client.smartGroupSearch("notFound", "123")
+                fail("Should have thrown exception")
+            } catch (AirWatchClientException e) {
+            }
+        }
+    }
+
+    @Test
     void shouldCallAddSmartGroupEndpoint() {
         String smartGroupId = "someGroupId"
         String appId = "someAppId"
@@ -106,6 +127,51 @@ class AirWatchClientTest {
         assertEquals(POST, params["method"])
         assertEquals(JSON, params["type"])
         assertEquals(null, params["body"])
+    }
+
+    @Test
+    void shouldCallQueryDeviceByUDIDEndpoint() {
+        String deviceUdid = "abc123"
+        String path = format("API/v1/mdm/devices/udid/%s/query", deviceUdid)
+
+        httpBuilderMock.use {
+            client.queryDevice(deviceUdid)
+        }
+
+        assertEquals(path, params["path"].toString())
+        assertEquals(POST, params["method"])
+        assertEquals(JSON, params["type"])
+        assertEquals(null, params["body"])
+    }
+
+    @Test
+    public void shouldReturnDeviceAppsIndexedByAppIdentifier() throws Exception {
+        def deviceUdid = "abc123"
+        def httpMock = new MockFor(HTTPBuilder)
+
+        def successResponse = ['statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 200, 'status': 'OK']]
+        def responseJson = ['DeviceApps': [
+                ["ApplicationIdentifier": "com.foo", "BuildVersion": "1.2.3"],
+                ["ApplicationIdentifier": "com.bar", "BuildVersion": "6.5.4"]
+        ]]
+
+        httpMock.demand.request(1) { Method method, Closure req ->
+            req.delegate = [response: [:], uri: [:]]
+            req.call()
+
+            assertEquals(GET, method)
+            assertEquals(format("API/v1/mdm/devices/udid/%s/apps", deviceUdid), req.uri.path)
+
+            req.delegate.response.success(successResponse, responseJson)
+        }
+
+        httpMock.use {
+            def result = client.getDeviceApps(deviceUdid)
+
+            assertEquals(2, result.keySet().size())
+            assertEquals("1.2.3", result["com.foo"]["BuildVersion"])
+            assertEquals("6.5.4", result["com.bar"]["BuildVersion"])
+        }
     }
 
     @Test

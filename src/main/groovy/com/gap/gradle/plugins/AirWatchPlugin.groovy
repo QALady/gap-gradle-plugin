@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins
-
 import com.gap.gradle.airwatch.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -9,8 +8,11 @@ import org.gradle.api.tasks.Exec
 import org.gradle.internal.reflect.Instantiator
 
 import javax.inject.Inject
+import java.util.concurrent.TimeUnit
 
 class AirWatchPlugin implements Plugin<Project> {
+
+    private static final int NUMBER_OF_TRIES = 10
 
     private final Instantiator instantiator
     private Project project
@@ -73,6 +75,7 @@ class AirWatchPlugin implements Plugin<Project> {
             def airwatchClient = airWatchClientFactory.create(targetEnvironment, credentialProvider)
             def createdApp = airwatchClient.uploadApp(resolvedArtifact.file, extension)
 
+            ext.uploadedArtifactFile = resolvedArtifact.file
             ext.airwatchClient = airwatchClient
             ext.targetEnvironment = targetEnvironment
             ext.publishedAppId = createdApp["Id"]["Value"]
@@ -113,6 +116,16 @@ class AirWatchPlugin implements Plugin<Project> {
 
             // TODO Uncomment after AirWarch feature pack 6 upgrade (MPL-342)
             // onlyIf { extension.configFile.exists() }
+        }
+
+        project.task("waitDeviceToGetApp", type: WaitDeviceToGetAppTask, dependsOn: "configureApp") {
+            doFirst {
+                airwatchClient = pushArtifactToAirWatchTask.airwatchClient
+                publishedArtifactFile = pushArtifactToAirWatchTask.uploadedArtifactFile
+            }
+            numberOfTries = NUMBER_OF_TRIES
+            sleepTimeout = 1
+            sleepTimeUnit = TimeUnit.MINUTES
         }
     }
 
