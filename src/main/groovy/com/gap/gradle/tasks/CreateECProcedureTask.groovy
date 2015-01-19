@@ -22,7 +22,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	def segmentDsl
 	def projectName = "WM Temporary Procedures"
 
-	int TIME_TO_WAIT_IN_MINUTES = 2
+	int TIME_TO_WAIT_IN_MINUTES = 20
 	int INTERVAL_IN_MINUTES = 1
 
 	CreateECProcedureTask(Project project, commanderClient = new CommanderClient()) {
@@ -161,7 +161,7 @@ class CreateECProcedureTask extends WatchmenTask {
 			Util.executeWithRetry(TIME_TO_WAIT_IN_MINUTES, INTERVAL_IN_MINUTES, {
 				commanderClient.getJobStatus(jobId).status == 'completed'
 			})
-			logger.info("created Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
+			logger.info("Created Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
 		}
 		catch (Exception ex){
 			logger.error(ex)
