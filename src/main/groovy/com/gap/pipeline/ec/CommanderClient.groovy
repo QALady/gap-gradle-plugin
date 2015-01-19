@@ -325,4 +325,8 @@ class CommanderClient {
 		}
 		return shellCommand.execute(command)
 	}
+
+	def getJobStatus(def jobId) {
+		new XmlSlurper().parseText(String.valueOf(shellCommand.execute("ectool getJobStatus ${jobId}".toString())))
+	}
 }

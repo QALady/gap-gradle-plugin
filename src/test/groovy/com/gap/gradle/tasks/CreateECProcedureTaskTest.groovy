@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -41,6 +40,32 @@ class CreateECProcedureTaskTest {
 		when(mockShellCommand.execute(['ectool', 'getProperty', '/myProject/runCondition'])).thenReturn('always')
 		when(mockShellCommand.execute(['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', '--actualParameter', 'openstackTenant=tenant-name1', 'chefRole=the-chef-role-to-apply-on-the-node1'])).thenReturn(1)
 		when(mockShellCommand.execute(['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', '--actualParameter', 'openstackTenant=tenant-name2', 'chefRole=the-chef-role-to-apply-on-the-node2'])).thenReturn(2)
+
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('1')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('2')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('3')
+
+		def jobStatusResponse1 = """<response requestId="1" nodeId="10.105.68.77">
+    <jobId>f80a312a-a007-11e4-8eb1-00505625f614</jobId>
+    <outcome>error</outcome>
+    <status>completed</status>
+  </response>"""
+
+		def jobStatusResponse2 = """<response requestId="1" nodeId="10.105.68.77">
+    <jobId>f80a312a-a007-11e4-8eb1-00505625f614</jobId>
+    <outcome>error</outcome>
+    <status>completed</status>
+  </response>"""
+
+		def jobStatusResponse3 = """<response requestId="1" nodeId="10.105.68.77">
+    <jobId>f80a312a-a007-11e4-8eb1-00505625f614</jobId>
+    <outcome>error</outcome>
+    <status>completed</status>
+  </response>"""
+
+		when(mockShellCommand.execute('ectool getJobStatus 1')).thenReturn(jobStatusResponse1.toString())
+		when(mockShellCommand.execute('ectool getJobStatus 2')).thenReturn(jobStatusResponse2.toString())
+		when(mockShellCommand.execute('ectool getJobStatus 3')).thenReturn(jobStatusResponse3.toString())
 
 		EnvironmentStub env = new EnvironmentStub()
 		env.setValue('COMMANDER_JOBID', '1234') // sets the job ID
@@ -293,7 +318,7 @@ class CreateECProcedureTaskTest {
 		verify(mockShellCommand).execute(["ectool", "setProperty", configName, procName])
 	}
 
-	@Ignore
+	@Test
 	void shouldRunWithDynamicNodes() {
 
 		project.segment {
@@ -306,28 +331,32 @@ class CreateECProcedureTaskTest {
 					openstackTenant 'tenant-name2'
 					chefRole 'the-chef-role-to-apply-on-the-node2'
 				}
+				node3 {
+					openstackTenant 'tenant-name3'
+					chefRole 'the-chef-role-to-apply-on-the-node3'
+				}
 			}
 		}
 		task.execute()
 	}
 
-    @Test
-    void shouldCreateProcedureWithCopyReports() {
-        project.segment {
-            test {
-                'anyName' {
-                    action 'WM Gradle:Copy Reports'
-                    parameters {
-                        reportsDir.value '/tmp/'
-                    }
-                }
-            }
-        }
+	@Test
+	void shouldCreateProcedureWithCopyReports() {
+		project.segment {
+			test {
+				'anyName' {
+					action 'WM Gradle:Copy Reports'
+					parameters {
+						reportsDir.value '/tmp/'
+					}
+				}
+			}
+		}
 
-        task.execute()
+		task.execute()
 
-        verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Gradle"])
-        assertEquals("/tmp/", project.segment.test.anyName.parameters.reportsDir.value)
-    }
+		verify(mockShellCommand).execute(["ectool", "getPlugin", "WM Gradle"])
+		assertEquals("/tmp/", project.segment.test.anyName.parameters.reportsDir.value)
+	}
 
 }
