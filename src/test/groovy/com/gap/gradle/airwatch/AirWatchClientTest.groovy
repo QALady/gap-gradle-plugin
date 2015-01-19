@@ -91,6 +91,37 @@ class AirWatchClientTest {
     }
 
     @Test
+    void shouldCallSearchApplicationEndpoint() {
+        SearchApplicationConfig testConfig = new SearchApplicationConfig()
+        testConfig.bundleId = "com.test.me"
+        testConfig.status = "Active"
+
+        httpBuilderMock.use {
+            client.searchApplication(testConfig)
+        }
+
+        assertEquals("API/v1/mam/apps/search", params["path"].toString())
+        assertEquals(GET, params["method"])
+        assertEquals(JSON, params["type"])
+        assertEquals("com.test.me", params["query"]["bundleid"])
+        assertEquals("Active", params["query"]["status"])
+        assertNull(params["query"]["type"])
+    }
+
+    @Test
+    void shouldCallRetireApplicationEndpoint() {
+        String applicationId = "1234"
+        httpBuilderMock.use {
+            client.retireApplication(applicationId)
+        }
+
+        assertEquals("API/v1/mam/apps/internal/1234/retire", params["path"].toString())
+        assertEquals(POST, params["method"])
+        assertEquals(JSON, params["type"])
+        assertNull(params["body"])
+    }
+
+    @Test
     public void shouldThrowExceptionIfSmartGroupNotFound() throws Exception {
         def httpMock = new MockFor(HTTPBuilder)
 

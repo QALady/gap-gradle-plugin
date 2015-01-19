@@ -32,6 +32,9 @@ class AirWatchClient {
     private static final MDM_QUERY_DEVICE_BY_UDID_PATH = "${API_V1_PATH}/mdm/devices/udid/%s/query"
     private static final MDM_DEVICE_APPS_BY_UDID_PATH = "${API_V1_PATH}/mdm/devices/udid/%s/apps"
 
+    private static final APP_SEARCH_PATH = "${API_V1_PATH}/mam/apps/search"
+    private static final APP_RETIRE_PATH = "${MAM_APPS_PATH}/%s/retire"
+
     private HTTPBuilder http
 
     AirWatchClient(String host, String username, String password, String tenantCode) {
@@ -117,6 +120,23 @@ class AirWatchClient {
         ]
 
         doRequest(POST, args)
+    }
+
+    Map searchApplication(SearchApplicationConfig config) {
+        Map args = [
+                "path" : APP_SEARCH_PATH,
+                "query": config.validSearchEndPointParams()
+        ]
+
+        doRequest(GET, args)
+    }
+
+    void retireApplication(String appId){
+       println "\n Retiring an application with appId \"${appId}\"..."
+
+       Map args = [ "path": format(APP_RETIRE_PATH,appId) ]
+
+       doRequest(POST, args)
     }
 
     void assignSmartGroupToApplication(String smartGroups, String appId, String locationGroupId) {
