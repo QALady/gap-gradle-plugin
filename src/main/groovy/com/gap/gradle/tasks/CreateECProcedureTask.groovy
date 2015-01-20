@@ -128,7 +128,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	def executeCreateDynamicNodes() {
 		def easyCreateParams
 		def projectName = "Nova-CLI"
-		def procedureName = "Easy Create"
+		def procedureName = "'Easy Create'"
 		def nodeList=[]
 		segmentDsl.dynamicNodes.each { node ->
 			easyCreateParams = [:]
@@ -143,6 +143,7 @@ class CreateECProcedureTask extends WatchmenTask {
 
 			logger.info("Trying to Create Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
 			def jobId=commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
+			logger.info("Create Dynamic Node JobId : $jobId")
 			def currentNode= [:]
 			currentNode.jobId=jobId
 			currentNode.node=node
@@ -172,7 +173,7 @@ class CreateECProcedureTask extends WatchmenTask {
 
 	def deleteNode(def node){
 		def projectName = "Nova-CLI"
-		def procedureName = "Easy Delete"
+		def procedureName = "'Easy Delete'"
 		def easyCreateParams = [:]
 		easyCreateParams.put("resourceToDelete", "${node.name}".toString())
 		easyCreateParams.put("tenant", "${node.openstackTenant}".toString())
