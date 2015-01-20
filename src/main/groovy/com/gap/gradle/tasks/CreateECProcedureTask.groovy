@@ -7,7 +7,7 @@ import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 import com.gap.util.Util
-import com.gap.util.WatchmenException
+import com.gap.gradle.exceptions.DynamicNodesException
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
@@ -155,11 +155,11 @@ class CreateECProcedureTask extends WatchmenTask {
 			nodeList.each { eachNode ->
 				if (!waitForJobToComplete(eachNode.jobId, eachNode.node)) {
 					if (!commanderClient.getJobStatus(eachNode.jobId).outcome.toString().equalsIgnoreCase('successful')) {
-						throw new WatchmenException("Problematic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role.")
+						throw new DynamicNodesException("Problematic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role.")
 					}
 				}
 			}
-		} catch (WatchmenException e) {
+		} catch (DynamicNodesException e) {
 			nodeList.each { eachNode ->
 				deleteNode(eachNode.node)
 			}
@@ -176,7 +176,7 @@ class CreateECProcedureTask extends WatchmenTask {
 			})
 			logger.info("Created Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
 		}
-		catch (WatchmenException ex) {
+		catch (DynamicNodesException ex) {
 			logger.error(ex)
 			deleteNode(node)
 		}
