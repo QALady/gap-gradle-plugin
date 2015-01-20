@@ -1,4 +1,5 @@
 package com.gap.gradle.airwatch
+
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectSet
@@ -10,6 +11,7 @@ class AirwatchUploadExtension implements BeginInstallConfig {
     private Object appNameObj
     private Object appDescriptionObj
     private Object smartGroupsObj
+    final SearchApplicationConfig searchParamsToRetireApp
     final ArtifactSpec artifact
     final NamedDomainObjectSet<Environment> environments
     String configFilename
@@ -28,6 +30,7 @@ class AirwatchUploadExtension implements BeginInstallConfig {
         this.extractAirwatchConfigTask = extractAirwatchConfigTask
         this.artifact = instantiator.newInstance(ArtifactSpec)
         this.environments = project.container(Environment, { name -> instantiator.newInstance(Environment, name) })
+        this.searchParamsToRetireApp = instantiator.newInstance(SearchApplicationConfig)
         this.uploadChunks = 25
     }
 
@@ -82,5 +85,9 @@ class AirwatchUploadExtension implements BeginInstallConfig {
 
     void environments(Action<? super NamedDomainObjectCollection<Environment>> action) {
         action.execute(environments)
+    }
+
+    void searchParamsToRetireApp(Action<SearchApplicationConfig> action) {
+        action.execute(searchParamsToRetireApp)
     }
 }

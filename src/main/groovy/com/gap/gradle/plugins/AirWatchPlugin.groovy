@@ -1,4 +1,5 @@
 package com.gap.gradle.plugins
+
 import com.gap.gradle.airwatch.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -68,11 +69,20 @@ class AirWatchPlugin implements Plugin<Project> {
                 throw new GradleException("You need to specify to which environment the artifact will be uploaded using `targetEnvironment`.")
             }
 
+            def airwatchClient = airWatchClientFactory.create(targetEnvironment, credentialProvider)
+
             beginInstallConfigValidator.validate(extension)
+
+            ext.retireVersion = ''
+            if (extension.searchParamsToRetireApp.hasSearchParams()) {
+                def appList = airwatchClient.searchApplication(extension.searchParamsToRetireApp)
+                if (!appList.isEmpty()) {
+                    ext.retireVersion = appList["Application"]["Id"][0]["Value"].toString()
+                }
+            }
 
             println "Pushing artifact to Airwatch ${targetEnvironment}..."
 
-            def airwatchClient = airWatchClientFactory.create(targetEnvironment, credentialProvider)
             def createdApp = airwatchClient.uploadApp(resolvedArtifact.file, extension)
 
             ext.uploadedArtifactFile = resolvedArtifact.file
@@ -98,10 +108,23 @@ class AirWatchPlugin implements Plugin<Project> {
             onlyIf { extension.smartGroups }
         }
 
+        project.task("autoRetireAppPreviousVersion", dependsOn: "pushArtifactToAirWatch") {
+            doFirst {
+                if (!pushArtifactToAirWatchTask.retireVersion.isAllWhitespace()) {
+                    def airwatchClient = pushArtifactToAirWatchTask.airwatchClient
+
+                    println "auto retire this application version ${pushArtifactToAirWatchTask.retireVersion}"
+
+                    airwatchClient.retireApplication(pushArtifactToAirWatchTask.retireVersion)
+                }
+            }
+            onlyIf { extension.searchParamsToRetireApp.hasSearchParams() }
+        }
+
         project.task("installAirwatchGem", type: Exec) {
             executable 'bundle'
             args = ['install', '--path', '/tmp/bundle']
-            // TODO Uncomment after AirWarch feature pack 6 upgrade (MPL-342)
+            // TODO Uncomment after AirWatch feature pack 6 upgrade (MPL-342)
             // onlyIf { extension.configFile.exists() }
         }
 
@@ -114,7 +137,7 @@ class AirWatchPlugin implements Plugin<Project> {
                 environment AW_URL: extension.targetEnvironment.consoleHost, AW_USER: credential.username, AW_PASS: credential.password
             }
 
-            // TODO Uncomment after AirWarch feature pack 6 upgrade (MPL-342)
+            // TODO Uncomment after AirWatch feature pack 6 upgrade (MPL-342)
             // onlyIf { extension.configFile.exists() }
         }
 

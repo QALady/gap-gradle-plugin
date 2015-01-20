@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins
-
 import com.gap.gradle.airwatch.*
 import com.google.common.collect.Sets
 import org.gradle.api.GradleException
@@ -57,7 +56,7 @@ class AirWatchPluginTest {
         taskShouldExist('installAirwatchGem', project)
         taskShouldExist('extractAirwatchConfig', project)
         taskShouldExist('autoAssignSmartGroups', project)
-
+        taskShouldExist('autoRetireAppPreviousVersion', project)
         taskShouldExist('configureApp', project)
         ["installAirwatchGem", "extractAirwatchConfig", "pushArtifactToAirWatch"].each {
             taskShouldDependOn('configureApp', it, project)
@@ -116,7 +115,7 @@ class AirWatchPluginTest {
         assertEquals(airWatchClient, pushArtifactsTask.airwatchClient)
     }
 
-    @Ignore // TODO Re-enable after AirWarch feature pack 6 upgrade (MPL-342)
+    @Ignore // TODO Re-enable after AirWatch feature pack 6 upgrade (MPL-342)
     @Test
     public void shouldNotConfigureAppIfAirwatchUploadConfigFileDoesNotExist() throws Exception {
         def configureAppTask = project.tasks.configureApp
@@ -131,7 +130,7 @@ class AirWatchPluginTest {
         assertEquals(true, configureAppTask.state.skipped)
     }
 
-    @Ignore // TODO Re-enable after AirWarch feature pack 6 upgrade (MPL-342)
+    @Ignore // TODO Re-enable after AirWatch feature pack 6 upgrade (MPL-342)
     @Test
     public void shouldNotInstallAirwatchGemIfConfigFileDoesNotExist() throws Exception {
         def installGemTask = project.tasks.installAirwatchGem
@@ -230,5 +229,22 @@ class AirWatchPluginTest {
         autoAssignSmartGroups.execute()
 
         assertEquals(true, autoAssignSmartGroups.state.skipped)
+    }
+
+    @Test
+    public void shouldNotCallRetireIfRetireVersionIsNull() throws Exception {
+        project.airwatchUpload {
+            artifact.name = 'target'
+            targetEnvironment environments.preProduction
+        }
+
+        def pushArtifactsTask = project.tasks.pushArtifactToAirWatch
+        pushArtifactsTask.airwatchClient = mock(AirWatchClient)
+
+        def retirePreviousVersion = project.tasks.autoRetireAppPreviousVersion
+
+        retirePreviousVersion.execute()
+
+        assertEquals(true, project.tasks.autoRetireAppPreviousVersion.state.skipped)
     }
 }
