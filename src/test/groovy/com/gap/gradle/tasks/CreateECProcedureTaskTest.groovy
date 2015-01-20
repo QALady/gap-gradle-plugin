@@ -47,19 +47,19 @@ class CreateECProcedureTaskTest {
 
 		def jobStatusResponse1 = """<response requestId="1" nodeId="10.105.68.77">
     <jobId>f80a312a-a007-11e4-8eb1-00505625f614</jobId>
-    <outcome>error</outcome>
+    <outcome>successful</outcome>
     <status>completed</status>
   </response>"""
 
 		def jobStatusResponse2 = """<response requestId="1" nodeId="10.105.68.77">
     <jobId>f80a312a-a007-11e4-8eb1-00505625f614</jobId>
-    <outcome>error</outcome>
+    <outcome>successful</outcome>
     <status>completed</status>
   </response>"""
 
 		def jobStatusResponse3 = """<response requestId="1" nodeId="10.105.68.77">
     <jobId>f80a312a-a007-11e4-8eb1-00505625f614</jobId>
-    <outcome>error</outcome>
+    <outcome>successful</outcome>
     <status>completed</status>
   </response>"""
 

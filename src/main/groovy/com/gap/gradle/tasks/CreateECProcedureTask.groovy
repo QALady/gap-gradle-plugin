@@ -129,7 +129,7 @@ class CreateECProcedureTask extends WatchmenTask {
 		def easyCreateParams
 		def projectName = "Nova-CLI"
 		def procedureName = "Easy Create"
-		def nodeList=[]
+		def nodeList = []
 		segmentDsl.dynamicNodes.each { node ->
 			easyCreateParams = [:]
 			easyCreateParams.put("tenant", "${node.openstackTenant}".toString())
@@ -142,36 +142,47 @@ class CreateECProcedureTask extends WatchmenTask {
 			easyCreateParams.put("type", "${node.imageType}".toString())
 
 			logger.info("Trying to Create Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
-			def jobId=commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
+			def jobId = commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
 			logger.info("Create Dynamic Node JobId : $jobId")
-			def currentNode= [:]
-			currentNode.jobId=jobId
-			currentNode.node=node
+			def currentNode = [:]
+			currentNode.jobId = jobId
+			currentNode.node = node
 			nodeList.add(currentNode)
 		}
 
-		nodeList.each { eachNode ->
-			waitForJobToComplete(eachNode.jobId, eachNode.node)
+		try {
+			nodeList.each { eachNode ->
+				if (!waitForJobToComplete(eachNode.jobId, eachNode.node)) {
+					if (!commanderClient.getJobStatus(eachNode.jobId).outcome.toString().equalsIgnoreCase('successful')) {
+						throw new Exception("Problematic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role.")
+					}
+				}
+			}
+		} catch (Exception e) {
+			nodeList.each { eachNode ->
+				deleteNode(eachNode.node)
+			}
+			throw e
 		}
 	}
 
-	def waitForJobToComplete(def jobId, def node){
+	def waitForJobToComplete(def jobId, def node) {
 		logger.info("Waiting for JobId : $jobId")
 
-		try{
+		try {
 			Util.executeWithRetry(TIME_TO_WAIT_IN_MINUTES, INTERVAL_IN_MINUTES, {
 				commanderClient.getJobStatus(jobId).status == 'completed'
 			})
 			logger.info("Created Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
 		}
-		catch (Exception ex){
+		catch (Exception ex) {
 			logger.error(ex)
 			deleteNode(node)
 		}
 
 	}
 
-	def deleteNode(def node){
+	def deleteNode(def node) {
 		def projectName = "Nova-CLI"
 		def procedureName = "Easy Delete"
 		def easyCreateParams = [:]
