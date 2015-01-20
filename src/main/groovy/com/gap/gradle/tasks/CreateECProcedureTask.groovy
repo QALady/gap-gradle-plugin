@@ -153,10 +153,12 @@ class CreateECProcedureTask extends WatchmenTask {
 
 		try {
 			nodeList.each { eachNode ->
-				if (!waitForJobToComplete(eachNode.jobId, eachNode.node)) {
+				if (waitForJobToComplete(eachNode.jobId, eachNode.node)) {
 					if (!commanderClient.getJobStatus(eachNode.jobId).outcome.toString().equalsIgnoreCase('successful')) {
 						throw new DynamicNodesException("Problematic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role.")
 					}
+				}else{
+					throw new DynamicNodesException("Problematic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role.")
 				}
 			}
 		} catch (DynamicNodesException e) {
@@ -175,10 +177,11 @@ class CreateECProcedureTask extends WatchmenTask {
 				commanderClient.getJobStatus(jobId).status == 'completed'
 			})
 			logger.info("Created Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
+			return true
 		}
-		catch (DynamicNodesException ex) {
+		catch (Exception ex) {
 			logger.error(ex)
-			deleteNode(node)
+			return false
 		}
 
 	}

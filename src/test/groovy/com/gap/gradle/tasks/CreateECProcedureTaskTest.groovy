@@ -337,6 +337,8 @@ class CreateECProcedureTaskTest {
 				}
 			}
 		}
+		task.TIME_TO_WAIT_IN_MINUTES = 2
+		task.INTERVAL_IN_MINUTES = 1
 		task.execute()
 	}
 
