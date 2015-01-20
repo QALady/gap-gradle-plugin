@@ -32,6 +32,11 @@ airwatchUpload {
     type 'ipa'
   }
 
+  searchParamsToRetireApp {
+    bundleId 'com.gap.search.toretire'
+    status 'Active'
+  }
+
   targetEnvironment environments.preProduction
 }
 ```
@@ -45,6 +50,7 @@ airwatchUpload {
 * `uploadChunks` specifies in how many chunks the ipa is going to be uploaded. If omitted, the default value is used (25).
 * `environments` allows the addition of other Airwatch environments that you might want to push artifacts to. There are pre-configured ones: preProduction (aka CN11) and production.
 * `smartGroups` used to configure which Smart Groups are going to be automatically assigned to the ipa
+* `searchParamsToRetireApp` used to define criteria to search for appId with the parameters provided so that autoRetireAppPreviousVersion task can use this appId and retire the application in Airwatch.
 * `artifact` specifies which artifact from the "archives" configuration will be uploaded to Airwatch. You can see this as a criteria filter, you can specify some or all of the artifact's attributes to narrow down the artifact that you want to upload. Matching only using classifier, will grab the first artifact found in archives with that classifier:
 
   ```groovy
@@ -94,8 +100,17 @@ And you can overwrite pre-configured values for existing ones. e.g.: Override va
 * `locationGroupId`: defines under which Airwatch location group you'll create the application
 * `credentialName`: this is the name of the credential in EletricCommander (project [WM Credentials](https://commander.gapinc.dev/commander/link/projectDetails/projects/WM%20Credentials?objectId=project-85a02ed1-42a2-11e4-a559-00505625f614&filterName0=projectsPageSearch&filterDepth=1&tabGroup=credentialsHeader&s=Projects)) that knows the actual username/password to access Airwatch
 
+### searchParamsToRetireApp
+
+Specify only the parameters needed to uniquely identify and retire an application. Not all the parameters are needed. Start with bundleId and status parameters to identify an application to retire
+
+* `bundleId`: bundleId of the current build
+* `applicationName`: Display name of the application
+* `status`: status of the application
+
 ## Tasks available
 
 * `pushArtifactToAirWatch`: uses Airwatch REST API to upload the artifact.
 * `autoAssignSmartGroups`: uses Airwatch REST API to assign the configured `smartGroups` to the uploaded ipa. It depends on `pushArtifactToAirWatch`.
+* `autoRetireAppPreviousVersion`: This will retire the application by appId provided using airwath Rest api. It depends on `pushArtifactToAirWatch` to search for a give appId that meets the criteria.
 * `configureApp`: goes through the Airwatch Console and configures the uploaded application with the values from the "airwatchConfig" config file. It depends on `pushArtifactToAirWatch`.
