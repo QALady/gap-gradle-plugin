@@ -1,5 +1,6 @@
 package com.gap.gradle.tasks
 
+import com.gap.gradle.exceptions.DynamicNodesException
 import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
 import com.gap.gradle.extensions.GapWMSegmentDslAction
 import com.gap.pipeline.ec.CommanderClient
@@ -7,7 +8,6 @@ import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 import com.gap.util.Util
-import com.gap.gradle.exceptions.DynamicNodesException
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
@@ -23,7 +23,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	def segmentDsl
 	def projectName = "WM Temporary Procedures"
 
-	int TIME_TO_WAIT_IN_MINUTES = 20
+	int TIME_TO_WAIT_IN_MINUTES = 30
 	int INTERVAL_IN_MINUTES = 1
 
 	CreateECProcedureTask(Project project, commanderClient = new CommanderClient()) {
@@ -142,9 +142,9 @@ class CreateECProcedureTask extends WatchmenTask {
 			easyCreateParams.put("createResource", "true")
 			easyCreateParams.put("type", "${node.imageType}".toString())
 
-			logger.info("Trying to Create Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
+			logger.info("Initializing Create Dynamic Node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
 			def jobId = commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
-			logger.info("Create Dynamic Node JobId : $jobId")
+			logger.info("Dynamic Node ${node.name} has JobId $jobId")
 			def currentNode = [:]
 			currentNode.jobId = jobId
 			currentNode.node = node
@@ -152,31 +152,45 @@ class CreateECProcedureTask extends WatchmenTask {
 		}
 
 		try {
-			nodeList.each { eachNode ->
-				if (waitForJobToComplete(eachNode.jobId, eachNode.node)) {
-					if (!commanderClient.getJobStatus(eachNode.jobId).outcome.toString().equalsIgnoreCase('successful')) {
+			if (waitForJobToComplete(nodeList)) {
+				nodeList.each { eachNode ->
+					if (!'successful'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).outcome.toString())) {
 						throw new DynamicNodesException("Problematic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role.")
 					}
-				}else{
-					throw new DynamicNodesException("Problematic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role.")
 				}
+				logger.info("All nodes successfully created")
 			}
-		} catch (DynamicNodesException e) {
+		}
+		catch (DynamicNodesException de) {
 			nodeList.each { eachNode ->
 				deleteNode(eachNode.node)
 			}
-			throw e
+			throw de
 		}
 	}
 
-	def waitForJobToComplete(def jobId, def node) {
-		logger.info("Waiting for JobId : $jobId")
+	def waitForJobToComplete(def nodeList) {
 
 		try {
 			Util.executeWithRetry(TIME_TO_WAIT_IN_MINUTES, INTERVAL_IN_MINUTES, {
-				commanderClient.getJobStatus(jobId).status == 'completed'
+				nodeList.each { eachNode ->
+					if ('error'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).outcome.toString())) {
+						def errorText="Error creating Dynamic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role."
+						logger.error(errorText)
+						throw new DynamicNodesException(errorText)
+					}
+				}
+
+				boolean statusCompleted = true
+				nodeList.each { eachNode ->
+					statusCompleted = statusCompleted && 'completed'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).status.toString())
+					logger.info("Dynamic Node : ${eachNode.node.name}  on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} with status ${commanderClient.getJobStatus(eachNode.jobId).status})")
+				}
+				if (statusCompleted) {
+					logger.info("All nodes status completed")
+				}
+				return statusCompleted
 			})
-			logger.info("Created Dynamic node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
 			return true
 		}
 		catch (Exception ex) {
