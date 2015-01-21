@@ -1,9 +1,11 @@
 package com.gap.gradle.tasks
 
 import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
+import com.gap.gradle.plugins.openstack.DynamicNodeHelper;
 import com.gap.gradle.utils.ShellCommand
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.utils.EnvironmentStub
+
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -71,6 +73,8 @@ class CreateECProcedureTaskTest {
 		env.setValue('COMMANDER_JOBID', '1234') // sets the job ID
 		commanderClient = new CommanderClient(mockShellCommand, env)
 		task = new CreateECProcedureTask(project, commanderClient)
+		
+		DynamicNodeHelper.TIME_TO_WAIT_IN_MINUTES = 2
 	}
 
 	@Test
@@ -337,8 +341,6 @@ class CreateECProcedureTaskTest {
 				}
 			}
 		}
-		task.TIME_TO_WAIT_IN_MINUTES = 2
-		task.INTERVAL_IN_MINUTES = 1
 		task.execute()
 	}
 

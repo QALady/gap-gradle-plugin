@@ -5,10 +5,9 @@ import static com.gap.gradle.extensions.GapWMSegmentDsl.segmentPhases
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
-import com.gap.gradle.exceptions.DynamicNodesException
 import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
 import com.gap.gradle.extensions.GapWMSegmentDslAction
-import com.gap.gradle.utils.RetryCommand
+import com.gap.gradle.plugins.openstack.DynamicNodeHelper
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
@@ -21,21 +20,20 @@ class CreateECProcedureTask extends WatchmenTask {
 	def logger = LogFactory.getLog(CreateECProcedureTask)
 	private Project project
 	private CommanderClient commanderClient
+	private DynamicNodeHelper dynamicNodeHelper
 	def segmentDsl
 	def projectName = "WM Temporary Procedures"
-
-	int TIME_TO_WAIT_IN_MINUTES = 30
-	int INTERVAL_IN_MINUTES = 1
 
 	CreateECProcedureTask(Project project, commanderClient = new CommanderClient()) {
 		super(project)
 		this.project = project
 		this.commanderClient = commanderClient
-		this.segmentDsl = project.segment
+		this.dynamicNodeHelper = new DynamicNodeHelper(commanderClient)
+		this.segmentDsl = project.segment		
 	}
 
 	def execute() {
-		executeCreateDynamicNodes()
+		dynamicNodeHelper.createDynamicNodes(segmentDsl.dynamicNodes)
 		segmentPhases.each { phase ->
 			createPhaseProcedure(phase)
 		}
@@ -126,89 +124,4 @@ class CreateECProcedureTask extends WatchmenTask {
 
 		return promotedPlugin
 	}
-
-	def executeCreateDynamicNodes() {
-		def easyCreateParams
-		def projectName = "Nova-CLI"
-		def procedureName = "Easy Create"
-		def nodeList = []
-		segmentDsl.dynamicNodes.each { node ->
-			easyCreateParams = [:]
-			easyCreateParams.put("tenant", "${node.openstackTenant}".toString())
-			easyCreateParams.put("roleName", "${node.chefRole}".toString())
-			easyCreateParams.put("hostname", "${node.name}".toString())
-
-			easyCreateParams.put("network", "public".toString())
-			easyCreateParams.put("autoPurge", "true")
-			easyCreateParams.put("createResource", "true")
-			easyCreateParams.put("type", "${node.imageType}".toString())
-
-			logger.info("Initializing Create Dynamic Node:  ${node.name} on ${node.openstackTenant} tenant with ${node.chefRole} role.")
-			def jobId = commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
-			logger.info("Dynamic Node ${node.name} has JobId $jobId")
-			def currentNode = [:]
-			currentNode.jobId = jobId
-			currentNode.node = node
-			nodeList.add(currentNode)
-		}
-
-		try {
-			if (waitForJobToComplete(nodeList)) {
-				nodeList.each { eachNode ->
-					if (!'successful'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).outcome.toString())) {
-						throw new DynamicNodesException("Problematic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role.")
-					}
-				}
-				logger.info("All nodes successfully created")
-			}
-		}
-		catch (DynamicNodesException de) {
-			nodeList.each { eachNode ->
-				deleteNode(eachNode.node)
-			}
-			throw de
-		}
-	}
-
-	def waitForJobToComplete(def nodeList) {
-
-		try {
-			RetryCommand.executeWithRetry(TIME_TO_WAIT_IN_MINUTES, INTERVAL_IN_MINUTES, {
-				nodeList.each { eachNode ->
-					if ('error'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).outcome.toString())) {
-						def errorText="Error creating Dynamic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role."
-						logger.error(errorText)
-						throw new DynamicNodesException(errorText)
-					}
-				}
-
-				boolean statusCompleted = true
-				nodeList.each { eachNode ->
-					statusCompleted = statusCompleted && 'completed'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).status.toString())
-					logger.info("Dynamic Node : ${eachNode.node.name}  on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} with status ${commanderClient.getJobStatus(eachNode.jobId).status})")
-				}
-				if (statusCompleted) {
-					logger.info("All nodes status completed")
-				}
-				return statusCompleted
-			})
-			return true
-		}
-		catch (Exception ex) {
-			logger.error(ex)
-			return false
-		}
-
-	}
-
-	def deleteNode(def node) {
-		def projectName = "Nova-CLI"
-		def procedureName = "Easy Delete"
-		def easyCreateParams = [:]
-		easyCreateParams.put("resourceToDelete", "${node.name}".toString())
-		easyCreateParams.put("tenant", "${node.openstackTenant}".toString())
-		commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
-		logger.info("Deleted node :  ${node.name} on ${node.openstackTenant} tenant.")
-	}
-
 }
