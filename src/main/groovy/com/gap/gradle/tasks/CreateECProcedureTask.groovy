@@ -8,7 +8,7 @@ import org.gradle.api.Project
 import com.gap.gradle.exceptions.DynamicNodesException
 import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
 import com.gap.gradle.extensions.GapWMSegmentDslAction
-import com.gap.gradle.utils.SchedulerUtil
+import com.gap.gradle.utils.RetryCommand
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
@@ -173,7 +173,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	def waitForJobToComplete(def nodeList) {
 
 		try {
-			SchedulerUtil.executeWithRetry(TIME_TO_WAIT_IN_MINUTES, INTERVAL_IN_MINUTES, {
+			RetryCommand.executeWithRetry(TIME_TO_WAIT_IN_MINUTES, INTERVAL_IN_MINUTES, {
 				nodeList.each { eachNode ->
 					if ('error'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).outcome.toString())) {
 						def errorText="Error creating Dynamic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role."

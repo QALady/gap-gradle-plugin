@@ -2,10 +2,10 @@ package com.gap.gradle.utils
 
 import org.apache.commons.logging.LogFactory
 
-public class SchedulerUtil{
+public class RetryCommand{
 
     public static void executeWithRetry(timeToWaitInMinutes, intervalInMinutes, closure){
-		def logger = LogFactory.getLog(SchedulerUtil)
+		def logger = LogFactory.getLog(RetryCommand)
         def timeoutMillis = timeToWaitInMinutes * 60000
         def start = System.currentTimeMillis()
         def end  = start + timeoutMillis
