@@ -1,17 +1,18 @@
 package com.gap.gradle.tasks
 
+import static com.gap.gradle.extensions.GapWMSegmentDsl.segmentPhases
+
+import org.apache.commons.logging.LogFactory
+import org.gradle.api.Project
+
 import com.gap.gradle.exceptions.DynamicNodesException
 import com.gap.gradle.exceptions.WMSegmentDslLockResourceOnLocalException
 import com.gap.gradle.extensions.GapWMSegmentDslAction
+import com.gap.gradle.utils.SchedulerUtil
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
-import com.gap.util.Util
-import org.apache.commons.logging.LogFactory
-import org.gradle.api.Project
-
-import static com.gap.gradle.extensions.GapWMSegmentDsl.segmentPhases
 
 @RequiredParameters([
 		@Require(parameter = 'segment', description = 'the WM Segment DSL')
@@ -172,7 +173,7 @@ class CreateECProcedureTask extends WatchmenTask {
 	def waitForJobToComplete(def nodeList) {
 
 		try {
-			Util.executeWithRetry(TIME_TO_WAIT_IN_MINUTES, INTERVAL_IN_MINUTES, {
+			SchedulerUtil.executeWithRetry(TIME_TO_WAIT_IN_MINUTES, INTERVAL_IN_MINUTES, {
 				nodeList.each { eachNode ->
 					if ('error'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).outcome.toString())) {
 						def errorText="Error creating Dynamic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role."
