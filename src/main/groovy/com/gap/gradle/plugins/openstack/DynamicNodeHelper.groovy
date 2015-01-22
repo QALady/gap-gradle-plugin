@@ -45,7 +45,7 @@ class DynamicNodeHelper {
 		try {
 			if (waitForJobToComplete(nodeList)) {
 				nodeList.each { eachNode ->
-					if (!'successful'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).outcome.toString())) {
+					if (!'success'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).outcome.toString())) {
 						throw new DynamicNodesException("Problematic node:  ${eachNode.node.name} on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} role.")
 					}
 				}
@@ -54,7 +54,7 @@ class DynamicNodeHelper {
 		}
 		catch (DynamicNodesException de) {
 			nodeList.each { eachNode ->
-				deleteNode(eachNode.node)
+				deleteNode(eachNode.node, eachNode.jobId)
 			}
 			throw de
 		}
@@ -74,7 +74,7 @@ class DynamicNodeHelper {
 					boolean statusCompleted = true
 					nodeList.each { eachNode ->
 						statusCompleted = statusCompleted && 'completed'.equalsIgnoreCase(commanderClient.getJobStatus(eachNode.jobId).status.toString())
-						logger.info("Dynamic Node : ${eachNode.node.name}  on ${eachNode.node.openstackTenant} tenant with ${eachNode.node.chefRole} with status ${commanderClient.getJobStatus(eachNode.jobId).status})")
+						logger.info("Dynamic Node : ${eachNode.node.name}  with JobId ${eachNode.jobId} tenant with ${eachNode.node.chefRole} with status ${commanderClient.getJobStatus(eachNode.jobId).status})")
 					}
 					if (statusCompleted) {
 						logger.info("All nodes status completed")
@@ -89,14 +89,14 @@ class DynamicNodeHelper {
 			}
 		}
 		
-		def deleteNode(def node) {
+		def deleteNode(def node, def jobId) {
 			def projectName = "Nova-CLI"
 			def procedureName = "Easy Delete"
 			def easyCreateParams = [:]
 			easyCreateParams.put("resourceToDelete", "${node.name}".toString())
 			easyCreateParams.put("tenant", "${node.openstackTenant}".toString())
 			commanderClient.runProcedure(projectName, procedureName, easyCreateParams)
-			logger.info("Deleted node :  ${node.name} on ${node.openstackTenant} tenant.")
+			logger.info("Deleted node :  ${node.name} with JobId ${jobId} on ${node.openstackTenant} tenant.")
 		}
 		
 
