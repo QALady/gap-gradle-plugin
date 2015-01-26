@@ -18,8 +18,8 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 				name "artifactory"
     			url "${artifactoryUrl}/local-non-prod"
 	            credentials {
-                    username 'ec-build-snap'
-                    password '$nap4me'
+                    username 'ec-build'
+                    password 'EC-art!'
                 }
     		}
     		maven {

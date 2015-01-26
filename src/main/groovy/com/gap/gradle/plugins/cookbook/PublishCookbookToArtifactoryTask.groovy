@@ -30,8 +30,8 @@ class PublishCookbookToArtifactoryTask {
                 layout 'maven'
                 url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
                 credentials {
-                    username 'ec-build-snap'
-                    password '$nap4me'
+                    username 'ec-build'
+                    password 'EC-art!'
                 }
             }
         }
