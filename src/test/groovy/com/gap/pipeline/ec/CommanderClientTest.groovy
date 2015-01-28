@@ -187,7 +187,7 @@ public class CommanderClientTest {
 
         commander.getArtifactoryUserName()
 
-        verify(mockShellCommand).execute(['ectool', 'getFullCredential', '/projects/WM Credentials/Credentials/WMArtifactory', '--value', 'userName'])
+        verify(mockShellCommand).execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/WMArtifactory', '--value', 'userName'])
     }
 
     @Test
@@ -196,6 +196,6 @@ public class CommanderClientTest {
 
         commander.getArtifactoryPassword()
 
-        verify(mockShellCommand).execute(['ectool', 'getFullCredential', '/projects/WM Credentials/Credentials/WMArtifactory', '--value', 'password'])
+        verify(mockShellCommand).execute(['ectool', 'getFullCredential', '/projects/WM Credentials/credentials/WMArtifactory', '--value', 'password'])
     }
 }

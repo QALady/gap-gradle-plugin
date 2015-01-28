@@ -232,11 +232,11 @@ class CommanderClient {
 	}
 
 	def getArtifactoryUserName() {
-		getCredential("/projects/WM Credentials/Credentials/WMArtifactory", "userName")
+		getCredential("/projects/WM Credentials/credentials/WMArtifactory", "userName")
 	}
 
 	def getArtifactoryPassword() {
-		getCredential("/projects/WM Credentials/Credentials/WMArtifactory", "password")
+		getCredential("/projects/WM Credentials/credentials/WMArtifactory", "password")
 	}
 
 	def getCredential(String credentialName, String valueName) {
