@@ -1,18 +1,20 @@
 package com.gap.pipeline
-import groovy.json.JsonSlurper
-
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-
 import com.gap.gradle.ivy.IvyInfo
 import com.gap.gradle.tasks.GenerateAndLinkUpstreamChangelogReportTask
 import com.gap.gradle.tasks.GetResolvedVersionTask
 import com.gap.gradle.tasks.PromoteArtifactsTask
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.*
+import groovy.json.JsonSlurper
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.tasks.Upload
+
 //CookbookConfig cookbookDetail
 
 class GapPipelinePlugin implements Plugin<Project> {
+
+    private static final String WM_LOCAL_NON_PROD = "wm_local_non_prod"
 
     CommanderClient ecclient = new CommanderClient()
 
@@ -25,16 +27,12 @@ class GapPipelinePlugin implements Plugin<Project> {
         loadProperties(project, "prodPrepare", "ivy")
 
         configureTasksRequiredByWatchmenSegment(project)
-		
+
         project.repositories {
           ivy {
-            name "wm_local_non_prod"
+            name WM_LOCAL_NON_PROD
             layout "maven"
             url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
-            credentials {
-              username "${ecclient.getArtifactoryUserName()}"
-              password "${ecclient.getArtifactoryPassword()}"
-            }
           }
           maven {
               name "wm_maven_remote_repos"
@@ -46,6 +44,8 @@ class GapPipelinePlugin implements Plugin<Project> {
               url "http://artifactory.gapinc.dev/artifactory/remote-repos"
           }
         }
+
+        setIvyCredentialsIfAnyUploadIsGoingToHappen(project)
 
         project.task('setupBuildDirectories') <<{
             new SetUpBuildDirectoriesTask(project).execute()
@@ -103,6 +103,17 @@ class GapPipelinePlugin implements Plugin<Project> {
 
         project.task('buildJsonWithAllResolvedVersions') << {
             new BuildJsonWithAllResolvedVersionsTask(project).execute()
+        }
+    }
+
+    private setIvyCredentialsIfAnyUploadIsGoingToHappen(Project project) {
+        project.gradle.taskGraph.whenReady { taskGraph ->
+            if (taskGraph.allTasks.any { it instanceof Upload }) {
+                project.repositories[WM_LOCAL_NON_PROD].credentials {
+                    username ecclient.getArtifactoryUserName()
+                    password ecclient.getArtifactoryPassword()
+                }
+            }
         }
     }
 
