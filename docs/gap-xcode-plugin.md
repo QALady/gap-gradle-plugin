@@ -6,6 +6,22 @@ This plugin exposes an extension called `xcode` that provides some syntax sugar 
 ## Usage
 
 ```groovy
+buildscript {
+    repositories {
+        maven { url 'http://artifactory.gapinc.dev/artifactory/remote-repos' }
+        maven { url 'http://artifactory.gapinc.dev/artifactory/local-non-prod' }
+        ivy {
+            layout 'maven'
+            url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+        }
+    }
+
+    dependencies {
+        classpath group: 'com.gap', name: 'gap-gradle-plugin', version: '+'
+        classpath group: 'org.openbakery', name: 'xcodePlugin', version: '0.9.+' // required
+    }
+}
+
 apply plugin: 'gap-xcode'
 
 xcode {
