@@ -36,9 +36,9 @@ xcode {
     }
 
     build {
-        target 'MyApp'
-        sdk 'iphoneos'
-        signingIdentity signing.distribution
+        target 'MyApp' // you can also pass a closure, like in the line below
+        sdk { 'iphoneos' }
+        signingIdentity { signing.distribution }
     }
 
     archive {
@@ -54,21 +54,21 @@ In addition to this documentation, please use the official [xcodebuild documenta
 
 ### Test options
 
-* `scheme` specifies which scheme will be built.
-* `destination.platform` specifies in which plataform the unit tests will run, usually the simulator.
-* `destination.name` specifies the name of the device to use, e.g.: `iPhone 5s`, `iPhone 6`, etc.
-* `destination.os` specifies the iOS version of the simulator, e.g.: `7.1`, `8.1`, etc.
+* `scheme` (String or Closure) specifies which scheme will be built.
+* `destination.platform` (String or Closure) specifies in which plataform the unit tests will run, usually the simulator.
+* `destination.name` (String or Closure) specifies the name of the device to use, e.g.: `iPhone 5s`, `iPhone 6`, etc.
+* `destination.os` (String or Closure) specifies the iOS version of the simulator, e.g.: `7.1`, `8.1`, etc.
 
 ### Build options
 
-* `target` specifies which target will be built. See available targets with `xcodebuild -list`.
-* `sdk` specifies which SDK will be used to build the target, e.g.: `iphoneos`, `iphonesimulator`. See all available SDKs with `xcodebuild -showsdks`.
-* `signingIdentity` specifies which Code Signing Identity will be used to sign the app. There are two pre-configured identities available: `signing.development` and `signing.distribution`.
+* `target` (String or Closure) specifies which target will be built. See available targets with `xcodebuild -list`.
+* `sdk` (String or Closure) specifies which SDK will be used to build the target, e.g.: `iphoneos`, `iphonesimulator`. See all available SDKs with `xcodebuild -showsdks`.
+* `signingIdentity` (SigningIdentity or Closure) specifies which Code Signing Identity will be used to sign the app. There are two pre-configured identities available: `signing.development` and `signing.distribution`.
 
 ### Archive options
 
-* `version` is equivalent to [CFBundleVersion](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-102364). Will be used to set artifact version uploaded to Artifactory.
-* `shortVersionString` is equivalent to [CFBundleShortVersionString](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-111349).
+* `version` (String or Closure) is equivalent to [CFBundleVersion](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-102364). Will be used to set artifact version uploaded to Artifactory.
+* `shortVersionString` (String or Closure) is equivalent to [CFBundleShortVersionString](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-111349).
 
 ## Adding custom Signing Identities
 
