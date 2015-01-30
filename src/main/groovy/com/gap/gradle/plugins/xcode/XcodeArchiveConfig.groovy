@@ -30,11 +30,11 @@ class XcodeArchiveConfig implements XcodeConfig {
         def errorMessages = ''
 
         if (version == null || isBlank(version.get())) {
-            errorMessages += "Please define the ipa `version`."
+            errorMessages += "- Please define the ipa `version`.\n"
         }
 
         if (shortVersionString == null || isBlank(shortVersionString.get())) {
-            errorMessages += "Please define the ipa `shortVersionString`."
+            errorMessages += "- Please define the ipa `shortVersionString`."
         }
 
         if (!isBlank(errorMessages)) {
