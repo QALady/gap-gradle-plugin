@@ -8,6 +8,7 @@ import org.gradle.internal.reflect.Instantiator
 
 import com.gap.gradle.extensions.GapWMSegmentDsl
 import com.gap.gradle.tasks.CheckDSLFileExistTask
+import com.gap.gradle.tasks.ConfigureDefaultResourceFromDsl
 import com.gap.gradle.tasks.CreateECProcedureTask
 import com.gap.gradle.tasks.GenerateGradleWMSegmentDslFromPropertiesTask
 import com.gap.gradle.tasks.PostWMSegmentPhasesTask
@@ -27,6 +28,10 @@ class GapWMSegmentDslPlugin implements Plugin<Project> {
 	void apply(Project project) {
 
 		loadSegmentDslConfig(project)
+
+		project.task('configureDefaultResource') << {
+			new ConfigureDefaultResourceFromDsl(project).execute()
+		}
 
 		project.task('createECProcedure') << {
 			new CreateECProcedureTask(project).execute()
