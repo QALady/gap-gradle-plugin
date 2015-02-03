@@ -57,4 +57,28 @@ class Assert {
         }
         fail("Task ${task} does not declare a dependency on ${requiredDependency}")
     }
+
+    static void taskShouldBeFinalizedBy(task, requiredFinalizer, project) {
+        for (def finalizer : project.tasks.findByName(task).finalizedBy.values) {
+            if (finalizer == requiredFinalizer) {
+                return
+            } else if (finalizer instanceof List) {
+                for (def f : finalizer) {
+                    if (f == requiredFinalizer) {
+                        return
+                    }
+                }
+            }
+        }
+        fail("Task ${task} is not finalized by ${requiredFinalizer}")
+    }
+
+    static void projectShouldHaveConfiguration(project, requiredConfiguration) {
+        for (def configuration : project.configurations) {
+            if (configuration.name == requiredConfiguration) {
+                return
+            }
+        }
+        fail("Project ${project} doesn't have configuration ${requiredConfiguration}")
+    }
 }

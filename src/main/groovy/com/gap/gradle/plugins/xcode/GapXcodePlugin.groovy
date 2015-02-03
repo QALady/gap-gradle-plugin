@@ -123,7 +123,6 @@ class GapXcodePlugin implements Plugin<Project> {
             }
 
             if (taskGraph.hasTask(':uploadArchives')) {
-                extension.build.validate()
                 extension.archive.validate()
                 project.version = extension.archive.version
 

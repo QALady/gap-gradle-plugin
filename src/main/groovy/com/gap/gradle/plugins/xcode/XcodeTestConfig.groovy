@@ -7,11 +7,19 @@ import org.gradle.internal.reflect.Instantiator
 import static org.apache.commons.lang.StringUtils.isBlank
 
 class XcodeTestConfig implements XcodeConfig {
-    String scheme
+    private Property<String> scheme
     DestinationConfig destination
 
     XcodeTestConfig(Instantiator instantiator) {
         this.destination = instantiator.newInstance(DestinationConfig)
+    }
+
+    String getScheme() {
+        return scheme.get()
+    }
+
+    void setScheme(Object scheme) {
+        this.scheme = new Property(scheme)
     }
 
     void destination(Action<DestinationConfig> action) {
@@ -20,7 +28,7 @@ class XcodeTestConfig implements XcodeConfig {
 
     @Override
     void validate() throws InvalidXcodeConfigurationException {
-        if (isBlank(scheme)) {
+        if (scheme == null || isBlank(scheme.get())) {
             throw new InvalidXcodeConfigurationException("Please configure the `scheme`.")
         }
 
