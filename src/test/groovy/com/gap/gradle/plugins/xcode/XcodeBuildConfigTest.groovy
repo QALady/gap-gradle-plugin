@@ -28,30 +28,20 @@ class XcodeBuildConfigTest {
     }
 
     @Test
-    public void shouldSupportTargetAsClosure() throws Exception {
+    public void shouldSupportPropertiesAsClosure() throws Exception {
         buildConfig.target = { 'someTarget' }
-
-        assertEquals(buildConfig.target, 'someTarget')
-    }
-
-    @Test
-    public void shouldSupportTargetAsString() throws Exception {
-        buildConfig.target = 'someTarget'
-
-        assertEquals(buildConfig.target, 'someTarget')
-    }
-
-    @Test
-    public void shouldSupportSDKAsClosure() throws Exception {
         buildConfig.sdk = { 'someSDK' }
 
+        assertEquals(buildConfig.target, 'someTarget')
         assertEquals(buildConfig.sdk, 'someSDK')
     }
 
     @Test
-    public void shouldSupportSDKAsString() throws Exception {
+    public void shouldSupportPropertiesAsString() throws Exception {
+        buildConfig.target = 'someTarget'
         buildConfig.sdk = 'someSDK'
 
+        assertEquals(buildConfig.target, 'someTarget')
         assertEquals(buildConfig.sdk, 'someSDK')
     }
 
@@ -67,7 +57,6 @@ class XcodeBuildConfigTest {
 
         buildConfig.signingIdentity = { identity }
 
-        println buildConfig.signingIdentity.class
         assertEquals(buildConfig.signingIdentity.name, 'testIdentity')
     }
 
@@ -83,13 +72,27 @@ class XcodeBuildConfigTest {
 
         buildConfig.signingIdentity = identity
 
-        println buildConfig.signingIdentity.class
         assertEquals(buildConfig.signingIdentity.name, 'testIdentity')
     }
 
     @Test
-    public void shouldThrowValidationExceptionIfInvalid() throws Exception {
+    public void shouldThrowValidationExceptionIfOptionsAreNotSet() throws Exception {
         buildConfig = new XcodeBuildConfig()
+
+        try {
+            buildConfig.validate()
+        } catch (InvalidXcodeConfigurationException e) {
+            assertThat(e.message, containsString('target'))
+            assertThat(e.message, containsString('SDK'))
+            assertThat(e.message, containsString('signing'))
+        }
+    }
+
+    @Test
+    public void shouldThrowValidationExceptionIfOptionsAreEmpty() throws Exception {
+        buildConfig = new XcodeBuildConfig()
+        buildConfig.target = ''
+        buildConfig.sdk = ''
 
         try {
             buildConfig.validate()
