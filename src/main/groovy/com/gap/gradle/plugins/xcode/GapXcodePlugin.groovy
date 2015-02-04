@@ -1,6 +1,7 @@
 package com.gap.gradle.plugins.xcode
 
 import com.gap.gradle.plugins.xcode.tasks.TransformJUnitXmlReportToHTMLTask
+import org.apache.commons.io.FileUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Zip
@@ -35,21 +36,23 @@ class GapXcodePlugin implements Plugin<Project> {
     }
 
     private configureExistingTasks() {
-        project.tasks.findByName('test').finalizedBy('transformJUnitXmlReportToHTML')
+        project.tasks['test'].finalizedBy('transformJUnitXmlReportToHTML')
 
-        project.tasks.findByName('codesign').doFirst {
-            def codeSign = extension.build.signingIdentity.name
-            def configuration = project.xcodebuild.configuration
-            def sdk = extension.build.sdk
-
-            def filePath = "${targetOutputDir(codeSign)}/${configuration}-${sdk}"
-            def fileTree = project.fileTree(filePath)
-            def rootPlistPath = fileTree.include('**/Root.plist').asPath
-
-            ant.replace(file: rootPlistPath, token: '@version@', value: extension.archive.version)
+        project.tasks['package'].doFirst {
+            replaceVersionTokenInSettingsBundle()
         }
 
-        project.tasks.findByName('uploadArchives').dependsOn('airwatchConfigZip')
+        project.tasks['package'].doLast {
+            moveGeneratedArtifactsToArtifactsDirectory()
+        }
+
+        // Xcode gradle plugin version 0.10 moved the IPA creation and signing to the 'package' task.
+        // To keep projects backwards compatible we're running package after 'archive' runs.
+        project.tasks['archive'].doLast {
+            project.tasks['package'].execute()
+        }
+
+        project.tasks['uploadArchives'].dependsOn('airwatchConfigZip')
     }
 
     private createNewTasks() {
@@ -88,12 +91,13 @@ class GapXcodePlugin implements Plugin<Project> {
                 }
             }
 
-            if (taskGraph.hasTask(':build')) {
+            if (taskGraph.hasTask(':xcodebuild')) {
                 extension.build.validate()
                 def buildConfig = extension.build
                 def signIdentity = buildConfig.signingIdentity
 
                 project.xcodebuild {
+                    productName = buildConfig.target
                     target = buildConfig.target
                     sdk = buildConfig.sdk
                     symRoot = targetOutputDir(signIdentity.name)
@@ -123,21 +127,22 @@ class GapXcodePlugin implements Plugin<Project> {
             }
 
             if (taskGraph.hasTask(':uploadArchives')) {
+                def target = extension.build.target
+
                 extension.archive.validate()
                 project.version = extension.archive.version
 
                 project.artifacts {
                     def chosenIdentity = extension.build.signingIdentity.name
-                    archives classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'ipa')
-                    archives classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'zip')
-                    archives classifier: 'iphonesimulator', file: fullPathToArtifact(chosenIdentity, 'iphonesimulator', 'zip')
+                    archives name: target, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'ipa')
+                    archives name: target, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'zip')
+                    archives name: target, classifier: 'iphonesimulator', file: fullPathToArtifact(chosenIdentity, 'iphonesimulator', 'zip')
 
                     def developmentIdentity = extension.signing.development.name
-                    archives classifier: 'iphoneos-dev', file: fullPathToArtifact(developmentIdentity, 'iphoneos', 'ipa')
-                    archives classifier: 'iphoneos-dev', file: fullPathToArtifact(developmentIdentity, 'iphoneos', 'zip')
+                    archives name: target, classifier: 'iphoneos-dev', file: fullPathToArtifact(developmentIdentity, 'iphoneos', 'ipa')
+                    archives name: target, classifier: 'iphoneos-dev', file: fullPathToArtifact(developmentIdentity, 'iphoneos', 'zip')
                 }
 
-                def target = extension.build.target
                 def airwatchConfigForTarget = "airwatchConfig/${target}"
                 if (project.file(airwatchConfigForTarget).exists()) {
                     project.airwatchConfigZip.from airwatchConfigForTarget
@@ -149,7 +154,6 @@ class GapXcodePlugin implements Plugin<Project> {
                     }
                 }
             }
-
         }
     }
 
@@ -180,11 +184,49 @@ class GapXcodePlugin implements Plugin<Project> {
         project.file("${basePath}/sym-${identityName}/${appName}")
     }
 
-    private File fullPathToArtifact(identityName, sdk, type) {
-        def basePath = targetOutputDir(identityName).path
-        def appName = extension.build.target
-        def fileName = "${appName}.${type}"
+    private void moveGeneratedArtifactsToArtifactsDirectory() {
+        def codeSign = extension.build.signingIdentity.name
+        def configuration = project.xcodebuild.configuration
+        def sdk = extension.build.sdk
+        def target = project.xcodebuild.target
 
-        project.file("${basePath}/Release-${sdk}/${fileName}")
+        def artifactsDir = getArtifactsDir()
+        artifactsDir.mkdirs()
+
+        if (sdk == 'iphoneos') {
+            // Zip file with the debug symbols
+            project.ant.zip(destfile: new File(artifactsDir, artifactFileName(target, sdk, codeSign, 'zip')).toString()) {
+                zipfileset(prefix: "${target}.app.dSYM", dir: "${project.buildDir}/sym-${codeSign}/${target}/${configuration}-${sdk}/${target}.app.dSYM")
+            }
+
+            FileUtils.copyFile(new File(project.buildDir, "package/${target}.ipa"), new File(artifactsDir, artifactFileName(target, sdk, codeSign, 'ipa')))
+        }
+        else {
+            FileUtils.copyFile(new File(project.buildDir, "archive/${target}.zip"), new File(artifactsDir, artifactFileName(target, sdk, codeSign, 'zip')))
+        }
+    }
+
+    private void replaceVersionTokenInSettingsBundle() {
+        def codeSign = extension.build.signingIdentity.name
+        def configuration = project.xcodebuild.configuration
+        def sdk = extension.build.sdk
+
+        def filePath = "${targetOutputDir(codeSign)}/${configuration}-${sdk}"
+        def fileTree = project.fileTree(filePath)
+        def rootPlistPath = fileTree.include('**/Root.plist').asPath
+
+        project.ant.replace(file: rootPlistPath, token: '@version@', value: extension.archive.version)
+    }
+
+    private File getArtifactsDir() {
+        new File(project.buildDir, 'artifacts')
+    }
+
+    private File fullPathToArtifact(String identityName, String sdk, String type) {
+        new File(getArtifactsDir(), artifactFileName(extension.build.target, sdk, identityName, type))
+    }
+
+    private static String artifactFileName(String target, String sdk, String codeSign, String extension) {
+        "${target}-${sdk}-${codeSign}.${extension}"
     }
 }
