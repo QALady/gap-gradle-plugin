@@ -36,6 +36,7 @@ xcode {
     }
 
     build {
+        productName 'My Application'
         target 'MyApp' // you can also pass a closure, like in the line below
         sdk { 'iphoneos' }
         signingIdentity { signing.distribution }
@@ -61,6 +62,7 @@ In addition to this documentation, please use the official [xcodebuild documenta
 
 ### Build options
 
+* `productName` (String or Closure) needs to be the Product Name that your Xcode project uses for your `target`. If not specified the value of `target` will be used.
 * `target` (String or Closure) specifies which target will be built. See available targets with `xcodebuild -list`.
 * `sdk` (String or Closure) specifies which SDK will be used to build the target, e.g.: `iphoneos`, `iphonesimulator`. See all available SDKs with `xcodebuild -showsdks`.
 * `signingIdentity` (SigningIdentity or Closure) specifies which Code Signing Identity will be used to sign the app. There are two pre-configured identities available: `signing.development` and `signing.distribution`.
