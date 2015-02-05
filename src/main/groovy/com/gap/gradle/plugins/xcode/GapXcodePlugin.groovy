@@ -53,6 +53,11 @@ class GapXcodePlugin implements Plugin<Project> {
         }
 
         project.tasks['uploadArchives'].dependsOn('airwatchConfigZip')
+
+        // Xcode gradle plugin version 0.10 renamed the clean tasks.
+        // Adding aliases to keep backwards compatibility.
+        project.task('keychain-clean').dependsOn('keychainClean')
+        project.task('provisioning-clean').dependsOn('provisioningClean')
     }
 
     private createNewTasks() {
