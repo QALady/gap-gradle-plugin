@@ -18,7 +18,7 @@ buildscript {
 
     dependencies {
         classpath group: 'com.gap', name: 'gap-gradle-plugin', version: '+'
-        classpath group: 'org.openbakery', name: 'xcodePlugin', version: '0.9.+' // required
+        classpath group: 'org.openbakery', name: 'xcodePlugin', version: '0.10.1-gradle1' // required
     }
 }
 
