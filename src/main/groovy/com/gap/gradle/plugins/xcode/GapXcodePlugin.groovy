@@ -97,7 +97,7 @@ class GapXcodePlugin implements Plugin<Project> {
                 def signIdentity = buildConfig.signingIdentity
 
                 project.xcodebuild {
-                    productName = buildConfig.target
+                    productName = buildConfig.productName
                     target = buildConfig.target
                     sdk = buildConfig.sdk
                     symRoot = targetOutputDir(signIdentity.name)
@@ -127,6 +127,7 @@ class GapXcodePlugin implements Plugin<Project> {
             }
 
             if (taskGraph.hasTask(':uploadArchives')) {
+                def productName = extension.build.productName
                 def target = extension.build.target
 
                 extension.archive.validate()
@@ -134,13 +135,13 @@ class GapXcodePlugin implements Plugin<Project> {
 
                 project.artifacts {
                     def chosenIdentity = extension.build.signingIdentity.name
-                    archives name: target, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'ipa')
-                    archives name: target, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'zip')
-                    archives name: target, classifier: 'iphonesimulator', file: fullPathToArtifact(chosenIdentity, 'iphonesimulator', 'zip')
+                    archives name: productName, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'ipa')
+                    archives name: productName, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'zip')
+                    archives name: productName, classifier: 'iphonesimulator', file: fullPathToArtifact(chosenIdentity, 'iphonesimulator', 'zip')
 
                     def developmentIdentity = extension.signing.development.name
-                    archives name: target, classifier: 'iphoneos-dev', file: fullPathToArtifact(developmentIdentity, 'iphoneos', 'ipa')
-                    archives name: target, classifier: 'iphoneos-dev', file: fullPathToArtifact(developmentIdentity, 'iphoneos', 'zip')
+                    archives name: productName, classifier: 'iphoneos-dev', file: fullPathToArtifact(developmentIdentity, 'iphoneos', 'ipa')
+                    archives name: productName, classifier: 'iphoneos-dev', file: fullPathToArtifact(developmentIdentity, 'iphoneos', 'zip')
                 }
 
                 def airwatchConfigForTarget = "airwatchConfig/${target}"
@@ -178,7 +179,7 @@ class GapXcodePlugin implements Plugin<Project> {
     }
 
     private File targetOutputDir(identityName) {
-        def appName = extension.build.target
+        def appName = extension.build.productName
         def basePath = project.buildDir
 
         project.file("${basePath}/sym-${identityName}/${appName}")
@@ -188,21 +189,21 @@ class GapXcodePlugin implements Plugin<Project> {
         def codeSign = extension.build.signingIdentity.name
         def configuration = project.xcodebuild.configuration
         def sdk = extension.build.sdk
-        def target = project.xcodebuild.target
+        def productName = project.xcodebuild.productName
 
         def artifactsDir = getArtifactsDir()
         artifactsDir.mkdirs()
 
         if (sdk == 'iphoneos') {
             // Zip file with the debug symbols
-            project.ant.zip(destfile: new File(artifactsDir, artifactFileName(target, sdk, codeSign, 'zip')).toString()) {
-                zipfileset(prefix: "${target}.app.dSYM", dir: "${project.buildDir}/sym-${codeSign}/${target}/${configuration}-${sdk}/${target}.app.dSYM")
+            project.ant.zip(destfile: new File(artifactsDir, artifactFileName(productName, sdk, codeSign, 'zip')).toString()) {
+                zipfileset(prefix: "${productName}.app.dSYM", dir: "${targetOutputDir(codeSign)}/${configuration}-${sdk}/${productName}.app.dSYM")
             }
 
-            FileUtils.copyFile(new File(project.buildDir, "package/${target}.ipa"), new File(artifactsDir, artifactFileName(target, sdk, codeSign, 'ipa')))
+            FileUtils.copyFile(new File(project.buildDir, "package/${productName}.ipa"), new File(artifactsDir, artifactFileName(productName, sdk, codeSign, 'ipa')))
         }
         else {
-            FileUtils.copyFile(new File(project.buildDir, "archive/${target}.zip"), new File(artifactsDir, artifactFileName(target, sdk, codeSign, 'zip')))
+            FileUtils.copyFile(new File(project.buildDir, "archive/${productName}.zip"), new File(artifactsDir, artifactFileName(productName, sdk, codeSign, 'zip')))
         }
     }
 
@@ -223,10 +224,10 @@ class GapXcodePlugin implements Plugin<Project> {
     }
 
     private File fullPathToArtifact(String identityName, String sdk, String type) {
-        new File(getArtifactsDir(), artifactFileName(extension.build.target, sdk, identityName, type))
+        new File(getArtifactsDir(), artifactFileName(extension.build.productName, sdk, identityName, type))
     }
 
-    private static String artifactFileName(String target, String sdk, String codeSign, String extension) {
-        "${target}-${sdk}-${codeSign}.${extension}"
+    private static String artifactFileName(String productName, String sdk, String codeSign, String extension) {
+        "${productName}-${sdk}-${codeSign}.${extension}"
     }
 }
