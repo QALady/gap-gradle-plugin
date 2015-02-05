@@ -95,4 +95,10 @@ class GapXcodePluginTest {
         assertEquals('foo', testIdentity.description)
         assertEquals('bar', testIdentity.certificateURI)
     }
+
+    @Test
+    public void shouldAliasCleaningTasksToKeepBackwardsCompatibility() throws Exception {
+        taskShouldDependOn('keychain-clean', 'keychainClean', project)
+        taskShouldDependOn('provisioning-clean', 'provisioningClean', project)
+    }
 }
