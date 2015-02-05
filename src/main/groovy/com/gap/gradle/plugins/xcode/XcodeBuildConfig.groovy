@@ -5,9 +5,21 @@ import com.gap.gradle.plugins.xcode.exceptions.InvalidXcodeConfigurationExceptio
 import static org.apache.commons.lang.StringUtils.isBlank
 
 class XcodeBuildConfig implements XcodeConfig {
+    private Property<String> productName
     private Property<String> target
     private Property<String> sdk
     private Property<SigningIdentity> signingIdentity
+
+    String getProductName() {
+        if (productName == null) {
+            return target.get()
+        }
+        productName.get()
+    }
+
+    void setProductName(Object productName) {
+        this.productName = new Property(productName)
+    }
 
     String getTarget() {
         target.get()
