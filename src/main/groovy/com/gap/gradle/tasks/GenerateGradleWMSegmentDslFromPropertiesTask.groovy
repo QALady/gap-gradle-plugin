@@ -59,9 +59,11 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 
 	def parseToGradle() {
 
-		String tokenForJobLinks = ''
-		String labelForJobLinks = ''
-		String locationForJobLinks = ''
+		String tokenForApacheReportsCopy = ''
+		String labelForApacheReportsCopy = ''
+		String locationForApacheReportsCopy = ''
+		String tokenForJobLinks=''
+		String labelForJobsLinks=''
 		def linkMap = [:]
 
 		lines.each {
@@ -76,31 +78,31 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 					tokenKeys[0] = '_finally'
 				}
 
-				if (!tokenForJobLinks.isEmpty() && tokens[0].startsWith(tokenForJobLinks)) {
+				if (!tokenForApacheReportsCopy.isEmpty() && tokens[0].startsWith(tokenForApacheReportsCopy)) {
 					if (tokenKeys.length == 4 && tokenKeys[3].equalsIgnoreCase('Link Label')) {
-						labelForJobLinks = tokens[1]
+						labelForApacheReportsCopy = tokens[1]
 					} else if (tokenKeys.length == 4 && tokenKeys[3].equalsIgnoreCase('reportSourceDirectory')) {
-						locationForJobLinks = tokens[1]
-						linkMap.put('parameters.reportsDir', locationForJobLinks)
+						locationForApacheReportsCopy = tokens[1]
+						linkMap.put('parameters.reportsDir', locationForApacheReportsCopy)
 
 					}
 
-					if (!tokenForJobLinks.isEmpty() && !labelForJobLinks.isEmpty() && !locationForJobLinks.isEmpty()) {
-						tokenKeys = [tokenKeys[0], labelForJobLinks, 'action']
+					if (!tokenForApacheReportsCopy.isEmpty() && !labelForApacheReportsCopy.isEmpty() && !locationForApacheReportsCopy.isEmpty()) {
+						tokenKeys = [tokenKeys[0], labelForApacheReportsCopy, 'action']
 						tokens[1] = 'WM Gradle:Copy reports'
-						createGradleLine([tokenKeys[0], labelForJobLinks, 'action'] as String[], tokens[1])
+						createGradleLine([tokenKeys[0], labelForApacheReportsCopy, 'action'] as String[], tokens[1])
 						linkMap.each { key, value ->
 							if (key.toString().indexOf(".") > 0) {
 								String[] keys = key.toString().split("\\.")
-								createGradleLine([tokenKeys[0].toString(), labelForJobLinks, keys[0], keys[1]] as String[], value.toString())
+								createGradleLine([tokenKeys[0].toString(), labelForApacheReportsCopy, keys[0], keys[1]] as String[], value.toString())
 							} else {
-								createGradleLine([tokenKeys[0], labelForJobLinks, key] as String[], value.toString())
+								createGradleLine([tokenKeys[0], labelForApacheReportsCopy, key] as String[], value.toString())
 							}
 						}
 						linkMap = [:]
-						tokenForJobLinks = ''
-						labelForJobLinks = ''
-						locationForJobLinks = ''
+						tokenForApacheReportsCopy = ''
+						labelForApacheReportsCopy = ''
+						locationForApacheReportsCopy = ''
 					} else if ("runOrder".equalsIgnoreCase(tokenKeys[2])) {
 						linkMap.put("runOrder", tokens[1])
 					} else if ("runCondition".equalsIgnoreCase(tokenKeys[2])) {
@@ -111,11 +113,31 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 
 
 				if (tokenKeys.length == 3 && "action".equalsIgnoreCase(tokenKeys[2]) && "WM Publish:Apache Reports Copy".equalsIgnoreCase(tokens[1])) {
-					tokenForJobLinks = tokenKeys[0] + '.' + tokenKeys[1]
+					tokenForApacheReportsCopy = tokenKeys[0] + '.' + tokenKeys[1]
 					tokenKeys = []
 				}
 
-				createGradleLine(tokenKeys, tokens[1])
+				if (tokenKeys.length == 3 && "action".equalsIgnoreCase(tokenKeys[2]) && "WM Link:Create Link".equalsIgnoreCase(tokens[1])) {
+					tokenForJobLinks = tokenKeys[0] + ' ' + tokenKeys[1]
+					tokenKeys = []
+				}
+
+				if (tokenKeys.length == 4 && "urlLabel".equalsIgnoreCase(tokenKeys[3].trim())) {
+					labelForJobsLinks=tokens[1]
+					tokenKeys = []
+				}
+
+				boolean lineCreated = false
+
+				if (tokenKeys.length == 4 && "urlLink".equalsIgnoreCase(tokenKeys[3].trim())) {
+					String sourcePath = tokens[1]
+					createGradleLine(['jobLinks', labelForJobsLinks, 'link'] as String[], sourcePath)
+					lineCreated = true
+				}
+
+				if (!lineCreated) {
+					createGradleLine(tokenKeys, tokens[1])
+				}
 
 		}
 

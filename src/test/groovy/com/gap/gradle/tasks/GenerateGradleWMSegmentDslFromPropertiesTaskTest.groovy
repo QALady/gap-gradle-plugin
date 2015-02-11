@@ -33,7 +33,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
 	void shouldReadPropertyFile() {
 		task.readPropertiesFile()
 		logger.info("Line count is ${task.lines.size()}")
-		Assert.assertEquals("Line count does not match", 39, task.lines.size())
+		Assert.assertEquals("Line count does not match", 45, task.lines.size())
 	}
 
 	@Test
@@ -57,6 +57,14 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
                     value './gradlew test'
                 }
             }
+        }
+    }
+    jobLinks {
+        Google {
+            link 'http://www.google.com'
+        }
+        Gap {
+            link 'http://www.gap.com'
         }
     }
     approve {

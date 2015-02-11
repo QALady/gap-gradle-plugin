@@ -19,6 +19,14 @@ segment {
             }
         }
     }
+    jobLinks {
+        Google {
+            link 'http://www.google.com'
+        }
+        Gap {
+            link 'http://www.gap.com'
+        }
+    }
     approve {
         '0_sonar' {
             action 'WM Exec:Run'
