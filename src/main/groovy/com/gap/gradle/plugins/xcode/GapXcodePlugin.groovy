@@ -1,5 +1,7 @@
 package com.gap.gradle.plugins.xcode
 
+import com.gap.gradle.plugins.xcode.tasks.GcovAnalysisTask
+import com.gap.gradle.plugins.xcode.tasks.ReplaceTokensInFile
 import com.gap.gradle.plugins.xcode.tasks.TransformJUnitXmlReportToHTMLTask
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Plugin
@@ -38,9 +40,7 @@ class GapXcodePlugin implements Plugin<Project> {
     private configureExistingTasks() {
         project.tasks['test'].finalizedBy('transformJUnitXmlReportToHTML')
 
-        project.tasks['package'].doFirst {
-            replaceVersionTokenInSettingsBundle()
-        }
+        project.tasks['xcodebuild'].finalizedBy('replaceTokensInSettingsBundle')
 
         project.tasks['package'].doLast {
             moveGeneratedArtifactsToArtifactsDirectory()
@@ -61,6 +61,14 @@ class GapXcodePlugin implements Plugin<Project> {
     }
 
     private createNewTasks() {
+        project.task('replaceTokensInSettingsBundle', type: ReplaceTokensInFile) {
+            doFirst {
+                targetFilePath pathToRootPlist()
+                tokensToReplace = ['@version@'    : extension.archive.version,
+                                   '@scmRevision@': extension.archive.scmRevision]
+            }
+        }
+
         project.task('airwatchConfigZip', type: Zip)
 
         project.task('transformJUnitXmlReportToHTML', type: TransformJUnitXmlReportToHTMLTask) {
@@ -206,22 +214,9 @@ class GapXcodePlugin implements Plugin<Project> {
             }
 
             FileUtils.copyFile(new File(project.buildDir, "package/${productName}.ipa"), new File(artifactsDir, artifactFileName(productName, sdk, codeSign, 'ipa')))
-        }
-        else {
+        } else {
             FileUtils.copyFile(new File(project.buildDir, "archive/${productName}.zip"), new File(artifactsDir, artifactFileName(productName, sdk, codeSign, 'zip')))
         }
-    }
-
-    private void replaceVersionTokenInSettingsBundle() {
-        def codeSign = extension.build.signingIdentity.name
-        def configuration = project.xcodebuild.configuration
-        def sdk = extension.build.sdk
-
-        def filePath = "${targetOutputDir(codeSign)}/${configuration}-${sdk}"
-        def fileTree = project.fileTree(filePath)
-        def rootPlistPath = fileTree.include('**/Root.plist').asPath
-
-        project.ant.replace(file: rootPlistPath, token: '@version@', value: extension.archive.version)
     }
 
     private File getArtifactsDir() {
@@ -234,5 +229,16 @@ class GapXcodePlugin implements Plugin<Project> {
 
     private static String artifactFileName(String productName, String sdk, String codeSign, String extension) {
         "${productName}-${sdk}-${codeSign}.${extension}"
+    }
+
+    private String pathToRootPlist() {
+        def codeSign = extension.build.signingIdentity.name
+        def configuration = project.xcodebuild.configuration
+        def sdk = extension.build.sdk
+
+        def filePath = "${targetOutputDir(codeSign)}/${configuration}-${sdk}"
+        def fileTree = project.fileTree(filePath)
+
+        fileTree.include('**/Root.plist').asPath
     }
 }
