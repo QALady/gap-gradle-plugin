@@ -35,7 +35,8 @@ xcode {
     }
 
     build {
-        productName 'My Application'
+        productName 'My Application' // no need to specify if your target name is same as the product name
+        configuration 'Debug'      // default is set to 'Release' only specify if it is not 'Release'
         target 'MyApp' // you can also pass a closure, like in the line below
         sdk { 'iphoneos' }
         signingIdentity { signing.distribution }

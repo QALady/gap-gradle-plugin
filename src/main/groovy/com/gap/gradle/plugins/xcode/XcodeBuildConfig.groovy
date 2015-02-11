@@ -9,6 +9,7 @@ class XcodeBuildConfig implements XcodeConfig {
     private Property<String> target
     private Property<String> sdk
     private Property<SigningIdentity> signingIdentity
+    private Property<String> configuration = new Property('Release')
 
     String getProductName() {
         if (productName == null) {
@@ -27,6 +28,14 @@ class XcodeBuildConfig implements XcodeConfig {
 
     void setTarget(Object target) {
         this.target = new Property(target)
+    }
+   
+    void setConfiguration(Object configuration) {
+        this.configuration = new Property(configuration)
+    }
+    
+    String getConfiguration() {
+        configuration.get()
     }
 
     String getSdk() {

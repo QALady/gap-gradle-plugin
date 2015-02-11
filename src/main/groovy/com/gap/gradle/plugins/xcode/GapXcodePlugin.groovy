@@ -105,6 +105,7 @@ class GapXcodePlugin implements Plugin<Project> {
                     productName = buildConfig.productName
                     target = buildConfig.target
                     sdk = buildConfig.sdk
+                    configuration = buildConfig.configuration
                     symRoot = targetOutputDir(signIdentity.name)
 
                     signing {
@@ -128,7 +129,6 @@ class GapXcodePlugin implements Plugin<Project> {
                     shortVersionString = extension.archive.shortVersionString
                 }
 
-                project.xcodebuild.configuration = 'Release'
             }
 
             if (taskGraph.hasTask(':uploadArchives')) {
