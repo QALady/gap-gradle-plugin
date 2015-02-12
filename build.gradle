@@ -51,6 +51,9 @@ apply plugin: 'sonar-runner'
 
 apply from: 'gradle/sonarQube.gradle'
 
+sourceCompatibility=JavaVersion.VERSION_1_7
+targetCompatibility=JavaVersion.VERSION_1_7
+
 cobertura {
     coverageFormats = ['xml', 'html']
     coverageReportDir = mkdir('target/reports/coverage')
