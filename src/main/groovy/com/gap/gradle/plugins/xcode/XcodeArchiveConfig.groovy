@@ -8,6 +8,7 @@ class XcodeArchiveConfig implements XcodeConfig {
 
     private Property<String> version
     private Property<String> shortVersionString
+    private Property<String> scmRevision
 
     String getVersion() {
         return version.get()
@@ -23,6 +24,14 @@ class XcodeArchiveConfig implements XcodeConfig {
 
     void setShortVersionString(Object shortVersionString) {
         this.shortVersionString = new Property(shortVersionString)
+    }
+
+    String getScmRevision() {
+        scmRevision.get()
+    }
+
+    void setScmRevision(Object scmRevision) {
+        this.scmRevision = new Property<String>(scmRevision)
     }
 
     @Override

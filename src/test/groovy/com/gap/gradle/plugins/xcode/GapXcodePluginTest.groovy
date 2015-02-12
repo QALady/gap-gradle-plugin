@@ -31,6 +31,7 @@ class GapXcodePluginTest {
         taskShouldExist('airwatchConfigZip', project)
         taskShouldExist('transformJUnitXmlReportToHTML', project)
         taskShouldExist('gcovAnalyze', project)
+        taskShouldExist('replaceTokensInSettingsBundle', project)
     }
 
     @Test
@@ -43,6 +44,7 @@ class GapXcodePluginTest {
         taskShouldDependOn('uploadArchives', 'airwatchConfigZip', project)
         taskShouldDependOn('gcovAnalyze', 'test', project)
         taskShouldBeFinalizedBy('test', 'transformJUnitXmlReportToHTML', project)
+        taskShouldBeFinalizedBy('xcodebuild', 'replaceTokensInSettingsBundle', project)
     }
 
     @Test

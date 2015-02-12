@@ -71,6 +71,7 @@ In addition to this documentation, please use the official [xcodebuild documenta
 
 * `version` (String or Closure) is equivalent to [CFBundleVersion](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-102364). Will be used to set artifact version uploaded to Artifactory.
 * `shortVersionString` (String or Closure) is equivalent to [CFBundleShortVersionString](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/20001431-111349).
+* `scmRevision` (String or Closure) is an optional parameter to set what SVN/Git revision generated that ipa version.
 
 ## Adding custom Signing Identities
 
