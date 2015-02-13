@@ -77,6 +77,37 @@ class DbotPlugin implements Plugin<Project> {
                 ].toList()
             }
         }
+
+        project.task("searchInvalidObjects", type: JavaExec) {
+          classpath project.configurations.runtime
+            main = 'com.gap.gid.dbot.tasks.CompareInvalidObjects'
+            doFirst {
+              args = [
+                "--username=" + project.ext.username,
+                "--password=" + project.ext.password,
+                "--url=" + project.ext.url,
+                "--schema=" + project.ext.schema,
+                "--driver=" + project.ext.driver,
+                "--flavor=" + project.ext.flavor,
+                ].toList()
+            }
+        }
+
+        project.task("updateCheckingInvalidObjects", type: JavaExec, dependsOn: ['searchInvalidObjects','update']) {
+          description 'update oracle database checking invalid objects'
+            classpath project.configurations.runtime
+            main = 'com.gap.gid.dbot.tasks.StoreCurrentInvalidObjects'
+            doFirst {
+              args = [
+                "--username=" + project.ext.username,
+                "--password=" + project.ext.password,
+                "--url=" + project.ext.url,
+                "--schema=" + project.ext.schema,
+                "--driver=" + project.ext.driver,
+                "--flavor=" + project.ext.flavor,
+                ].toList()
+            }
+        }
         project.task("initDatabase", type: JavaExec) {
           description 'runs the sql file init.sql to initializes a database i.e. create database, user and schema'
           classpath project.configurations.runtime
