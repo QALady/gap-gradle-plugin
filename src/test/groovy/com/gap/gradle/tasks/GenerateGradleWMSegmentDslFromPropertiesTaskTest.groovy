@@ -59,14 +59,6 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
             }
         }
     }
-    jobLinks {
-        Google {
-            link 'http://www.google.com'
-        }
-        Gap {
-            link 'http://www.gap.com'
-        }
-    }
     approve {
         '0_sonar' {
             action 'WM Exec:Run'
@@ -150,6 +142,14 @@ class GenerateGradleWMSegmentDslFromPropertiesTaskTest {
     _finally {
         '0_final' {
             action 'test_final'
+        }
+    }
+    jobLinks {
+        Google {
+            link 'http://www.google.com'
+        }
+        Gap {
+            link 'http://www.gap.com'
         }
     }
 }"""

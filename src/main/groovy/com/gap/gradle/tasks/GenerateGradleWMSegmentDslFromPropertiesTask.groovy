@@ -65,6 +65,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 		String tokenForJobLinks=''
 		String labelForJobsLinks=''
 		def linkMap = [:]
+		def jobLinksMap = [:]
 
 		lines.each {
 			line ->
@@ -131,14 +132,18 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 
 				if (tokenKeys.length == 4 && "urlLink".equalsIgnoreCase(tokenKeys[3].trim())) {
 					String sourcePath = tokens[1]
-					createGradleLine(['jobLinks', labelForJobsLinks, 'link'] as String[], sourcePath)
+					//createGradleLine( ['jobLinks', labelForJobsLinks, 'link'] as String[], sourcePath)
+					jobLinksMap.put(['jobLinks', labelForJobsLinks, 'link'],sourcePath)
 					lineCreated = true
 				}
 
 				if (!lineCreated) {
 					createGradleLine(tokenKeys, tokens[1])
 				}
+		}
 
+		jobLinksMap.each {key, sourcePath ->
+			createGradleLine(key as String[], sourcePath)
 		}
 
 		gradlelizedData = "segment " + GradleOutput.prettyPrint(GradleOutput.toJson(segment))
