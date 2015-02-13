@@ -123,6 +123,8 @@ class AirWatchClient {
     }
 
     Map searchApplication(SearchApplicationConfig config) {
+        println "\nLooking for older ipa versions to be retired...\n${config}"
+
         Map args = [
                 "path" : APP_SEARCH_PATH,
                 "query": config.validSearchEndPointParams()
@@ -132,7 +134,7 @@ class AirWatchClient {
     }
 
     void retireApplication(String appId){
-       println "\n Retiring an application with appId \"${appId}\"..."
+       println "\nRetiring an application with appId \"${appId}\"..."
 
        Map args = [ "path": format(APP_RETIRE_PATH,appId) ]
 
