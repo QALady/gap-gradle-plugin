@@ -1,8 +1,5 @@
 package com.gap.gradle.tasks
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.gap.cloud.VMMetadata
 import com.gap.cloud.VirtualMachineBuilder
 import com.gap.cloud.openstack.OpenstackCloudProvider
