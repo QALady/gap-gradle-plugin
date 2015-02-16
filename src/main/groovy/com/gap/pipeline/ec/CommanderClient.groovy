@@ -41,6 +41,73 @@ class CommanderClient {
 		logger.info("createProcedure: " + command.toString())
 		return shellCommand.execute(command)
 	}
+    
+    /**
+     Usage: createResource <resourceName>
+     [--artifactCacheDirectory <artifactCacheDirectory>]
+     [--block <0|1|true|false>]
+     [--description <description>]
+     [--hostName <hostName>]
+     [--pools <pools>]
+     [--port <port>]
+     [--proxyCustomization <proxyCustomization>]
+     [--proxyHostName <proxyHostName>]
+     [--proxyPort <proxyPort>]
+     [--proxyProtocol <proxyProtocol>]
+     [--repositoryNames <repositoryNames>]
+     [--resourceDisabled <0|1|true|false>]
+     [--shell <shell>]
+     [--stepLimit <stepLimit>]
+     [--trusted <0|1|true|false>]
+     [--useSSL <0|1|true|false>]
+     [--workspaceName <workspaceName>]
+     [--zoneName <zoneName>]
+     */
+     def createResource(resourceName, Map properties = [:]) {
+         def command = ['ectool', 'createResource', resourceName.toString()]
+         
+         populateCommand(properties, command)
+         logger.info("createResource: " + command.toString())
+         return shellCommand.execute(command)
+     }
+     
+     /**Usage: modifyResource <resourceName>
+      [--artifactCacheDirectory <artifactCacheDirectory>]
+      [--block <0|1|true|false>]
+      [--description <description>]
+      [--hostName <hostName>]
+      [--newName <newName>]
+      [--pools <pools>]
+      [--port <port>]
+      [--proxyCustomization <proxyCustomization>]
+      [--proxyHostName <proxyHostName>]
+      [--proxyPort <proxyPort>]
+      [--proxyProtocol <proxyProtocol>]
+      [--repositoryNames <repositoryNames>]
+      [--resourceDisabled <0|1|true|false>]
+      [--shell <shell>]
+      [--stepLimit <stepLimit>]
+      [--trusted <0|1|true|false>]
+      [--useSSL <0|1|true|false>]
+      [--workspaceName <workspaceName>]
+      [--zoneName <zoneName>]
+      */
+      def modifyResource(resourceName, Map properties = [:]) {
+          def command = ['ectool', 'modifyResource', resourceName.toString()]
+          
+          populateCommand(properties, command)
+          logger.info("modifyResource: " + command.toString())
+          return shellCommand.execute(command)
+      }
+     
+     /**
+      * Usage: deleteResource <resourceName>
+      */     
+     def deleteResource(resourceName) {
+         def command =  ['ectool', 'deleteResource', resourceName.toString()]
+         logger.info("deleteResource: " + command.toString())
+         return shellCommand.execute(command)
+     }
 
 	/**
 	 * Usage: createStep <projectName> <procedureName> <stepName>
