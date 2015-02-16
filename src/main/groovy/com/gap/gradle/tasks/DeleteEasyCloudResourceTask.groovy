@@ -98,8 +98,7 @@ class DeleteEasyCloudResourceTask extends WatchmenTask {
     }
     
     private void populateGlobalProperties(Object jsonObject) {
-        def tenantName, machineType, networkType;
-        StringBuilder sb = new StringBuilder();
+        def tenantName;
         LOGGER.info("Reading Json properties");
         globalProperties = new Properties();
         

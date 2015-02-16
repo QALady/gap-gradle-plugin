@@ -7,7 +7,6 @@ import com.gap.gradle.exceptions.InvalidPropertyAccessException
 import com.gap.gradle.threads.CreateECResourceThread
 import com.gap.gradle.threads.PostVMCreationThread
 import com.gap.pipeline.ec.CommanderClient;
-import com.gap.pipeline.exception.MissingParameterException
 import com.gap.pipeline.tasks.WatchmenTask;
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
@@ -169,89 +168,91 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
              throw new InvalidPropertyAccessException("Tenant property not set in project. Please set project property 'tenant'");
         }
         
-        if (!project.hasProperty('type')) {
-                machineType = jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.JSON_OBJECT_DEFAULT_MACHINE];
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_VM_TYPE, machineType);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.DNATYPE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.DNATYPE]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_IMAGENAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.OS_IMAGENAME]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT]);
-                    
-         } else {
-             machineType = project.type;
-             if (jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType] != null) {
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_VM_TYPE, machineType);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.DNATYPE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.DNATYPE]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_IMAGENAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.OS_IMAGENAME]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT]);
-             } else {
-                 throw new InvalidPropertyAccessException("No such machine type " + machineType + " exists. Please check type");
-             }
+        if (project.hasProperty('type')) {
+            machineType = project.type;
+            if (jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType] != null) {
+               globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_VM_TYPE, machineType);
+               globalProperties.put(CreateEasyCloudResourceTask.Constants.DNATYPE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.DNATYPE]);
+               globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_IMAGENAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.OS_IMAGENAME]);
+               globalProperties.put(CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT]);
+            } else {
+                throw new InvalidPropertyAccessException("No such machine type " + machineType + " exists. Please check type");
+            }
+         } else {            
+             machineType = jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.JSON_OBJECT_DEFAULT_MACHINE];
+             globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_VM_TYPE, machineType);
+             globalProperties.put(CreateEasyCloudResourceTask.Constants.DNATYPE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.DNATYPE]);
+             globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_IMAGENAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.OS_IMAGENAME]);
+             globalProperties.put(CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT]);                 
         }
         
-        if (!project.hasProperty('network')) {
-                networkType = jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.JSON_OBJECT_DEFAULT_NETWORK];
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_NETWORK_TYPE, networkType);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE]);
+        if (project.hasProperty('network')) {
+            networkType = project.network;
+            if (jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType] != null) {
+              globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_NETWORK_TYPE, networkType);
+              globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME]);
+              globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE]);
+            } else {
+                throw new InvalidPropertyAccessException("No such Network " + networkType + " exists. Please check network");
+            }
                     
-         } else {
-             networkType = project.network;
-             if (jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType] != null) {
-               globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_NETWORK_TYPE, networkType);
-               globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME]);
-               globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE]);
-             } else {
-                 throw new InvalidPropertyAccessException("No such Network " + networkType + " exists. Please check network");
-             }
+         } else {             
+             networkType = jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.JSON_OBJECT_DEFAULT_NETWORK];
+             globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_NETWORK_TYPE, networkType);
+             globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME]);
+             globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE]);
         }
        
-        if (!project.hasProperty(CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL)) {
+        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL)) {
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL, project[CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL]);            
+            
+        } else {
             globalProperties.put(CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL, jsonObject[CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL]);
-            
-        } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL, project[CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL]);
         }
         
-        if (!project.hasProperty(CreateEasyCloudResourceTask.Constants.DNAURL)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.DNAURL, jsonObject[CreateEasyCloudResourceTask.Constants.DNAURL]);
-            
-        } else {
+        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.DNAURL)) {
             globalProperties.put(CreateEasyCloudResourceTask.Constants.DNAURL, project[CreateEasyCloudResourceTask.Constants.DNAURL]);
+                        
+        } else {
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.DNAURL, jsonObject[CreateEasyCloudResourceTask.Constants.DNAURL]);
         }
         
-        if (!project.hasProperty(CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL, jsonObject[CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL]);
+        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL)) {
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL, project[CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL]);
             
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL, project[CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL]);
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL, jsonObject[CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL]);            
         }
        
-        if (!project.hasProperty(CreateEasyCloudResourceTask.Constants.ETCD_KEY)) {
+        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.ETCD_KEY)) {
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_KEY, project[CreateEasyCloudResourceTask.Constants.ETCD_KEY]);            
+            
+        } else {
             globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_KEY, jsonObject[CreateEasyCloudResourceTask.Constants.ETCD_KEY]);
-            
-        } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_KEY, project[CreateEasyCloudResourceTask.Constants.ETCD_KEY]);
         }
         
-        if (!project.hasProperty(CreateEasyCloudResourceTask.Constants.OS_FLAVOR)) {
+        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.OS_FLAVOR)) {
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_FLAVOR, project[CreateEasyCloudResourceTask.Constants.OS_FLAVOR]);            
+            
+        } else {
             globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_FLAVOR, jsonObject[CreateEasyCloudResourceTask.Constants.OS_FLAVOR]);
-            
-        } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_FLAVOR, project[CreateEasyCloudResourceTask.Constants.OS_FLAVOR]);
         }
         
-        if (!project.hasProperty(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES, jsonObject[CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES]);
+        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES)) {
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES, project[CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES]);
             
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES, project[CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES]);
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES, jsonObject[CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES]);            
         }
        
         if (project.hasProperty(CreateEasyCloudResourceTask.Constants.ROLE_NAME)) {
             globalProperties.put(CreateEasyCloudResourceTask.Constants.ROLE_NAME, project[CreateEasyCloudResourceTask.Constants.ROLE_NAME]);            
         }
         
-        if (!project.hasProperty(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET)) {
+        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET)) {
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET, project[CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET].replace(" ", ""));            
+            
+        } else {
             jsonObject[CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET].each { eachSecGroup ->
                 if (sb.length() == 0) {
                     sb.append(eachSecGroup);
@@ -261,9 +262,6 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
                 }
             }
             globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET, sb.toString().replace(" ", ""));
-            
-        } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET, project[CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET].replace(" ", ""));
         }   
         
         if (project.hasProperty(CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG)) {
@@ -273,10 +271,10 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
             }
         } 
         
-        if (!project.hasProperty(CreateEasyCloudResourceTask.Constants.AUTO_PURGE)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.AUTO_PURGE, jsonObject[CreateEasyCloudResourceTask.Constants.AUTO_PURGE]);
-        } else {
+        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.AUTO_PURGE)) {
             globalProperties.put(CreateEasyCloudResourceTask.Constants.AUTO_PURGE, (String)project[CreateEasyCloudResourceTask.Constants.AUTO_PURGE].toLowerCase());
+        } else {
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.AUTO_PURGE, jsonObject[CreateEasyCloudResourceTask.Constants.AUTO_PURGE]);            
         }
         /*    for (Map.Entry<String, String> entry : globalProperties.entrySet()) {
          println (entry.getKey() + " ==> " + entry.getValue())

@@ -157,7 +157,6 @@ class PostVMCreationThread implements Runnable {
         LOGGER.info("Influx DB curl URL is " + command.toString());
         def proc = command.execute()
         def exitCode = proc.waitFor()
-        def output = proc.in.text
         
         if (exitCode == 0) {
             LOGGER.info("Successfully written data to influx DB for " + vmMetadata.getHostname());
