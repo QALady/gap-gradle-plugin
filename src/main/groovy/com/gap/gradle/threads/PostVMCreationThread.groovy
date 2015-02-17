@@ -1,6 +1,7 @@
 package com.gap.gradle.threads
 
 import com.gap.cloud.VMMetadata;
+import com.gap.gradle.utils.ShellCommandException;
 import com.gap.pipeline.ec.CommanderClient;
 
 import groovyx.net.http.HTTPBuilder;
@@ -64,10 +65,13 @@ class PostVMCreationThread implements Runnable {
             
             LOGGER.info("Setting EC resource properties for " + vmMetadata.getHostname())
             String ip = this.getIPString(vmMetadata);
-            commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/id", vmMetadata.getProviderId());
-            commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/ip", ip);
-            commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/image", properties.get(OS_IMAGENAME));
-                       
+            try {
+                commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/id", vmMetadata.getProviderId());
+                commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/ip", ip);
+                commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/image", properties.get(OS_IMAGENAME));
+            } catch (ShellCommandException e) {
+                LOGGER.info("Could not set EC Property.....Continuing " + e.getMessage());
+            }           
             phaseState = "exit_sucess";
             resultState = "success";
             successfullyRegisteredInstances.add(vmMetadata);

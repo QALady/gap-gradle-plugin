@@ -244,6 +244,8 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
        
         if (project.hasProperty(CreateEasyCloudResourceTask.Constants.ROLE_NAME)) {
             globalProperties.put(CreateEasyCloudResourceTask.Constants.ROLE_NAME, project[CreateEasyCloudResourceTask.Constants.ROLE_NAME]);            
+        } else {
+            globalProperties.put(CreateEasyCloudResourceTask.Constants.ROLE_NAME, "");
         }
         
         if (project.hasProperty(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET)) {
