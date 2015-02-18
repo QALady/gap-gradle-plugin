@@ -71,7 +71,9 @@ class PostVMCreationThread implements Runnable {
                 commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/image", properties.get(OS_IMAGENAME));
             } catch (ShellCommandException e) {
                 LOGGER.info("Could not set EC Property.....Continuing " + e.getMessage());
-            }           
+            } catch (IOException e) {
+                LOGGER.info("Could not set EC Property.....Continuing " + e.getMessage());
+            }         
             phaseState = "exit_sucess";
             resultState = "success";
             successfullyRegisteredInstances.add(vmMetadata);
@@ -105,6 +107,9 @@ class PostVMCreationThread implements Runnable {
     
     private void writeDataToInfluxDB() {
         
+        def ec_job_id = "";
+        def ec_job_step_id = "";
+        def ec_job_name = "";
         def duration = (int)(System.currentTimeMillis() / 1000) - (properties.get(START_TIME_IN_SECS));
         def result = resultState;
         def phase = phaseState;
@@ -114,11 +119,29 @@ class PostVMCreationThread implements Runnable {
         def openstack_user_data_type = properties.get(DNATYPE);
         def id = vmMetadata.getProviderId();
         def host_id = vmMetadata.getLocation().getId();
-        def instance_hostname = vmMetadata.getHostname();
-        def ec_job_id = commander.getJobId();
-        def ec_job_step_id = commander.getECProperty("/myJobStep/jobStepId");
-        def ec_job_name = commander.getECProperty("/myJob/jobName");
+        def instance_hostname = vmMetadata.getHostname();        
         def influxDBUrl = properties.get(INFLUX_DB_URL);
+        try {
+            ec_job_id = commander.getJobId();
+        } catch (ShellCommandException e){
+            LOGGER.info("Could not get EC JobId.....Continuing " + e.getMessage());
+        } catch (IOException e) {
+            LOGGER.info("Could not get EC JobId.....Continuing " + e.getMessage());
+        } 
+        try {
+            ec_job_step_id = commander.getECProperty("/myJobStep/jobStepId");
+        } catch (ShellCommandException e){
+            LOGGER.info("Could not get EC Job Step Id.....Continuing " + e.getMessage());
+        } catch (IOException e) {
+            LOGGER.info("Could not get EC Job Step Id.....Continuing " + e.getMessage());
+        } 
+        try {
+            ec_job_name = commander.getECProperty("/myJob/jobName");
+        } catch (ShellCommandException e){
+            LOGGER.info("Could not get EC Job Name.....Continuing " + e.getMessage());
+        } catch (IOException e) {
+            LOGGER.info("Could not get EC Job Name.....Continuing " + e.getMessage());
+        } 
         
         def jsonData = """[
     {
