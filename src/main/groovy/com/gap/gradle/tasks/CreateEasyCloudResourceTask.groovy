@@ -11,6 +11,7 @@ import com.gap.pipeline.tasks.WatchmenTask;
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 
+import groovy.json.JsonOutput;
 import groovy.json.JsonSlurper;
 
 import java.util.concurrent.ExecutorService;
@@ -112,12 +113,17 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         for (VMMetadata eachVMMetadata : vmMetadatas) {
             LOGGER.info(eachVMMetadata.toString())
         }
+        def jsonAll = JsonOutput.toJson(vmMetadatas);
+        project.gapCloud.jsonAllInstances = jsonAll;
+        
         LOGGER.info("*******************************************************************");
         LOGGER.info("ALL VMS that were spun up on Openstack and successfully registered with ETCD are as follows")
         for (VMMetadata eachVMMetadata : successfullyRegisteredInstances) {
             LOGGER.info(eachVMMetadata.toString())
         }
         LOGGER.info("*******************************************************************");
+        def jsonRegistered = JsonOutput.toJson(successfullyRegisteredInstances);
+        project.gapCloud.jsonAllRegisteredInstances = jsonRegistered;
         
         if (globalProperties.get(CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG) != null) {
             if ((globalProperties.get(CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG)).equalsIgnoreCase("true")) {
