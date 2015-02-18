@@ -113,8 +113,8 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         for (VMMetadata eachVMMetadata : vmMetadatas) {
             LOGGER.info(eachVMMetadata.toString())
         }
-        def jsonAll = JsonOutput.toJson(vmMetadatas);
-        project.gapCloud.jsonAllInstances = jsonAll;
+//        def jsonAll = JsonOutput.toJson(vmMetadatas);
+//        project.gapCloud.jsonAllInstances = jsonAll;
         
         LOGGER.info("*******************************************************************");
         LOGGER.info("ALL VMS that were spun up on Openstack and successfully registered with ETCD are as follows")
@@ -122,8 +122,8 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
             LOGGER.info(eachVMMetadata.toString())
         }
         LOGGER.info("*******************************************************************");
-        def jsonRegistered = JsonOutput.toJson(successfullyRegisteredInstances);
-        project.gapCloud.jsonAllRegisteredInstances = jsonRegistered;
+ //       def jsonRegistered = JsonOutput.toJson(successfullyRegisteredInstances);
+//        project.gapCloud.jsonAllRegisteredInstances = jsonRegistered;
         
         if (globalProperties.get(CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG) != null) {
             if ((globalProperties.get(CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG)).equalsIgnoreCase("true")) {
