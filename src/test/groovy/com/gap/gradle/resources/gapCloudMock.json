@@ -1,0 +1,197 @@
+{
+  "inFluxDBUrl": "http://localhost:8089/db/pipeline/series?u=root&p=root",
+  "osFlavor": "m1.medium",
+  "numberOfInstances": "1",
+  "DNAURL": "http://localhost:8089/pipeline-dna",
+  "etcdHostnameUrl": "http://localhost:8089/v2/keys",
+  "etcdKey": "iso/create-vm",
+  "osSecurityGroupSet": ["default"],
+  "autoPurge": "true",
+  "machines": {
+    "3d_prebaked_pgsql": {
+      "DNAType": "dbot-pgsql-dna",
+      "osImageName": "dbot-pgsql-r2",
+      "phoneTimeOut": "600"
+    },
+    "3d_prebaked_xe": {
+      "DNAType": "dbot-xe-dna",
+      "osImageName": "dbot-xe-r2",
+      "phoneTimeOut": "600"
+    },
+    "build": {
+      "DNAType": "linux-build-dna",
+      "osImageName": "rhel-6.6-r3",
+      "phoneTimeOut": "600"
+    },
+    "chef": {
+      "DNAType": "linux-chef-dna",
+      "osImageName": "rhel-6.6-r3",
+      "phoneTimeOut": "600"
+    },
+    "egg": {
+      "DNAType": "linux-egg-dna",
+      "osImageName": "rhel-5.8-i386-r4",
+      "phoneTimeOut": "600"
+    },
+    "prebakedegg": {
+      "DNAType": "linux-egg-prebake-dna",
+      "osImageName": "rhel-5.8-i386-r6-prebake-08262014",
+      "phoneTimeOut": "360"
+    },
+    "tdev": {
+      "DNAType": "corp-dynamic-dna",
+      "osImageName": "rhel-6.3-r27",
+      "phoneTimeOut": "800"
+    },
+    "tdev_chef_iso_setup": {
+      "DNAType": "corp-dynamic-dna",
+      "osImageName": "rhel-6.4-r12-corp-tdev-prebaked-081520141631",
+      "phoneTimeOut": "300"
+    },
+    "tdev_prebaked": {
+      "DNAType": "corp-prebaked-dynamic-dna",
+      "osImageName": "rhel-6.4-r12-corp-tdev-prebaked-041120140926",
+      "phoneTimeOut": "4200"
+    },
+    "tdev_prebaked_63": {
+      "DNAType": "corp-prebaked-dynamic-dna",
+      "osImageName": "rhel-6.3-r27-corp-tdev-prebaked-052120141559",
+      "phoneTimeOut": "800"
+    },
+    "tdev_prebaked_chef11": {
+      "DNAType": "corp-prebaked-dynamic-dna",
+      "osImageName": "rhel-6.4-r12-corp-tdev-prebaked-081520141631",
+      "phoneTimeOut": "600"
+    },
+    "tdev_prebaked_chef11_build": {
+      "DNAType": "corp-prebaked-dynamic-dna",
+      "osImageName": "rhel-6.4-r12-corp-tdev-prebaked-buildnode-090920142116",
+      "phoneTimeOut": "480"
+    },
+    "win": {
+      "DNAType": "win-dna",
+      "osImageName": "cloud-win7-64-isolation-r24",
+      "phoneTimeOut": "180"
+    },
+    "windebug": {
+      "DNAType": "win-rdp-dna",
+      "osImageName": "cloud-win7-64-isolation-r24",
+      "phoneTimeOut": "360"
+    },
+    "phoneTimeOut": "300"
+  },
+  "networks": {
+    "corp-cloud-guest-dev-1": {
+      "ecZone": "default",
+      "osNetworkName": "corp-cloud-guest-dev-1",
+      "osNetwork": "e87a6321-5504-462c-b20b-515b51e40ad6"
+    },
+    "private": {
+      "ecZone": "ISO",
+      "osNetworkName": "iso-private",
+      "osNetwork": "d4044100-d052-409f-bfb5-3b28b8a134c8"
+    },
+    "public": {
+      "ecZone": "default",
+      "osNetworkName": "vlan602",
+      "osNetwork": "6652c837-9fa8-4813-aa5b-06ea81501126"
+    },
+    "shared": {
+      "ecZone": "default",
+      "osNetworkName": "sf-shared-02",
+      "osNetwork": "3f2d266d-4693-4a2b-a6f4-28e11845d82d"
+    },
+    "snapserve-ci": {
+      "ecZone": "SnapServe-CI",
+      "osNetworkName": "snapserve-ci",
+      "osNetwork": "a1e16b94-cf31-4353-90a5-173f0d590be5"
+    },
+    "snapserve-public": {
+      "ecZone": "default",
+      "osNetworkName": "snapserve-public",
+      "osNetwork": "3fd3ad78-91bd-4b14-908c-74edbc536723"
+    }
+  },
+  "tenants": {
+    "deviso": {
+      "osAvailabilityZone": "nova",
+      "osEndpoint": "https://sfcloud.gid.gap.com:5000/v2.0",
+      "osKeyName": "root_at_isolated",
+      "osPassword": "blah",
+      "osTenant": "deviso",
+      "osUsername": "blah",
+      "defaultNetwork": "private",
+      "defaultMachine": "build"
+    },
+    "iso": {
+      "osAvailabilityZone": "nova",
+      "osEndpoint": "https://sfcloud.gid.gap.com:5000/v2.0",
+      "osKeyName": "root_at_isolated",
+      "osPassword": "blah",
+      "osTenant": "iso",
+      "osUsername": "blah",
+      "defaultNetwork": "private",
+      "defaultMachine": "build"
+    },
+    "itemfoundation": {
+      "osAvailabilityZone": "nova",
+      "osEndpoint": "https://sfcloud.gid.gap.com:5000/v2.0",
+      "osKeyName": "root_at_isolated",
+      "osPassword": "blah",
+      "osTenant": "itemfoundation",
+      "osUsername": "blah",
+      "defaultNetwork": "public",
+      "defaultMachine": "tdev_prebaked"
+    },
+    "scratch": {
+      "osAvailabilityZone": "nova",
+      "osEndpoint": "https://sfcloud.gid.gap.com:5000/v2.0",
+      "osKeyName": "root_at_isolated",
+      "osPassword": "blah",
+      "osTenant": "scratch",
+      "osUsername": "blah",
+      "defaultNetwork": "public",
+      "defaultMachine": "build"
+    },
+    "snapserve": {
+      "osAvailabilityZone": "nova",
+      "osEndpoint": "https://sfcloud.gid.gap.com:5000/v2.0",
+      "osKeyName": "root-snapserve",
+      "osPassword": "blah",
+      "osTenant": "snapserve",
+      "osUsername": "blah",
+      "defaultNetwork": "snapserve-public",
+      "defaultMachine": "tdev_prebaked_chef11"
+    },
+    "watchmen_px": {
+      "osAvailabilityZone": "tdev",
+      "osEndpoint": "https://pxcloud.gid.gap.com:5000/v2.0",
+      "osKeyName": "Watchmen",
+      "osPassword": "blah",
+      "osTenant": "watchmen_px",
+      "osUsername": "blah",
+      "defaultNetwork": "corp-cloud-guest-dev-1",
+      "defaultMachine": "tdev_prebaked"
+    },
+    "watchmen_sf": {
+      "osAvailabilityZone": "nova",
+      "osEndpoint": "https://sfcloud.gid.gap.com:5000/v2.0",
+      "osKeyName": "root_at_isolated",
+      "osPassword": "blah",
+      "osTenant": "watchmen_sf",
+      "osUsername": "blah",
+      "defaultNetwork": "public",
+      "defaultMachine": "tdev_prebaked"
+    },
+    "watchmen_sf_actual": {
+      "osAvailabilityZone": "nova",
+      "osEndpoint": "https://sfcloud.gid.gap.com:5000/v2.0",
+      "osKeyName": "root_at_isolated",
+      "osPassword": "Password@2!",
+      "osTenant": "watchmen_sf",
+      "osUsername": "watchmen",
+      "defaultNetwork": "public",
+      "defaultMachine": "tdev_prebaked"
+    }
+  }
+}

@@ -8,3 +8,4 @@ out
 classes
 .DS_Store
 /bin/
+*.swp

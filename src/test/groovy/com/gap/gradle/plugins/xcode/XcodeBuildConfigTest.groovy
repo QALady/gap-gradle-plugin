@@ -118,4 +118,19 @@ class XcodeBuildConfigTest {
 
         assertThat(buildConfig.productName, equalTo('foo'))
     }
+
+    @Test
+    public void shouldReturnSpecifiedXcodeBuildConfiguration() throws Exception {
+        buildConfig =  new XcodeBuildConfig()
+        buildConfig.configuration = 'TestConfig'
+        
+        assertEquals(buildConfig.getConfiguration(), 'TestConfig')
+    }
+    
+    @Test
+    public void shouldReturnDefaultXcodeBuildConfigurationIfNotSpecified() throws Exception {
+        buildConfig =  new XcodeBuildConfig()
+     
+        assertEquals(buildConfig.configuration, 'Release')
+    }
 }
