@@ -11,12 +11,14 @@ import static org.hamcrest.CoreMatchers.containsString
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertThat
 import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 import static org.testng.Assert.assertEquals
 
 public class XcodeTestConfigTest {
 
     private XcodeTestConfig testConfig
     private DependencyInjectingInstantiator instantiator
+    private XcodeExtension xcodeExtension = mock(XcodeExtension)
 
     @Before
     public void setUp() throws Exception {
@@ -24,7 +26,7 @@ public class XcodeTestConfigTest {
         final Action warning = mock(Action)
         instantiator = new DependencyInjectingInstantiator(services, warning)
 
-        testConfig = new XcodeTestConfig(instantiator)
+        testConfig = new XcodeTestConfig(instantiator, xcodeExtension)
     }
 
     @Test
@@ -44,6 +46,14 @@ public class XcodeTestConfigTest {
         testConfig.scheme = { 'some scheme' }
 
         assertEquals(testConfig.scheme, 'some scheme')
+    }
+
+    @Test
+    public void shouldReturnXcodeExtensionSchemeIfTestOneNotSpecified() throws Exception {
+        when(xcodeExtension.getScheme()).thenReturn('xcode extension scheme')
+        testConfig.scheme = null
+
+        assertEquals(testConfig.scheme, 'xcode extension scheme')
     }
 
     @Test
