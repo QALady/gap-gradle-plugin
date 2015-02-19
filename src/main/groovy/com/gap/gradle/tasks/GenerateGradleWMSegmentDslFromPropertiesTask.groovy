@@ -45,11 +45,10 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 		propertiesFile = new File(propertyFileName)
 		if (propertiesFile.exists()) {
 			propertiesFile.eachLine {
-				if (it.startsWith("#")) {
-					//todo  comments not necessary at this stage
-//					lines.add(it.replace("#", '/* ') + " */")
-//					logger.info it.replace("#", '/* ') + " */"
-				} else if (!it.trim().isEmpty()) {
+				//todo  comments not necessary at this stage
+				//lines.add(it.replace("#", '/* ') + " */")
+				//logger.info it.replace("#", '/* ') + " */"
+				if (!it.startsWith("#") & !it.trim().isEmpty()) {
 					lines.add(it)
 					logger.info it
 				}
@@ -238,4 +237,3 @@ private class GradleOutput extends JsonOutput {
 		return output.toString()
 	}
 }
-

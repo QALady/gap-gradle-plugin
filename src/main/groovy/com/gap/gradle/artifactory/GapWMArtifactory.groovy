@@ -1,14 +1,7 @@
 package com.gap.gradle.artifactory
 
-import static groovyx.net.http.ContentType.JSON
-
-import groovy.json.JsonBuilder
-import groovyx.net.http.HttpResponseException
-import groovyx.net.http.RESTClient
-import org.gradle.api.artifacts.PublishException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 import org.jfrog.artifactory.client.ArtifactoryClient
 import org.jfrog.artifactory.client.Artifactory
 import org.jfrog.artifactory.client.UploadableArtifact

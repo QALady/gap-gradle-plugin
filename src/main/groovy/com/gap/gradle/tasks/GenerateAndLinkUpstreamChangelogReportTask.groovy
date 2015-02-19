@@ -33,7 +33,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	public def execute() {
 		validate()
 		try {
-			processUpstreamChangeLog()			
+			processUpstreamChangeLog()
 		} catch (all) {
 			logger.info("Unable to generate upstream Change Log report.")
 			logger.debug(all.message)
@@ -58,7 +58,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 	}
 
 	def addUpstreamChangeLogToMarkup(givenUpStreamJobId) {
-		logger.info("adding ChangeLog of UPSTREAM Job ID: $givenUpStreamJobId")		
+		logger.info("adding ChangeLog of UPSTREAM Job ID: $givenUpStreamJobId")
 		buildChangelogMarkup(getECSCMPropertySheetRecords(givenUpStreamJobId))
 		//buildChangelogMarkup(commanderClient.getECProperties([path: "/jobs[" + givenUpStreamJobId + "]/ecscm_changeLogs", recurse: 1]))
 		buildLinkMarkup(givenUpStreamJobId)
@@ -75,7 +75,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 		Property upStreamJobProperty = commanderClient.getReportUrlPropertyOfJob(givenJobId, "Upstream Job")
 		if (upStreamJobProperty.isValid()) {
 			upStreamJobId = upStreamJobProperty.value.tokenize("/").last()
-			return upStreamJobId		
+			return upStreamJobId
 		}
 		return null
 	}
@@ -90,7 +90,9 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 				logger.debug("Requested property does not exist. ${e.message}\n")
 				return Property.invalidProperty("ecscm_changeLogs")
 			}
-			else throw e
+			else {
+				throw e
+			}
 		}
 		logger.debug("Change Log from Upstream: " + prop)
 		def response = new XmlSlurper().parseText(prop)
@@ -148,7 +150,7 @@ class GenerateAndLinkUpstreamChangelogReportTask extends WatchmenTask {
 			}
 		}
 	}
-	
+
 	private void copyArtifactsForUseByEC () {
 		new CommanderArtifacts(commanderClient).copyToArtifactsDir(upstream_changelog_file)
 	}

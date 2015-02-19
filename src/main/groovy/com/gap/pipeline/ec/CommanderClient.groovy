@@ -41,7 +41,7 @@ class CommanderClient {
 		logger.info("createProcedure: " + command.toString())
 		return shellCommand.execute(command)
 	}
-    
+
     /**
      Usage: createResource <resourceName>
      [--artifactCacheDirectory <artifactCacheDirectory>]
@@ -65,12 +65,12 @@ class CommanderClient {
      */
      def createResource(resourceName, Map properties = [:]) {
          def command = ['ectool', 'createResource', resourceName.toString()]
-         
+
          populateCommand(properties, command)
          logger.info("createResource: " + command.toString())
          return shellCommand.execute(command)
      }
-     
+
      /**Usage: modifyResource <resourceName>
       [--artifactCacheDirectory <artifactCacheDirectory>]
       [--block <0|1|true|false>]
@@ -94,15 +94,15 @@ class CommanderClient {
       */
       def modifyResource(resourceName, Map properties = [:]) {
           def command = ['ectool', 'modifyResource', resourceName.toString()]
-          
+
           populateCommand(properties, command)
           logger.info("modifyResource: " + command.toString())
           return shellCommand.execute(command)
       }
-     
+
      /**
       * Usage: deleteResource <resourceName>
-      */     
+      */
      def deleteResource(resourceName) {
          def command =  ['ectool', 'deleteResource', resourceName.toString()]
          logger.info("deleteResource: " + command.toString())
@@ -242,7 +242,9 @@ class CommanderClient {
 			if (e.message.contains('[NoSuchProperty]')) {
 				logger.debug("Requested property does not exist. ${e.message}\n")
 				return Property.invalidProperty(key)
-			} else throw e
+			} else {
+				throw e
+			}
 		}
 	}
 
@@ -337,7 +339,9 @@ class CommanderClient {
 			if (e.message.contains('[NoSuchPropertySheet]')) {
 				logger.debug("Requested property sheet does not exist. ${e.message}\n")
 				return Property.invalidProperty(pConfig.toString())
-			} else throw e
+			} else {
+				throw e
+			}
 		}
 		return slurpedJson
 	}
