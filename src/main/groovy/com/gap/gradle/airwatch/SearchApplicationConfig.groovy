@@ -14,8 +14,8 @@ class SearchApplicationConfig {
     String applicationType
 
     public String toString() {
-        return "Search Parameters " +
-                "bundleId: " + bundleId +
+        return "Search Parameters" +
+                "\n bundleId: " + bundleId +
                 "\n status: " + status +
                 "\n applicationName: " + applicationName
     }

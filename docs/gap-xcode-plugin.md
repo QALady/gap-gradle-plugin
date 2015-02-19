@@ -45,6 +45,7 @@ xcode {
     archive {
         version = '1.0.0'
         shortVersionString = '1.0.0'
+        scmRevision = '7bf2862' // Git or SVN revision that produced the current version
     }
 }
 ```
@@ -101,6 +102,35 @@ xcode {
         }
     }
 }
+```
+
+## Displaying version and SVN/Git revision in the Settings app
+
+To display the `archive.version` and `archive.scmRevision` in iOS Settings app, you need to create the proper entries in the `Root.plist` of you app (inside `Settings.bundle`) and use the tokens `@version@` and `@scmRevision@` as the `DefaultValue`. Then, after the app is built, the plugin will replace the tokens with the values specified in `archive`.
+
+e.g.:
+
+```xml
+<dict>
+    <key>Type</key>
+    <string>PSTitleValueSpecifier</string>
+    <key>Title</key>
+    <string>Version</string>
+    <key>Key</key>
+    <string>version</string>
+    <key>DefaultValue</key>
+    <string>@version@</string>
+</dict>
+<dict>
+    <key>Type</key>
+    <string>PSTitleValueSpecifier</string>
+    <key>Title</key>
+    <string>SCM Revision</string>
+    <key>Key</key>
+    <string>scmRevision</string>
+    <key>DefaultValue</key>
+    <string>@scmRevision@</string>
+</dict>
 ```
 
 ## Tasks available
