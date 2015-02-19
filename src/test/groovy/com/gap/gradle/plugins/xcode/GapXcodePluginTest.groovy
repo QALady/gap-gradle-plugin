@@ -8,8 +8,8 @@ import org.junit.Before
 import org.junit.Test
 
 import static helpers.Assert.*
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
+import static org.hamcrest.CoreMatchers.containsString
+import static org.junit.Assert.*
 
 class GapXcodePluginTest {
 
@@ -102,5 +102,32 @@ class GapXcodePluginTest {
     public void shouldAliasCleaningTasksToKeepBackwardsCompatibility() throws Exception {
         taskShouldDependOn('keychain-clean', 'keychainClean', project)
         taskShouldDependOn('provisioning-clean', 'provisioningClean', project)
+    }
+
+    @Test
+    public void shouldReplaceTokensInSettingsBundle() throws Exception {
+        project.xcode {
+            build {
+                productName 'MyAppProductName'
+                target 'MyApp'
+                sdk 'iphoneos'
+                signingIdentity signing.development
+            }
+
+            archive {
+                version '1'
+                scmRevision 'foobar'
+            }
+        }
+
+        def plist = new File("${project.buildDir}/sym-development/MyAppProductName/Release-iphoneos/MyAppProductName.app/Settings.bundle", 'Root.plist')
+        plist.parentFile.mkdirs()
+        plist << '@version@'
+        plist << '@scmRevision@'
+
+        project.tasks['replaceTokensInSettingsBundle'].execute()
+
+        assertThat(plist.text, containsString('1'))
+        assertThat(plist.text, containsString('foobar'))
     }
 }

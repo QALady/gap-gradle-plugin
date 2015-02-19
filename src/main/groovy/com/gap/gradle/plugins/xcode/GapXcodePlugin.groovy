@@ -233,12 +233,10 @@ class GapXcodePlugin implements Plugin<Project> {
 
     private String pathToRootPlist() {
         def codeSign = extension.build.signingIdentity.name
-        def configuration = project.xcodebuild.configuration
+        def configuration = extension.build.configuration
         def sdk = extension.build.sdk
+        def appName = extension.build.productName
 
-        def filePath = "${targetOutputDir(codeSign)}/${configuration}-${sdk}"
-        def fileTree = project.fileTree(filePath)
-
-        fileTree.include('**/Root.plist').asPath
+        "${targetOutputDir(codeSign)}/${configuration}-${sdk}/${appName}.app/Settings.bundle/Root.plist"
     }
 }
