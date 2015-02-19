@@ -1,9 +1,8 @@
 package com.gap.gradle.plugins.xcode
 
-import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.internal.DependencyInjectingInstantiator
-import org.gradle.internal.service.ServiceRegistry
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.reflect.Instantiator
 import org.gradle.testfixtures.ProjectBuilder
 import org.hamcrest.CoreMatchers
 import org.junit.Before
@@ -12,7 +11,6 @@ import org.junit.Test
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertNull
 import static org.junit.Assert.assertThat
-import static org.mockito.Mockito.mock
 
 public class XcodeExtensionTest {
 
@@ -20,11 +18,8 @@ public class XcodeExtensionTest {
 
     @Before
     public void setUp() throws Exception {
-        final ServiceRegistry services = mock(ServiceRegistry)
-        final Action warning = mock(Action)
-        final DependencyInjectingInstantiator instantiator = new DependencyInjectingInstantiator(services, warning)
-
-        final Project project = ProjectBuilder.builder().build()
+        Project project = ProjectBuilder.builder().build()
+        Instantiator instantiator = ((ProjectInternal) project).getServices().get(Instantiator)
 
         extension = new XcodeExtension(instantiator, project)
     }
