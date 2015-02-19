@@ -235,7 +235,7 @@ class GapXcodePlugin implements Plugin<Project> {
         def codeSign = extension.build.signingIdentity.name
         def configuration = extension.build.configuration
         def sdk = extension.build.sdk
-        def appName = project.xcodebuild.productName
+        def appName = extension.build.productName
 
         "${targetOutputDir(codeSign)}/${configuration}-${sdk}/${appName}.app/Settings.bundle/Root.plist"
     }

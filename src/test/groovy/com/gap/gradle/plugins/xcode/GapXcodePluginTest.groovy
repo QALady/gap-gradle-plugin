@@ -108,7 +108,7 @@ class GapXcodePluginTest {
     public void shouldReplaceTokensInSettingsBundle() throws Exception {
         project.xcode {
             build {
-                productName 'MyApp'
+                productName 'MyAppProductName'
                 target 'MyApp'
                 sdk 'iphoneos'
                 signingIdentity signing.development
@@ -120,7 +120,7 @@ class GapXcodePluginTest {
             }
         }
 
-        def plist = new File("${project.buildDir}/sym-development/MyApp/Release-iphoneos/MyApp.app/Settings.bundle", 'Root.plist')
+        def plist = new File("${project.buildDir}/sym-development/MyAppProductName/Release-iphoneos/MyAppProductName.app/Settings.bundle", 'Root.plist')
         plist.parentFile.mkdirs()
         plist << '@version@'
         plist << '@scmRevision@'
