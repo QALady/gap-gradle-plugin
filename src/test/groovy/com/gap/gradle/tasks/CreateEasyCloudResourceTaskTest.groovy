@@ -54,6 +54,8 @@ class CreateEasyCloudResourceTaskTest {
         verify(commander).setECProperty("/myJob/osResources/watchmen-test-group-fgh/ip", "10.9.59.100");
         verify(commander).setECProperty("/myJob/osResources/watchmen-test-group-ace/image", "rhel-6.4-r12-corp-tdev-prebaked-041120140926");
         verify(commander).setECProperty("/myJob/osResources/watchmen-test-group-fgh/image", "rhel-6.4-r12-corp-tdev-prebaked-041120140926");
+        assertEquals(2, project.gapCloud.allInstances.size());
+        assertEquals(2, project.gapCloud.allRegisteredInstances.size())
     }
     
     @Test
@@ -66,6 +68,8 @@ class CreateEasyCloudResourceTaskTest {
         CreateEasyCloudResourceTask createEasyCloudResourceTask = new CreateEasyCloudResourceTask(commander, virtualMachineBuilder, openstackCloudProvider, this.getJsonObject(), project);
         createEasyCloudResourceTask.createEasyCloudResource();
         assertEquals(0, createEasyCloudResourceTask.successfullyRegisteredInstances.size());
+        assertEquals(2, project.gapCloud.allInstances.size());
+        assertEquals(0, project.gapCloud.allRegisteredInstances.size())
     }
     
     @Test
@@ -267,6 +271,7 @@ class CreateEasyCloudResourceTaskTest {
     private void setUpProject() {
         project = ProjectBuilder.builder().withName("gapCloudResource").build()
         project.group = 'com.gap.watchmen'
+        project.extensions.create("gapCloud", GapCloudResource)
         project.ext.hostname = 'watchmen-test-group'
         project.ext.tenant = 'watchmen_sf'
         project.ext.roleName = 'wm-build-resource'
@@ -321,14 +326,14 @@ class CreateEasyCloudResourceTaskTest {
             .thenReturn("e03e8d12157b51c0e7c6b7ef59ae2115869d7e9b852864d1ee07b632");
         when(vmMetadata.getFloatingIPAddress())
             .thenReturn(null);
-        sb.append("{ ID - "  + vmMetadata.getNodeId()).append("; ProviderId - " + vmMetadata.getProviderId())
-                .append("; Hostname - " + vmMetadata.getHostname())
-                .append("; Group Name - " + vmMetadata.getGroupName())
-                .append("; Public Addresses - " + vmMetadata.getPublicAddresses())
-                .append("; Private Addresses - " + vmMetadata.getPrivateAddresses())
-                .append("; Floating IP Address - " + vmMetadata.getFloatingIPAddress())
-                .append("; User Metadata - " + vmMetadata.getUserMetadata())
-                .append("; Host ID - " + vmMetadata.getLocation().getId());
+        sb.append("{ \"ID\" : \""  + vmMetadata.getNodeId()).append("\", \"ProviderId\" : \"" + vmMetadata.getProviderId())
+                .append("\", \"Hostname\" : \"" + vmMetadata.getHostname())
+                .append("\", \"Group Name\" : \"" + vmMetadata.getGroupName())
+                .append("\", \"Public Addresses\" : \"" + vmMetadata.getPublicAddresses())
+                .append("\", \"Private Addresse\" : \"" + vmMetadata.getPrivateAddresses())
+                .append("\", \"Floating IP Address\" : \"" + vmMetadata.getFloatingIPAddress())
+                .append("\", \"User Metadata\" : \"" + vmMetadata.getUserMetadata())
+                .append("\", \"Host ID\" : \"" + vmMetadata.getLocation().getId() + "\"}");
         when(vmMetadata.toString())
             .thenReturn(sb.toString())
         
@@ -352,14 +357,14 @@ class CreateEasyCloudResourceTaskTest {
             .thenReturn("e03e8d12157b51c0e7c6b7ef59ae2115869d7e9b852864d1ee07b632")
         when(vmMetadata1.getFloatingIPAddress())
             .thenReturn(null);
-        sb1.append("{ ID - "  + vmMetadata1.getNodeId()).append("; ProviderId - " + vmMetadata1.getProviderId())
-                .append("; Hostname - " + vmMetadata1.getHostname())
-                .append("; Group Name - " + vmMetadata1.getGroupName())
-                .append("; Public Addresses - " + vmMetadata1.getPublicAddresses())
-                .append("; Private Addresses - " + vmMetadata1.getPrivateAddresses())
-                .append("; Floating IP Address - " + vmMetadata1.getFloatingIPAddress())
-                .append("; User Metadata - " + vmMetadata1.getUserMetadata())
-                .append("; Host ID - " + vmMetadata1.getLocation().getId());
+        sb1.append("{ \"ID\" : \""  + vmMetadata1.getNodeId()).append("\", \"ProviderId\" : \"" + vmMetadata1.getProviderId())
+                .append("\", \"Hostname\" : \"" + vmMetadata1.getHostname())
+                .append("\", \"Group Name\" : \"" + vmMetadata1.getGroupName())
+                .append("\", \"Public Addresses\" : \"" + vmMetadata1.getPublicAddresses())
+                .append("\", \"Private Addresses\" : \"" + vmMetadata1.getPrivateAddresses())
+                .append("\", \"Floating IP Address\" : \"" + vmMetadata1.getFloatingIPAddress())
+                .append("\", \"User Metadata\" : \"" + vmMetadata1.getUserMetadata())
+                .append("\", \"Host ID\" : \"" + vmMetadata1.getLocation().getId() + "\"}");
         when(vmMetadata1.toString())
             .thenReturn(sb1.toString())
             
