@@ -5,17 +5,20 @@ import com.gap.gradle.plugins.xcode.exceptions.InvalidXcodeConfigurationExceptio
 import static org.apache.commons.lang.StringUtils.isBlank
 
 class XcodeBuildConfig implements XcodeConfig {
+    private XcodeExtension extension
     private Property<String> productName
     private Property<String> target
     private Property<String> sdk
     private Property<SigningIdentity> signingIdentity
     private Property<String> configuration = new Property('Release')
 
+    XcodeBuildConfig(XcodeExtension extension) {
+        this.extension = extension
+    }
+
     String getProductName() {
-        if (productName == null) {
-            return target.get()
-        }
-        productName.get()
+        def productNameValue = productName?.get()
+        return isBlank(productNameValue) ? getTarget() : productNameValue
     }
 
     void setProductName(Object productName) {
@@ -23,7 +26,8 @@ class XcodeBuildConfig implements XcodeConfig {
     }
 
     String getTarget() {
-        target.get()
+        def targetValue = target?.get()
+        return isBlank(targetValue) ? extension.scheme : targetValue
     }
 
     void setTarget(Object target) {
@@ -35,11 +39,11 @@ class XcodeBuildConfig implements XcodeConfig {
     }
     
     String getConfiguration() {
-        configuration.get()
+        return configuration.get()
     }
 
     String getSdk() {
-        sdk.get()
+        return sdk.get()
     }
 
     void setSdk(Object sdk) {
@@ -47,7 +51,7 @@ class XcodeBuildConfig implements XcodeConfig {
     }
 
     SigningIdentity getSigningIdentity() {
-        signingIdentity.get()
+        return signingIdentity.get()
     }
 
     void setSigningIdentity(Object signingIdentity) {
@@ -56,24 +60,24 @@ class XcodeBuildConfig implements XcodeConfig {
 
     @Override
     void validate() throws InvalidXcodeConfigurationException {
-        def errorMessages = ''
+        def errorMessages = []
 
-        if (target == null || isBlank(target.get())) {
-            errorMessages += "- Please configure the build `target`. See available targets with `xcodebuild -list`.\n"
+        if (extension.isTargetRequired() && isBlank(target?.get())) {
+            errorMessages << "- Please configure the build `target`, or the `xcode.workspace` and `xcode.scheme`. See available targets with `xcodebuild -list`."
         }
 
-        if (sdk == null || isBlank(target.get())) {
-            errorMessages += "- Please configure with which SDK the target will be built, " +
-                    "e.g. `iphoneos` or `iphonesimulator`. See all available SDKs with `xcodebuild -showsdks`.\n"
+        if (isBlank(sdk?.get())) {
+            errorMessages << "- Please configure with which SDK the target will be built, " +
+                    "e.g. `iphoneos` or `iphonesimulator`. See all available SDKs with `xcodebuild -showsdks`."
         }
 
         if (signingIdentity == null) {
-            errorMessages += "- Please choose which signing identity will be used to sign the app. " +
-                    "e.g. `development` or `distribution`.\n"
+            errorMessages << "- Please choose which signing identity will be used to sign the app. " +
+                    "e.g. `development` or `distribution`."
         }
 
-        if (!isBlank(errorMessages)) {
-            throw new InvalidXcodeConfigurationException(errorMessages)
+        if (!errorMessages.isEmpty()) {
+            throw new InvalidXcodeConfigurationException(errorMessages.join("\n"))
         }
     }
 }

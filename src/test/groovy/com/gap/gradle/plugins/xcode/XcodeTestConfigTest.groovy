@@ -1,9 +1,10 @@
 package com.gap.gradle.plugins.xcode
 
 import com.gap.gradle.plugins.xcode.exceptions.InvalidXcodeConfigurationException
-import org.gradle.api.Action
-import org.gradle.api.internal.DependencyInjectingInstantiator
-import org.gradle.internal.service.ServiceRegistry
+import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.reflect.Instantiator
+import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
@@ -11,20 +12,20 @@ import static org.hamcrest.CoreMatchers.containsString
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertThat
 import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 import static org.testng.Assert.assertEquals
 
 public class XcodeTestConfigTest {
 
     private XcodeTestConfig testConfig
-    private DependencyInjectingInstantiator instantiator
+    private XcodeExtension xcodeExtension = mock(XcodeExtension)
 
     @Before
     public void setUp() throws Exception {
-        final ServiceRegistry services = mock(ServiceRegistry)
-        final Action warning = mock(Action)
-        instantiator = new DependencyInjectingInstantiator(services, warning)
+        Project project = ProjectBuilder.builder().build()
+        Instantiator instantiator = ((ProjectInternal) project).getServices().get(Instantiator)
 
-        testConfig = new XcodeTestConfig(instantiator)
+        testConfig = new XcodeTestConfig(instantiator, xcodeExtension)
     }
 
     @Test
@@ -44,6 +45,14 @@ public class XcodeTestConfigTest {
         testConfig.scheme = { 'some scheme' }
 
         assertEquals(testConfig.scheme, 'some scheme')
+    }
+
+    @Test
+    public void shouldReturnXcodeExtensionSchemeIfTestOneNotSpecified() throws Exception {
+        when(xcodeExtension.getScheme()).thenReturn('xcode extension scheme')
+        testConfig.scheme = null
+
+        assertEquals(testConfig.scheme, 'xcode extension scheme')
     }
 
     @Test

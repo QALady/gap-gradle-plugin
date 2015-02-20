@@ -7,15 +7,18 @@ import org.gradle.internal.reflect.Instantiator
 import static org.apache.commons.lang.StringUtils.isBlank
 
 class XcodeTestConfig implements XcodeConfig {
+    private XcodeExtension extension
     private Property<String> scheme
     DestinationConfig destination
 
-    XcodeTestConfig(Instantiator instantiator) {
+    XcodeTestConfig(Instantiator instantiator, XcodeExtension extension) {
         this.destination = instantiator.newInstance(DestinationConfig)
+        this.extension = extension
     }
 
     String getScheme() {
-        return scheme.get()
+        def testScheme = scheme?.get()
+        return isBlank(testScheme) ? extension.scheme : testScheme
     }
 
     void setScheme(Object scheme) {
@@ -28,8 +31,8 @@ class XcodeTestConfig implements XcodeConfig {
 
     @Override
     void validate() throws InvalidXcodeConfigurationException {
-        if (scheme == null || isBlank(scheme.get())) {
-            throw new InvalidXcodeConfigurationException("Please configure the `scheme`.")
+        if (isBlank(getScheme())) {
+            throw new InvalidXcodeConfigurationException("Please configure the `xcode.scheme` or the `xcode.test.scheme`.")
         }
 
         destination.validate()

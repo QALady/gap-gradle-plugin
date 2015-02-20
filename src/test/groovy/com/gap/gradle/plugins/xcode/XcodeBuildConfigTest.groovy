@@ -1,7 +1,7 @@
 package com.gap.gradle.plugins.xcode
+
 import com.gap.gradle.plugins.xcode.exceptions.InvalidXcodeConfigurationException
 import org.gradle.api.Project
-import org.gradle.internal.reflect.Instantiator
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
@@ -10,21 +10,20 @@ import static org.hamcrest.CoreMatchers.containsString
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.junit.Assert.assertThat
 import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 import static org.testng.Assert.assertEquals
 
 class XcodeBuildConfigTest {
 
     private XcodeBuildConfig buildConfig
     private Project project
-    private XcodeExtension extension
+    private xcodeExtension = mock(XcodeExtension)
 
     @Before
     public void setUp() throws Exception {
         project = ProjectBuilder.builder().build()
 
-        extension = project.extensions.create('xcode', XcodeExtension, mock(Instantiator), project)
-
-        buildConfig = new XcodeBuildConfig()
+        buildConfig = new XcodeBuildConfig(xcodeExtension)
     }
 
     @Test
@@ -77,8 +76,6 @@ class XcodeBuildConfigTest {
 
     @Test
     public void shouldThrowValidationExceptionIfOptionsAreNotSet() throws Exception {
-        buildConfig = new XcodeBuildConfig()
-
         try {
             buildConfig.validate()
         } catch (InvalidXcodeConfigurationException e) {
@@ -90,7 +87,6 @@ class XcodeBuildConfigTest {
 
     @Test
     public void shouldThrowValidationExceptionIfOptionsAreEmpty() throws Exception {
-        buildConfig = new XcodeBuildConfig()
         buildConfig.target = ''
         buildConfig.sdk = ''
 
@@ -104,8 +100,16 @@ class XcodeBuildConfigTest {
     }
 
     @Test
+    public void shouldNotThrowValidationExceptionIfTargetIsNotRequired() throws Exception {
+        when(xcodeExtension.isTargetRequired()).thenReturn(false)
+        buildConfig.sdk = 'foo'
+        buildConfig.signingIdentity = mock(SigningIdentity)
+
+        buildConfig.validate()
+    }
+
+    @Test
     public void shouldUseTargetAsProductNameIfNotExplicitlyDefined() throws Exception {
-        buildConfig = new XcodeBuildConfig()
         buildConfig.target = 'foo'
 
         assertThat(buildConfig.productName, equalTo('foo'))
@@ -113,24 +117,36 @@ class XcodeBuildConfigTest {
 
     @Test
     public void shouldReturnSpecifiedProductName() throws Exception {
-        buildConfig = new XcodeBuildConfig()
         buildConfig.productName = 'foo'
 
         assertThat(buildConfig.productName, equalTo('foo'))
     }
 
     @Test
+    public void shouldUseSchemeAsProductNameIfTargetWasNotSpecified() throws Exception {
+        when(xcodeExtension.getScheme()).thenReturn("scheme name")
+        buildConfig.target = null
+
+        assertThat(buildConfig.productName, equalTo("scheme name"))
+    }
+
+    @Test
     public void shouldReturnSpecifiedXcodeBuildConfiguration() throws Exception {
-        buildConfig =  new XcodeBuildConfig()
         buildConfig.configuration = 'TestConfig'
         
-        assertEquals(buildConfig.getConfiguration(), 'TestConfig')
+        assertEquals(buildConfig.configuration, 'TestConfig')
     }
-    
+
     @Test
     public void shouldReturnDefaultXcodeBuildConfigurationIfNotSpecified() throws Exception {
-        buildConfig =  new XcodeBuildConfig()
-     
         assertEquals(buildConfig.configuration, 'Release')
+    }
+
+    @Test
+    public void shouldReturnSchemeIfTargetWasNotSpecified() throws Exception {
+        buildConfig.target = null
+        when(xcodeExtension.getScheme()).thenReturn("scheme name")
+
+        assertThat(buildConfig.target, equalTo("scheme name"))
     }
 }

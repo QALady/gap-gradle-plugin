@@ -32,9 +32,19 @@ class GapXcodePlugin implements Plugin<Project> {
         this.project.plugins.apply('xcode')
         this.project.configurations.create('airwatchConfig')
 
+        configureWorkspaceAndScheme()
         configureExistingTasks()
         createNewTasks()
         configureTaskGraph()
+    }
+
+    private configureWorkspaceAndScheme() {
+        this.project.afterEvaluate {
+            this.project.xcodebuild {
+                workspace = extension.workspace
+                scheme = extension.scheme
+            }
+        }
     }
 
     private configureExistingTasks() {
