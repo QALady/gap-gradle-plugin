@@ -11,6 +11,7 @@ import org.junit.Test
 import static org.hamcrest.CoreMatchers.containsString
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertThat
+import static org.junit.Assert.fail
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 import static org.testng.Assert.assertEquals
@@ -71,6 +72,20 @@ public class XcodeTestConfigTest {
             testConfig.scheme = ''
         } catch (InvalidXcodeConfigurationException e) {
             assertThat(e.message, containsString('scheme'))
+        }
+    }
+
+    @Test
+    public void testAllPropertiesShouldBeNullSafe() throws Exception {
+        def config = testConfig
+
+        config.class.declaredFields.findAll { it.type.is(Property) }.each {
+            try {
+                config.getAt(it.name)
+            } catch (NullPointerException e) {
+                fail("\"${it.name}\" getter should not throw NullPointerException. " +
+                        "Make sure Groovy’s null safe operator is used (e.g.: ${it.name}?.get()).")
+            }
         }
     }
 }

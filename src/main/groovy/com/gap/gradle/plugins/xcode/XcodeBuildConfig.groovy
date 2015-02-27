@@ -43,7 +43,7 @@ class XcodeBuildConfig implements XcodeConfig {
     }
 
     String getSdk() {
-        return sdk.get()
+        return sdk?.get()
     }
 
     void setSdk(Object sdk) {
@@ -51,7 +51,7 @@ class XcodeBuildConfig implements XcodeConfig {
     }
 
     SigningIdentity getSigningIdentity() {
-        return signingIdentity.get()
+        return signingIdentity?.get()
     }
 
     void setSigningIdentity(Object signingIdentity) {
@@ -66,7 +66,7 @@ class XcodeBuildConfig implements XcodeConfig {
             errorMessages << "- Please configure the build `target`, or the `xcode.workspace` and `xcode.scheme`. See available targets with `xcodebuild -list`."
         }
 
-        if (isBlank(sdk?.get())) {
+        if (isBlank(getSdk())) {
             errorMessages << "- Please configure with which SDK the target will be built, " +
                     "e.g. `iphoneos` or `iphonesimulator`. See all available SDKs with `xcodebuild -showsdks`."
         }

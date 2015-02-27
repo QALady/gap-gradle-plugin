@@ -6,7 +6,7 @@ import org.junit.Test
 
 import static org.hamcrest.CoreMatchers.containsString
 import static org.junit.Assert.assertThat
-import static org.testng.Assert.assertEquals
+import static org.junit.Assert.fail
 import static org.testng.Assert.assertEquals
 
 class DestinationConfigTest {
@@ -63,6 +63,20 @@ class DestinationConfigTest {
             assertThat(e.message, containsString('platform'))
             assertThat(e.message, containsString('name'))
             assertThat(e.message, containsString('os'))
+        }
+    }
+
+    @Test
+    public void testAllPropertiesShouldBeNullSafe() throws Exception {
+        def config = destinationConfig
+
+        config.class.declaredFields.findAll { it.type.is(Property) }.each {
+            try {
+                config.getAt(it.name)
+            } catch (NullPointerException e) {
+                fail("\"${it.name}\" getter should not throw NullPointerException. " +
+                        "Make sure Groovy’s null safe operator is used (e.g.: ${it.name}?.get()).")
+            }
         }
     }
 }
