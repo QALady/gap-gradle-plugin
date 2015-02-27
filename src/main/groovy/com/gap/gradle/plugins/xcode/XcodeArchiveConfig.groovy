@@ -11,7 +11,7 @@ class XcodeArchiveConfig implements XcodeConfig {
     private Property<String> scmRevision
 
     String getVersion() {
-        return version.get()
+        return version?.get()
     }
 
     void setVersion(Object version) {
@@ -19,7 +19,7 @@ class XcodeArchiveConfig implements XcodeConfig {
     }
 
     String getShortVersionString() {
-        return shortVersionString.get()
+        return shortVersionString?.get()
     }
 
     void setShortVersionString(Object shortVersionString) {
@@ -27,7 +27,7 @@ class XcodeArchiveConfig implements XcodeConfig {
     }
 
     String getScmRevision() {
-        scmRevision.get()
+        scmRevision?.get()
     }
 
     void setScmRevision(Object scmRevision) {
@@ -36,18 +36,18 @@ class XcodeArchiveConfig implements XcodeConfig {
 
     @Override
     void validate() throws InvalidXcodeConfigurationException {
-        def errorMessages = ''
+        def errorMessages = []
 
-        if (version == null || isBlank(version.get())) {
-            errorMessages += "- Please define the ipa `version`.\n"
+        if (isBlank(getVersion())) {
+            errorMessages << "- Please define the ipa `version`."
         }
 
-        if (shortVersionString == null || isBlank(shortVersionString.get())) {
-            errorMessages += "- Please define the ipa `shortVersionString`."
+        if (isBlank(getShortVersionString())) {
+            errorMessages << "- Please define the ipa `shortVersionString`."
         }
 
-        if (!isBlank(errorMessages)) {
-            throw new InvalidXcodeConfigurationException(errorMessages)
+        if (!errorMessages.isEmpty()) {
+            throw new InvalidXcodeConfigurationException(errorMessages.join("\n"))
         }
     }
 }

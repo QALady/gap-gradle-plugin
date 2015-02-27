@@ -10,7 +10,7 @@ class DestinationConfig implements XcodeConfig {
     private Property<String> os
 
     String getPlatform() {
-        return platform.get()
+        return platform?.get()
     }
 
     void setPlatform(Object platform) {
@@ -18,7 +18,7 @@ class DestinationConfig implements XcodeConfig {
     }
 
     String getName() {
-        return name.get()
+        return name?.get()
     }
 
     void setName(Object name) {
@@ -26,7 +26,7 @@ class DestinationConfig implements XcodeConfig {
     }
 
     String getOs() {
-        return os.get()
+        return os?.get()
     }
 
     void setOs(Object os) {
@@ -34,22 +34,22 @@ class DestinationConfig implements XcodeConfig {
     }
 
     void validate() {
-        def errorMessage = ''
+        def errorMessage = []
 
-        if (platform == null || isBlank(platform.get())) {
-            errorMessage += "Please configure the `platform` in test destination."
+        if (isBlank(getPlatform())) {
+            errorMessage << "- Please configure the `platform` in test destination."
         }
 
-        if (name == null || isBlank(name.get())) {
-            errorMessage += "Please configure the `name` in test destination."
+        if (isBlank(getName())) {
+            errorMessage << "- Please configure the `name` in test destination."
         }
 
-        if (os == null || isBlank(os.get())) {
-            errorMessage += "Please configure the `os` in test destination."
+        if (isBlank(getOs())) {
+            errorMessage << "- Please configure the `os` in test destination."
         }
 
-        if (!isBlank(errorMessage)) {
-            throw new InvalidXcodeConfigurationException(errorMessage)
+        if (!errorMessage.isEmpty()) {
+            throw new InvalidXcodeConfigurationException(errorMessage.join("\n"))
         }
     }
 }

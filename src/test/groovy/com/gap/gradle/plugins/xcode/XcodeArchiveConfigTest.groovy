@@ -6,11 +6,7 @@ import org.junit.Test
 
 import static org.hamcrest.CoreMatchers.containsString
 import static org.junit.Assert.assertThat
-import static org.testng.Assert.assertEquals
-import static org.testng.Assert.assertEquals
-import static org.testng.Assert.assertEquals
-import static org.testng.Assert.assertEquals
-import static org.testng.Assert.assertEquals
+import static org.junit.Assert.fail
 import static org.testng.Assert.assertEquals
 
 class XcodeArchiveConfigTest {
@@ -60,6 +56,20 @@ class XcodeArchiveConfigTest {
         } catch (InvalidXcodeConfigurationException e) {
             assertThat(e.message, containsString('version'))
             assertThat(e.message, containsString('shortVersionString'))
+        }
+    }
+
+    @Test
+    public void testAllPropertiesShouldBeNullSafe() throws Exception {
+        def config = archiveConfig
+
+        config.class.declaredFields.findAll { it.type.is(Property) }.each {
+            try {
+                config.getAt(it.name)
+            } catch (NullPointerException e) {
+                fail("\"${it.name}\" getter should not throw NullPointerException. " +
+                        "Make sure Groovy’s null safe operator is used (e.g.: ${it.name}?.get()).")
+            }
         }
     }
 }
