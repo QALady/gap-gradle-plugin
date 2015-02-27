@@ -51,6 +51,21 @@ airwatchUpload {
 * `environments` allows the addition of other Airwatch environments that you might want to push artifacts to. There are pre-configured ones: preProduction (aka CN11) and production.
 * `smartGroups` used to configure which Smart Groups are going to be automatically assigned to the ipa
 * `searchParamsToRetireApp` used to define criteria to search for appId with the parameters provided so that autoRetireAppPreviousVersion task can use this appId and retire the application in Airwatch.
+* `ipaFile` specifies a `File` reference to the IPA that will be pushed to Airwatch. This option overrides the `artifact` option. You can use it together with the [gap-ios-signing](gap-ios-signing.md) plugin, for example:
+
+  ```groovy
+  ipaSigning {
+    // Other options here...
+  }
+
+  airwatchUpload {
+    // Other options here...
+    ipaFile { ipaSigning.output }
+  }
+
+  pushArtifactToAirWatch.dependsOn ipaSigning
+  ```
+
 * `artifact` specifies which artifact from the "archives" configuration will be uploaded to Airwatch. You can see this as a criteria filter, you can specify some or all of the artifact's attributes to narrow down the artifact that you want to upload. Matching only using classifier, will grab the first artifact found in archives with that classifier:
 
   ```groovy

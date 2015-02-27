@@ -1,7 +1,7 @@
 package com.gap.gradle.airwatch
 
 import com.gap.gradle.airwatch.util.Barrier
-import com.gap.gradle.airwatch.util.CaptureExecOutput
+import com.gap.gradle.airwatch.util.CommandRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
@@ -12,7 +12,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
 
     private static final String INSTALLED_STATUS = "2"
 
-    CaptureExecOutput capture = new CaptureExecOutput(project)
+    CommandRunner commandRunner = new CommandRunner(project)
 
     AirWatchClient airwatchClient
     int numberOfTries
@@ -57,7 +57,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
     }
 
     private String readPlistKeyValue(File plist, String key) {
-        def result = capture.outputOf("/usr/libexec/PlistBuddy", plist, "-c", "Print :${key}").trim()
+        def result = commandRunner.run("/usr/libexec/PlistBuddy", plist, "-c", "Print :${key}").trim()
 
         println "\n\n Value from plist for key $key = $result \n\n"
 
@@ -65,7 +65,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
     }
 
     private String getConnectedDeviceUdid() {
-        def deviceUdid = capture.outputOf("bash", "-c", "system_profiler SPUSBDataType | sed -n -e '/iPod/,/Serial/p' | grep 'Serial Number:' | cut -d ':' -f 2").trim()
+        def deviceUdid = commandRunner.run("bash", "-c", "system_profiler SPUSBDataType | sed -n -e '/iPod/,/Serial/p' | grep 'Serial Number:' | cut -d ':' -f 2").trim()
 
         if (deviceUdid.isEmpty()) {
             throw new GradleException("No iPod device detected.")
