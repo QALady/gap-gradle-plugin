@@ -1,5 +1,6 @@
 package com.gap.gradle.airwatch
 
+import com.gap.gradle.plugins.xcode.Property
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectSet
@@ -19,6 +20,7 @@ class AirwatchUploadExtension implements BeginInstallConfig {
     File configFile
     String pushMode
     Integer uploadChunks
+    Property<File> ipaFile
 
     private final Copy extractAirwatchConfigTask
     private final Instantiator instantiator
@@ -77,6 +79,14 @@ class AirwatchUploadExtension implements BeginInstallConfig {
             return configFile
         }
         new File(extractAirwatchConfigTask.destinationDir, configFilename)
+    }
+
+    File getIpaFile() {
+        return ipaFile?.get()
+    }
+
+    void setIpaFile(File ipaFile) {
+        this.ipaFile = new Property<File>(ipaFile)
     }
 
     void artifact(Action<ArtifactSpec> action) {

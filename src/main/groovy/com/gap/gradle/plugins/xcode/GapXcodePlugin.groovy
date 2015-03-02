@@ -11,6 +11,9 @@ import org.gradle.internal.reflect.Instantiator
 
 import javax.inject.Inject
 
+import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DEVELOPMENT
+import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DISTRIBUTION
+
 class GapXcodePlugin implements Plugin<Project> {
 
     private final Instantiator instantiator
@@ -26,8 +29,8 @@ class GapXcodePlugin implements Plugin<Project> {
     void apply(Project project) {
         this.project = project
         this.extension = project.extensions.create('xcode', XcodeExtension, instantiator, project)
-        this.extension.signing.add(developmentIdentity())
-        this.extension.signing.add(distributionIdentity())
+        this.extension.signing.add(DEFAULT_DEVELOPMENT)
+        this.extension.signing.add(DEFAULT_DISTRIBUTION)
 
         this.project.plugins.apply('xcode')
         this.project.configurations.create('airwatchConfig')
@@ -178,26 +181,6 @@ class GapXcodePlugin implements Plugin<Project> {
                     }
                 }
             }
-        }
-    }
-
-    private static SigningIdentity developmentIdentity() {
-        new SigningIdentity('development').with {
-            description = 'iPhone Developer: Alan Orchaton (DY23J3NF52)'
-            certificateURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/DevPrivateKey.p12'
-            certificatePassword = 'bollinger!'
-            mobileProvisionURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/GapDevelopment.mobileprovision'
-            return it
-        }
-    }
-
-    private static SigningIdentity distributionIdentity() {
-        new SigningIdentity('distribution').with {
-            description = 'iPhone Distribution: Gap Inc.'
-            certificateURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/InternalDistKeyv2.p12'
-            certificatePassword = 'jlohr1'
-            mobileProvisionURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/GapInternalDistribution.mobileprovision'
-            return it
         }
     }
 

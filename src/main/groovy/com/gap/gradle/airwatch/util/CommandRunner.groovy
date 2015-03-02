@@ -2,14 +2,14 @@ package com.gap.gradle.airwatch.util
 
 import org.gradle.api.Project
 
-class CaptureExecOutput {
+class CommandRunner {
     private final Project project
 
-    def CaptureExecOutput(Project project) {
+    def CommandRunner(Project project) {
         this.project = project
     }
 
-    public String outputOf(Object... args) {
+    public String run(Object... args) {
         def result = new ByteArrayOutputStream().withStream { os ->
             project.exec {
                 commandLine args

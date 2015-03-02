@@ -5,4 +5,8 @@ class ArtifactSpec {
     String name
     String classifier
     String type
+
+    boolean hasAtLeastOneSpecDefined() {
+        [groupId, name, classifier, type].any { it != null }
+    }
 }

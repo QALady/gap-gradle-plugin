@@ -10,7 +10,7 @@ import static org.mockito.Matchers.any
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
-public class CaptureExecOutputTest {
+public class CommandRunnerTest {
 
     private String[] commandLineParams
     private OutputStream standardOutput
@@ -31,8 +31,8 @@ public class CaptureExecOutputTest {
             }
         })
 
-        def capture = new CaptureExecOutput(project)
-        def output = capture.outputOf("foo")
+        def commandRunner = new CommandRunner(project)
+        def output = commandRunner.run("foo")
 
         assertEquals("foo", commandLineParams[0])
         assertEquals(" hello world\n", output)

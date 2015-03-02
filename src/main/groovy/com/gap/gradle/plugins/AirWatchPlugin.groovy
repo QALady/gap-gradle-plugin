@@ -1,9 +1,11 @@
 package com.gap.gradle.plugins
 
 import com.gap.gradle.airwatch.*
+import com.gap.gradle.plugins.mobile.ArchivesArtifactFinder
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.internal.reflect.Instantiator
@@ -53,16 +55,7 @@ class AirWatchPlugin implements Plugin<Project> {
 
     void createTasks() {
         def pushArtifactToAirWatchTask = project.task("pushArtifactToAirWatch") << {
-            def artifactFinder = new ArtifactFinder(extension.artifact)
-            def resolvedArtifact = project.configurations['archives'].resolvedConfiguration.resolvedArtifacts.find {
-                def matchResult = artifactFinder.matches(it)
-                println "Artifact ${it} from archives ${matchResult ? 'matches':'does not match'} artifact spec."
-                matchResult
-            }
-
-            if (resolvedArtifact == null) {
-                throw new GradleException("Could not find artifact that matches configured artifact in archives configuration.")
-            }
+            File ipaToUpload = getIpaToBeUploaded()
 
             def targetEnvironment = extension.targetEnvironment
             if (targetEnvironment == null) {
@@ -83,9 +76,9 @@ class AirWatchPlugin implements Plugin<Project> {
 
             println "Pushing artifact to Airwatch ${targetEnvironment}..."
 
-            def createdApp = airwatchClient.uploadApp(resolvedArtifact.file, extension)
+            def createdApp = airwatchClient.uploadApp(ipaToUpload, extension)
 
-            ext.uploadedArtifactFile = resolvedArtifact.file
+            ext.uploadedArtifactFile = ipaToUpload
             ext.airwatchClient = airwatchClient
             ext.targetEnvironment = targetEnvironment
             ext.publishedAppId = createdApp["Id"]["Value"]
@@ -152,7 +145,21 @@ class AirWatchPlugin implements Plugin<Project> {
         }
     }
 
-    def productionEnv() {
+    File getIpaToBeUploaded() {
+        if (extension.ipaFile) {
+            return extension.ipaFile
+        }
+
+        ResolvedArtifact resolvedArtifact = new ArchivesArtifactFinder(project).find(extension.artifact)
+
+        if (resolvedArtifact == null) {
+            throw new GradleException("Could not find artifact that matches configured artifact in archives configuration.")
+        }
+
+        return resolvedArtifact.file
+    }
+
+    static def productionEnv() {
         new Environment("production").with {
             apiHost = "https://gapstoresds.awmdm.com/"
             consoleHost = "https://gapstoresds.awmdm.com/"
@@ -163,7 +170,7 @@ class AirWatchPlugin implements Plugin<Project> {
         }
     }
 
-    def preProductionEnv() {
+    static def preProductionEnv() {
         new Environment("preProduction").with {
             apiHost = "https://cn377.awmdm.com/"
             consoleHost = "https://cn377.awmdm.com/"
