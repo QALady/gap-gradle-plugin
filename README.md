@@ -36,5 +36,6 @@ apply plugin: 'gappipeline'
 
 * [Airwatch plugin](docs/airwatch-plugin.md)
 * [DBot plugin](docs/dbot-plugin.md)
+* [iOS Signing plugin](docs/gap-ios-signing.md)
 * [Xcode plugin](docs/gap-xcode-plugin.md)
 * [iOS Sonar Runner plugin](docs/gap-ios-sonar-runner.md)
