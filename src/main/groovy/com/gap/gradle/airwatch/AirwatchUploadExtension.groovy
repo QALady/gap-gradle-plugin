@@ -85,7 +85,7 @@ class AirwatchUploadExtension implements BeginInstallConfig {
         return ipaFile?.get()
     }
 
-    void setIpaFile(File ipaFile) {
+    void setIpaFile(Object ipaFile) {
         this.ipaFile = new Property<File>(ipaFile)
     }
 

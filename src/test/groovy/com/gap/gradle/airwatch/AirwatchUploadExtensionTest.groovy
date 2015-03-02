@@ -59,4 +59,12 @@ public class AirwatchUploadExtensionTest {
 
         assertEquals("foobar", extension.smartGroups)
     }
+
+    @Test
+    public void shouldSupportIpaFileAsAClosure() throws Exception {
+        def file = mock(File)
+        extension.ipaFile = { file }
+
+        assertEquals(file, extension.ipaFile)
+    }
 }
