@@ -38,7 +38,10 @@ class IpaSigningTask extends DefaultTask {
 
         artifact = instantiator.newInstance(ArtifactSpec)
         downloader = instantiator.newInstance(FileDownloader, project)
-        commandRunner = instantiator.newInstance(CommandRunner, project)
+
+        // There's a bug in Gradle's Instantiator that causes a "missing property 'project'"
+        // when calling commandRunner.run(...), that's why we're using a "new" here.
+        commandRunner = new CommandRunner(project)
     }
 
     def hasRequiredParameters() {
