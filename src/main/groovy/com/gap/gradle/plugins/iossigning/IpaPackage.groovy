@@ -33,7 +33,7 @@ class IpaPackage {
                 "--force", "--preserve-metadata=identifier,entitlements", "--sign", signingIdentity.description,
                 "--verbose", ipaAppDir.absolutePath, "--keychain", keychain.file.absolutePath)
 
-        def resignedIpa = new File(workingDir, "resigned.ipa")
+        def resignedIpa = new File(workingDir, resignedIpaName())
         resignedIpa.delete()
 
         zipper.zip(ipaExplodedDir, resignedIpa)
@@ -53,5 +53,9 @@ class IpaPackage {
     private File appDirInsideIpaPayload() {
         def payloadDir = new File(ipaExplodedDir, "Payload")
         return payloadDir.listFiles()[0]
+    }
+
+    private String resignedIpaName() {
+        ipaFile.name.replaceFirst(/\.ipa$/, "-resigned.ipa")
     }
 }
