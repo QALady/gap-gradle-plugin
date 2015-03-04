@@ -55,7 +55,7 @@ class AirWatchClient {
     Map uploadApp(File ipaFile, BeginInstallConfig config) {
         def transactionId = uploadFile(ipaFile, config)
 
-        println "\nCreating the app in AirWatch using the uploaded chunks..."
+        println "Creating the app in AirWatch using the uploaded chunks..."
 
         beginInstall(transactionId, config)
     }
@@ -66,13 +66,11 @@ class AirWatchClient {
         String transactionId = "0"
         int chunkSize = (ceil(fileSize / config.uploadChunks)).intValue()
 
-        println "\nWill upload \"${file.name}\" to AirWatch..."
-
         file.eachByte(chunkSize) { byte[] buffer, int sizeRead ->
             byte[] bufferSlice = copyOfRange(buffer, 0, sizeRead)
             String encodedChunk = bufferSlice.encodeBase64().toString()
 
-            println "\nUploading chunk ${chunkSequenceNumber} of ${config.uploadChunks}..."
+            println "Uploading chunk ${chunkSequenceNumber} of ${config.uploadChunks}..."
 
             def response = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize, chunkSize)
             transactionId = response.get("TranscationId")
@@ -124,7 +122,7 @@ class AirWatchClient {
     }
 
     Map searchApplication(SearchApplicationConfig config) {
-        println "\nLooking for older ipa versions to be retired...\n${config}"
+        println "Looking for older ipa versions to be retired...\n${config}"
 
         Map args = [
                 "path" : APP_SEARCH_PATH,
@@ -135,7 +133,7 @@ class AirWatchClient {
     }
 
     void retireApplication(String appId) {
-        println "\nRetiring an application with appId \"${appId}\"..."
+        println "Retiring an application with id \"${appId}\"..."
 
         Map args = ["path": format(APP_RETIRE_PATH, appId)]
 
@@ -169,7 +167,7 @@ class AirWatchClient {
     }
 
     Map smartGroupSearch(String smartGroupName, String locationGroupId) {
-        println "\nSearching for Smart Group \"${smartGroupName}\"..."
+        println "Searching for Smart Group \"${smartGroupName}\"..."
 
         Map args = [
                 "path" : SMARTGROUPS_SEARCH_PATH,
@@ -186,7 +184,7 @@ class AirWatchClient {
     }
 
     void addSmartGroup(String appId, String smartGroupId) {
-        println "\nAssigning Smart Group id \"${smartGroupId}\" to app id \"${appId}\"..."
+        println "Assigning Smart Group id \"${smartGroupId}\" to app id \"${appId}\"..."
 
         Map args = [
                 "path": format(ADD_SMARTGROUP_PATH, appId, smartGroupId)

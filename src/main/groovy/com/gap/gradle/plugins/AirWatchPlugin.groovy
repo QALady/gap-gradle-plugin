@@ -59,7 +59,11 @@ class AirWatchPlugin implements Plugin<Project> {
                 def appList = airWatchClient.searchApplication(extension.searchParamsToRetireApp)
 
                 if (!appList.isEmpty()) {
-                    ext.retireVersion = appList["Application"]["Id"][0]["Value"].toString()
+                    def app = appList["Application"][0]
+
+                    println "The following ipa will be retired after the new version is deployed: ${app}\n"
+
+                    ext.retireVersion = app["Id"]["Value"].toString()
                 }
             }
 
@@ -75,7 +79,7 @@ class AirWatchPlugin implements Plugin<Project> {
 
                 beginInstallConfigValidator.validate(extension)
 
-                println "\nPushing artifact \"${ipaToUpload.name}\" to Airwatch ${targetEnvironment}...\n"
+                println "Pushing artifact \"${ipaToUpload.name}\" to Airwatch ${targetEnvironment}...\n"
                 def createdApp = airWatchClient.uploadApp(ipaToUpload, extension)
 
                 ext.uploadedArtifactFile = ipaToUpload
@@ -98,8 +102,6 @@ class AirWatchPlugin implements Plugin<Project> {
         project.task("autoRetireAppPreviousVersion", dependsOn: ["searchAppToRetire", "pushArtifactToAirWatch"]) {
             doFirst {
                 def retireVersion = searchAppToRetire.retireVersion
-
-                println "Auto retire this application version ${retireVersion}"
 
                 airWatchClient.retireApplication(retireVersion)
             }
