@@ -1,4 +1,5 @@
 package com.gap.gradle.plugins
+
 import com.gap.gradle.airwatch.*
 import com.google.common.collect.Sets
 import org.gradle.api.GradleException
@@ -52,15 +53,29 @@ class AirWatchPluginTest {
 
     @Test
     public void shouldAddNewTasks() {
-        taskShouldExist('pushArtifactToAirWatch', project)
-        taskShouldExist('installAirwatchGem', project)
         taskShouldExist('extractAirwatchConfig', project)
+        taskShouldExist('searchAppToRetire', project)
+
+        taskShouldExist('pushArtifactToAirWatch', project)
+        taskShouldDependOn('pushArtifactToAirWatch', 'searchAppToRetire', project)
+
         taskShouldExist('autoAssignSmartGroups', project)
+        taskShouldDependOn('autoAssignSmartGroups', 'pushArtifactToAirWatch', project)
+
         taskShouldExist('autoRetireAppPreviousVersion', project)
+        ['searchAppToRetire', 'pushArtifactToAirWatch'].each {
+            taskShouldDependOn('autoRetireAppPreviousVersion', it, project)
+        }
+
+        taskShouldExist('installAirwatchGem', project)
+
         taskShouldExist('configureApp', project)
         ["installAirwatchGem", "extractAirwatchConfig", "pushArtifactToAirWatch"].each {
             taskShouldDependOn('configureApp', it, project)
         }
+
+        taskShouldExist('waitDeviceToGetApp', project)
+        taskShouldDependOn('waitDeviceToGetApp', 'configureApp', project)
     }
 
     @Test
@@ -97,25 +112,8 @@ class AirWatchPluginTest {
         assertEquals("456", pushArtifactsTask.publishedAppId)
     }
 
-    @Test
-    public void shouldExposeAirwatchClientAsTaskProperty() throws Exception {
-        def airWatchClient = mock(AirWatchClient)
-        when(airWatchClientFactory.create(project.airwatchUpload.environments.preProduction, credentialProvider)).thenReturn(airWatchClient)
-        when(airWatchClient.uploadApp(Mockito.any(File), any(BeginInstallConfig))).thenReturn(["Id": ["Value": "456"]])
-
-        project.airwatchUpload {
-            artifact.name = 'target'
-            targetEnvironment environments.preProduction
-        }
-
-        def pushArtifactsTask = project.tasks.pushArtifactToAirWatch
-
-        pushArtifactsTask.execute()
-
-        assertEquals(airWatchClient, pushArtifactsTask.airwatchClient)
-    }
-
-    @Ignore // TODO Re-enable after AirWatch feature pack 6 upgrade (MPL-342)
+    @Ignore
+    // TODO Re-enable after AirWatch feature pack 6 upgrade (MPL-342)
     @Test
     public void shouldNotConfigureAppIfAirwatchUploadConfigFileDoesNotExist() throws Exception {
         def configureAppTask = project.tasks.configureApp
@@ -130,7 +128,8 @@ class AirWatchPluginTest {
         assertEquals(true, configureAppTask.state.skipped)
     }
 
-    @Ignore // TODO Re-enable after AirWatch feature pack 6 upgrade (MPL-342)
+    @Ignore
+    // TODO Re-enable after AirWatch feature pack 6 upgrade (MPL-342)
     @Test
     public void shouldNotInstallAirwatchGemIfConfigFileDoesNotExist() throws Exception {
         def installGemTask = project.tasks.installAirwatchGem
