@@ -2,7 +2,6 @@ package com.gap.gradle.airwatch
 
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
-import org.apache.commons.lang.StringUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -14,6 +13,8 @@ import static groovyx.net.http.Method.POST
 import static java.lang.Math.ceil
 import static java.lang.String.format
 import static java.util.Arrays.copyOfRange
+import static java.util.Collections.emptyMap
+import static org.apache.commons.lang.StringUtils.isBlank
 
 class AirWatchClient {
 
@@ -133,12 +134,12 @@ class AirWatchClient {
         doRequest(GET, args)
     }
 
-    void retireApplication(String appId){
-       println "\nRetiring an application with appId \"${appId}\"..."
+    void retireApplication(String appId) {
+        println "\nRetiring an application with appId \"${appId}\"..."
 
-       Map args = [ "path": format(APP_RETIRE_PATH,appId) ]
+        Map args = ["path": format(APP_RETIRE_PATH, appId)]
 
-       doRequest(POST, args)
+        doRequest(POST, args)
     }
 
     void assignSmartGroupToApplication(String smartGroups, String appId, String locationGroupId) {
@@ -211,36 +212,33 @@ class AirWatchClient {
 
             response.success = { resp, body ->
                 println "AirWatch returned a successful response: ${resp.statusLine}\n" +
-                        parseResponseBody(body, resp.contentType)
+                        parseResponseBody(body, resp)
 
-                if (body == null || (body instanceof String && StringUtils.isBlank(body))) {
-                    return [:]
-                }
-
-                return body
+                return emptyBody(body) ? emptyMap() : body
             }
 
             response.failure = { resp, body ->
                 throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n" +
-                        parseResponseBody(body, resp.contentType))
+                        parseResponseBody(body, resp))
             }
         }
     }
 
-    private String parseResponseBody(body, responseContentType) {
-        def message = ''
+    private static String parseResponseBody(body, response) {
+        if (emptyBody(body)) return "Response body is empty\n"
 
-        if (JSON.toString().equals(responseContentType)) {
-            message <<= 'Response body is'
-            if (body == null || (body instanceof String && StringUtils.isBlank(body))) {
-                message <<= ' empty'
-            } else {
-                message <<= ": ${toJson(body)}"
-            }
-        } else {
-            message <<= body
-        }
+        if (jsonResponse(response)) return "Response body is: ${toJson(body)}\n"
 
-        return message
+        return body
+    }
+
+    private static boolean jsonResponse(response) {
+        def contentTypeHeader = response.headers.find { it.name.equals('Content-Type') }
+
+        JSON.toString().equals(contentTypeHeader.value)
+    }
+
+    private static boolean emptyBody(body) {
+        !body || (body instanceof String && isBlank(body))
     }
 }
