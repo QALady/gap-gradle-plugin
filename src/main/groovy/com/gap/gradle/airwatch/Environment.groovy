@@ -1,6 +1,24 @@
 package com.gap.gradle.airwatch
 
 class Environment {
+    public static final def DEFAULT_PRODUCTION = new Environment("production").with {
+        apiHost = "https://gapstoresds.awmdm.com/"
+        consoleHost = "https://gapstoresds.awmdm.com/"
+        tenantCode = "1VOJHIBAAAG6A46QCFAA"
+        credentialName = "AirWatchProd"
+        locationGroupId = "570"
+        return it
+    }
+
+    public static final def DEFAULT_PREPRODUCTION = new Environment("preProduction").with {
+        apiHost = "https://cn377.awmdm.com/"
+        consoleHost = "https://cn377.awmdm.com/"
+        tenantCode = "1AVBHIBAAAG6A4NQCFAA"
+        credentialName = "AirWatchPreProd"
+        locationGroupId = "570"
+        return it
+    }
+
     final String name
     String apiHost
     String consoleHost

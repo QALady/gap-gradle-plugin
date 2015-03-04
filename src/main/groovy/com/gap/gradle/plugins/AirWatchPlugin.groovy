@@ -13,6 +13,9 @@ import org.gradle.internal.reflect.Instantiator
 import javax.inject.Inject
 import java.util.concurrent.TimeUnit
 
+import static com.gap.gradle.airwatch.Environment.DEFAULT_PREPRODUCTION
+import static com.gap.gradle.airwatch.Environment.DEFAULT_PRODUCTION
+
 class AirWatchPlugin implements Plugin<Project> {
 
     private static final int NUMBER_OF_TRIES = 10
@@ -36,8 +39,8 @@ class AirWatchPlugin implements Plugin<Project> {
         this.extractAirwatchConfigTask = createExtractAirwatchConfigTask()
 
         this.extension = project.extensions.create("airwatchUpload", AirwatchUploadExtension, project, instantiator, extractAirwatchConfigTask)
-        this.extension.environments.add(preProductionEnv())
-        this.extension.environments.add(productionEnv())
+        this.extension.environments.add(DEFAULT_PREPRODUCTION)
+        this.extension.environments.add(DEFAULT_PRODUCTION)
 
         createTasks()
     }
@@ -153,28 +156,6 @@ class AirWatchPlugin implements Plugin<Project> {
         }
 
         return resolvedArtifact.file
-    }
-
-    static def productionEnv() {
-        new Environment("production").with {
-            apiHost = "https://gapstoresds.awmdm.com/"
-            consoleHost = "https://gapstoresds.awmdm.com/"
-            tenantCode = "1VOJHIBAAAG6A46QCFAA"
-            credentialName = "AirWatchProd"
-            locationGroupId = "570"
-            return it
-        }
-    }
-
-    static def preProductionEnv() {
-        new Environment("preProduction").with {
-            apiHost = "https://cn377.awmdm.com/"
-            consoleHost = "https://cn377.awmdm.com/"
-            tenantCode = "1AVBHIBAAAG6A4NQCFAA"
-            credentialName = "AirWatchPreProd"
-            locationGroupId = "570"
-            return it
-        }
     }
 
     private AirWatchClient getAirWatchClient() {
