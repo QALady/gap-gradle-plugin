@@ -2,6 +2,7 @@ package com.gap.gradle.plugins.iossigning
 
 import com.gap.gradle.airwatch.ArtifactSpec
 import com.gap.gradle.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.iossigning.exceptions.ArtifactNotFoundException
 import com.gap.gradle.plugins.mobile.ArchivesArtifactFinder
 import com.gap.gradle.plugins.xcode.SigningIdentity
 import org.gradle.api.DefaultTask
@@ -55,6 +56,10 @@ class IpaSigningTask extends DefaultTask {
     @TaskAction
     def signIpa() {
         def resolvedArtifact = new ArchivesArtifactFinder(project).find(artifact)
+        if (resolvedArtifact == null) {
+            throw new ArtifactNotFoundException(artifact)
+        }
+
         def signingDir = new File(project.buildDir, "gap-ios-signing")
         signingDir.mkdirs()
 
