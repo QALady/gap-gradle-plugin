@@ -3,6 +3,8 @@ package com.gap.gradle.plugins.xcode
 import com.gap.gradle.plugins.xcode.tasks.GcovAnalysisTask
 import com.gap.gradle.plugins.xcode.tasks.ReplaceTokensInFile
 import com.gap.gradle.plugins.xcode.tasks.TransformJUnitXmlReportToHTMLTask
+import com.gap.gradle.tasks.SpawnBackgroundProcessTask
+import com.gap.gradle.tasks.StopProcessByPortTask
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -93,6 +95,8 @@ class GapXcodePlugin implements Plugin<Project> {
             fileNamePattern '**/*.gcda'
             reportsDir project.file("${project.buildDir}/reports/gcov")
         }
+
+
     }
 
     private configureTaskGraph() {
