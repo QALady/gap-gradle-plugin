@@ -1,23 +1,27 @@
 package com.gap.gradle.airwatch
+
 import groovy.mock.interceptor.MockFor
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
+import org.apache.http.Header
 import org.junit.Before
 import org.junit.Test
 
 import static groovy.json.JsonOutput.toJson
-import static groovyx.net.http.ContentType.HTML
 import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.Method.GET
 import static groovyx.net.http.Method.POST
 import static java.lang.String.format
 import static org.junit.Assert.*
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 class AirWatchClientTest {
 
     private AirWatchClient client
     def httpBuilderMock
     def params = []
+    def headerMock
 
     @Before
     void setUp() {
@@ -37,6 +41,10 @@ class AirWatchClientTest {
                       query  : req.uri.query,
                       body   : req.body]
         }
+
+        headerMock = mock(Header)
+        when(headerMock.name).thenReturn('Content-Type')
+        when(headerMock.value).thenReturn('application/json')
     }
 
     @Test
@@ -180,7 +188,7 @@ class AirWatchClientTest {
         def deviceUdid = "abc123"
         def httpMock = new MockFor(HTTPBuilder)
 
-        def successResponse = ['statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 200, 'status': 'OK']]
+        def successResponse = ['statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 200, 'status': 'OK'], headers: headerMock]
         def responseJson = ['DeviceApps': [
                 ["ApplicationIdentifier": "com.foo", "BuildVersion": "1.2.3"],
                 ["ApplicationIdentifier": "com.bar", "BuildVersion": "6.5.4"]
@@ -213,7 +221,7 @@ class AirWatchClientTest {
 
         def httpMock = new MockFor(HTTPBuilder)
 
-        def successResponse = ['statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 200, 'status': 'OK']]
+        def successResponse = ['statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 200, 'status': 'OK'], 'headers': headerMock]
         def responseJson = ['SmartGroups': ['SmartGroupID': ["someGroupId"]]]
 
         httpMock.demand.request(6) { Method method, Closure req ->
@@ -240,8 +248,8 @@ class AirWatchClientTest {
         def httpMock = new MockFor(HTTPBuilder)
 
         def errorResponse = [
-                'statusLine' : ['protocol': 'HTTP/1.1', 'statusCode': 500, 'status': 'Internal Server Error'],
-                'contentType': JSON.toString()
+                'statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 500, 'status': 'Internal Server Error'],
+                'headers'   : headerMock
         ]
         def errorBody = ['anError': 'An error message']
 
@@ -265,9 +273,13 @@ class AirWatchClientTest {
     void shouldNotParseResponseBodyIfContentTypeNotJSON() throws Exception {
         def httpMock = new MockFor(HTTPBuilder)
 
+        def headerMock = mock(Header)
+        when(headerMock.name).thenReturn('Content-Type')
+        when(headerMock.value).thenReturn('text/html')
+
         def response = [
-                'statusLine' : ['protocol': 'HTTP/1.1', 'statusCode': 401, 'status': 'Unauthorized'],
-                'contentType': HTML.toString()
+                'statusLine': ['protocol': 'HTTP/1.1', 'statusCode': 401, 'status': 'Unauthorized'],
+                'headers'   : headerMock
         ]
         def body = 'Some text body'
 

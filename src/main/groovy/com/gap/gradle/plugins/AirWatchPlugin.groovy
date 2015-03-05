@@ -13,6 +13,9 @@ import org.gradle.internal.reflect.Instantiator
 import javax.inject.Inject
 import java.util.concurrent.TimeUnit
 
+import static com.gap.gradle.airwatch.Environment.DEFAULT_PREPRODUCTION
+import static com.gap.gradle.airwatch.Environment.DEFAULT_PRODUCTION
+
 class AirWatchPlugin implements Plugin<Project> {
 
     private static final int NUMBER_OF_TRIES = 10
@@ -36,8 +39,8 @@ class AirWatchPlugin implements Plugin<Project> {
         this.extractAirwatchConfigTask = createExtractAirwatchConfigTask()
 
         this.extension = project.extensions.create("airwatchUpload", AirwatchUploadExtension, project, instantiator, extractAirwatchConfigTask)
-        this.extension.environments.add(preProductionEnv())
-        this.extension.environments.add(productionEnv())
+        this.extension.environments.add(DEFAULT_PREPRODUCTION)
+        this.extension.environments.add(DEFAULT_PRODUCTION)
 
         createTasks()
     }
@@ -54,64 +57,59 @@ class AirWatchPlugin implements Plugin<Project> {
     }
 
     void createTasks() {
-        def pushArtifactToAirWatchTask = project.task("pushArtifactToAirWatch") << {
-            File ipaToUpload = getIpaToBeUploaded()
+        def searchAppToRetire = project.task("searchAppToRetire") {
+            doFirst {
+                def appList = airWatchClient.searchApplication(extension.searchParamsToRetireApp)
 
-            def targetEnvironment = extension.targetEnvironment
-            if (targetEnvironment == null) {
-                throw new GradleException("You need to specify to which environment the artifact will be uploaded using `targetEnvironment`.")
-            }
-
-            def airwatchClient = airWatchClientFactory.create(targetEnvironment, credentialProvider)
-
-            beginInstallConfigValidator.validate(extension)
-
-            ext.retireVersion = ''
-            if (extension.searchParamsToRetireApp.hasSearchParams()) {
-                def appList = airwatchClient.searchApplication(extension.searchParamsToRetireApp)
                 if (!appList.isEmpty()) {
-                    ext.retireVersion = appList["Application"]["Id"][0]["Value"].toString()
+                    def app = appList["Application"][0]
+
+                    println "The following ipa will be retired after the new version is deployed: ${app}\n"
+
+                    ext.retireVersion = app["Id"]["Value"].toString()
                 }
             }
 
-            println "Pushing artifact to Airwatch ${targetEnvironment}..."
-
-            def createdApp = airwatchClient.uploadApp(ipaToUpload, extension)
-
-            ext.uploadedArtifactFile = ipaToUpload
-            ext.airwatchClient = airwatchClient
-            ext.targetEnvironment = targetEnvironment
-            ext.publishedAppId = createdApp["Id"]["Value"]
+            onlyIf { extension.searchParamsToRetireApp.hasSearchParams() }
         }
 
-        project.pushArtifactToAirWatch.group = "AirWatch"
-        project.pushArtifactToAirWatch.description = "Distributes the app (.ipa) from Artifactory to AirWatch"
+        def pushArtifactToAirWatchTask = project.task("pushArtifactToAirWatch", dependsOn: "searchAppToRetire") {
+            group = "AirWatch"
+            description = "Distributes the app (.ipa) from Artifactory to AirWatch"
+
+            doFirst {
+                File ipaToUpload = getIpaToBeUploaded()
+
+                beginInstallConfigValidator.validate(extension)
+
+                println "Pushing artifact \"${ipaToUpload.name}\" to Airwatch ${targetEnvironment}...\n"
+                def createdApp = airWatchClient.uploadApp(ipaToUpload, extension)
+
+                ext.uploadedArtifactFile = ipaToUpload
+                ext.publishedAppId = createdApp["Id"]["Value"]
+            }
+        }
 
         project.task("autoAssignSmartGroups", dependsOn: "pushArtifactToAirWatch") {
             doFirst {
                 String smartGroups = extension.smartGroups
-                String locationGroupId = extension.targetEnvironment.locationGroupId
+                String locationGroupId = targetEnvironment.locationGroupId
                 String appId = pushArtifactToAirWatchTask.publishedAppId
 
-                def airwatchClient = pushArtifactToAirWatchTask.airwatchClient
-
-                airwatchClient.assignSmartGroupToApplication(smartGroups, appId, locationGroupId)
+                airWatchClient.assignSmartGroupToApplication(smartGroups, appId, locationGroupId)
             }
 
             onlyIf { extension.smartGroups }
         }
 
-        project.task("autoRetireAppPreviousVersion", dependsOn: "pushArtifactToAirWatch") {
+        project.task("autoRetireAppPreviousVersion", dependsOn: ["searchAppToRetire", "pushArtifactToAirWatch"]) {
             doFirst {
-                if (!pushArtifactToAirWatchTask.retireVersion.isAllWhitespace()) {
-                    def airwatchClient = pushArtifactToAirWatchTask.airwatchClient
+                def retireVersion = searchAppToRetire.retireVersion
 
-                    println "auto retire this application version ${pushArtifactToAirWatchTask.retireVersion}"
-
-                    airwatchClient.retireApplication(pushArtifactToAirWatchTask.retireVersion)
-                }
+                airWatchClient.retireApplication(retireVersion)
             }
-            onlyIf { extension.searchParamsToRetireApp.hasSearchParams() }
+
+            onlyIf { searchAppToRetire.hasProperty('retireVersion') }
         }
 
         project.task("installAirwatchGem", type: Exec) {
@@ -136,9 +134,10 @@ class AirWatchPlugin implements Plugin<Project> {
 
         project.task("waitDeviceToGetApp", type: WaitDeviceToGetAppTask, dependsOn: "configureApp") {
             doFirst {
-                airwatchClient = pushArtifactToAirWatchTask.airwatchClient
+                airwatchClient = airWatchClient
                 publishedArtifactFile = pushArtifactToAirWatchTask.uploadedArtifactFile
             }
+
             numberOfTries = NUMBER_OF_TRIES
             sleepTimeout = 1
             sleepTimeUnit = TimeUnit.MINUTES
@@ -159,26 +158,18 @@ class AirWatchPlugin implements Plugin<Project> {
         return resolvedArtifact.file
     }
 
-    static def productionEnv() {
-        new Environment("production").with {
-            apiHost = "https://gapstoresds.awmdm.com/"
-            consoleHost = "https://gapstoresds.awmdm.com/"
-            tenantCode = "1VOJHIBAAAG6A46QCFAA"
-            credentialName = "AirWatchProd"
-            locationGroupId = "570"
-            return it
-        }
+    private AirWatchClient getAirWatchClient() {
+        return airWatchClientFactory.create(targetEnvironment, credentialProvider)
     }
 
-    static def preProductionEnv() {
-        new Environment("preProduction").with {
-            apiHost = "https://cn377.awmdm.com/"
-            consoleHost = "https://cn377.awmdm.com/"
-            tenantCode = "1AVBHIBAAAG6A4NQCFAA"
-            credentialName = "AirWatchPreProd"
-            locationGroupId = "570"
-            return it
+    private Environment getTargetEnvironment() {
+        def targetEnvironment = extension.targetEnvironment
+
+        if (!targetEnvironment) {
+            throw new GradleException("You need to specify to which environment the artifact will be uploaded using `targetEnvironment`.")
         }
+
+        return targetEnvironment
     }
 
     void setAirWatchClientFactory(AirWatchClientFactory airWatchClientFactory) {

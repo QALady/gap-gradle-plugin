@@ -2,7 +2,6 @@ package com.gap.gradle.airwatch
 
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
-import org.apache.commons.lang.StringUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -14,6 +13,8 @@ import static groovyx.net.http.Method.POST
 import static java.lang.Math.ceil
 import static java.lang.String.format
 import static java.util.Arrays.copyOfRange
+import static java.util.Collections.emptyMap
+import static org.apache.commons.lang.StringUtils.isBlank
 
 class AirWatchClient {
 
@@ -54,7 +55,7 @@ class AirWatchClient {
     Map uploadApp(File ipaFile, BeginInstallConfig config) {
         def transactionId = uploadFile(ipaFile, config)
 
-        println "\nCreating the app in AirWatch using the uploaded chunks..."
+        println "Creating the app in AirWatch using the uploaded chunks..."
 
         beginInstall(transactionId, config)
     }
@@ -65,13 +66,11 @@ class AirWatchClient {
         String transactionId = "0"
         int chunkSize = (ceil(fileSize / config.uploadChunks)).intValue()
 
-        println "\nWill upload \"${file.name}\" to AirWatch..."
-
         file.eachByte(chunkSize) { byte[] buffer, int sizeRead ->
             byte[] bufferSlice = copyOfRange(buffer, 0, sizeRead)
             String encodedChunk = bufferSlice.encodeBase64().toString()
 
-            println "\nUploading chunk ${chunkSequenceNumber} of ${config.uploadChunks}..."
+            println "Uploading chunk ${chunkSequenceNumber} of ${config.uploadChunks}..."
 
             def response = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize, chunkSize)
             transactionId = response.get("TranscationId")
@@ -123,7 +122,7 @@ class AirWatchClient {
     }
 
     Map searchApplication(SearchApplicationConfig config) {
-        println "\nLooking for older ipa versions to be retired...\n${config}"
+        println "Looking for older ipa versions to be retired...\n${config}"
 
         Map args = [
                 "path" : APP_SEARCH_PATH,
@@ -133,12 +132,12 @@ class AirWatchClient {
         doRequest(GET, args)
     }
 
-    void retireApplication(String appId){
-       println "\nRetiring an application with appId \"${appId}\"..."
+    void retireApplication(String appId) {
+        println "Retiring an application with id \"${appId}\"..."
 
-       Map args = [ "path": format(APP_RETIRE_PATH,appId) ]
+        Map args = ["path": format(APP_RETIRE_PATH, appId)]
 
-       doRequest(POST, args)
+        doRequest(POST, args)
     }
 
     void assignSmartGroupToApplication(String smartGroups, String appId, String locationGroupId) {
@@ -168,7 +167,7 @@ class AirWatchClient {
     }
 
     Map smartGroupSearch(String smartGroupName, String locationGroupId) {
-        println "\nSearching for Smart Group \"${smartGroupName}\"..."
+        println "Searching for Smart Group \"${smartGroupName}\"..."
 
         Map args = [
                 "path" : SMARTGROUPS_SEARCH_PATH,
@@ -185,7 +184,7 @@ class AirWatchClient {
     }
 
     void addSmartGroup(String appId, String smartGroupId) {
-        println "\nAssigning Smart Group id \"${smartGroupId}\" to app id \"${appId}\"..."
+        println "Assigning Smart Group id \"${smartGroupId}\" to app id \"${appId}\"..."
 
         Map args = [
                 "path": format(ADD_SMARTGROUP_PATH, appId, smartGroupId)
@@ -211,36 +210,33 @@ class AirWatchClient {
 
             response.success = { resp, body ->
                 println "AirWatch returned a successful response: ${resp.statusLine}\n" +
-                        parseResponseBody(body, resp.contentType)
+                        parseResponseBody(body, resp)
 
-                if (body == null || (body instanceof String && StringUtils.isBlank(body))) {
-                    return [:]
-                }
-
-                return body
+                return emptyBody(body) ? emptyMap() : body
             }
 
             response.failure = { resp, body ->
                 throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n" +
-                        parseResponseBody(body, resp.contentType))
+                        parseResponseBody(body, resp))
             }
         }
     }
 
-    private String parseResponseBody(body, responseContentType) {
-        def message = ''
+    private static String parseResponseBody(body, response) {
+        if (emptyBody(body)) return "Response body is empty\n"
 
-        if (JSON.toString().equals(responseContentType)) {
-            message <<= 'Response body is'
-            if (body == null || (body instanceof String && StringUtils.isBlank(body))) {
-                message <<= ' empty'
-            } else {
-                message <<= ": ${toJson(body)}"
-            }
-        } else {
-            message <<= body
-        }
+        if (jsonResponse(response)) return "Response body is: ${toJson(body)}\n"
 
-        return message
+        return body
+    }
+
+    private static boolean jsonResponse(response) {
+        def contentTypeHeader = response.headers.find { it.name.equals('Content-Type') }
+
+        JSON.toString().equals(contentTypeHeader.value)
+    }
+
+    private static boolean emptyBody(body) {
+        !body || (body instanceof String && isBlank(body))
     }
 }
