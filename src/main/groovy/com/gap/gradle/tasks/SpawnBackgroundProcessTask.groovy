@@ -1,4 +1,5 @@
 package com.gap.gradle.tasks
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
@@ -6,7 +7,6 @@ import org.gradle.api.tasks.TaskAction
 class SpawnBackgroundProcessTask extends DefaultTask {
 
     String command
-    String processReadyText
     String directory
 
     SpawnBackgroundProcessTask() {
@@ -19,7 +19,7 @@ class SpawnBackgroundProcessTask extends DefaultTask {
             throw new GradleException("Please define `command` to execute")
         }
 
-        Process process = invokeCommand()
+        invokeCommand()
         waitFor()
     }
 
