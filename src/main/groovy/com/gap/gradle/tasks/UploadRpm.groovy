@@ -18,7 +18,6 @@ class UploadRpm extends DefaultTask {
     ecClient = new CommanderClient()
     gapArtifactory = new GapWMArtifactory(ecClient)
     File file = new File(sourcePath)
-    def path = "${repoName}/${channel}/${file.getName()}"
     def uploadedArtifatUrl = gapArtifactory.uploadRpm("${repoName}/${channel}", sourcePath)
     ecClient.addLinkToUrl(file.getName(), uploadedArtifatUrl)
   }
