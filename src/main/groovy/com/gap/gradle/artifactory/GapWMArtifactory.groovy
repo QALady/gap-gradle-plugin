@@ -1,15 +1,11 @@
 package com.gap.gradle.artifactory
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.jfrog.artifactory.client.ArtifactoryClient
-import org.jfrog.artifactory.client.Artifactory
-import org.jfrog.artifactory.client.UploadableArtifact
 import com.gap.pipeline.ec.CommanderClient
+import org.jfrog.artifactory.client.Artifactory
+import org.jfrog.artifactory.client.ArtifactoryClient
+import org.jfrog.artifactory.client.UploadableArtifact
 
 class GapWMArtifactory {
-
-  private static final Logger logger = LoggerFactory.getLogger(GapWMArtifactory)
 
   private static final ARTIFACTORY_URL = "http://artifactory.gapinc.dev/artifactory/"
   private static final YUM_NON_PROD_REPO = "yum-non-prod"
