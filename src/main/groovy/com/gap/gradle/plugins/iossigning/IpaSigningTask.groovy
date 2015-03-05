@@ -70,7 +70,7 @@ class IpaSigningTask extends DefaultTask {
         keychain.importCertificate(certificate, signingIdentity.certificatePassword, CODESIGN_TOOL_PATH)
 
         try {
-            def ipaPackage = new IpaPackage(resolvedArtifact.file, signingDir, new Zipper(project), commandRunner)
+            def ipaPackage = new IpaPackage(resolvedArtifact.file, signingDir, new Zipper(commandRunner), commandRunner)
             ipaPackage.replaceEmbeddedProvision(mobileProvision)
             File newSignedIpa = ipaPackage.resign(signingIdentity, keychain)
             output = newSignedIpa

@@ -1,6 +1,8 @@
 package com.gap.gradle.airwatch.util
+
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
+import org.junit.Before
 import org.junit.Test
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
@@ -12,11 +14,13 @@ import static org.mockito.Mockito.when
 
 public class CommandRunnerTest {
 
+    private File workingDirParam
     private String[] commandLineParams
     private OutputStream standardOutput
+    private CommandRunner commandRunner
 
-    @Test
-    public void shouldCaptureExecOutput() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         def project = mock(Project)
 
         when(project.exec(any(Closure))).thenAnswer(new Answer<ExecResult>() {
@@ -31,14 +35,34 @@ public class CommandRunnerTest {
             }
         })
 
-        def commandRunner = new CommandRunner(project)
+        commandRunner = new CommandRunner(project)
+    }
+
+    @Test
+    public void shouldCaptureExecOutput() throws Exception {
         def output = commandRunner.run("foo")
 
+        assertEquals(new File("."), workingDirParam)
         assertEquals("foo", commandLineParams[0])
+        assertEquals(" hello world\n", output)
+    }
+
+    @Test
+    public void shouldAcceptOverridingWorkingDir() throws Exception {
+        def baseDir = new File("/path/to/some/dir")
+
+        def output = commandRunner.run(baseDir, "bar")
+
+        assertEquals(baseDir, workingDirParam)
+        assertEquals("bar", commandLineParams[0])
         assertEquals(" hello world\n", output)
     }
 
     private void commandLine(Object[] args) {
         commandLineParams = args
+    }
+
+    private void workingDir(File dir) {
+        workingDirParam = dir
     }
 }

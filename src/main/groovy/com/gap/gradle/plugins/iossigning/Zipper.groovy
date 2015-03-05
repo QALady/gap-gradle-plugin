@@ -1,19 +1,22 @@
 package com.gap.gradle.plugins.iossigning
 
-import org.gradle.api.Project
+import com.gap.gradle.airwatch.util.CommandRunner
 
 class Zipper {
-    private final Project project
+    public static final String ZIP_TOOL = "/usr/bin/zip"
+    public static final String UNZIP_TOOL = "/usr/bin/unzip"
 
-    def Zipper(Project project) {
-        this.project = project
+    private final CommandRunner commandRunner
+
+    def Zipper(CommandRunner commandRunner) {
+        this.commandRunner = commandRunner
     }
 
     def unzip(File zipFile, File destinationDir) {
-        project.ant.unzip(src: zipFile.absolutePath, dest: destinationDir.absolutePath)
+        commandRunner.run(UNZIP_TOOL, zipFile.absolutePath, "-d", destinationDir.absolutePath)
     }
 
     def zip(File baseDir, File destinationZip) {
-        project.ant.zip(destfile: destinationZip, baseDir: baseDir)
+        commandRunner.run(baseDir, ZIP_TOOL, destinationZip.absolutePath, "-r", ".")
     }
 }
