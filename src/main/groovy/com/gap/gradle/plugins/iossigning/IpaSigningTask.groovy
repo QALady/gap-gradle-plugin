@@ -22,6 +22,7 @@ class IpaSigningTask extends DefaultTask {
 
     private final FileDownloader downloader
     private final CommandRunner commandRunner
+    private final Security security
 
     SigningIdentity signingIdentity
     ArtifactSpec artifact
@@ -43,6 +44,7 @@ class IpaSigningTask extends DefaultTask {
         // There's a bug in Gradle's Instantiator that causes a "missing property 'project'"
         // when calling commandRunner.run(...), that's why we're using a "new" here.
         commandRunner = new CommandRunner(project)
+        security = new Security(commandRunner)
     }
 
     def hasRequiredParameters() {
@@ -66,17 +68,32 @@ class IpaSigningTask extends DefaultTask {
         def certificate = downloader.download(signingIdentity.certificateURI, signingDir)
         def mobileProvision = downloader.download(signingIdentity.mobileProvisionURI, signingDir)
 
-        def keychain = new Keychain(new Security(commandRunner))
+        def keychain = new Keychain(security)
         keychain.importCertificate(certificate, signingIdentity.certificatePassword, CODESIGN_TOOL_PATH)
 
         try {
             def ipaPackage = new IpaPackage(resolvedArtifact.file, signingDir, new Zipper(commandRunner), commandRunner)
             ipaPackage.replaceEmbeddedProvision(mobileProvision)
-            File newSignedIpa = ipaPackage.resign(signingIdentity, keychain)
-            output = newSignedIpa
 
+            def entitlements = getEntitlements(mobileProvision, signingDir)
+
+            output = ipaPackage.resign(signingIdentity, keychain, entitlements)
         } finally {
             keychain.destroy()
         }
+    }
+
+    private File getEntitlements(File provisioningProfile, File outputDir) {
+        def decodedCms = security.decodeCMSMessages(provisioningProfile)
+
+        def plainProfile = new File(outputDir, "plain-provisioning-profile.plist")
+        plainProfile.write(decodedCms)
+
+        def entitlements = new PlistBuddy(commandRunner).printEntry(":Entitlements", plainProfile)
+
+        def entitlementsFile = new File(outputDir, "entitlements.plist")
+        entitlementsFile.write(entitlements)
+
+        entitlementsFile
     }
 }

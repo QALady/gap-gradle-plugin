@@ -28,9 +28,9 @@ class IpaPackage {
         FileUtils.copyFile(newMobileProvision, new File(ipaAppDir, "embedded.mobileprovision"))
     }
 
-    public File resign(SigningIdentity signingIdentity, Keychain keychain) {
+    public File resign(SigningIdentity signingIdentity, Keychain keychain, File entitlements) {
         commandRunner.run(CODESIGN_TOOL,
-                "--force", "--preserve-metadata=identifier,entitlements", "--sign", signingIdentity.description,
+                "--force", "--entitlements", entitlements, "--sign", signingIdentity.description,
                 "--verbose", ipaAppDir.absolutePath, "--keychain", keychain.file.absolutePath)
 
         def resignedIpa = new File(workingDir, resignedIpaName())
