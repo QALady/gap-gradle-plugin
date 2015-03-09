@@ -12,20 +12,20 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
     private static final int IOS_DEBUG_PROXY_PORT = 27753
 
     void apply(Project project) {
-
         project.extensions.create('appiumConfig', AppiumPluginExtension,project)
 
         project.task('startAppium', type: SpawnBackgroundProcessTask) {
+            doFirst {
+                project.appiumConfig.logFile.parentFile.mkdirs()
+            }
 
             project.afterEvaluate {
                 command =  'appium' + project.appiumConfig.appiumServerArguments()
                 println "starting background process for Appium " + command
             }
-
         }
 
         project.task('startiOSWebkitDebugProxy', type: SpawnBackgroundProcessTask) {
-
             def wdir = new File('.')
             def cmd = "system_profiler SPUSBDataType | sed -n -e '/iPod/,/Serial/p' | grep 'Serial Number:' | cut -d ':' -f 2 | tr -d ' '"
             def UDID = ["bash", "-c", cmd].execute(null, wdir).text.trim()
