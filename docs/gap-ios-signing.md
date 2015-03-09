@@ -9,7 +9,7 @@ This plugin is used to sign/resign an existing IPA package.
 apply plugin: 'gap-ios-signing'
 
 ipaSigning {
-    signingIdentity signing.development # pre-configured "distribution" is also available
+    signingIdentity signing.development // pre-configured "distribution" is also available
 
     artifact {
         groupId 'com.gap.apps.ios.example'
