@@ -3,8 +3,11 @@ package com.gap.gradle.threads
 import com.gap.cloud.VMMetadata;
 import com.gap.gradle.utils.ShellCommandException;
 import com.gap.pipeline.ec.CommanderClient;
+import com.google.common.base.Optional
 
 import groovyx.net.http.HTTPBuilder;
+
+import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory;
@@ -13,26 +16,26 @@ import static com.gap.gradle.tasks.CreateEasyCloudResourceTask.Constants.*;
 import static groovyx.net.http.ContentType.*
 import static groovyx.net.http.Method.*
 
-class PostVMCreationThread implements Runnable {
+class PostVMCreationThread implements Callable<Optional<VMMetadata>> {
     
     private static final Log LOGGER = LogFactory.getLog(com.gap.gradle.threads.PostVMCreationThread);
-    private List<VMMetadata> successfullyRegisteredInstances;
+    private static final String EC_JOB_RESOURCES = "/myJob/osResources/";
     private VMMetadata vmMetadata;
     private Properties properties;
     private CommanderClient commander;
     private String resultState;
     private String phaseState;
     
-    public PostVMCreationThread(Properties properties, List<VMMetadata> successfullyRegisteredInstances, VMMetadata vmMetadata, CommanderClient commander) {
+    public PostVMCreationThread(Properties properties, VMMetadata vmMetadata, CommanderClient commander) {
         this.properties = properties;
-        this.successfullyRegisteredInstances = successfullyRegisteredInstances;
         this.vmMetadata = vmMetadata;
         this.commander = commander;
     }
 
     @Override
-    public void run() {
+    public Optional<VMMetadata> call() {
         boolean phoneHomeStatus = false;
+        boolean successfullyRegisteredInstance = false;
         def output;
         
         String etcdURL = properties.get(ETCD_HOSTNAME_URL) + "/" + properties.get(ETCD_KEY) + "/" + vmMetadata.getProviderId() + "?wait=true";
@@ -66,9 +69,9 @@ class PostVMCreationThread implements Runnable {
             LOGGER.info("Setting EC resource properties for " + vmMetadata.getHostname())
             String ip = this.getIPString(vmMetadata);
             try {
-                commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/id", vmMetadata.getProviderId());
-                commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/ip", ip);
-                commander.setECProperty("/myJob/osResources/" + vmMetadata.getHostname() + "/image", properties.get(OS_IMAGENAME));
+                commander.setECProperty(EC_JOB_RESOURCES + vmMetadata.getHostname() + "/id", vmMetadata.getProviderId());
+                commander.setECProperty(EC_JOB_RESOURCES + vmMetadata.getHostname() + "/ip", ip);
+                commander.setECProperty(EC_JOB_RESOURCES + vmMetadata.getHostname() + "/image", properties.get(OS_IMAGENAME));
             } catch (ShellCommandException e) {
                 LOGGER.info("Could not set EC Property.....Continuing " + e.getMessage());
             } catch (IOException e) {
@@ -76,7 +79,7 @@ class PostVMCreationThread implements Runnable {
             }         
             phaseState = "exit_sucess";
             resultState = "success";
-            successfullyRegisteredInstances.add(vmMetadata);
+            successfullyRegisteredInstance = true;
         } else {
             LOGGER.info("VM " + vmMetadata.getHostname() + " was NOT successfully registered with etcd")
             phaseState = "handle_phone_home_timeout"
@@ -86,6 +89,11 @@ class PostVMCreationThread implements Runnable {
         /* Write Data to Influx DB */
         LOGGER.info("Writing data to influx db for " + vmMetadata.getHostname())
         this.writeDataToInfluxDB()
+        if (successfullyRegisteredInstance) {
+            return Optional.of(vmMetadata);
+        } else {
+            return Optional.absent();
+        }
     }
     
     private String getIPString(VMMetadata vmMetadata) {

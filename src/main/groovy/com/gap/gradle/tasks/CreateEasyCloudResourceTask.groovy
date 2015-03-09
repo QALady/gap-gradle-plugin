@@ -10,15 +10,27 @@ import com.gap.pipeline.ec.CommanderClient;
 import com.gap.pipeline.tasks.WatchmenTask;
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters;
+import com.google.common.base.Function
+import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import groovy.json.JsonSlurper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
+
+import static com.gap.gradle.tasks.CreateEasyCloudResourceTask.Constants.*
 
 @RequiredParameters([
     @Require(parameter = 'tenant', description = 'Openstack Tenant'),
@@ -74,18 +86,18 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         osNetworkNameSet = new HashSet<String>();
         osSecurityGroupSet = new HashSet<String>();
         
-        osNetworkNameSet.add(globalProperties.get(CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME));
+        osNetworkNameSet.add(globalProperties.get(OS_NETWORKNAME));
         
-        globalProperties.get(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET).split(',').each { eachSecGroup ->
+        globalProperties.get(OS_SECURITY_GROUP_SET).split(',').each { eachSecGroup ->
             osSecurityGroupSet.add(eachSecGroup)
         }
 
-        userMetadata.put("roleName", globalProperties.get(CreateEasyCloudResourceTask.Constants.ROLE_NAME));
-        int count = Integer.parseInt(globalProperties.get(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES));
+        userMetadata.put("roleName", globalProperties.get(ROLE_NAME));
+        int count = Integer.parseInt(globalProperties.get(NUMBER_OF_INSTANCES));
 
-        vmMetadatas = virtualMachineBuilder.withProvider(openstackCloudProvider).withGroupName(globalProperties.get(CreateEasyCloudResourceTask.Constants.HOSTNAME))
-                      .withHardwareProfileNameRegex(globalProperties.get(CreateEasyCloudResourceTask.Constants.OS_FLAVOR)).withOsImageRegex(globalProperties.get(CreateEasyCloudResourceTask.Constants.OS_IMAGENAME)).withNetworks(osNetworkNameSet)
-                      .withSecurityGroups(osSecurityGroupSet).withKeypairName(globalProperties.get(CreateEasyCloudResourceTask.Constants.OS_KEYNAME)).withUserData(this.getUserDataString())
+        vmMetadatas = virtualMachineBuilder.withProvider(openstackCloudProvider).withGroupName(globalProperties.get(HOSTNAME))
+                      .withHardwareProfileNameRegex(globalProperties.get(OS_FLAVOR)).withOsImageRegex(globalProperties.get(OS_IMAGENAME)).withNetworks(osNetworkNameSet)
+                      .withSecurityGroups(osSecurityGroupSet).withKeypairName(globalProperties.get(OS_KEYNAME)).withUserData(this.getUserDataString())
                       .withUserMetadata(userMetadata).buildVirtualMachine(count);
                       
         for (VMMetadata eachVMMetadata : vmMetadatas) {
@@ -95,17 +107,26 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
     }
     
     private void postVMCreationSteps(List<VMMetadata> vmMetadatas) {
-        successfullyRegisteredInstances = Collections.synchronizedList(new ArrayList<VMMetadata>());
         LOGGER.info("Post creation steps of VMs");         
         
         ExecutorService postVMCreationExecutor = Executors.newFixedThreadPool(VM_CUSTOMIZATION_THREADS);
+        List<Future<Optional<VMMetadata>>> futureExecutions = new ArrayList<Future<Optional<VMMetadata>>>();
         
         for (VMMetadata eachVMMetadata : vmMetadatas) {            
-            Runnable worker = new PostVMCreationThread(globalProperties, successfullyRegisteredInstances, eachVMMetadata, commander);
-            postVMCreationExecutor.execute(worker);
+            Future<Optional<VMMetadata>> futureExecution = postVMCreationExecutor.submit(new PostVMCreationThread(globalProperties, eachVMMetadata, commander));
+            futureExecutions.add(futureExecution);
         }
-        postVMCreationExecutor.shutdown();
-        while(!postVMCreationExecutor.isTerminated());
+    
+        successfullyRegisteredInstances = Lists.newArrayList(
+            Iterables.filter(
+                Lists.transform(futureExecutions, new Function<Future<Optional<VMMetadata>>, VMMetadata>() {
+                    @Override
+                    public VMMetadata apply(Future<Optional<VMMetadata>> future) {
+                        if (future.get().isPresent()) {
+                            return future.get().get();
+                        } 
+                    }
+                }), Predicates.notNull()));
         
         LOGGER.info("*******************************************************************");
         LOGGER.info("ALL VMS that were spun up on Openstack are as follows")
@@ -122,8 +143,8 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         LOGGER.info("*******************************************************************");
         project.gapCloud.allRegisteredInstances = successfullyRegisteredInstances;
         
-        if (globalProperties.get(CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG) != null) {
-            if ((globalProperties.get(CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG)).equalsIgnoreCase("true")) {
+        if (globalProperties.get(CREATE_EC_RESOURCE_FLAG) != null) {
+            if ((globalProperties.get(CREATE_EC_RESOURCE_FLAG)).equalsIgnoreCase("true")) {
                 LOGGER.info("Setting up EC resources...")
                 ExecutorService createECResourceExecutor = Executors.newFixedThreadPool(VM_CUSTOMIZATION_THREADS);
                 for (VMMetadata eachVMMetadata : vmMetadatas) {
@@ -142,24 +163,24 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         LOGGER.info("Reading Json properties");
         globalProperties = new Properties();
         
-        globalProperties.put(CreateEasyCloudResourceTask.Constants.START_TIME_IN_SECS, ((int)System.currentTimeMillis() / 1000));
+        globalProperties.put(START_TIME_IN_SECS, ((int)System.currentTimeMillis() / 1000));
         
         if (project.hasProperty('hostname')) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.HOSTNAME, project.hostname);
+            globalProperties.put(HOSTNAME, project.hostname);
         } else {
             throw new InvalidPropertyAccessException("Hostname property not set in project. Please set project property 'hostname'");
         }
         
         if (project.hasProperty('tenant')) {
             tenantName = project.tenant;
-            if (jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName] != null) {
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_TENANT, tenantName);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_USERNAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.OS_USERNAME]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_PASSWORD, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.OS_PASSWORD]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_ENDPOINT, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.OS_ENDPOINT]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_TENANT, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.OS_TENANT]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_KEYNAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.OS_KEYNAME]);
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_AVAILABILITY_ZONE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.OS_AVAILABILITY_ZONE]);
+            if (jsonObject[JSON_OBJECT_TENANTS][tenantName] != null) {
+                globalProperties.put(JSON_TENANT, tenantName);
+                globalProperties.put(OS_USERNAME, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_USERNAME]);
+                globalProperties.put(OS_PASSWORD, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_PASSWORD]);
+                globalProperties.put(OS_ENDPOINT, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_ENDPOINT]);
+                globalProperties.put(OS_TENANT, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_TENANT]);
+                globalProperties.put(OS_KEYNAME, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_KEYNAME]);
+                globalProperties.put(OS_AVAILABILITY_ZONE, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_AVAILABILITY_ZONE]);
                 
             } else {
                 throw new InvalidPropertyAccessException("No such tenant " + tenantName + " exists in the cloud. Please check tenant name");
@@ -170,92 +191,92 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         
         if (project.hasProperty('type')) {
             machineType = project.type;
-            if (jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType] != null) {
-               globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_VM_TYPE, machineType);
-               globalProperties.put(CreateEasyCloudResourceTask.Constants.DNATYPE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.DNATYPE]);
-               globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_IMAGENAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.OS_IMAGENAME]);
-               globalProperties.put(CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT]);
+            if (jsonObject[JSON_OBJECT_MACHINES][machineType] != null) {
+               globalProperties.put(JSON_VM_TYPE, machineType);
+               globalProperties.put(DNATYPE, jsonObject[JSON_OBJECT_MACHINES][machineType][DNATYPE]);
+               globalProperties.put(OS_IMAGENAME, jsonObject[JSON_OBJECT_MACHINES][machineType][OS_IMAGENAME]);
+               globalProperties.put(PHONE_TIMEOUT, jsonObject[JSON_OBJECT_MACHINES][machineType][PHONE_TIMEOUT]);
             } else {
                 throw new InvalidPropertyAccessException("No such machine type " + machineType + " exists. Please check type");
             }
          } else {            
-             machineType = jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.JSON_OBJECT_DEFAULT_MACHINE];
-             globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_VM_TYPE, machineType);
-             globalProperties.put(CreateEasyCloudResourceTask.Constants.DNATYPE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.DNATYPE]);
-             globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_IMAGENAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.OS_IMAGENAME]);
-             globalProperties.put(CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_MACHINES][machineType][CreateEasyCloudResourceTask.Constants.PHONE_TIMEOUT]);                 
+             machineType = jsonObject[JSON_OBJECT_TENANTS][tenantName][JSON_OBJECT_DEFAULT_MACHINE];
+             globalProperties.put(JSON_VM_TYPE, machineType);
+             globalProperties.put(DNATYPE, jsonObject[JSON_OBJECT_MACHINES][machineType][DNATYPE]);
+             globalProperties.put(OS_IMAGENAME, jsonObject[JSON_OBJECT_MACHINES][machineType][OS_IMAGENAME]);
+             globalProperties.put(PHONE_TIMEOUT, jsonObject[JSON_OBJECT_MACHINES][machineType][PHONE_TIMEOUT]);
         }
         
         if (project.hasProperty('network')) {
             networkType = project.network;
-            if (jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType] != null) {
-              globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_NETWORK_TYPE, networkType);
-              globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME]);
-              globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE]);
+            if (jsonObject[JSON_OBJECT_NETWORKS][networkType] != null) {
+              globalProperties.put(JSON_NETWORK_TYPE, networkType);
+              globalProperties.put(OS_NETWORKNAME, jsonObject[JSON_OBJECT_NETWORKS][networkType][OS_NETWORKNAME]);
+              globalProperties.put(OS_NETWORK_ECZONE, jsonObject[JSON_OBJECT_NETWORKS][networkType][OS_NETWORK_ECZONE]);
             } else {
                 throw new InvalidPropertyAccessException("No such Network " + networkType + " exists. Please check network");
             }
                     
          } else {             
-             networkType = jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][CreateEasyCloudResourceTask.Constants.JSON_OBJECT_DEFAULT_NETWORK];
-             globalProperties.put(CreateEasyCloudResourceTask.Constants.JSON_NETWORK_TYPE, networkType);
-             globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORKNAME]);
-             globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE, jsonObject[CreateEasyCloudResourceTask.Constants.JSON_OBJECT_NETWORKS][networkType][CreateEasyCloudResourceTask.Constants.OS_NETWORK_ECZONE]);
+             networkType = jsonObject[JSON_OBJECT_TENANTS][tenantName][JSON_OBJECT_DEFAULT_NETWORK];
+             globalProperties.put(JSON_NETWORK_TYPE, networkType);
+             globalProperties.put(OS_NETWORKNAME, jsonObject[JSON_OBJECT_NETWORKS][networkType][OS_NETWORKNAME]);
+             globalProperties.put(OS_NETWORK_ECZONE, jsonObject[JSON_OBJECT_NETWORKS][networkType][OS_NETWORK_ECZONE]);
         }
        
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL, project[CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL]);            
+        if (project.hasProperty(INFLUX_DB_URL)) {
+            globalProperties.put(INFLUX_DB_URL, project[INFLUX_DB_URL]);
             
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL, jsonObject[CreateEasyCloudResourceTask.Constants.INFLUX_DB_URL]);
+            globalProperties.put(INFLUX_DB_URL, jsonObject[INFLUX_DB_URL]);
         }
         
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.DNAURL)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.DNAURL, project[CreateEasyCloudResourceTask.Constants.DNAURL]);
+        if (project.hasProperty(DNAURL)) {
+            globalProperties.put(DNAURL, project[DNAURL]);
                         
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.DNAURL, jsonObject[CreateEasyCloudResourceTask.Constants.DNAURL]);
+            globalProperties.put(DNAURL, jsonObject[DNAURL]);
         }
         
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL, project[CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL]);
+        if (project.hasProperty(ETCD_HOSTNAME_URL)) {
+            globalProperties.put(ETCD_HOSTNAME_URL, project[ETCD_HOSTNAME_URL]);
             
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL, jsonObject[CreateEasyCloudResourceTask.Constants.ETCD_HOSTNAME_URL]);            
+            globalProperties.put(ETCD_HOSTNAME_URL, jsonObject[ETCD_HOSTNAME_URL]);
         }
        
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.ETCD_KEY)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_KEY, project[CreateEasyCloudResourceTask.Constants.ETCD_KEY]);            
+        if (project.hasProperty(ETCD_KEY)) {
+            globalProperties.put(ETCD_KEY, project[ETCD_KEY]);
             
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.ETCD_KEY, jsonObject[CreateEasyCloudResourceTask.Constants.ETCD_KEY]);
+            globalProperties.put(ETCD_KEY, jsonObject[ETCD_KEY]);
         }
         
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.OS_FLAVOR)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_FLAVOR, project[CreateEasyCloudResourceTask.Constants.OS_FLAVOR]);            
+        if (project.hasProperty(OS_FLAVOR)) {
+            globalProperties.put(OS_FLAVOR, project[OS_FLAVOR]);
             
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_FLAVOR, jsonObject[CreateEasyCloudResourceTask.Constants.OS_FLAVOR]);
+            globalProperties.put(OS_FLAVOR, jsonObject[OS_FLAVOR]);
         }
         
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES, project[CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES]);
+        if (project.hasProperty(NUMBER_OF_INSTANCES)) {
+            globalProperties.put(NUMBER_OF_INSTANCES, project[NUMBER_OF_INSTANCES]);
             
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES, jsonObject[CreateEasyCloudResourceTask.Constants.NUMBER_OF_INSTANCES]);            
+            globalProperties.put(NUMBER_OF_INSTANCES, jsonObject[NUMBER_OF_INSTANCES]);
         }
        
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.ROLE_NAME)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.ROLE_NAME, project[CreateEasyCloudResourceTask.Constants.ROLE_NAME]);            
+        if (project.hasProperty(ROLE_NAME)) {
+            globalProperties.put(ROLE_NAME, project[ROLE_NAME]);
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.ROLE_NAME, "");
+            globalProperties.put(ROLE_NAME, "");
         }
         
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET, project[CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET].replace(" ", ""));            
+        if (project.hasProperty(OS_SECURITY_GROUP_SET)) {
+            globalProperties.put(OS_SECURITY_GROUP_SET, project[OS_SECURITY_GROUP_SET].replace(" ", ""));
             
         } else {
-            jsonObject[CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET].each { eachSecGroup ->
+            jsonObject[OS_SECURITY_GROUP_SET].each { eachSecGroup ->
                 if (sb.length() == 0) {
                     sb.append(eachSecGroup);
                 } else {
@@ -263,20 +284,20 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
                     sb.append(eachSecGroup)
                 }
             }
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.OS_SECURITY_GROUP_SET, sb.toString().replace(" ", ""));
+            globalProperties.put(OS_SECURITY_GROUP_SET, sb.toString().replace(" ", ""));
         }   
         
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG, project[CreateEasyCloudResourceTask.Constants.CREATE_EC_RESOURCE_FLAG])
-            if (project.hasProperty(CreateEasyCloudResourceTask.Constants.POOL_NAME)) {
-                globalProperties.put(CreateEasyCloudResourceTask.Constants.POOL_NAME, project[CreateEasyCloudResourceTask.Constants.POOL_NAME])
+        if (project.hasProperty(CREATE_EC_RESOURCE_FLAG)) {
+            globalProperties.put(CREATE_EC_RESOURCE_FLAG, project[CREATE_EC_RESOURCE_FLAG])
+            if (project.hasProperty(POOL_NAME)) {
+                globalProperties.put(POOL_NAME, project[POOL_NAME])
             }
         } 
         
-        if (project.hasProperty(CreateEasyCloudResourceTask.Constants.AUTO_PURGE)) {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.AUTO_PURGE, (String)project[CreateEasyCloudResourceTask.Constants.AUTO_PURGE].toLowerCase());
+        if (project.hasProperty(AUTO_PURGE)) {
+            globalProperties.put(AUTO_PURGE, (String)project[AUTO_PURGE].toLowerCase());
         } else {
-            globalProperties.put(CreateEasyCloudResourceTask.Constants.AUTO_PURGE, jsonObject[CreateEasyCloudResourceTask.Constants.AUTO_PURGE]);            
+            globalProperties.put(AUTO_PURGE, jsonObject[AUTO_PURGE]);
         }
         /*    for (Map.Entry<String, String> entry : globalProperties.entrySet()) {
          println (entry.getKey() + " ==> " + entry.getValue())
@@ -285,16 +306,16 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
 
     private Properties getOpenstackProperties() {
         Properties properties = new Properties();
-        properties.put("username", globalProperties.get(CreateEasyCloudResourceTask.Constants.OS_USERNAME));
-        properties.put("password", globalProperties.get(CreateEasyCloudResourceTask.Constants.OS_PASSWORD));
-        properties.put("endpoint", globalProperties.get(CreateEasyCloudResourceTask.Constants.OS_ENDPOINT));
-        properties.put("tenant", globalProperties.get(CreateEasyCloudResourceTask.Constants.OS_TENANT));
+        properties.put("username", globalProperties.get(OS_USERNAME));
+        properties.put("password", globalProperties.get(OS_PASSWORD));
+        properties.put("endpoint", globalProperties.get(OS_ENDPOINT));
+        properties.put("tenant", globalProperties.get(OS_TENANT));
         return properties;
     }
 
     private String getUserDataString() {
         String userData = null;
-        String openstackUserDataUrl = globalProperties.get(CreateEasyCloudResourceTask.Constants.DNAURL) + "/" + globalProperties.get(CreateEasyCloudResourceTask.Constants.DNATYPE);
+        String openstackUserDataUrl = globalProperties.get(DNAURL) + "/" + globalProperties.get(DNATYPE);
         def command = ['curl', '-s', '-k', openstackUserDataUrl]
         def process = command.execute()
         def exitCode = process.waitFor()
