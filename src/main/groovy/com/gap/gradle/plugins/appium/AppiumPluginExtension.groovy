@@ -3,15 +3,17 @@ import org.gradle.api.Project
 
 class AppiumPluginExtension {
   
-    private String defaultServerFlags
     private String extendedServerFlags
+    private final Project project
+
     boolean simulatorMode = true
-    private Project project
+    File logFile
 
     AppiumPluginExtension(Project project) {
         this.project = project
+        this.logFile = new File(project.buildDir, "test/logs/appium.log")
     }
-    
+
     public String appiumServerArguments() { 
         if (getExtendedServerFlags() != null) {
             return getDefaultServerFlags() + ' ' + getExtendedServerFlags()
@@ -21,7 +23,7 @@ class AppiumPluginExtension {
     }
 
     String getDefaultServerFlags() {
-        return " --log-no-colors --log-timestamp --log ${project.buildDir}/test/logs/appium.log"
+        return " --log-no-colors --log-timestamp --log ${logFile.absolutePath}"
     }
 
     String getExtendedServerFlags() {
@@ -31,5 +33,4 @@ class AppiumPluginExtension {
     void setExtendedServerFlags(String extendedServerFlags) {
         this.extendedServerFlags = extendedServerFlags
     }
-
 }
