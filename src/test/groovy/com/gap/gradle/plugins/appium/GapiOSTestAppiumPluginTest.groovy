@@ -19,6 +19,7 @@ class GapiOSTestAppiumPluginTest {
     @Before
     void setup() {
         project = ProjectBuilder.builder().build()
+//        project.buildDir = "testBuildDir"
     }
 
     @Test
@@ -41,7 +42,7 @@ class GapiOSTestAppiumPluginTest {
         project.apply plugin: 'gap-ios-appium'
 
         project.appiumConfig {
-            serverFlags 'extraParamaters --forserver'
+            extendedServerFlags 'extraParamaters --forserver'
         }
 
         assertThat(project.tasks.startAppium, instanceOf(com.gap.gradle.tasks.SpawnBackgroundProcessTask))
