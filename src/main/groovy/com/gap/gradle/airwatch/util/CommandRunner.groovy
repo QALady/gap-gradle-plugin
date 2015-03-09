@@ -10,8 +10,13 @@ class CommandRunner {
     }
 
     public String run(Object... args) {
+        run(new File("."), args)
+    }
+
+    public String run(File baseDir, Object... args) {
         def result = new ByteArrayOutputStream().withStream { os ->
             project.exec {
+                workingDir baseDir
                 commandLine args
                 standardOutput = os
             }

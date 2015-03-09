@@ -55,6 +55,15 @@ class SecurityTest {
         }
     }
 
+    @Test
+    public void shouldDecodeCmsMessages() throws Exception {
+        File inputFile = fakeFileWithAbsolutePath()
+
+        security.decodeCMSMessages(inputFile)
+
+        verify(commandRunner).run(SECURITY_TOOL, "cms", "-D", "-i", inputFile.absolutePath)
+    }
+
     private static File fakeFileWithAbsolutePath() {
         def keychain = mock(File)
         when(keychain.absolutePath).thenReturn("/tmp/fake")

@@ -28,6 +28,10 @@ class Security {
         setKeychainList(currentKeychains << keychain.absolutePath)
     }
 
+    public String decodeCMSMessages(File infile) {
+        commandRunner.run(SECURITY_TOOL, "cms", "-D", "-i", infile.absolutePath)
+    }
+
     private Collection<String> getKeychainList() {
         String keychainList = commandRunner.run(SECURITY_TOOL, "list-keychains")
         def cleanedKeychainPaths = keychainList.split("\n").collect { it.replaceAll(/^\s*\"|\"$/, "") }
