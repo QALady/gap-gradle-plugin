@@ -13,12 +13,12 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
     void apply(Project project) {
 
-        project.extensions.create('appiumConfig', AppiumPluginExtension)
+        project.extensions.create('appiumConfig', AppiumPluginExtension,project)
 
         project.task('startAppium', type: SpawnBackgroundProcessTask) {
 
             project.afterEvaluate {
-                command = 'appium' + project.appiumConfig.appiumServerArguments()
+                command =  'appium' + project.appiumConfig.appiumServerArguments()
                 println "starting background process for Appium " + command
             }
 
@@ -27,7 +27,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         project.task('startiOSWebkitDebugProxy', type: SpawnBackgroundProcessTask) {
 
             def wdir = new File('.')
-            def cmd = "system_profiler SPUSBDataType | sed -n -e '/iPhone/,/Serial/p' | grep 'Serial Number:' | cut -d ':' -f 2 | tr -d ' '"
+            def cmd = "system_profiler SPUSBDataType | sed -n -e '/iPod/,/Serial/p' | grep 'Serial Number:' | cut -d ':' -f 2 | tr -d ' '"
             def UDID = ["bash", "-c", cmd].execute(null, wdir).text.trim()
             println "UDID of the device associated to " + UDID
             command "node /usr/local/lib/node_modules/appium/bin/ios-webkit-debug-proxy-launcher.js -c ${UDID}:27753 -d"
