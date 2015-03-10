@@ -2,19 +2,20 @@ package com.gap.gradle.plugins.appium
 import org.gradle.api.Project
 
 class AppiumPluginExtension {
-  
-    private String extendedServerFlags
-    private final Project project
 
+    private String defaultServerFlags
+    private final Project project
+    private String extendedServerFlags
     boolean simulatorMode = true
     File logFile
 
     AppiumPluginExtension(Project project) {
         this.project = project
         this.logFile = new File(project.buildDir, "test/logs/appium.log")
+        this.defaultServerFlags = " --log-no-colors --log-timestamp --log ${logFile.absolutePath}"
     }
 
-    public String appiumServerArguments() { 
+    public String appiumServerArguments() {
         if (getExtendedServerFlags() != null) {
             return getDefaultServerFlags() + ' ' + getExtendedServerFlags()
         } else {
@@ -23,7 +24,7 @@ class AppiumPluginExtension {
     }
 
     String getDefaultServerFlags() {
-        return " --log-no-colors --log-timestamp --log ${logFile.absolutePath}"
+        return defaultServerFlags
     }
 
     String getExtendedServerFlags() {

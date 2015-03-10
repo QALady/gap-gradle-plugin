@@ -1,9 +1,7 @@
 package com.gap.gradle.plugins.appium
 
-import com.gap.gradle.tasks.SpawnBackgroundProcessTask
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -11,6 +9,7 @@ import static helpers.Assert.taskShouldExist
 import static org.hamcrest.Matchers.instanceOf
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
+
 
 class GapiOSTestAppiumPluginTest {
 
