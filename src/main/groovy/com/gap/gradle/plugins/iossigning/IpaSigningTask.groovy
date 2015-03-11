@@ -5,7 +5,9 @@ import com.gap.gradle.airwatch.util.CommandRunner
 import com.gap.gradle.plugins.iossigning.exceptions.ArtifactNotFoundException
 import com.gap.gradle.plugins.mobile.ArchivesArtifactFinder
 import com.gap.gradle.plugins.xcode.SigningIdentity
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.reflect.Instantiator
@@ -95,5 +97,9 @@ class IpaSigningTask extends DefaultTask {
         entitlementsFile.write(entitlements)
 
         entitlementsFile
+    }
+
+    void signing(Action<? super NamedDomainObjectCollection<SigningIdentity>> action) {
+        action.execute(signing)
     }
 }
