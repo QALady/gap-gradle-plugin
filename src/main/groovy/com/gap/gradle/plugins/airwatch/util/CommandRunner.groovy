@@ -1,4 +1,4 @@
-package com.gap.gradle.airwatch.util
+package com.gap.gradle.plugins.airwatch.util
 
 import org.gradle.api.Project
 

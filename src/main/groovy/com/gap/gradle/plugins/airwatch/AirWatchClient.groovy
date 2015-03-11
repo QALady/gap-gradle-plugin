@@ -1,5 +1,6 @@
-package com.gap.gradle.airwatch
+package com.gap.gradle.plugins.airwatch
 
+import com.gap.gradle.plugins.airwatch.exceptions.AirWatchClientException
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import org.slf4j.Logger

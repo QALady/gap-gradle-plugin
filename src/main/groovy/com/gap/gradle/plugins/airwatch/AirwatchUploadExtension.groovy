@@ -1,4 +1,4 @@
-package com.gap.gradle.airwatch
+package com.gap.gradle.plugins.airwatch
 
 import com.gap.gradle.plugins.xcode.Property
 import org.gradle.api.Action

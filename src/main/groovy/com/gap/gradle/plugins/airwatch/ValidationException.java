@@ -1,4 +1,4 @@
-package com.gap.gradle.airwatch;
+package com.gap.gradle.plugins.airwatch;
 
 public class ValidationException extends RuntimeException {
     public ValidationException(String message) {

@@ -1,4 +1,4 @@
-package com.gap.gradle.airwatch
+package com.gap.gradle.plugins.airwatch
 
 class AirWatchClientFactory {
     AirWatchClient create(Environment environment, CredentialProvider credentialProvider) {

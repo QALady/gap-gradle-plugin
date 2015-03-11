@@ -1,4 +1,4 @@
-package com.gap.gradle.airwatch
+package com.gap.gradle.plugins.airwatch
 
 class Environment {
     public static final def DEFAULT_PRODUCTION = new Environment("production").with {

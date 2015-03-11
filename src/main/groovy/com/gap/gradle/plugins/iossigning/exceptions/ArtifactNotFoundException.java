@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins.iossigning.exceptions;
 
-import com.gap.gradle.airwatch.ArtifactSpec;
+import com.gap.gradle.plugins.airwatch.ArtifactSpec;
 
 import static java.lang.String.format;
 

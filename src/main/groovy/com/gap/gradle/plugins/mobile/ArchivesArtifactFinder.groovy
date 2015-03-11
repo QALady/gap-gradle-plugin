@@ -1,7 +1,7 @@
 package com.gap.gradle.plugins.mobile
 
-import com.gap.gradle.airwatch.ArtifactFinder
-import com.gap.gradle.airwatch.ArtifactSpec
+import com.gap.gradle.plugins.airwatch.ArtifactFinder
+import com.gap.gradle.plugins.airwatch.ArtifactSpec
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedArtifact
 

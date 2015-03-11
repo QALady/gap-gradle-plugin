@@ -1,4 +1,4 @@
-package com.gap.gradle.airwatch.util
+package com.gap.gradle.plugins.airwatch.util
 import org.junit.Test
 
 import java.util.concurrent.TimeUnit

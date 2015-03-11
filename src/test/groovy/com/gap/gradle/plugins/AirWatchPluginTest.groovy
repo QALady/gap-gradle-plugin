@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins
 
-import com.gap.gradle.airwatch.*
+import com.gap.gradle.plugins.airwatch.*
 import com.google.common.collect.Sets
 import org.gradle.api.GradleException
 import org.gradle.api.Project

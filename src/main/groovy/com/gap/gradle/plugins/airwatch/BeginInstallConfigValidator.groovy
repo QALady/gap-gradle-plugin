@@ -1,4 +1,4 @@
-package com.gap.gradle.airwatch
+package com.gap.gradle.plugins.airwatch
 
 import static org.apache.commons.lang.StringUtils.isBlank
 

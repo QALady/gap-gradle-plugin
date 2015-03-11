@@ -1,4 +1,4 @@
-package com.gap.gradle.airwatch
+package com.gap.gradle.plugins.airwatch
 
 import org.gradle.api.artifacts.ResolvedArtifact
 

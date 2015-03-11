@@ -1,4 +1,4 @@
-package com.gap.gradle.airwatch;
+package com.gap.gradle.plugins.airwatch.exceptions;
 
 public class AirWatchClientException extends RuntimeException {
     public AirWatchClientException(String message) {

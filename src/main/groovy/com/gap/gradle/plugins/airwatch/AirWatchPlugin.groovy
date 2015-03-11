@@ -1,6 +1,6 @@
-package com.gap.gradle.plugins
+package com.gap.gradle.plugins.airwatch
 
-import com.gap.gradle.airwatch.*
+import com.gap.gradle.plugins.airwatch.*
 import com.gap.gradle.plugins.mobile.ArchivesArtifactFinder
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -13,8 +13,8 @@ import org.gradle.internal.reflect.Instantiator
 import javax.inject.Inject
 import java.util.concurrent.TimeUnit
 
-import static com.gap.gradle.airwatch.Environment.DEFAULT_PREPRODUCTION
-import static com.gap.gradle.airwatch.Environment.DEFAULT_PRODUCTION
+import static com.gap.gradle.plugins.airwatch.Environment.DEFAULT_PREPRODUCTION
+import static com.gap.gradle.plugins.airwatch.Environment.DEFAULT_PRODUCTION
 
 class AirWatchPlugin implements Plugin<Project> {
 

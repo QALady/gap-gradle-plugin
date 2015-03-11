@@ -1,7 +1,7 @@
-package com.gap.gradle.airwatch
+package com.gap.gradle.plugins.airwatch
 
-import com.gap.gradle.airwatch.util.Barrier
-import com.gap.gradle.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.airwatch.util.Barrier
+import com.gap.gradle.plugins.airwatch.util.CommandRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
