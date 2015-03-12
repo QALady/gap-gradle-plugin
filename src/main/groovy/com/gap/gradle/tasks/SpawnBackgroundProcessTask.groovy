@@ -1,10 +1,16 @@
 package com.gap.gradle.tasks
 
+import com.gap.gradle.plugins.mobile.Barrier
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
+import static java.util.concurrent.TimeUnit.SECONDS
+
 class SpawnBackgroundProcessTask extends DefaultTask {
+
+    public static final int MAX_RETRIES = 12
+    public static final int RETRY_INTERVAL = 5
 
     String command
     String directory
@@ -15,12 +21,28 @@ class SpawnBackgroundProcessTask extends DefaultTask {
 
     @TaskAction
     def exec() {
-        if (!(command)) {
+        if (!command) {
             throw new GradleException("Please define `command` to execute")
         }
 
+        println "Starting background process with command \"${command}\"...\n"
+
         invokeCommand()
-        waitFor()
+
+        waitForProcessToFinish()
+    }
+
+    private void waitForProcessToFinish() {
+        try {
+            new Barrier(MAX_RETRIES, RETRY_INTERVAL, SECONDS).executeUntil {
+                def command = "ps -ef | grep '${command}' | grep -v grep | wc -l"
+                def number_of_processes = ["bash", "-c", command].execute().text.toInteger()
+
+                (number_of_processes == 1)
+            }
+        } catch (Barrier.MaxNumberOfTriesReached e) {
+            throw new GradleException("Process Timeout: Command \"${command}\" did not start in ${MAX_RETRIES * RETRY_INTERVAL} seconds", e);
+        }
     }
 
     private Process invokeCommand() {
@@ -28,35 +50,5 @@ class SpawnBackgroundProcessTask extends DefaultTask {
                 .redirectErrorStream(true)
                 .directory(new File(directory))
                 .start()
-    }
-
-    private waitFor() {
-        //wait timeout 60 secs and retry time 5 secs
-        int max_retries = 12
-        int retry_interval = 5
-        int number_of_processes = 0
-        int retry_count = 1
-        def cmd = "ps -ef | grep '${command}' | grep -v grep |wc | awk '{print \$1}'"
-
-        println " waiting for process to exist ${command}"
-
-        while (number_of_processes != 1) {
-            number_of_processes = ["bash", "-c", cmd].execute(null, new File(directory)).text.toInteger()
-            println "number of processes ....." + number_of_processes
-            if (number_of_processes == 1) {
-                break;
-            }
-            if (retry_count == max_retries) {
-                throw new MaxRetriesExceededException("Process Timedout: ${command} didnt start in ${max_retries * retry_interval} secs");
-            }
-            retry_count += 1
-            sleep retry_interval * 1000
-        }
-    }
-
-    public class MaxRetriesExceededException extends RuntimeException {
-        public MaxRetriesExceededException(String message) {
-            super(message)
-        }
     }
 }

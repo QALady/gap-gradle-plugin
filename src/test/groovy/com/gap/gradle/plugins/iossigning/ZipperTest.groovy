@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins.iossigning
 
-import com.gap.gradle.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.mobile.CommandRunner
 import org.junit.Before
 import org.junit.Test
 

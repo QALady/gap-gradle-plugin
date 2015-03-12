@@ -1,5 +1,5 @@
 package com.gap.gradle.plugins.iossigning
-import com.gap.gradle.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.mobile.CommandRunner
 import org.junit.Test
 
 import static org.hamcrest.Matchers.arrayContaining

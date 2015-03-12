@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins.iossigning
 
-import com.gap.gradle.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.mobile.CommandRunner
 
 class Security {
     private static final String SECURITY_TOOL = "/usr/bin/security"

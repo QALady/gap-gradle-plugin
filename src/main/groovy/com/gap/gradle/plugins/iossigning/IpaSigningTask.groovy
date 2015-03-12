@@ -1,7 +1,7 @@
 package com.gap.gradle.plugins.iossigning
 
-import com.gap.gradle.airwatch.ArtifactSpec
-import com.gap.gradle.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.airwatch.ArtifactSpec
+import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.iossigning.exceptions.ArtifactNotFoundException
 import com.gap.gradle.plugins.mobile.ArchivesArtifactFinder
 import com.gap.gradle.plugins.xcode.SigningIdentity

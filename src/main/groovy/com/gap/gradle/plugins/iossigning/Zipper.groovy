@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins.iossigning
 
-import com.gap.gradle.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.mobile.CommandRunner
 
 class Zipper {
     public static final String ZIP_TOOL = "/usr/bin/zip"
