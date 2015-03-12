@@ -2,6 +2,7 @@ package com.gap.gradle.plugins.airwatch
 
 import com.gap.gradle.plugins.airwatch.util.Barrier
 import com.gap.gradle.plugins.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.iossigning.PlistBuddy
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
@@ -57,7 +58,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
     }
 
     private String readPlistKeyValue(File plist, String key) {
-        def result = commandRunner.run("/usr/libexec/PlistBuddy", plist, "-c", "Print :${key}").trim()
+        def result = new PlistBuddy(commandRunner).printEntry(":${key}", plist)
 
         println "\n\n Value from plist for key $key = $result \n\n"
 
