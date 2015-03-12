@@ -10,6 +10,8 @@ class StopProcessByPortTask extends DefaultTask {
     @TaskAction
     def exec() {
         ports.each { port ->
+            println "Stopping process at port $port"
+
             def cmd = "lsof -Fp -i :$port"
             def process = cmd.execute()
 
