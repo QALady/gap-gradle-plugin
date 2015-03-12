@@ -3,6 +3,7 @@ package com.gap.gradle.plugins.airwatch
 import com.gap.gradle.plugins.airwatch.util.Barrier
 import com.gap.gradle.plugins.airwatch.util.CommandRunner
 import com.gap.gradle.plugins.iossigning.PlistBuddy
+import com.gap.gradle.plugins.mobile.MobileDeviceUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
@@ -66,7 +67,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
     }
 
     private String getConnectedDeviceUdid() {
-        def deviceUdid = commandRunner.run("bash", "-c", "system_profiler SPUSBDataType | sed -n -e '/iPod/,/Serial/p' | grep 'Serial Number:' | cut -d ':' -f 2").trim()
+        def deviceUdid = new MobileDeviceUtils(commandRunner).listAttachedDevices()
 
         if (deviceUdid.isEmpty()) {
             throw new GradleException("No iPod device detected.")
