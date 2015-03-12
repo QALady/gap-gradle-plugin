@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins.iossigning
 
-import com.gap.gradle.plugins.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.mobile.CommandRunner
 
 class PlistBuddy {
     public static final String PLISTBUDDY_TOOL = "/usr/libexec/PlistBuddy"

@@ -1,6 +1,5 @@
 package com.gap.gradle.plugins.mobile
 
-import com.gap.gradle.plugins.airwatch.util.CommandRunner
 import org.junit.Before
 import org.junit.Test
 

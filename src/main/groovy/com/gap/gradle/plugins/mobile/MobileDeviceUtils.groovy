@@ -1,7 +1,4 @@
 package com.gap.gradle.plugins.mobile
-
-import com.gap.gradle.plugins.airwatch.util.CommandRunner
-
 /**
  * This class defines wrapper methods around the utilities provided by libimobiledevice
  */

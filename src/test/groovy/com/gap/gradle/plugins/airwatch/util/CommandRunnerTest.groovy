@@ -1,5 +1,6 @@
 package com.gap.gradle.plugins.airwatch.util
 
+import com.gap.gradle.plugins.mobile.CommandRunner
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.junit.Before

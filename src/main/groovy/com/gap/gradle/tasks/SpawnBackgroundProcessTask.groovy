@@ -1,6 +1,6 @@
 package com.gap.gradle.tasks
 
-import com.gap.gradle.plugins.airwatch.util.Barrier
+import com.gap.gradle.plugins.mobile.Barrier
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction

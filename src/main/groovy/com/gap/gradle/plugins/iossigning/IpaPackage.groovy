@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins.iossigning
 
-import com.gap.gradle.plugins.airwatch.util.CommandRunner
+import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.xcode.SigningIdentity
 import org.apache.commons.io.FileUtils
 
