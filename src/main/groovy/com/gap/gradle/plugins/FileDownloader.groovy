@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins.iossigning
+package com.gap.gradle.plugins
 
 import org.apache.commons.io.FilenameUtils
 import org.gradle.api.Project
