@@ -56,4 +56,10 @@ class GapiOSTestAppiumPluginTest {
 
     }
 
+    @Test
+    public void shouldAddGetPerfMetricsTask() {
+        project.apply plugin: 'gap-ios-appium'
+        taskShouldExist('getPerfMetrics', project)
+    }
+
 }

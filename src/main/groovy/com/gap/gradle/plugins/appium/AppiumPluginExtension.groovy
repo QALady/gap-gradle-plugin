@@ -32,6 +32,10 @@ class AppiumPluginExtension {
     }
 
     void setExtendedServerFlags(String extendedServerFlags) {
-        this.extendedServerFlags = extendedServerFlags
+        if(this.extendedServerFlags == null){
+            this.extendedServerFlags = extendedServerFlags
+        } else {
+            this.extendedServerFlags << extendedServerFlags
+        }
     }
 }

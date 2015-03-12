@@ -34,7 +34,7 @@ class AppiumPluginExtensionTest  {
     @Test
     public void shouldAppiumServerArgumentsWithExtendedArguments(){
 
-        extension.extendedServerFlags = "--localtime"
+        extension.setExtendedServerFlags("--localtime")
         assert(extension.appiumServerArguments() == " --log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log --localtime")
     }
 

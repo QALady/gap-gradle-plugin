@@ -6,6 +6,7 @@ import com.gap.gradle.tasks.SpawnBackgroundProcessTask
 import com.gap.gradle.tasks.StopProcessByPortTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import com.gap.gradle.plugins.FileDownloader
 
 class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
@@ -13,10 +14,13 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
     private static final int IOS_DEBUG_PROXY_PORT = 27753
 
     private CommandRunner commandRunner
+    private FileDownloader downloader
 
     void apply(Project project) {
         project.extensions.create('appiumConfig', AppiumPluginExtension,project)
         this.commandRunner = new CommandRunner(project)
+        this.downloader = new FileDownloader(project)
+        def templateLocation = project.hasProperty('defaultInstrumentsTemplatePath') ? project.getProperty('defaultInstrumentsTemplatePath') : ""
 
         project.task('startAppium', type: SpawnBackgroundProcessTask) {
             doFirst {
@@ -35,6 +39,15 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
         project.task('stopAppium', type: StopProcessByPortTask) {
             ports = [APPIUM_PORT, IOS_DEBUG_PROXY_PORT]
+        }
+
+        project.task('getPerfMetrics') {
+            doFirst {
+                def template = downloader.download(templateLocation, project.buildDir)
+                project.appiumConfig.setExtendedServerFlags("--tracetemplate "+template)
+                project.tasks.startAppium.execute()
+            }
+            onlyIf { !project.appiumConfig.simulatorMode }
         }
 
         project.tasks['startAppium'].dependsOn('startiOSWebkitDebugProxy')
