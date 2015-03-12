@@ -1,5 +1,6 @@
 package com.gap.gradle.tasks
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -10,7 +11,7 @@ import static org.hamcrest.CoreMatchers.containsString
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
 
-public class StartBackgroundProcessTaskTest {
+public class SpawnBackgroundProcessTaskTest {
 
     private static final String DUMMY_PROCESS_FILE = "src/test/groovy/com/gap/gradle/resources/dummy_process.sh"
 
@@ -45,14 +46,14 @@ public class StartBackgroundProcessTaskTest {
         }
     }
 
-    @Test 
+    @Test
     public void shouldThrowMaxRetriesExceptionWhenProcessNotFound() throws Exception {
         try {
                task.command "echo test"
                task.execute()
             }
-        catch(Exception e) {
-           assertThat(e.cause.message,containsString('Process Timedout: echo test didnt start in 60 secs'))
+        catch(GradleException e) {
+           assertThat(e.cause.message, containsString("echo test"))
         }
     }
 }
