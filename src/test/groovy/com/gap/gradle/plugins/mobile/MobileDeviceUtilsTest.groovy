@@ -3,25 +3,26 @@ package com.gap.gradle.plugins.mobile
 import org.junit.Before
 import org.junit.Test
 
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.verify
+import static org.junit.Assert.assertEquals
+import static org.mockito.Matchers.anyVararg
+import static org.mockito.Mockito.*
 
 public class MobileDeviceUtilsTest {
-    public static final String IDEVICE_ID_TOOL = '/usr/local/bin/idevice_id'
-
     private CommandRunner commandRunner
     private MobileDeviceUtils mobileDevice
 
     @Before
     public void setUp() throws Exception {
         commandRunner = mock(CommandRunner)
+        when(commandRunner.run(anyVararg())).thenReturn(" 123 ")
+
         mobileDevice = new MobileDeviceUtils(commandRunner)
     }
 
     @Test
     public void shouldListAttachedDevices() throws Exception {
-        mobileDevice.listAttachedDevices()
+        assertEquals("123", mobileDevice.listAttachedDevices())
 
-        verify(commandRunner).run(IDEVICE_ID_TOOL, '--list')
+        verify(commandRunner).run('bash', '-c', MobileDeviceUtils.LIST_ATTACHED_DEVICE)
     }
 }

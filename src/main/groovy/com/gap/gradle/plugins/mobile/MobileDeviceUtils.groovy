@@ -1,9 +1,7 @@
 package com.gap.gradle.plugins.mobile
-/**
- * This class defines wrapper methods around the utilities provided by libimobiledevice
- */
+
 class MobileDeviceUtils {
-    public static final String IDEVICE_ID_TOOL = '/usr/local/bin/idevice_id'
+    public static final String LIST_ATTACHED_DEVICE = "system_profiler SPUSBDataType | sed -n -e '/iPod/,/Serial/p' | grep 'Serial Number:' | cut -d ':' -f 2"
 
     private final CommandRunner commandRunner
 
@@ -12,6 +10,6 @@ class MobileDeviceUtils {
     }
 
     public String listAttachedDevices() {
-        commandRunner.run(IDEVICE_ID_TOOL, '--list')
+        commandRunner.run("bash", "-c", LIST_ATTACHED_DEVICE).trim()
     }
 }
