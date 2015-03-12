@@ -21,11 +21,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         project.task('startAppium', type: SpawnBackgroundProcessTask) {
             doFirst {
                 project.appiumConfig.logFile.parentFile.mkdirs()
-            }
-
-            project.afterEvaluate {
                 command =  'appium' + project.appiumConfig.appiumServerArguments()
-                println "starting background process for Appium " + command
             }
         }
 

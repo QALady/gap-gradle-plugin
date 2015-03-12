@@ -21,9 +21,11 @@ class SpawnBackgroundProcessTask extends DefaultTask {
 
     @TaskAction
     def exec() {
-        if (!(command)) {
+        if (!command) {
             throw new GradleException("Please define `command` to execute")
         }
+
+        println "Starting background process with command \"${command}\"...\n"
 
         invokeCommand()
 
