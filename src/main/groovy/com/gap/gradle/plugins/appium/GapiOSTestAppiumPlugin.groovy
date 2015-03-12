@@ -26,7 +26,9 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         }
 
         project.task('startiOSWebkitDebugProxy', type: SpawnBackgroundProcessTask) {
-            command "node /usr/local/lib/node_modules/appium/bin/ios-webkit-debug-proxy-launcher.js -c ${connectedDeviceUdid}:27753 -d"
+            doFirst {
+                command "node /usr/local/lib/node_modules/appium/bin/ios-webkit-debug-proxy-launcher.js -c ${connectedDeviceUdid}:27753 -d"
+            }
 
             onlyIf { !project.appiumConfig.simulatorMode }
         }
@@ -42,7 +44,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         def deviceUdid = new MobileDeviceUtils(commandRunner).listAttachedDevices()
 
         if (deviceUdid) {
-            println "\n\nConnected device UDID = $deviceUdid\n\n"
+            println "Connected device UDID: ${deviceUdid}"
         }
 
         deviceUdid
