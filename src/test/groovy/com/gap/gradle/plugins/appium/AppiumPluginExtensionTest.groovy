@@ -1,17 +1,14 @@
 package com.gap.gradle.plugins.appium
 
+import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
-/**
- * Created by ra7r7ve on 3/9/15.
- */
-
 class AppiumPluginExtensionTest  {
 
-    private extension
-    private project
+    private AppiumPluginExtension extension
+    private Project project
     private File projectDir
 
     @Before
@@ -23,19 +20,13 @@ class AppiumPluginExtensionTest  {
 
     @Test
     public void shouldHaveDefaultServerArguments(){
-        assert(extension.defaultServerFlags == " --log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log")
+        assert(extension.appiumServerArguments() == "--log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log")
     }
 
     @Test
-    public void shouldAppiumServerArgumentsWithoutExtendedArguments(){
-        assert(extension.appiumServerArguments() == " --log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log")
-    }
-
-    @Test
-    public void shouldAppiumServerArgumentsWithExtendedArguments(){
-
+    public void shouldSupportExtendingDefaultArguments(){
         extension.setExtendedServerFlags("--localtime")
-        assert(extension.appiumServerArguments() == " --log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log --localtime")
-    }
 
+        assert(extension.appiumServerArguments() == "--log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log --localtime")
+    }
 }

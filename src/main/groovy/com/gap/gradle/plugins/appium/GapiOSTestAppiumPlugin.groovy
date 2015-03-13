@@ -15,17 +15,20 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
     private CommandRunner commandRunner
     private FileDownloader downloader
+    private AppiumPluginExtension extension
+    private Project project
 
     void apply(Project project) {
-        project.extensions.create('appiumConfig', AppiumPluginExtension,project)
+        this.project = project
         this.commandRunner = new CommandRunner(project)
         this.downloader = new FileDownloader(project)
+        this.extension = project.extensions.create('appiumConfig', AppiumPluginExtension, project)
         def templateLocation = project.hasProperty('defaultInstrumentsTemplatePath') ? project.getProperty('defaultInstrumentsTemplatePath') : ""
 
         project.task('startAppium', type: SpawnBackgroundProcessTask) {
             doFirst {
-                project.appiumConfig.logFile.parentFile.mkdirs()
-                command =  'appium' + project.appiumConfig.appiumServerArguments()
+                extension.logFile.parentFile.mkdirs()
+                command =  'appium ' + extension.appiumServerArguments()
             }
         }
 
@@ -34,7 +37,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
                 command "node /usr/local/lib/node_modules/appium/bin/ios-webkit-debug-proxy-launcher.js -c ${connectedDeviceUdid}:27753 -d"
             }
 
-            onlyIf { !project.appiumConfig.simulatorMode }
+            onlyIf { !extension.simulatorMode }
         }
 
         project.task('stopAppium', type: StopProcessByPortTask) {
@@ -44,10 +47,11 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         project.task('getPerfMetrics') {
             doFirst {
                 def template = downloader.download(templateLocation, project.buildDir)
-                project.appiumConfig.setExtendedServerFlags("--tracetemplate "+template)
+                extension.setExtendedServerFlags("--tracetemplate " + template)
                 project.tasks.startAppium.execute()
             }
-            onlyIf { !project.appiumConfig.simulatorMode }
+
+            onlyIf { !extension.simulatorMode }
         }
 
         project.tasks['startAppium'].dependsOn('startiOSWebkitDebugProxy')
