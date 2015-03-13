@@ -26,7 +26,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         this.extension = project.extensions.create('appiumConfig', AppiumPluginExtension, project)
         def templateLocation = project.hasProperty('defaultInstrumentsTemplatePath') ? project.getProperty('defaultInstrumentsTemplatePath') : ""
 
-        project.task('startAppium', type: SpawnBackgroundProcessTask) {
+        project.task('startAppium', type: SpawnBackgroundProcessTask, dependsOn: 'startiOSWebkitDebugProxy') {
             doFirst {
                 extension.logFile.parentFile.mkdirs()
                 command =  'appium ' + extension.appiumServerArguments()
@@ -45,7 +45,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
             ports = [APPIUM_PORT, IOS_DEBUG_PROXY_PORT]
         }
 
-        project.task('getPerfMetrics') {
+        project.task('startAppiumForPerformanceTests', dependsOn: 'startiOSWebkitDebugProxy') {
             doFirst {
                 def template = downloader.download(templateLocation, project.buildDir)
                 extension.setExtendedServerFlags("--tracetemplate " + template)
@@ -55,7 +55,6 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
             onlyIf { !extension.simulatorMode }
         }
 
-        project.tasks['startAppium'].dependsOn('startiOSWebkitDebugProxy')
     }
 
     private String getConnectedDeviceUdid() {

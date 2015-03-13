@@ -1,15 +1,15 @@
 package com.gap.gradle.plugins.appium
 
 import com.gap.gradle.tasks.SpawnBackgroundProcessTask
+import com.gap.gradle.tasks.StopProcessByPortTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
-import static helpers.Assert.taskShouldExist
+import static helpers.Assert.*
 import static org.hamcrest.CoreMatchers.containsString
-import static org.hamcrest.Matchers.instanceOf
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
@@ -25,35 +25,28 @@ class GapiOSTestAppiumPluginTest {
     }
 
     @Test
-    public void shouldAddStopAppiumTask() {
-        project.apply plugin: 'gap-ios-appium'
+    public void shouldAddNewTasks() {
         taskShouldExist('stopAppium', project)
-    }
+        taskShouldBeOfType('stopAppium', StopProcessByPortTask, project)
 
-    @Test
-    public void shouldAddStartAppiumTask() {
         taskShouldExist('startAppium', project)
-    }
+        taskShouldBeOfType('startAppium', SpawnBackgroundProcessTask, project)
 
-    @Test
-    public void shouldStartAppiumTaskWithServerArgs() {
-        project.appiumConfig {
-            extendedServerFlags 'extraParamaters --forserver'
+        taskShouldExist('startiOSWebkitDebugProxy', project)
+        taskShouldBeOfType('startiOSWebkitDebugProxy', SpawnBackgroundProcessTask, project)
+
+        taskShouldExist('startAppiumForPerformanceTests', project)
+
+        ['startAppium', 'startAppiumForPerformanceTests'].each {
+            taskShouldDependOn(it, 'startiOSWebkitDebugProxy', project)
         }
-
-        assertThat(project.tasks.startAppium, instanceOf(SpawnBackgroundProcessTask))
     }
 
     @Test
-    public void shouldSkipiOSDebugProxyWithDefaulSimulatedMode() {
+    public void shouldNotStartDebugProxyInSimulatorMode() {
         project.tasks.startiOSWebkitDebugProxy.execute()
+
         assertTrue(project.tasks.startiOSWebkitDebugProxy.state.skipped)
-
-    }
-
-    @Test
-    public void shouldAddGetPerfMetricsTask() {
-        taskShouldExist('getPerfMetrics', project)
     }
 
     @Test
