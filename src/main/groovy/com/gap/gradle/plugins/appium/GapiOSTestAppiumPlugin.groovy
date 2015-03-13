@@ -29,6 +29,11 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         project.task('startAppium', type: SpawnBackgroundProcessTask, dependsOn: 'startiOSWebkitDebugProxy') {
             doFirst {
                 extension.logFile.parentFile.mkdirs()
+
+                if (!extension.simulatorMode) {
+                    extension.setExtendedServerFlags("--udid " + connectedDeviceUdid)
+                }
+
                 command =  'appium ' + extension.appiumServerArguments()
             }
         }
@@ -57,6 +62,8 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
     private File getTraceTemplate() {
         def downloadDir = project.buildDir
+
+        println "Downloading Instruments trace template from ${INSTRUMENTS_TEMPLATE_URL} into ${downloadDir}...\n"
         def templateFile = downloader.download(INSTRUMENTS_TEMPLATE_URL, downloadDir)
 
         if (templateFile.name.contains('?')) {
