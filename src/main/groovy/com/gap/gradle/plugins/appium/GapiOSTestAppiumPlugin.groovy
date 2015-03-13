@@ -4,6 +4,7 @@ import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.mobile.MobileDeviceUtils
 import com.gap.gradle.tasks.SpawnBackgroundProcessTask
 import com.gap.gradle.tasks.StopProcessByPortTask
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import com.gap.gradle.plugins.FileDownloader
@@ -12,20 +13,23 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
     private static final int APPIUM_PORT = 4723
     private static final int IOS_DEBUG_PROXY_PORT = 27753
+    private static final String INSTRUMENTS_TEMPLATE_URL = "http://github.gapinc.dev/mpl/instruments-standard-template/blob/master/snapserve-standard.tracetemplate?raw=true"
 
     private CommandRunner commandRunner
     private FileDownloader downloader
+    private AppiumPluginExtension extension
+    private Project project
 
     void apply(Project project) {
-        project.extensions.create('appiumConfig', AppiumPluginExtension,project)
+        this.project = project
         this.commandRunner = new CommandRunner(project)
         this.downloader = new FileDownloader(project)
-        def templateLocation = project.hasProperty('defaultInstrumentsTemplatePath') ? project.getProperty('defaultInstrumentsTemplatePath') : ""
+        this.extension = project.extensions.create('appiumConfig', AppiumPluginExtension, project)
 
-        project.task('startAppium', type: SpawnBackgroundProcessTask) {
+        project.task('startAppium', type: SpawnBackgroundProcessTask, dependsOn: 'startiOSWebkitDebugProxy') {
             doFirst {
-                project.appiumConfig.logFile.parentFile.mkdirs()
-                command =  'appium' + project.appiumConfig.appiumServerArguments()
+                extension.logFile.parentFile.mkdirs()
+                command =  'appium ' + extension.appiumServerArguments()
             }
         }
 
@@ -34,31 +38,44 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
                 command "node /usr/local/lib/node_modules/appium/bin/ios-webkit-debug-proxy-launcher.js -c ${connectedDeviceUdid}:27753 -d"
             }
 
-            onlyIf { !project.appiumConfig.simulatorMode }
+            onlyIf { !extension.simulatorMode }
         }
 
         project.task('stopAppium', type: StopProcessByPortTask) {
             ports = [APPIUM_PORT, IOS_DEBUG_PROXY_PORT]
         }
 
-        project.task('getPerfMetrics') {
+        project.task('startAppiumForPerformanceTests', dependsOn: 'startiOSWebkitDebugProxy') {
             doFirst {
-                def template = downloader.download(templateLocation, project.buildDir)
-                project.appiumConfig.setExtendedServerFlags("--tracetemplate "+template)
+                extension.setExtendedServerFlags("--tracetemplate " + traceTemplate)
                 project.tasks.startAppium.execute()
             }
-            onlyIf { !project.appiumConfig.simulatorMode }
+
+            onlyIf { !extension.simulatorMode }
+        }
+    }
+
+    private File getTraceTemplate() {
+        def downloadDir = project.buildDir
+        def templateFile = downloader.download(INSTRUMENTS_TEMPLATE_URL, downloadDir)
+
+        if (templateFile.name.contains('?')) {
+            def fileNameWithoutQueryString = templateFile.name.split('\\?')[0]
+
+            return new File(downloadDir, fileNameWithoutQueryString)
         }
 
-        project.tasks['startAppium'].dependsOn('startiOSWebkitDebugProxy')
+        return templateFile
     }
 
     private String getConnectedDeviceUdid() {
         def deviceUdid = new MobileDeviceUtils(commandRunner).listAttachedDevices()
 
-        if (deviceUdid) {
-            println "Connected device UDID: ${deviceUdid}"
+        if (deviceUdid.isEmpty()) {
+            throw new GradleException("No iPod device detected. Please connect a device or use `Simulator Mode`")
         }
+
+        println "Connected device UDID: ${deviceUdid}"
 
         deviceUdid
     }

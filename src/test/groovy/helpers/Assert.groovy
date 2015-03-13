@@ -1,7 +1,12 @@
 package helpers
 
+import com.gap.gradle.tasks.SpawnBackgroundProcessTask
+import com.gap.gradle.tasks.StopProcessByPortTask
+import org.gradle.api.Project
+
 import static org.hamcrest.CoreMatchers.nullValue
 import static org.hamcrest.Matchers.containsString
+import static org.hamcrest.Matchers.instanceOf
 import static org.hamcrest.Matchers.notNullValue
 import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertThat
@@ -80,5 +85,11 @@ class Assert {
             }
         }
         fail("Project ${project} doesn't have configuration ${requiredConfiguration}")
+    }
+
+    static void taskShouldBeOfType(String taskName, Class<?> taskType, Project project) {
+        def task = project.tasks.findByName(taskName)
+
+        assertThat(task, instanceOf(taskType))
     }
 }
