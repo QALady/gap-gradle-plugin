@@ -29,6 +29,11 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         project.task('startAppium', type: SpawnBackgroundProcessTask, dependsOn: 'startiOSWebkitDebugProxy') {
             doFirst {
                 extension.logFile.parentFile.mkdirs()
+
+                if (!extension.simulatorMode) {
+                    extension.setExtendedServerFlags("--udid " + connectedDeviceUdid)
+                }
+
                 command =  'appium ' + extension.appiumServerArguments()
             }
         }
