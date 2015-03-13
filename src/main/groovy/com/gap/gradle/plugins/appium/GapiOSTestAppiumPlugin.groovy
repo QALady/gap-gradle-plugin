@@ -13,6 +13,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
     private static final int APPIUM_PORT = 4723
     private static final int IOS_DEBUG_PROXY_PORT = 27753
+    private static final String INSTRUMENTS_TEMPLATE_URL = "http://github.gapinc.dev/mpl/instruments-standard-template/blob/master/snapserve-standard.tracetemplate?raw=true"
 
     private CommandRunner commandRunner
     private FileDownloader downloader
@@ -24,7 +25,6 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         this.commandRunner = new CommandRunner(project)
         this.downloader = new FileDownloader(project)
         this.extension = project.extensions.create('appiumConfig', AppiumPluginExtension, project)
-        def templateLocation = project.hasProperty('defaultInstrumentsTemplatePath') ? project.getProperty('defaultInstrumentsTemplatePath') : ""
 
         project.task('startAppium', type: SpawnBackgroundProcessTask, dependsOn: 'startiOSWebkitDebugProxy') {
             doFirst {
@@ -47,14 +47,25 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
         project.task('startAppiumForPerformanceTests', dependsOn: 'startiOSWebkitDebugProxy') {
             doFirst {
-                def template = downloader.download(templateLocation, project.buildDir)
-                extension.setExtendedServerFlags("--tracetemplate " + template)
+                extension.setExtendedServerFlags("--tracetemplate " + traceTemplate)
                 project.tasks.startAppium.execute()
             }
 
             onlyIf { !extension.simulatorMode }
         }
+    }
 
+    private File getTraceTemplate() {
+        def downloadDir = project.buildDir
+        def templateFile = downloader.download(INSTRUMENTS_TEMPLATE_URL, downloadDir)
+
+        if (templateFile.name.contains('?')) {
+            def fileNameWithoutQueryString = templateFile.name.split('\\?')[0]
+
+            return new File(downloadDir, fileNameWithoutQueryString)
+        }
+
+        return templateFile
     }
 
     private String getConnectedDeviceUdid() {
