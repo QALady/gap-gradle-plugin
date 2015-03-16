@@ -4,7 +4,7 @@ class SigningIdentity {
     public static final def DEFAULT_DEVELOPMENT = new SigningIdentity('development').with {
         description = 'iPhone Developer: Alan Orchaton (DY23J3NF52)'
         certificateURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/DevPrivateKey.p12'
-        certificatePassword = 'bollinger!'
+        certificatePassword = 'jlohr1'
         mobileProvisionURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/GapDevelopment.mobileprovision'
         return it
     }
