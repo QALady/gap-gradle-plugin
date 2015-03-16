@@ -64,15 +64,8 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         def downloadDir = project.buildDir
 
         println "Downloading Instruments trace template from ${INSTRUMENTS_TEMPLATE_URL} into ${downloadDir}...\n"
-        def templateFile = downloader.download(INSTRUMENTS_TEMPLATE_URL, downloadDir)
 
-        if (templateFile.name.contains('?')) {
-            def fileNameWithoutQueryString = templateFile.name.split('\\?')[0]
-
-            return new File(downloadDir, fileNameWithoutQueryString)
-        }
-
-        return templateFile
+        downloader.download(INSTRUMENTS_TEMPLATE_URL, downloadDir)
     }
 
     private String getConnectedDeviceUdid() {
