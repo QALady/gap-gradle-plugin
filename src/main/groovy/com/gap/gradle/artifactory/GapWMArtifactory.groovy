@@ -19,8 +19,8 @@ class GapWMArtifactory {
   GapWMArtifactory(ecClient = new CommanderClient(), factory = new ArtifactoryFactory()) {
     this.ecClient = ecClient
     this.factory = factory
-    userName = ecclient.getArtifactoryUserName()
-    password = ecclient.getArtifactoryPassword()
+    userName = ecClient.getArtifactoryUserName()
+    password = ecClient.getArtifactoryPassword()
     artifactory = ArtifactoryClient.create(ARTIFACTORY_URL, userName, password)
   }
 
