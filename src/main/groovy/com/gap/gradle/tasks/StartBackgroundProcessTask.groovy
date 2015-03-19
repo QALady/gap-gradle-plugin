@@ -15,6 +15,7 @@ class StartBackgroundProcessTask extends DefaultTask {
     String command
     String directory
     File pidFile
+    Barrier barrier = new Barrier(MAX_RETRIES, RETRY_INTERVAL, SECONDS)
 
     StartBackgroundProcessTask() {
         directory = '.'
@@ -33,7 +34,7 @@ class StartBackgroundProcessTask extends DefaultTask {
 
     private void waitForProcessToFinish() {
         try {
-            new Barrier(MAX_RETRIES, RETRY_INTERVAL, SECONDS).executeUntil {
+            barrier.executeUntil {
                 def pid = getPid(command)
 
                 if (pid.isEmpty()) {
