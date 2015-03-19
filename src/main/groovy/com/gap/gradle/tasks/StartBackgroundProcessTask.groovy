@@ -58,9 +58,7 @@ class StartBackgroundProcessTask extends DefaultTask {
     }
 
     private static String getPid(String command) {
-        def psCommand = "ps -e | grep '${command}' | grep -v grep | awk '{print \$1}'"
-
-        ["bash", "-c", psCommand].execute().text.trim()
+        ["bash", "-c", "pgrep -f '${command}'"].execute().text.trim()
     }
 
     private Process invokeCommand() {
