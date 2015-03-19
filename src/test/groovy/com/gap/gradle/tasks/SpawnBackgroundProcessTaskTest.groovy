@@ -10,6 +10,8 @@ import org.junit.Test
 import static org.hamcrest.CoreMatchers.containsString
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.fail
+import static org.testng.Assert.assertEquals
+import static org.testng.Assert.assertNotEquals
 
 public class SpawnBackgroundProcessTaskTest {
 
@@ -29,10 +31,16 @@ public class SpawnBackgroundProcessTaskTest {
     }
 
     @Test(timeout = 2000l)
-    public void shouldStartProcess() throws Exception {
-        task.command "sh ${DUMMY_PROCESS_FILE}"
+    public void shouldStartProcessAndWritePidToFile() throws Exception {
+        def pidFile = tempFile()
 
+        assertEquals(0, pidFile.length())
+
+        task.command "sh ${DUMMY_PROCESS_FILE}"
+        task.pidFile pidFile
         task.execute()
+
+        assertNotEquals(0, pidFile.length())
     }
 
     @Test
@@ -43,17 +51,24 @@ public class SpawnBackgroundProcessTaskTest {
             fail('Exception not thrown')
         } catch (Exception e) {
             assertThat(e.cause.message, containsString('command'))
+            assertThat(e.cause.message, containsString('pidFile'))
         }
     }
 
     @Test
     public void shouldThrowMaxRetriesExceptionWhenProcessNotFound() throws Exception {
         try {
-               task.command "echo test"
-               task.execute()
-            }
-        catch(GradleException e) {
-           assertThat(e.cause.message, containsString("echo test"))
+            task.command "echo test"
+            task.pidFile tempFile()
+            task.execute()
+
+            fail('Exception not thrown')
+        } catch (GradleException e) {
+            assertThat(e.cause.message, containsString("echo test"))
         }
+    }
+
+    private static File tempFile() {
+        return File.createTempFile('test', 'file')
     }
 }

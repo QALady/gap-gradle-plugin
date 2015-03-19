@@ -1,7 +1,7 @@
 package com.gap.gradle.plugins.appium
 
 import com.gap.gradle.tasks.SpawnBackgroundProcessTask
-import com.gap.gradle.tasks.StopProcessByPortTask
+import com.gap.gradle.tasks.StopProcessByPidTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -27,7 +27,7 @@ class GapiOSTestAppiumPluginTest {
     @Test
     public void shouldAddNewTasks() {
         taskShouldExist('stopAppium', project)
-        taskShouldBeOfType('stopAppium', StopProcessByPortTask, project)
+        taskShouldBeOfType('stopAppium', StopProcessByPidTask, project)
 
         taskShouldExist('startAppium', project)
         taskShouldBeOfType('startAppium', SpawnBackgroundProcessTask, project)
