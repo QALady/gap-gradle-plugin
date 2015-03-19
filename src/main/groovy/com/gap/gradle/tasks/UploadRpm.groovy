@@ -7,7 +7,7 @@ import com.gap.pipeline.ec.CommanderClient
 
 class UploadRpm extends DefaultTask {
 
-  def String channel
+  def String channel = "devel"
   def String sourcePath
   def String repoName
   CommanderClient ecClient
