@@ -30,7 +30,7 @@ public class StartBackgroundProcessTaskTest {
         task = project.task('startProcess', type: StartBackgroundProcessTask)
     }
 
-    @Test(timeout = 2000l)
+    @Test(timeout = 2000)
     public void shouldStartProcessAndWritePidToFile() throws Exception {
         def pidFile = tempFile()
 
