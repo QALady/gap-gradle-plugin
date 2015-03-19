@@ -7,14 +7,14 @@ import com.gap.pipeline.ec.CommanderClient
 
 class UploadRpm extends DefaultTask {
 
-  def String channel = "devel"
   def String sourcePath
-  def String repoName
   CommanderClient ecClient
   GapWMArtifactory gapArtifactory
 
   @TaskAction
   def run() {
+    def String repoName
+    def String channel = "devel"
     ecClient = new CommanderClient()
     gapArtifactory = new GapWMArtifactory(ecClient)
     File file = new File(sourcePath)
