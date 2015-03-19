@@ -13,7 +13,7 @@ import static java.lang.System.getProperty
 
 class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
-    private static final String INSTRUMENTS_TEMPLATE_URL = "http://github.gapinc.dev/mpl/instruments-standard-template/blob/master/snapserve-standard.tracetemplate?raw=true"
+    private static final String INSTRUMENTS_TEMPLATE_URL = 'http://github.gapinc.dev/mpl/instruments-standard-template/raw/master/snapserve-standard.tracetemplate'
 
     private AppiumPluginExtension extension
     private Project project

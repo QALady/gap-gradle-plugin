@@ -1,5 +1,6 @@
 package com.gap.gradle.plugins
 
+import org.apache.commons.io.FilenameUtils
 import org.gradle.api.Project
 
 class FileDownloader {
@@ -14,12 +15,8 @@ class FileDownloader {
             destinationDir.mkdirs()
         }
 
-        project.ant.get(src: url, dest: destinationDir.getAbsolutePath(), verbose:true)
+        project.ant.get(src: url, dest: destinationDir.getAbsolutePath(), verbose: true)
 
-        return new File(destinationDir, getFileName(url))
-    }
-
-    private String getFileName(String url) {
-        return project.file(new URI(url).path).name
+        return new File(destinationDir, FilenameUtils.getName(url))
     }
 }
