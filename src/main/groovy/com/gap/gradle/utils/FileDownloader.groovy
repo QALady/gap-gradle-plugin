@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins
+package com.gap.gradle.utils
 
 import org.apache.commons.io.FilenameUtils
 import org.gradle.api.Project

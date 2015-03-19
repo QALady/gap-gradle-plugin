@@ -1,6 +1,6 @@
 package com.gap.gradle.plugins.appium
 
-import com.gap.gradle.plugins.FileDownloader
+import com.gap.gradle.utils.FileDownloader
 import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.mobile.MobileDeviceUtils
 import com.gap.gradle.tasks.SpawnBackgroundProcessTask
