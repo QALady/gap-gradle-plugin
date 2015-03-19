@@ -20,13 +20,13 @@ class AppiumPluginExtensionTest  {
 
     @Test
     public void shouldHaveDefaultServerArguments(){
-        assert(extension.appiumServerArguments() == "--log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log")
+        assert(extension.appiumServerArguments() == "--session-override --log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log")
     }
 
     @Test
     public void shouldSupportExtendingDefaultArguments(){
         extension.setExtendedServerFlags("--localtime")
 
-        assert(extension.appiumServerArguments() == "--log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log --localtime")
+        assert(extension.appiumServerArguments() == "--session-override --log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log --localtime")
     }
 }

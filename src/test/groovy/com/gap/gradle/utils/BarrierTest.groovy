@@ -1,6 +1,5 @@
-package com.gap.gradle.plugins.airwatch.util
+package com.gap.gradle.utils
 
-import com.gap.gradle.plugins.mobile.Barrier
 import org.junit.Test
 
 import java.util.concurrent.TimeUnit

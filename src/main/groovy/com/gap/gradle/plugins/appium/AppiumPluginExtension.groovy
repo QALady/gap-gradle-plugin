@@ -11,7 +11,7 @@ class AppiumPluginExtension {
 
     AppiumPluginExtension(Project project) {
         this.logFile = new File(project.buildDir, "test/logs/appium.log")
-        this.defaultServerFlags = ["--log-no-colors", "--log-timestamp", "--log", logFile.absolutePath]
+        this.defaultServerFlags = ["--session-override", "--log-no-colors", "--log-timestamp", "--log", logFile.absolutePath]
         this.extendedServerFlags = []
     }
 

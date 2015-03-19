@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins.mobile
+package com.gap.gradle.utils
 
 import java.util.concurrent.TimeUnit
 
