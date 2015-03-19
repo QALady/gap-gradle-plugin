@@ -7,7 +7,7 @@ import org.gradle.api.tasks.TaskAction
 
 import static java.util.concurrent.TimeUnit.SECONDS
 
-class SpawnBackgroundProcessTask extends DefaultTask {
+class StartBackgroundProcessTask extends DefaultTask {
 
     private static final int MAX_RETRIES = 12
     private static final int RETRY_INTERVAL = 5
@@ -16,7 +16,7 @@ class SpawnBackgroundProcessTask extends DefaultTask {
     String directory
     File pidFile
 
-    SpawnBackgroundProcessTask() {
+    StartBackgroundProcessTask() {
         directory = '.'
     }
 

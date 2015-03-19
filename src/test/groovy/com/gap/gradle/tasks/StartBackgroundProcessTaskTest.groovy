@@ -13,7 +13,7 @@ import static org.junit.Assert.fail
 import static org.testng.Assert.assertEquals
 import static org.testng.Assert.assertNotEquals
 
-public class SpawnBackgroundProcessTaskTest {
+public class StartBackgroundProcessTaskTest {
 
     private static final String DUMMY_PROCESS_FILE = "src/test/groovy/com/gap/gradle/resources/dummy_process.sh"
 
@@ -27,7 +27,7 @@ public class SpawnBackgroundProcessTaskTest {
         dummyProcessFile.setExecutable(true)
 
         project = ProjectBuilder.builder().build()
-        task = project.task('startProcess', type: SpawnBackgroundProcessTask)
+        task = project.task('startProcess', type: StartBackgroundProcessTask)
     }
 
     @Test(timeout = 2000l)

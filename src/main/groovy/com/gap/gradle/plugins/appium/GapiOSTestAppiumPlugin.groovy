@@ -3,7 +3,7 @@ package com.gap.gradle.plugins.appium
 import com.gap.gradle.utils.FileDownloader
 import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.mobile.MobileDeviceUtils
-import com.gap.gradle.tasks.SpawnBackgroundProcessTask
+import com.gap.gradle.tasks.StartBackgroundProcessTask
 import com.gap.gradle.tasks.StopProcessByPidTask
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -28,7 +28,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
     }
 
     private void createTasks(Project project) {
-        project.task('startAppium', type: SpawnBackgroundProcessTask, dependsOn: 'startiOSWebkitDebugProxy') {
+        project.task('startAppium', type: StartBackgroundProcessTask, dependsOn: 'startiOSWebkitDebugProxy') {
             doFirst {
                 extension.logFile.parentFile.mkdirs()
 
@@ -41,7 +41,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
             }
         }
 
-        project.task('startiOSWebkitDebugProxy', type: SpawnBackgroundProcessTask) {
+        project.task('startiOSWebkitDebugProxy', type: StartBackgroundProcessTask) {
             doFirst {
                 command "node /usr/local/lib/node_modules/appium/bin/ios-webkit-debug-proxy-launcher.js -c ${connectedDeviceUdid}:27753 -d"
                 pidFile tempPidFile
