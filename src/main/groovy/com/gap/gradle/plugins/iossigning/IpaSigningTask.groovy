@@ -12,7 +12,7 @@ import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
-import com.gap.gradle.plugins.FileDownloader
+import com.gap.gradle.utils.FileDownloader
 
 import javax.inject.Inject
 
