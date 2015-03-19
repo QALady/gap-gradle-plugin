@@ -34,6 +34,7 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
                 if (!extension.simulatorMode) {
                     extension.setExtendedServerFlags("--udid " + connectedDeviceUdid)
+                    extension.setExtendedServerFlags("--tracetemplate " + traceTemplate)
                 }
 
                 command 'appium ' + extension.appiumServerArguments()
@@ -52,15 +53,6 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
         project.task('stopAppium', type: StopProcessByPidTask) {
             pidFile tempPidFile
-        }
-
-        project.task('startAppiumForPerformanceTests', dependsOn: 'startiOSWebkitDebugProxy') {
-            doFirst {
-                extension.setExtendedServerFlags('--tracetemplate ' + traceTemplate)
-                project.tasks.startAppium.execute()
-            }
-
-            onlyIf { !extension.simulatorMode }
         }
     }
 

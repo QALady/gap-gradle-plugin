@@ -30,16 +30,11 @@ class GapiOSTestAppiumPluginTest {
         taskShouldBeOfType('stopAppium', StopProcessByPidTask, project)
 
         taskShouldExist('startAppium', project)
+        taskShouldDependOn('startAppium', 'startiOSWebkitDebugProxy', project)
         taskShouldBeOfType('startAppium', StartBackgroundProcessTask, project)
 
         taskShouldExist('startiOSWebkitDebugProxy', project)
         taskShouldBeOfType('startiOSWebkitDebugProxy', StartBackgroundProcessTask, project)
-
-        taskShouldExist('startAppiumForPerformanceTests', project)
-
-        ['startAppium', 'startAppiumForPerformanceTests'].each {
-            taskShouldDependOn(it, 'startiOSWebkitDebugProxy', project)
-        }
     }
 
     @Test
