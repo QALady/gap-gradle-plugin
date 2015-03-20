@@ -92,7 +92,7 @@ class IpaSigningTask extends DefaultTask {
         def plainProfile = new File(outputDir, "plain-provisioning-profile.plist")
         plainProfile.write(decodedCms)
 
-        def entitlements = new PlistBuddy(commandRunner).printEntry(":Entitlements", plainProfile)
+        def entitlements = new PlistBuddy(commandRunner).printEntry(":Entitlements", plainProfile, true)
 
         def entitlementsFile = new File(outputDir, "entitlements.plist")
         entitlementsFile.write(entitlements)
