@@ -61,7 +61,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
     private String readPlistKeyValue(File plist, String key) {
         def result = new PlistBuddy(commandRunner).printEntry(":${key}", plist)
 
-        println "\n\n Value from plist for key $key = $result \n\n"
+        println "Value from plist for key $key = $result"
 
         result
     }
@@ -73,7 +73,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
             throw new GradleException("No iPod device detected.")
         }
 
-        println "\n\nConnected device UDID = $deviceUdid \n\n"
+        println "Connected device UDID = $deviceUdid"
 
         deviceUdid
     }

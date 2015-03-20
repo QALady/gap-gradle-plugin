@@ -23,6 +23,6 @@ class CommandRunner {
             os.toString()
         }
 
-        result
+        result.trim()
     }
 }
