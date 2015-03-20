@@ -11,7 +11,11 @@ class PlistBuddy {
         this.commandRunner = commandRunner
     }
 
-    public String printEntry(String entryName, File plistFile) {
-        commandRunner.run(PLISTBUDDY_TOOL, "-x", "-c", "Print ${entryName}", plistFile.absolutePath)
+    public String printEntry(String entryName, File plistFile, boolean outputAsXml = false) {
+        def arguments = [PLISTBUDDY_TOOL, '-c', "Print ${entryName}", plistFile.absolutePath]
+
+        if (outputAsXml) arguments.add('-x')
+
+        commandRunner.run(arguments.toArray())
     }
 }

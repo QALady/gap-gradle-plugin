@@ -25,7 +25,17 @@ public class PlistBuddyTest {
 
         plistBuddy.printEntry(entryName, plistFile)
 
-        verify(commandRunner).run(PLISTBUDDY_TOOL, "-x", "-c", "Print ${entryName}", plistFile.absolutePath)
+        verify(commandRunner).run(PLISTBUDDY_TOOL, "-c", "Print ${entryName}", plistFile.absolutePath)
+    }
+
+    @Test
+    public void shouldPrintValueOfSpecifiedEntryAndOutputAsXml() throws Exception {
+        def entryName = "someKey"
+        def plistFile = fakeFileWithAbsolutePath("/path/to/some/plist")
+
+        plistBuddy.printEntry(entryName, plistFile, true)
+
+        verify(commandRunner).run(PLISTBUDDY_TOOL, "-c", "Print ${entryName}", plistFile.absolutePath, "-x")
     }
 
     private static File fakeFileWithAbsolutePath(String filePath) {
