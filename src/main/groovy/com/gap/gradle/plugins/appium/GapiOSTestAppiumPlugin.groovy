@@ -1,10 +1,10 @@
 package com.gap.gradle.plugins.appium
 
-import com.gap.gradle.utils.FileDownloader
 import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.mobile.MobileDeviceUtils
 import com.gap.gradle.tasks.StartBackgroundProcessTask
 import com.gap.gradle.tasks.StopProcessByPidTask
+import com.gap.gradle.utils.FileDownloader
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -28,14 +28,19 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
     }
 
     private void createTasks(Project project) {
-        project.task('startAppium', type: StartBackgroundProcessTask, dependsOn: 'startiOSWebkitDebugProxy') {
+        project.task('configureAppiumForRealDevices') {
+            doFirst {
+                extension.setExtendedServerFlags("--udid " + connectedDeviceUdid)
+                extension.setExtendedServerFlags("--tracetemplate " + traceTemplate)
+                extension.setExtendedServerFlags("--trace-dir " + "${project.buildDir}/instruments-trace-results/instrumentscli0.trace")
+            }
+
+            onlyIf { !extension.simulatorMode }
+        }
+
+        project.task('startAppium', type: StartBackgroundProcessTask, dependsOn: ['configureAppiumForRealDevices', 'startiOSWebkitDebugProxy']) {
             doFirst {
                 extension.logFile.parentFile.mkdirs()
-
-                if (!extension.simulatorMode) {
-                    extension.setExtendedServerFlags("--udid " + connectedDeviceUdid)
-                    extension.setExtendedServerFlags("--tracetemplate " + traceTemplate)
-                }
 
                 command 'appium ' + extension.appiumServerArguments()
                 pidFile tempPidFile
