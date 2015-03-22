@@ -8,6 +8,7 @@ import com.gap.gradle.utils.FileDownloader
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.bundling.Zip
 
 import static java.lang.System.getProperty
 
@@ -18,11 +19,13 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
     private AppiumPluginExtension extension
     private Project project
     private File tempPidFile
+    private File instrumentsTraceOutputDir
 
     void apply(Project project) {
         this.project = project
         this.extension = project.extensions.create('appiumConfig', AppiumPluginExtension, project)
         this.tempPidFile = createTempFile(project)
+        this.instrumentsTraceOutputDir = project.file("${project.buildDir}/test/instruments-trace-results")
 
         createTasks(project)
     }
@@ -30,9 +33,20 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
     private void createTasks(Project project) {
         project.task('configureAppiumForRealDevices') {
             doFirst {
+                instrumentsTraceOutputDir.mkdirs()
+
                 extension.setExtendedServerFlags("--udid " + connectedDeviceUdid)
                 extension.setExtendedServerFlags("--tracetemplate " + traceTemplate)
-                extension.setExtendedServerFlags("--trace-dir " + "${project.buildDir}/instruments-trace-results/instrumentscli0.trace")
+                extension.setExtendedServerFlags("--trace-dir " + instrumentsTraceOutputDir.absolutePath)
+            }
+
+            onlyIf { !extension.simulatorMode }
+        }
+
+        project.task('startiOSWebkitDebugProxy', type: StartBackgroundProcessTask) {
+            doFirst {
+                command "node /usr/local/lib/node_modules/appium/bin/ios-webkit-debug-proxy-launcher.js -c ${connectedDeviceUdid}:27753 -d"
+                pidFile tempPidFile
             }
 
             onlyIf { !extension.simulatorMode }
@@ -47,17 +61,24 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
             }
         }
 
-        project.task('startiOSWebkitDebugProxy', type: StartBackgroundProcessTask) {
-            doFirst {
-                command "node /usr/local/lib/node_modules/appium/bin/ios-webkit-debug-proxy-launcher.js -c ${connectedDeviceUdid}:27753 -d"
-                pidFile tempPidFile
-            }
-
-            onlyIf { !extension.simulatorMode }
-        }
-
         project.task('stopAppium', type: StopProcessByPidTask) {
             pidFile tempPidFile
+        }
+
+        project.task('zipInstrumentsTraceResults', type: Zip) {
+            from instrumentsTraceOutputDir
+
+            doLast {
+                project.artifacts {
+                    archives(project.zipInstrumentsTraceResults) {
+                        name instrumentsTraceOutputDir.name
+                    }
+                }
+            }
+        }
+
+        project.getTasksByName('uploadArchives', false).each {
+            it.dependsOn 'zipInstrumentsTraceResults'
         }
     }
 

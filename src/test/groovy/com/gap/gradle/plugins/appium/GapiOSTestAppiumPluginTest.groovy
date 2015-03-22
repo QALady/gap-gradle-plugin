@@ -35,6 +35,8 @@ class GapiOSTestAppiumPluginTest {
 
         taskShouldExist('startiOSWebkitDebugProxy', project)
         taskShouldBeOfType('startiOSWebkitDebugProxy', StartBackgroundProcessTask, project)
+
+        taskShouldExist('zipInstrumentsTraceResults', project)
     }
 
     @Test
