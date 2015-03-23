@@ -30,7 +30,7 @@ public class CommandRunnerTest {
                 invocation.arguments[0].delegate = this
                 invocation.arguments[0].call()
 
-                standardOutput.write(" hello world\n".bytes)
+                standardOutput.write(" hello\n world\n".bytes)
 
                 return null
             }
@@ -45,7 +45,7 @@ public class CommandRunnerTest {
 
         assertEquals(new File("."), workingDirParam)
         assertEquals("foo", commandLineParams[0])
-        assertEquals(" hello world\n", output)
+        assertEquals("hello\n world", output)
     }
 
     @Test
@@ -56,7 +56,7 @@ public class CommandRunnerTest {
 
         assertEquals(baseDir, workingDirParam)
         assertEquals("bar", commandLineParams[0])
-        assertEquals(" hello world\n", output)
+        assertEquals("hello\n world", output)
     }
 
     private void commandLine(Object[] args) {
