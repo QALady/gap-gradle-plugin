@@ -13,7 +13,7 @@ class SigningIdentity {
         description = 'iPhone Distribution: Gap Inc.'
         certificateURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/InternalDistKeyv2.p12'
         certificatePassword = 'jlohr1'
-        mobileProvisionURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/GapInternalDistribution.mobileprovision'
+        mobileProvisionURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/GapInternalDistributionV4.mobileprovision'
         return it
     }
 
