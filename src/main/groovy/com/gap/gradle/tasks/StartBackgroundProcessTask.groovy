@@ -27,7 +27,7 @@ class StartBackgroundProcessTask extends DefaultTask {
 
         println "Starting background process with command \"${command}\"...\n"
 
-        invokeCommand()
+        executeCommand(command)
 
         waitForProcessToFinish()
     }
@@ -35,7 +35,7 @@ class StartBackgroundProcessTask extends DefaultTask {
     private void waitForProcessToFinish() {
         try {
             barrier.executeUntil {
-                def pid = getPid(command)
+                def pid = getPidForCommand(command)
 
                 if (pid.isEmpty()) {
                     println 'Waiting for process to start...'
@@ -58,15 +58,12 @@ class StartBackgroundProcessTask extends DefaultTask {
         file.append(pid + "\n")
     }
 
-    private static String getPid(String command) {
-        ["bash", "-c", "pgrep -f '${command}'"].execute().text.trim()
+    private static String getPidForCommand(String cmd) {
+        executeCommand("pgrep -f '$cmd'").text.trim()
     }
 
-    private Process invokeCommand() {
-        new ProcessBuilder(command.split())
-                .redirectErrorStream(true)
-                .directory(new File(directory))
-                .start()
+    private static Process executeCommand(String cmd) {
+        ["bash", "-c", cmd].execute()
     }
 
     private void validateParameters() {

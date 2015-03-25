@@ -5,7 +5,9 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
-class AppiumPluginExtensionTest  {
+import static org.testng.Assert.assertEquals
+
+class AppiumPluginExtensionTest {
 
     private AppiumPluginExtension extension
     private Project project
@@ -19,14 +21,14 @@ class AppiumPluginExtensionTest  {
     }
 
     @Test
-    public void shouldHaveDefaultServerArguments(){
-        assert(extension.appiumServerArguments() == "--session-override --log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log")
+    public void shouldHaveDefaultServerArguments() {
+        assertEquals("--session-override --log-no-colors --log-timestamp &> ${projectDir.canonicalPath}/build/test/logs/appium.log", extension.appiumServerArguments())
     }
 
     @Test
-    public void shouldSupportExtendingDefaultArguments(){
+    public void shouldSupportExtendingDefaultArguments() {
         extension.setExtendedServerFlags("--localtime")
 
-        assert(extension.appiumServerArguments() == "--session-override --log-no-colors --log-timestamp --log ${projectDir.canonicalPath}/build/test/logs/appium.log --localtime")
+        assertEquals("--session-override --log-no-colors --log-timestamp &> ${projectDir.canonicalPath}/build/test/logs/appium.log --localtime", extension.appiumServerArguments())
     }
 }
