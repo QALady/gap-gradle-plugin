@@ -14,7 +14,7 @@ import static java.lang.System.getProperty
 
 class GapiOSTestAppiumPlugin implements Plugin<Project> {
 
-    private static final String INSTRUMENTS_TEMPLATE_URL = 'http://github.gapinc.dev/mpl/instruments-standard-template/raw/master/snapserve-standard.tracetemplate'
+    public static final String DEFAULT_INSTRUMENTS_TEMPLATE_URI = 'http://github.gapinc.dev/mpl/instruments-standard-template/raw/master/instruments-standard-template.tracetemplate'
 
     private AppiumPluginExtension extension
     private Project project
@@ -82,12 +82,15 @@ class GapiOSTestAppiumPlugin implements Plugin<Project> {
         }
     }
 
-    private File getTraceTemplate() {
+    private String getTraceTemplate() {
         def downloadDir = project.buildDir
+        def templateUri = extension.instrumentsTemplateURI ?: DEFAULT_INSTRUMENTS_TEMPLATE_URI
 
-        println "Downloading Instruments trace template from ${INSTRUMENTS_TEMPLATE_URL} into ${downloadDir}...\n"
+        println "Downloading Instruments trace template from ${templateUri} into ${downloadDir}...\n"
 
-        new FileDownloader(project).download(INSTRUMENTS_TEMPLATE_URL, downloadDir)
+        def template = new FileDownloader(project).download(templateUri, downloadDir)
+
+        return template.absolutePath
     }
 
     private String getConnectedDeviceUdid() {
