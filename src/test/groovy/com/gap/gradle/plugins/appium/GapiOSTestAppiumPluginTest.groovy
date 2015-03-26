@@ -1,5 +1,6 @@
 package com.gap.gradle.plugins.appium
 
+import com.gap.gradle.plugins.mobile.MobileDeviceUtils
 import com.gap.gradle.tasks.StartBackgroundProcessTask
 import com.gap.gradle.tasks.StopProcessByPidTask
 import com.gap.gradle.utils.FileDownloader
@@ -72,8 +73,10 @@ class GapiOSTestAppiumPluginTest {
             simulatorMode = false
         }
 
-        fakeDownloader.use {
-            project.tasks.configureAppiumForRealDevices.execute()
+        mobileDeviceUtilsMock.use {
+            fileDownloaderMock.use {
+                project.tasks.configureAppiumForRealDevices.execute()
+            }
         }
 
         String serverArguments = project.appiumConfig.appiumServerArguments()
@@ -88,8 +91,10 @@ class GapiOSTestAppiumPluginTest {
             instrumentsTemplateURI "non-standard-template"
         }
 
-        fakeDownloader.use {
-            project.tasks.configureAppiumForRealDevices.execute()
+        mobileDeviceUtilsMock.use {
+            fileDownloaderMock.use {
+                project.tasks.configureAppiumForRealDevices.execute()
+            }
         }
 
         String serverArguments = project.appiumConfig.appiumServerArguments()
@@ -97,7 +102,15 @@ class GapiOSTestAppiumPluginTest {
         assertThat(serverArguments, containsString("--tracetemplate ${alternateTemplateMock.absolutePath}"))
     }
 
-    def static getFakeDownloader() {
+    def static getMobileDeviceUtilsMock() {
+        def mobileDeviceUtilsMock = new MockFor(MobileDeviceUtils)
+
+        mobileDeviceUtilsMock.demand.listAttachedDevices { 'abcd1234' }
+
+        mobileDeviceUtilsMock
+    }
+
+    def static getFileDownloaderMock() {
         def fakeDownloader = new MockFor(FileDownloader)
 
         fakeDownloader.demand.download { String src, File dest ->
