@@ -7,6 +7,7 @@ class AppiumPluginExtension {
     private List<String> serverFlags
     boolean simulatorMode
     File logFile
+    String instrumentsTemplateURI
 
     AppiumPluginExtension(Project project) {
         this.serverFlags = []
