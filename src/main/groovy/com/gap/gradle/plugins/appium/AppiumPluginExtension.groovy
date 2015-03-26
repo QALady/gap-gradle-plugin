@@ -4,22 +4,34 @@ import org.gradle.api.Project
 
 class AppiumPluginExtension {
 
-    private List<String> defaultServerFlags
-    private List<String> extendedServerFlags
-    boolean simulatorMode = true
+    private List<String> serverFlags
+    boolean simulatorMode
     File logFile
 
     AppiumPluginExtension(Project project) {
+        this.serverFlags = []
+        this.simulatorMode = true
         this.logFile = new File(project.buildDir, "test/logs/appium.log")
-        this.defaultServerFlags = ["--session-override", "--log-no-colors", "--log-timestamp", "&>", logFile.absolutePath]
-        this.extendedServerFlags = []
+
+        configureDefaultFlags()
+    }
+
+    private void configureDefaultFlags() {
+        setExtendedServerFlags("--session-override")
+        setExtendedServerFlags("--log-no-colors")
+        setExtendedServerFlags("--log-timestamp")
     }
 
     public String appiumServerArguments() {
-        return (defaultServerFlags + extendedServerFlags).join(' ').trim()
+        def argsList = []
+        argsList.addAll(serverFlags)
+        argsList.add("&>")
+        argsList.add(logFile.absolutePath)
+
+        return argsList.join(' ').trim()
     }
 
-    public void setExtendedServerFlags(String extendedServerFlags) {
-        this.extendedServerFlags << extendedServerFlags
+    public void setExtendedServerFlags(String flag) {
+        this.serverFlags << flag
     }
 }
