@@ -11,24 +11,24 @@ class AppiumPluginExtensionTest {
 
     private AppiumPluginExtension extension
     private Project project
-    private File projectDir
+    private String logFilePath
 
     @Before
     public void setUp() throws Exception {
-        projectDir = new File(System.getProperty("java.io.tmpdir"))
-        project = ProjectBuilder.builder().withProjectDir(projectDir).build()
+        project = ProjectBuilder.builder().build()
         extension = new AppiumPluginExtension(project)
+        logFilePath = "${project.buildDir}/test/logs/appium.log"
     }
 
     @Test
     public void shouldHaveDefaultServerArguments() {
-        assertEquals("--session-override --log-no-colors --log-timestamp &> ${projectDir.canonicalPath}/build/test/logs/appium.log", extension.appiumServerArguments())
+        assertEquals(extension.appiumServerArguments(), "--session-override --log-no-colors --log-timestamp &> $logFilePath")
     }
 
     @Test
-    public void shouldSupportExtendingDefaultArguments() {
-        extension.setExtendedServerFlags("--localtime")
+    public void shouldKeepLogFileRedirectAsLastArgument() {
+        extension.setExtendedServerFlags("--some-arg")
 
-        assertEquals("--session-override --log-no-colors --log-timestamp &> ${projectDir.canonicalPath}/build/test/logs/appium.log --localtime", extension.appiumServerArguments())
+        assertEquals(extension.appiumServerArguments(), "--session-override --log-no-colors --log-timestamp --some-arg &> $logFilePath")
     }
 }
