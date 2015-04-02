@@ -13,6 +13,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
 import com.gap.gradle.utils.FileDownloader
+import com.gap.pipeline.ec.CommanderClient
 
 import javax.inject.Inject
 
@@ -26,6 +27,7 @@ class IpaSigningTask extends DefaultTask {
     private final FileDownloader downloader
     private final CommandRunner commandRunner
     private final Security security
+    private def commanderClient
 
     SigningIdentity signingIdentity
     ArtifactSpec artifact
@@ -48,6 +50,7 @@ class IpaSigningTask extends DefaultTask {
         // when calling commandRunner.run(...), that's why we're using a "new" here.
         commandRunner = new CommandRunner(project)
         security = new Security(commandRunner)
+        commanderClient = new CommanderClient()
     }
 
     def hasRequiredParameters() {
@@ -81,6 +84,8 @@ class IpaSigningTask extends DefaultTask {
             def entitlements = getEntitlements(mobileProvision, signingDir)
 
             output = ipaPackage.resign(signingIdentity, keychain, entitlements)
+            commanderClient.setECProperty("/myJob/resignedIpaFile", output.file.name)
+
         } finally {
             keychain.destroy()
         }
