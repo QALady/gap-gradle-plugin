@@ -120,7 +120,7 @@ class GapXcodePluginTest {
             }
         }
 
-        def plist = new File("${project.buildDir}/sym-development/MyAppProductName/Release-iphoneos/MyAppProductName.app/Settings.bundle", 'Root.plist')
+        def plist = new File("${project.buildDir}/MyAppProductName/Release-iphoneos/MyAppProductName.app/Settings.bundle", 'Root.plist')
         plist.parentFile.mkdirs()
         plist << '@version@'
         plist << '@scmRevision@'
