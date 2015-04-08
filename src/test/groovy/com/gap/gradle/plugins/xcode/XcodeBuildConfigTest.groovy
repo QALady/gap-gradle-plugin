@@ -82,7 +82,6 @@ class XcodeBuildConfigTest {
         } catch (InvalidXcodeConfigurationException e) {
             assertThat(e.message, containsString('target'))
             assertThat(e.message, containsString('SDK'))
-            assertThat(e.message, containsString('signing'))
         }
     }
 
@@ -96,7 +95,6 @@ class XcodeBuildConfigTest {
         } catch (InvalidXcodeConfigurationException e) {
             assertThat(e.message, containsString('target'))
             assertThat(e.message, containsString('SDK'))
-            assertThat(e.message, containsString('signing'))
         }
     }
 

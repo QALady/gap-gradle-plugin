@@ -126,14 +126,15 @@ class GapXcodePlugin implements Plugin<Project> {
                     productName = buildConfig.productName
                     target = buildConfig.target
                     sdk = buildConfig.sdk
-                    configuration = buildConfig.configuration
-                    symRoot = targetOutputDir(signIdentity.name)
-
-                    signing {
-                        identity = signIdentity.description
-                        certificateURI = signIdentity.certificateURI
-                        certificatePassword = signIdentity.certificatePassword
-                        mobileProvisionURI = signIdentity.mobileProvisionURI
+                    symRoot = targetOutputDir()
+                    configuration = buildConfig.configuration 
+                    if (signIdentity != null) {                    
+                       signing {
+                           identity = signIdentity.description
+                           certificateURI = signIdentity.certificateURI
+                           certificatePassword = signIdentity.certificatePassword
+                           mobileProvisionURI = signIdentity.mobileProvisionURI
+                       }
                     }
 
                     if (sdk == 'iphonesimulator') {
@@ -159,7 +160,7 @@ class GapXcodePlugin implements Plugin<Project> {
                 project.version = extension.archive.version
 
                 project.artifacts {
-                    def chosenIdentity = extension.build.signingIdentity.name
+                    def chosenIdentity = extension.build.signingIdentity
                     archives name: productName, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'ipa')
                     archives name: productName, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'zip')
                     archives name: productName, classifier: 'iphonesimulator', file: fullPathToArtifact(chosenIdentity, 'iphonesimulator', 'zip')
@@ -187,15 +188,15 @@ class GapXcodePlugin implements Plugin<Project> {
         }
     }
 
-    private File targetOutputDir(identityName) {
+    private File targetOutputDir() {
         def appName = extension.build.productName
         def basePath = project.buildDir
 
-        project.file("${basePath}/sym-${identityName}/${appName}")
+        project.file("${basePath}/${appName}")
     }
 
     private void moveGeneratedArtifactsToArtifactsDirectory() {
-        def codeSign = extension.build.signingIdentity.name
+        def codeSign = extension.build.signingIdentity
         def configuration = project.xcodebuild.configuration
         def sdk = extension.build.sdk
         def productName = project.xcodebuild.productName
@@ -206,7 +207,7 @@ class GapXcodePlugin implements Plugin<Project> {
         if (sdk == 'iphoneos') {
             // Zip file with the debug symbols
             project.ant.zip(destfile: new File(artifactsDir, artifactFileName(productName, sdk, codeSign, 'zip')).toString()) {
-                zipfileset(prefix: "${productName}.app.dSYM", dir: "${targetOutputDir(codeSign)}/${configuration}-${sdk}/${productName}.app.dSYM")
+                zipfileset(prefix: "${productName}.app.dSYM", dir: "${targetOutputDir()}/${configuration}-${sdk}/${productName}.app.dSYM")
             }
 
             FileUtils.copyFile(new File(project.buildDir, "package/${productName}.ipa"), new File(artifactsDir, artifactFileName(productName, sdk, codeSign, 'ipa')))
@@ -219,20 +220,19 @@ class GapXcodePlugin implements Plugin<Project> {
         new File(project.buildDir, 'artifacts')
     }
 
-    private File fullPathToArtifact(String identityName, String sdk, String type) {
-        new File(getArtifactsDir(), artifactFileName(extension.build.productName, sdk, identityName, type))
+    private File fullPathToArtifact(SigningIdentity identity, String sdk, String type) {
+        new File(getArtifactsDir(), artifactFileName(extension.build.productName, sdk, identity, type))
     }
 
-    private static String artifactFileName(String productName, String sdk, String codeSign, String extension) {
-        "${productName}-${sdk}-${codeSign}.${extension}"
+    private static String artifactFileName(String productName, String sdk, SigningIdentity codeSign, String extension) {
+        (codeSign != null)? "${productName}-${sdk}-${codeSign.name}.${extension}" : "${productName}-${sdk}.${extension}"
     }
 
     private String pathToRootPlist() {
-        def codeSign = extension.build.signingIdentity.name
         def configuration = extension.build.configuration
         def sdk = extension.build.sdk
         def appName = extension.build.productName
 
-        "${targetOutputDir(codeSign)}/${configuration}-${sdk}/${appName}.app/Settings.bundle/Root.plist"
+        "${targetOutputDir()}/${configuration}-${sdk}/${appName}.app/Settings.bundle/Root.plist"
     }
 }

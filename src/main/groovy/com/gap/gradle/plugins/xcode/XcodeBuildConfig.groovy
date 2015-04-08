@@ -71,10 +71,6 @@ class XcodeBuildConfig implements XcodeConfig {
                     "e.g. `iphoneos` or `iphonesimulator`. See all available SDKs with `xcodebuild -showsdks`."
         }
 
-        if (signingIdentity == null) {
-            errorMessages << "- Please choose which signing identity will be used to sign the app. " +
-                    "e.g. `development` or `distribution`."
-        }
 
         if (!errorMessages.isEmpty()) {
             throw new InvalidXcodeConfigurationException(errorMessages.join("\n"))
