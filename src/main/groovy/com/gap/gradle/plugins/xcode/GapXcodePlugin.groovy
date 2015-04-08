@@ -39,6 +39,10 @@ class GapXcodePlugin implements Plugin<Project> {
         configureExistingTasks()
         createNewTasks()
         configureTaskGraph()
+
+        project.afterEvaluate {
+            project.version = extension.archive.version
+        }
     }
 
     private configureWorkspaceAndScheme() {
