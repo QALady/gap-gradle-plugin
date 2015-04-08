@@ -80,6 +80,7 @@ class GapXcodePlugin implements Plugin<Project> {
                 tokensToReplace = ['@version@'    : extension.archive.version,
                                    '@scmRevision@': extension.archive.scmRevision]
             }
+            onlyIf { new File(pathToRootPlist()).exists() }
         }
 
         project.task('airwatchConfigZip', type: Zip)
