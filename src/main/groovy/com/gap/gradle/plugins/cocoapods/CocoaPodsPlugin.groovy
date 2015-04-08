@@ -9,17 +9,21 @@ class CocoaPodsPlugin implements Plugin<Project> {
     private static final String COCOAPODS_REPO_NAME = 'Gap-CocoaPods'
 
     private Project project
-    private CocoaPodsExtension extension
+    private PodSpecExtension extension
 
     @Override
     void apply(Project project) {
         this.project = project
-        this.extension = project.extensions.create('podspec', CocoaPodsExtension, project)
+        this.extension = project.extensions.create('podspec', PodSpecExtension, project)
 
         def updatePodspec = project.task("updatePodspec", type: UpdatePodspecTask) {
             doFirst {
-                podspecFile = originalPodspecFile
-                tokens = [ARTIFACT_VERSION: extension.podVersion, ARTIFACT_URL: artifactUrl]
+                PodspecValidator.validate(extension)
+
+                def originalFile = new File(project.rootDir, "${extension.podName}.podspec")
+
+                podspecFile = originalFile
+                tokens = [POD_NAME: extension.podName, POD_VERSION: extension.podVersion, ARTIFACT_URL: artifactUrl]
             }
         }
 
@@ -29,10 +33,6 @@ class CocoaPodsPlugin implements Plugin<Project> {
                 podRepo = COCOAPODS_REPO_NAME
             }
         }
-    }
-
-    private File getOriginalPodspecFile() {
-        new File(project.rootDir, "${extension.podName}.podspec")
     }
 
     private String getArtifactUrl() {
