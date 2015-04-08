@@ -165,7 +165,7 @@ class GapXcodePlugin implements Plugin<Project> {
                     archives name: productName, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'zip')
                     archives name: productName, classifier: 'iphonesimulator', file: fullPathToArtifact(chosenIdentity, 'iphonesimulator', 'zip')
 
-                    def developmentIdentity = extension.signing.development.name
+                    def developmentIdentity = extension.signing.development
 
                     File devIpa = fullPathToArtifact(developmentIdentity, 'iphoneos', 'ipa')
                     if (devIpa.exists()) {
