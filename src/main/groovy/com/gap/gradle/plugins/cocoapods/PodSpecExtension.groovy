@@ -7,7 +7,6 @@ class PodSpecExtension implements Podspec {
 
     private Project project
     private Property<String> podName
-    private Property<String> podVersion
 
     PodSpecExtension(Project project) {
         this.project = project
@@ -17,10 +16,6 @@ class PodSpecExtension implements Podspec {
         this.podName = new Property(podName)
     }
 
-    void setPodVersion(Object podVersion) {
-        this.podVersion = new Property(podVersion)
-    }
-
     @Override
     String getPodName() {
         return podName?.get()
@@ -28,10 +23,6 @@ class PodSpecExtension implements Podspec {
 
     @Override
     String getPodVersion() {
-        return podVersion?.get() ?: getProjectVersion()
-    }
-
-    private String getProjectVersion() {
         return hasProjectVersion() ? project.version : null
     }
 

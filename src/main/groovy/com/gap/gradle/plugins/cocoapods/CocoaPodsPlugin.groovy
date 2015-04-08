@@ -1,6 +1,5 @@
 package com.gap.gradle.plugins.cocoapods
 
-import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -23,7 +22,7 @@ class CocoaPodsPlugin implements Plugin<Project> {
                 def originalFile = new File(project.rootDir, "${extension.podName}.podspec")
 
                 podspecFile = originalFile
-                tokens = [POD_NAME: extension.podName, POD_VERSION: extension.podVersion, ARTIFACT_URL: artifactUrl]
+                tokens = [POD_NAME: extension.podName, POD_VERSION: extension.podVersion]
             }
         }
 
@@ -33,16 +32,5 @@ class CocoaPodsPlugin implements Plugin<Project> {
                 podRepo = COCOAPODS_REPO_NAME
             }
         }
-    }
-
-    private String getArtifactUrl() {
-        def artifactoryRepo = project.uploadArchives.repositories.find { it.url }
-        def group = project.group.replaceAll('\\.', '/')
-
-        if (!artifactoryRepo) {
-            throw new GradleException('No Artifactory repository found for uploadArchives task')
-        }
-
-        "${artifactoryRepo.url}/${group}/${extension.podVersion}/${extension.podName}.framework.zip".toString()
     }
 }
