@@ -1,6 +1,8 @@
 package com.gap.gradle.plugins.xcode
 
 import com.gap.gradle.plugins.xcode.exceptions.InvalidXcodeConfigurationException
+import com.gap.gradle.plugins.xcode.exceptions.SigningIdentityNotFound
+import org.gradle.api.UnknownDomainObjectException
 
 import static org.apache.commons.lang.StringUtils.isBlank
 
@@ -33,11 +35,11 @@ class XcodeBuildConfig implements XcodeConfig {
     void setTarget(Object target) {
         this.target = new Property(target)
     }
-   
+
     void setConfiguration(Object configuration) {
         this.configuration = new Property(configuration)
     }
-    
+
     String getConfiguration() {
         return configuration.get()
     }
@@ -51,7 +53,29 @@ class XcodeBuildConfig implements XcodeConfig {
     }
 
     SigningIdentity getSigningIdentity() {
-        return signingIdentity?.get()
+        def identity = signingIdentity?.get()
+
+        if (!identity) return
+
+        if (isIdentityName(identity)) {
+            getIdentityByName(identity)
+        } else {
+            return identity
+        }
+    }
+
+    private boolean isIdentityName(identity) {
+        identity instanceof String
+    }
+
+    private SigningIdentity getIdentityByName(String identityName) {
+        try {
+            return extension.signing.getByName(identityName)
+        } catch (UnknownDomainObjectException e) {
+            throw new SigningIdentityNotFound(e.message
+                    + " Available Code Signing identidies: "
+                    + extension.signing.collect { it.name }.join(", "))
+        }
     }
 
     void setSigningIdentity(Object signingIdentity) {
