@@ -132,21 +132,22 @@ class GapXcodePlugin implements Plugin<Project> {
             if (taskGraph.hasTask(':xcodebuild')) {
                 extension.build.validate()
                 def buildConfig = extension.build
-                def signIdentity = buildConfig.signingIdentity
 
                 project.xcodebuild {
                     productName = buildConfig.productName
                     target = buildConfig.target
                     sdk = buildConfig.sdk
+                    configuration = buildConfig.configuration
                     symRoot = targetOutputDir()
-                    configuration = buildConfig.configuration 
-                    if (signIdentity != null) {                    
-                       signing {
-                           identity = signIdentity.description
-                           certificateURI = signIdentity.certificateURI
-                           certificatePassword = signIdentity.certificatePassword
-                           mobileProvisionURI = signIdentity.mobileProvisionURI
-                       }
+
+                    def signIdentity = buildConfig.signingIdentity
+                    if (signIdentity != null) {
+                        signing {
+                            identity = signIdentity.description
+                            certificateURI = signIdentity.certificateURI
+                            certificatePassword = signIdentity.certificatePassword
+                            mobileProvisionURI = signIdentity.mobileProvisionURI
+                        }
                     }
 
                     if (sdk == 'iphonesimulator') {
@@ -165,28 +166,24 @@ class GapXcodePlugin implements Plugin<Project> {
             }
 
             if (taskGraph.hasTask(':uploadArchives')) {
-                def productName = extension.build.productName
-                def target = extension.build.target
 
-                extension.archive.validate()
-                project.version = extension.archive.version
+                project.fileTree(dir: getArtifactsDir()).each { file ->
+                    println "Found artifact ${file.absolutePath}"
 
-                project.artifacts {
-                    def chosenIdentity = extension.build.signingIdentity
-                    archives name: productName, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'ipa')
-                    archives name: productName, classifier: 'iphoneos', file: fullPathToArtifact(chosenIdentity, 'iphoneos', 'zip')
-                    archives name: productName, classifier: 'iphonesimulator', file: fullPathToArtifact(chosenIdentity, 'iphonesimulator', 'zip')
+                    (file.name =~ /^(\w+?)-(.*)\.(ipa|zip)$/).each { match, artifactName, artifactClassifier, type ->
 
-                    def developmentIdentity = extension.signing.development
+                        printf "Name: %s\nClassifier: %s\nType: %s\n\n", artifactName, artifactClassifier, type
 
-                    File devIpa = fullPathToArtifact(developmentIdentity, 'iphoneos', 'ipa')
-                    if (devIpa.exists()) {
-                        archives name: productName, classifier: 'iphoneos-dev', file: devIpa
-                        archives name: productName, classifier: 'iphoneos-dev', file: fullPathToArtifact(developmentIdentity, 'iphoneos', 'zip')
+                        project.artifacts.add("archives", file) {
+                            name artifactName
+                            classifier artifactClassifier
+                        }
                     }
                 }
 
+                def target = extension.build.target
                 def airwatchConfigForTarget = "airwatchConfig/${target}"
+
                 if (project.file(airwatchConfigForTarget).exists()) {
                     project.airwatchConfigZip.from airwatchConfigForTarget
                     project.artifacts {
@@ -196,15 +193,13 @@ class GapXcodePlugin implements Plugin<Project> {
                         }
                     }
                 }
+
             }
         }
     }
 
     private File targetOutputDir() {
-        def appName = extension.build.productName
-        def basePath = project.buildDir
-
-        project.file("${basePath}/${appName}")
+        project.file("${project.buildDir}/${extension.build.productName}")
     }
 
     private void moveGeneratedArtifactsToArtifactsDirectory() {
@@ -232,12 +227,8 @@ class GapXcodePlugin implements Plugin<Project> {
         new File(project.buildDir, 'artifacts')
     }
 
-    private File fullPathToArtifact(SigningIdentity identity, String sdk, String type) {
-        new File(getArtifactsDir(), artifactFileName(extension.build.productName, sdk, identity, type))
-    }
-
     private static String artifactFileName(String productName, String sdk, SigningIdentity codeSign, String extension) {
-        (codeSign != null)? "${productName}-${sdk}-${codeSign.name}.${extension}" : "${productName}-${sdk}.${extension}"
+        (codeSign != null) ? "${productName}-${sdk}-${codeSign.name}.${extension}" : "${productName}-${sdk}.${extension}"
     }
 
     private String pathToRootPlist() {
