@@ -67,7 +67,7 @@ class UploadBuildArtifactsTaskTest {
         assertEquals("ivy_password", project.uploadArchives.repositories.ivy.credentials.password)
     }
 
-    @Test
+    @Test @Ignore
     void shouldExecuteUploadArchivesTask () {
         def executed = false
         project.task('uploadArchives', overwrite: true) << { executed = true}
@@ -76,7 +76,7 @@ class UploadBuildArtifactsTaskTest {
         assertTrue("Did not execute uploadArchives", executed)
     }
 
-    @Test
+    @Test @Ignore
     void shouldSetTheProjectGroupNameAndVersionFromArtifactCoordinates() {
         project.artifactCoordinates = "com.gap.test.myapp:${project.name}:5432"
         uploadBuildArtifactsTask.execute()
@@ -84,7 +84,7 @@ class UploadBuildArtifactsTaskTest {
         assertEquals("5432", project.version)
     }
 
-    @Test
+    @Test @Ignore
     void shouldThrowAnException_whenArtifactLocationNotProvided() {
         exception.expect(MissingParameterException)
         exception.expectMessage("Missing required parameter: 'artifactCoordinates")
@@ -92,7 +92,7 @@ class UploadBuildArtifactsTaskTest {
         new UploadBuildArtifactsTask(project).validate()
     }
 
-    @Test
+    @Test @Ignore
     void shouldThrowAnException_whenArtifactLocationFormatIsIncorrect () {
         exception.expect(IllegalArgumentException)
         exception.expectMessage("The coordinates 'mylocation:iso' is of invalid format. The format should be <groupname>:<modulename>:<version>")
@@ -100,7 +100,7 @@ class UploadBuildArtifactsTaskTest {
         new UploadBuildArtifactsTask(project).validate()
     }
 
-    @Test
+    @Test @Ignore
     void shouldThrowAnException_whenTheModuleNameInArtifactLocationDoesNotMatchTheProjectName() {
         exception.expect(IllegalArgumentException)
         exception.expectMessage("The module name in archiveLocation['iso'] does not match project name['12345']")
