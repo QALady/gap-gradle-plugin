@@ -45,7 +45,14 @@ class UploadBuildArtifactsTask extends com.gap.pipeline.tasks.WatchmenTask {
                 doUpload(project)
             }
             repositories {
-                add project.repositories.wm_local_non_prod
+                ivy {
+-                    layout "maven"
+-                    url project.ivy.url
+-                    credentials {
+-                        username project.ivy.userName
+-                        password project.ivy.password
+-                    }
+-                }
             }
         }
         project.uploadArchives.execute()
