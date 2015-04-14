@@ -46,14 +46,15 @@ class UploadBuildArtifactsTask extends com.gap.pipeline.tasks.WatchmenTask {
             }
             repositories {
                 ivy {
--                    layout "maven"
--                    url project.ivy.url
--                    credentials {
--                        username project.ivy.userName
--                        password project.ivy.password
--                    }
--                }
+                    layout "maven"
+                    url project.ivy.url
+                    credentials {
+                        username project.ivy.userName
+                        password project.ivy.password
+                    }
+                }
             }
+
         }
         project.uploadArchives.execute()
     }
