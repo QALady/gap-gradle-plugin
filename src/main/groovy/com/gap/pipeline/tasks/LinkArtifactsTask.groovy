@@ -1,10 +1,11 @@
 package com.gap.pipeline.tasks
 
-import com.gap.gradle.utils.ShellCommand
+import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 import groovy.io.FileType
+import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.jsoup.Jsoup
@@ -17,28 +18,27 @@ import org.jsoup.nodes.Document
 class LinkArtifactsTask extends WatchmenTask {
 
     private static final String DIR_HTML = "dir.html"
+    private static final Log log = LogFactory.getLog(LinkArtifactsTask)
 
-    private Project project
     CommanderClient commanderClient
-    def artifactLocation
-    String commanderArtifactLocation
-    def log = LogFactory.getLog(LinkArtifactsTask)
+    CommandRunner commandRunner
+    String artifactsSource
+    String artifactsDestination
 
-    LinkArtifactsTask(Project project) {
+    LinkArtifactsTask(Project project, CommanderClient commanderClient) {
         super(project)
-        this.project = project
-        this.commanderClient = new CommanderClient()
-        this.artifactLocation = project.artifactLocation
-        this.commanderArtifactLocation = "${commanderClient.currentJobDir}/artifacts"
+        this.commanderClient = commanderClient
+        this.commandRunner = new CommandRunner(project)
+        this.artifactsSource = project.artifactLocation
+        this.artifactsDestination = "${commanderClient.currentJobDir}/artifacts"
     }
 
-    private void copyArtifacts() {
-        ShellCommand shellCommandExecutor = new ShellCommand()
-        shellCommandExecutor.execute("cp -R ${artifactLocation} ${commanderArtifactLocation}")
+    void copyArtifacts() {
+        commandRunner.run("cp", "-R", artifactsSource, artifactsDestination)
     }
 
-    private void createHtmlIndex() {
-        def dir = new File(commanderArtifactLocation)
+    void createHtmlIndex() {
+        def dir = new File(artifactsDestination)
 
         runTreeCommand(dir)
 
@@ -47,14 +47,13 @@ class LinkArtifactsTask extends WatchmenTask {
         }
     }
 
-    private void runTreeCommand(File dir) {
-        ShellCommand shellCmdExecutor = new ShellCommand(dir)
-        shellCmdExecutor.execute("tree --dirsfirst -CFo ${DIR_HTML} -H . -L 1 -I ${DIR_HTML} -T ${dir.absolutePath}")
+    void runTreeCommand(File dir) {
+        commandRunner.run(dir, "tree", "--dirsfirst", "-CF", "-o", DIR_HTML, "-H", ".", "-L", "1", "-T", dir, "-I", DIR_HTML)
 
         cleanupHtmlIndex(dir)
     }
 
-    private void cleanupHtmlIndex(File dir) {
+    void cleanupHtmlIndex(File dir) {
         File originalFile = new File(dir, DIR_HTML)
         Document htmlContent = Jsoup.parse(originalFile, "UTF-8")
 
@@ -64,8 +63,8 @@ class LinkArtifactsTask extends WatchmenTask {
         originalFile.write(htmlContent.outerHtml())
     }
 
-    private void linkArtifacts() {
-        commanderClient.addLink("${commanderArtifactLocation}/${DIR_HTML}", commanderClient.getJobId())
+    void linkArtifacts() {
+        commanderClient.addLink("${artifactsDestination}/${DIR_HTML}".toString(), commanderClient.getJobId())
     }
 
     def execute() {
