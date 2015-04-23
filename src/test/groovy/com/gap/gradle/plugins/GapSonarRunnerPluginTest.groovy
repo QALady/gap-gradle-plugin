@@ -73,14 +73,15 @@ class GapSonarRunnerPluginTest {
     }
 
     @Test
-    void sonar_shouldRunWithFutureDateInLocal() {
+    void sonar_shouldRunWithNextDateInLocal() {
         def commanderMock = new MockFor(CommanderClient)
+        def nextDay = new Date().next()
         commanderMock.demand.isRunningInPipeline {
             false
         }
         commanderMock.use {
             project.apply plugin: 'gap-sonar-runner'
-            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.projectDate'), is('2050-12-31'))
+            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.projectDate'), is(nextDay.format('YYYY-MM-dd')))
         }
     }
 

@@ -6,6 +6,8 @@ import org.gradle.api.Project
 
 class GapSonarRunnerPlugin implements Plugin<Project> {
 
+    private static final String SONAR_DATE_FORMAT = "YYYY-MM-dd"
+
     @Override
     void apply(Project project) {
 
@@ -28,6 +30,8 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
             }
         }
 
+        def nextDay = new Date().next()
+
         project.sonarRunner {
             sonarProperties {
                 property "sonar.host.url", "http://sonar001.phx.gapinc.dev:9000/"
@@ -48,7 +52,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                     //Hardcoded to resolve issue with timezones.
                     //Loca Timezone & Pipeline server timezones are different and
                     //local analysis is running behind latest snapshot time.
-                    property "sonar.projectDate", "2050-12-31"
+                    property "sonar.projectDate", "${nextDay.format(SONAR_DATE_FORMAT)}"
                 } else {
                     property "sonar.analysis.mode", "analysis"
                 }
