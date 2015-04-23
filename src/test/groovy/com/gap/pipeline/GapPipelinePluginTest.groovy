@@ -162,6 +162,11 @@ class GapPipelinePluginTest {
     }
 
     @Test
+    void linkArtifactsTaskIsAddedToTheProject(){
+        taskShouldExist('linkArtifacts', project)
+    }
+
+    @Test
     void shouldExecuteUploadBuildArtifactsTask(){
         def taskMock = new MockFor(UploadBuildArtifactsTask)
         taskMock.demand.execute { }

@@ -44,6 +44,10 @@ class GapPipelinePlugin implements Plugin<Project> {
       new UploadBuildArtifactsTask(project).execute()
     }
 
+    project.task('linkArtifacts') << {
+      new LinkArtifactsTask(project, ecclient).execute()
+    }
+
     if(project.getGradle().startParameter.taskNames.contains('downloadArtifacts')){
       project = new DownloadArtifactsTask(project).configure()
     }
