@@ -15,6 +15,8 @@ import static org.testng.Assert.assertEquals
 
 class LinkArtifactsTaskTest {
 
+    private static final String HTML_OUTPUT = "build-artifacts.html"
+
     private Project project
     private LinkArtifactsTask task
     private CommanderClient commanderClientMock
@@ -46,7 +48,7 @@ class LinkArtifactsTaskTest {
     @Test
     public void shouldCreateHtmlIndex() throws Exception {
         def baseDir = new File("/tmp/artifacts")
-        def dirHtml = new File(baseDir, "dir.html")
+        def dirHtml = new File(baseDir, HTML_OUTPUT)
 
         def jsoupMock = new MockFor(Jsoup)
 
@@ -61,14 +63,14 @@ class LinkArtifactsTaskTest {
             task.createHtmlIndex()
         }
 
-        verify(commandRunnerMock).run(baseDir, "tree", "--dirsfirst", "-CF", "-o", "dir.html", "-H", ".", "-L", "1", "-T", baseDir, "-I", "dir.html")
+        verify(commandRunnerMock).run(baseDir, "tree", "--dirsfirst", "-CF", "-o", HTML_OUTPUT, "-H", ".", "-L", "1", "-T", baseDir, "-I", HTML_OUTPUT)
     }
 
     @Test
     public void shouldLinkArtifacts() throws Exception {
         task.linkArtifacts()
 
-        verify(commanderClientMock).addLink("/tmp/artifacts/dir.html", "1")
+        verify(commanderClientMock).addLink(HTML_OUTPUT, "1")
     }
 
 }
