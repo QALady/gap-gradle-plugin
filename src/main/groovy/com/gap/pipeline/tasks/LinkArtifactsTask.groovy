@@ -17,7 +17,7 @@ import org.jsoup.nodes.Document
 
 class LinkArtifactsTask extends WatchmenTask {
 
-    private static final String DIR_HTML = "dir.html"
+    private static final String DIR_HTML = "build-artifacts.html"
     private static final Log log = LogFactory.getLog(LinkArtifactsTask)
 
     CommanderClient commanderClient
@@ -64,7 +64,7 @@ class LinkArtifactsTask extends WatchmenTask {
     }
 
     void linkArtifacts() {
-        commanderClient.addLink("${artifactsDestination}/${DIR_HTML}".toString(), commanderClient.getJobId())
+        commanderClient.addLink(DIR_HTML, commanderClient.jobId)
     }
 
     def execute() {

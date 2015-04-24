@@ -33,6 +33,7 @@ public class CommanderClientTest {
     @Test
     public void addLink_shouldInvokeEcToolToCreateLinks(){
         def jobId = "1254321"
+        environmentStub.setValue("COMMANDER_WORKSPACE_NAME", "default")
         commander.addLink("changelist.logger", jobId)
         verify(mockShellCommand).execute(['ectool', 'setProperty', '/jobs[1254321]/report-urls/changelist', '/commander/jobs/1254321/default/changelist.logger'])
     }
@@ -47,6 +48,12 @@ public class CommanderClientTest {
     public void getCurrentJobDir_shouldReturnDirectoryOfCurrentJob(){
         environmentStub.setValue('COMMANDER_WORKSPACE_UNIX', '/workspace/path/dirName')
         assertEquals("/workspace/path/dirName", commander.getCurrentJobDir())
+    }
+
+    @Test
+    public void getWorkspaceName_shouldReturnNameOfCurrentWorkspace(){
+        environmentStub.setValue("COMMANDER_WORKSPACE_NAME", "workspaceName")
+        assertEquals("workspaceName", commander.getWorkspaceName())
     }
 
     @Test

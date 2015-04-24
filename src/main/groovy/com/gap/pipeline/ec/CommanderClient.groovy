@@ -188,7 +188,7 @@ class CommanderClient {
 
 	def addLink(filename, jobid) {
 		def filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'))
-		setECProperty("/jobs[${jobid}]/report-urls/${filenameWithoutExtension}", "/commander/jobs/${jobid}/default/${filename}")
+		setECProperty("/jobs[${jobid}]/report-urls/${filenameWithoutExtension}", "/commander/jobs/${jobid}/${getWorkspaceName()}/${filename}")
 	}
 
 	def addLinkToUrl(linkName, linkUrl, jobId = getJobId()) {
@@ -205,6 +205,10 @@ class CommanderClient {
 
 	def getCurrentJobDir() {
 		environment.getValue('COMMANDER_WORKSPACE_UNIX')
+	}
+
+	def getWorkspaceName() {
+		environment.getValue('COMMANDER_WORKSPACE_NAME')
 	}
 
 	def setDefaultParameterValue(fullProcedureName, parameterName, defaultValue) {
