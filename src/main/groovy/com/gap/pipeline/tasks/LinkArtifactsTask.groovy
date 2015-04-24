@@ -60,6 +60,11 @@ class LinkArtifactsTask extends WatchmenTask {
         htmlContent.select("hr").remove()
         htmlContent.select("p.version").remove()
 
+        htmlContent.select("a.DIR").each {
+            def newHref = it.attr("href") + DIR_HTML
+            it.attr("href", newHref)
+        }
+
         originalFile.write(htmlContent.outerHtml())
     }
 
