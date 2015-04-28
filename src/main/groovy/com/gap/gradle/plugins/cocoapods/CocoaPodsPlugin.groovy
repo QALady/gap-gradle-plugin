@@ -1,5 +1,6 @@
 package com.gap.gradle.plugins.cocoapods
 
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -33,5 +34,24 @@ class CocoaPodsPlugin implements Plugin<Project> {
                 podRepo = COCOAPODS_REPO_NAME
             }
         }
+    }
+
+    private File getOriginalPodspec() {
+        def fileTree = project.fileTree(dir: project.rootDir).matching {
+            include "**/${podspec.name}.podspec"
+            exclude project.buildDir.name
+        }
+
+        if (fileTree.isEmpty()) {
+            throw new GradleException("Unable to find ${podspec.name}.podspec. Please check `podspec.name.`")
+        }
+
+        def filesFound = fileTree.files.collect { "- ${it.absolutePath}" }
+
+        if (filesFound.size() > 1) {
+            throw new GradleException("Ambigous *.podspec files found:\n${filesFound.join("\n")}")
+        }
+
+        return fileTree.getSingleFile()
     }
 }
