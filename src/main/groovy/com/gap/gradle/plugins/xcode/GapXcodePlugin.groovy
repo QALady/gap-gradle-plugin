@@ -3,6 +3,7 @@ package com.gap.gradle.plugins.xcode
 import com.gap.gradle.plugins.xcode.tasks.GcovAnalysisTask
 import com.gap.gradle.plugins.xcode.tasks.ReplaceTokensInFile
 import com.gap.gradle.plugins.xcode.tasks.TransformJUnitXmlReportToHTMLTask
+import com.gap.gradle.plugins.xcode.tasks.BuildHybridSDKTask
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -88,6 +89,12 @@ class GapXcodePlugin implements Plugin<Project> {
         }
 
         project.task('airwatchConfigZip', type: Zip)
+
+        project.task('buildHybridSDK', type: BuildHybridSDKTask) {
+            this.project.afterEvaluate {
+                sdkScheme this.project.xcodebuild.scheme
+            }
+        }
 
         project.task('transformJUnitXmlReportToHTML', type: TransformJUnitXmlReportToHTMLTask) {
             sourceFilePath "${project.buildDir}/test/test-results.xml"
