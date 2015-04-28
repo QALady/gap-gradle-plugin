@@ -6,23 +6,32 @@ import org.gradle.api.Project
 class PodSpecExtension implements Podspec {
 
     private Project project
-    private Property<String> podName
+    private Property<String> name
+    private Property<String> version
 
     PodSpecExtension(Project project) {
         this.project = project
     }
 
-    void setPodName(Object podName) {
-        this.podName = new Property(podName)
+    void setName(Object name) {
+        this.name = new Property(name)
+    }
+
+    void setVersion(Object version) {
+        this.version = new Property(version)
     }
 
     @Override
-    String getPodName() {
-        return podName?.get()
+    String getName() {
+        return name?.get()
     }
 
     @Override
-    String getPodVersion() {
+    String getVersion() {
+        return version?.get() ?: getProjectVersion()
+    }
+
+    private String getProjectVersion() {
         return hasProjectVersion() ? project.version : null
     }
 

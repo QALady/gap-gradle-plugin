@@ -18,6 +18,10 @@ class UpdatePodspecTask extends DefaultTask {
             throw new GradleException("Please define `podspecFile`.")
         }
 
+        tokens.each { key, value ->
+            println "Replacing token $key with value \"$value\""
+        }
+
         project.copy {
             from podspecFile.parentFile
             into project.buildDir
@@ -25,10 +29,6 @@ class UpdatePodspecTask extends DefaultTask {
             include podspecFile.name
 
             filter(ReplaceTokens, tokens: tokens)
-        }
-
-        tokens.each { key, value ->
-            println "Replaced token $key with value \"$value\""
         }
 
         output = new File(project.buildDir, podspecFile.name)
