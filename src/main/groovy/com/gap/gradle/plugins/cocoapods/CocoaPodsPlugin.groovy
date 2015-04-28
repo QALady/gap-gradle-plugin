@@ -9,6 +9,7 @@ class CocoaPodsPlugin implements Plugin<Project> {
 
     private Project project
     private PodSpecExtension extension
+    private PodspecValidator podspecValidator = new PodspecValidator()
 
     @Override
     void apply(Project project) {
@@ -17,7 +18,7 @@ class CocoaPodsPlugin implements Plugin<Project> {
 
         def updatePodspec = project.task("updatePodspec", type: UpdatePodspecTask) {
             doFirst {
-                PodspecValidator.validate(extension)
+                podspecValidator.validate(extension)
 
                 def originalFile = new File(project.rootDir, "${extension.podName}.podspec")
 

@@ -9,13 +9,14 @@ import static org.junit.Assert.fail
 
 public class PodspecValidatorTest {
     private podspec = new FakePodspec()
+    private podspecValidator = new PodspecValidator()
 
     @Test
     public void throwsExepctionIfPodNameNotDefined() throws Exception {
         podspec.podName = null
 
         try {
-            PodspecValidator.validate(podspec)
+            podspecValidator.validate(podspec)
 
             fail("Exception not thrown")
         } catch (GradleException e) {
@@ -28,7 +29,7 @@ public class PodspecValidatorTest {
         podspec.podVersion = null
 
         try {
-            PodspecValidator.validate(podspec)
+            podspecValidator.validate(podspec)
 
             fail("Exception not thrown")
         } catch (GradleException e) {
