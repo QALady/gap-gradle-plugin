@@ -13,7 +13,6 @@ public class CocoaPodsPluginTest {
     private static final String PUSH_TASK = "pushPodspec"
 
     private Project project
-    private CocoaPodsPlugin plugin
 
     @Before
     public void setUp() throws Exception {

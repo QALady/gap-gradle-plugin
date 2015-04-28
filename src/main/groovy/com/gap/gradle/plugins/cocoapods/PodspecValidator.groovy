@@ -6,13 +6,13 @@ import static org.apache.commons.lang.StringUtils.isBlank
 
 class PodspecValidator {
 
-    def validate(Podspec spec) {
-        if (isBlank(spec.podName)) {
-            throw new GradleException("Please specify a `podName`.")
+    def validate(Podspec podspec) {
+        if (isBlank(podspec.name)) {
+            throw new GradleException("Please specify the `podspec.name`.")
         }
 
-        if (isBlank(spec.podVersion)) {
-            throw new GradleException("Please specify the `podVersion` or `project.version`.")
+        if (isBlank(podspec.version)) {
+            throw new GradleException("Please specify the `podspec.version` or `project.version`.")
         }
     }
 }

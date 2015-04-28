@@ -13,33 +13,33 @@ public class PodspecValidatorTest {
 
     @Test
     public void throwsExepctionIfPodNameNotDefined() throws Exception {
-        podspec.podName = null
+        podspec.name = null
 
         try {
             podspecValidator.validate(podspec)
 
             fail("Exception not thrown")
         } catch (GradleException e) {
-            assertThat(e.message, containsString("podName"))
+            assertThat(e.message, containsString("podspec.name"))
         }
     }
 
     @Test
     public void throwsExepctionIfPodVersionNotDefined() throws Exception {
-        podspec.podVersion = null
+        podspec.version = null
 
         try {
             podspecValidator.validate(podspec)
 
             fail("Exception not thrown")
         } catch (GradleException e) {
-            assertThat(e.message, containsString("podVersion"))
+            assertThat(e.message, containsString("podspec.version"))
             assertThat(e.message, containsString("project.version"))
         }
     }
 }
 
 private class FakePodspec implements Podspec {
-    String podName = "FakePod"
-    String podVersion = "FakeVersion"
+    String name = "FakePod"
+    String version = "FakeVersion"
 }

@@ -10,37 +10,37 @@ import static org.testng.Assert.assertEquals
 public class PodSpecExtensionTest {
 
     private Project project
-    private PodSpecExtension extension
+    private PodSpecExtension podspec
 
     @Before
     public void setUp() throws Exception {
         project = ProjectBuilder.builder().build()
 
-        extension = new PodSpecExtension(project)
+        podspec = new PodSpecExtension(project)
     }
 
     @Test
     public void supportsPropertiesAsClosure() throws Exception {
-        extension.podName = { "someName" }
-        extension.podVersion = { "someVersion" }
+        podspec.name = { "someName" }
+        podspec.version = { "someVersion" }
 
-        assertEquals(extension.podName, "someName")
-        assertEquals(extension.podVersion, "someVersion")
+        assertEquals(podspec.name, "someName")
+        assertEquals(podspec.version, "someVersion")
     }
 
     @Test
     public void supportsPropertiesAsString() throws Exception {
-        extension.podName = "someName"
-        extension.podVersion = "someVersion"
+        podspec.name = "someName"
+        podspec.version = "someVersion"
 
-        assertEquals(extension.podName, "someName")
-        assertEquals(extension.podVersion, "someVersion")
+        assertEquals(podspec.name, "someName")
+        assertEquals(podspec.version, "someVersion")
     }
 
     @Test
     public void usesProjecVersionAsPodVersion() throws Exception {
         project.version = "1.0.0"
 
-        assertEquals(extension.podVersion, "1.0.0")
+        assertEquals(podspec.version, "1.0.0")
     }
 }
