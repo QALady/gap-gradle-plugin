@@ -23,18 +23,22 @@ public class PodSpecExtensionTest {
     public void supportsPropertiesAsClosure() throws Exception {
         podspec.name = { "someName" }
         podspec.version = { "someVersion" }
+        podspec.sourceLocation = { "someUrl" }
 
         assertEquals(podspec.name, "someName")
         assertEquals(podspec.version, "someVersion")
+        assertEquals(podspec.sourceLocation, "someUrl")
     }
 
     @Test
     public void supportsPropertiesAsString() throws Exception {
         podspec.name = "someName"
         podspec.version = "someVersion"
+        podspec.sourceLocation = "someUrl"
 
         assertEquals(podspec.name, "someName")
         assertEquals(podspec.version, "someVersion")
+        assertEquals(podspec.sourceLocation, "someUrl")
     }
 
     @Test

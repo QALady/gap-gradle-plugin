@@ -14,5 +14,9 @@ class PodspecValidator {
         if (isBlank(podspec.version)) {
             throw new GradleException("Please specify the `podspec.version` or `project.version`.")
         }
+
+        if (isBlank(podspec.sourceLocation)) {
+            throw new GradleException("Please specify the `podspec.sourceLocation`.")
+        }
     }
 }

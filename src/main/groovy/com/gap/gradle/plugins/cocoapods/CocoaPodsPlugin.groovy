@@ -22,7 +22,7 @@ class CocoaPodsPlugin implements Plugin<Project> {
                 podspecValidator.validate(podspec)
 
                 podspecFile = getOriginalPodspec()
-                tokens = [POD_NAME: podspec.name, POD_VERSION: podspec.version]
+                tokens = [POD_NAME: podspec.name, POD_VERSION: podspec.version, POD_SOURCE_LOCATION: podspec.sourceLocation]
             }
         }
 

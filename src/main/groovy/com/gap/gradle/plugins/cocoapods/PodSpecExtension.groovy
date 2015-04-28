@@ -8,6 +8,7 @@ class PodSpecExtension implements Podspec {
     private Project project
     private Property<String> name
     private Property<String> version
+    private Property<String> sourceLocation
 
     PodSpecExtension(Project project) {
         this.project = project
@@ -21,6 +22,10 @@ class PodSpecExtension implements Podspec {
         this.version = new Property(version)
     }
 
+    void setSourceLocation(Object sourceLocation) {
+        this.sourceLocation = new Property(sourceLocation)
+    }
+
     @Override
     String getName() {
         return name?.get()
@@ -29,6 +34,11 @@ class PodSpecExtension implements Podspec {
     @Override
     String getVersion() {
         return version?.get() ?: getProjectVersion()
+    }
+
+    @Override
+    String getSourceLocation() {
+        return sourceLocation?.get()
     }
 
     private String getProjectVersion() {
