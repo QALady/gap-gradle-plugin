@@ -21,9 +21,7 @@ class CocoaPodsPlugin implements Plugin<Project> {
             doFirst {
                 podspecValidator.validate(podspec)
 
-                def originalFile = new File(project.rootDir, "${extension.podName}.podspec")
-
-                podspecFile = originalFile
+                podspecFile = getOriginalPodspec()
                 tokens = [POD_NAME: podspec.name, POD_VERSION: podspec.version]
             }
         }
