@@ -91,6 +91,11 @@ class GapSonarRunnerPluginTest {
         commanderMock.demand.isRunningInPipeline() {
             true
         }
+
+        commanderMock.demand.getCurrentProjectName(){
+            "currentProjectName"
+        }
+
         commanderMock.use {
             project.apply plugin: 'gap-sonar-runner'
             assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.analysis.mode'), is('analysis'))

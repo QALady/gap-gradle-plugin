@@ -7,6 +7,7 @@ import org.gradle.api.Project
 class GapSonarRunnerPlugin implements Plugin<Project> {
 
     private static final String SONAR_DATE_FORMAT = "YYYY-MM-dd"
+    CommanderClient commanderClient = new CommanderClient();
 
     @Override
     void apply(Project project) {
@@ -55,6 +56,9 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                     property "sonar.projectDate", "${nextDay.format(SONAR_DATE_FORMAT)}"
                 } else {
                     property "sonar.analysis.mode", "analysis"
+
+                    String ecProjectName = commanderClient.getCurrentProjectName();
+                    println("**** Project in SonarRunner is : ${ecProjectName} ****")
                 }
             }
         }
@@ -64,12 +68,6 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
         project.tasks.create(name: 'sonar', dependsOn: 'sonarRunner') << {
             new SonarLinkTask(project).execute()
         }
-/*
-        CommanderClient commanderClient = new CommanderClient();
-        String ecProjectName = commanderClient.getCurrentProjectName();
-        SegmentRegistry segmentRegistry= new SegmentRegistry(commanderClient);
-        println("**** Project in SonarRunner is : ${ecProjectName} ****")
-*/
     }
 
     private boolean isLocal() {
