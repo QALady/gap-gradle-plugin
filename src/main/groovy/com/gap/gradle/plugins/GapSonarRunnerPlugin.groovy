@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins
-
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.SonarLinkTask
 import org.gradle.api.Plugin
@@ -65,12 +64,12 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
         project.tasks.create(name: 'sonar', dependsOn: 'sonarRunner') << {
             new SonarLinkTask(project).execute()
         }
-
+/*
         CommanderClient commanderClient = new CommanderClient();
         String ecProjectName = commanderClient.getCurrentProjectName();
-        //SegmentRegistry segmentRegistry= new SegmentRegistry(commanderClient);
+        SegmentRegistry segmentRegistry= new SegmentRegistry(commanderClient);
         println("**** Project in SonarRunner is : ${ecProjectName} ****")
-
+*/
     }
 
     private boolean isLocal() {
