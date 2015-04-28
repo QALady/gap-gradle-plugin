@@ -22,15 +22,19 @@ public class PodSpecExtensionTest {
     @Test
     public void supportsPropertiesAsClosure() throws Exception {
         extension.podName = { "someName" }
+        extension.podVersion = { "someVersion" }
 
         assertEquals(extension.podName, "someName")
+        assertEquals(extension.podVersion, "someVersion")
     }
 
     @Test
     public void supportsPropertiesAsString() throws Exception {
         extension.podName = "someName"
+        extension.podVersion = "someVersion"
 
         assertEquals(extension.podName, "someName")
+        assertEquals(extension.podVersion, "someVersion")
     }
 
     @Test

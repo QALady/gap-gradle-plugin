@@ -33,6 +33,7 @@ public class PodspecValidatorTest {
 
             fail("Exception not thrown")
         } catch (GradleException e) {
+            assertThat(e.message, containsString("podVersion"))
             assertThat(e.message, containsString("project.version"))
         }
     }

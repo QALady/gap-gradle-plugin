@@ -12,7 +12,7 @@ class PodspecValidator {
         }
 
         if (isBlank(spec.podVersion)) {
-            throw new GradleException("Please specify the `project.version`.")
+            throw new GradleException("Please specify the `podVersion` or `project.version`.")
         }
     }
 }
