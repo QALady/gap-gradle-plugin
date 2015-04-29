@@ -4,14 +4,14 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
-class UploadPodspecTask extends DefaultTask {
+class PublishPodTask extends DefaultTask {
 
     private final CocoaPodsCommandRunner cocoapods
 
     File podspecFile
     String podRepo
 
-    UploadPodspecTask() {
+    PublishPodTask() {
         cocoapods = new CocoaPodsCommandRunner(project)
     }
 

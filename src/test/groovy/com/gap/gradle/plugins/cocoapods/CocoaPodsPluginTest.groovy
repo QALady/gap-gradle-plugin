@@ -27,7 +27,7 @@ public class CocoaPodsPluginTest {
         taskShouldBeOfType(UPDATE_TASK, UpdatePodspecTask, project)
 
         taskShouldExist(PUSH_TASK, project)
-        taskShouldBeOfType(PUSH_TASK, UploadPodspecTask, project)
+        taskShouldBeOfType(PUSH_TASK, PublishPodTask, project)
 
         taskShouldDependOn(PUSH_TASK, UPDATE_TASK, project)
     }

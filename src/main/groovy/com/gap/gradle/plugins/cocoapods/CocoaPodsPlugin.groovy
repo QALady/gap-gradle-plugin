@@ -26,7 +26,7 @@ class CocoaPodsPlugin implements Plugin<Project> {
             }
         }
 
-        project.task("pushPodspec", type: UploadPodspecTask, dependsOn: "updatePodspec") {
+        project.task("publishPod", type: PublishPodTask, dependsOn: "updatePodspec") {
             doFirst {
                 podspecFile = updatePodspec.output
                 podRepo = COCOAPODS_REPO_NAME
