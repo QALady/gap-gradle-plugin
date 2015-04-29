@@ -46,7 +46,7 @@ class BuildHybridSDKTask extends DefaultTask {
         project.artifacts {
             hybridSDK hydridSDKFile
         }
-
+/*
         project.uploadHybridSDK {
             repositories {
                 ivy {
@@ -63,7 +63,7 @@ class BuildHybridSDKTask extends DefaultTask {
         project.uploadHybridSDK.repositories {
             add project.repositories.wm_local_non_prod
         }
-        project.uploadHybridSDK.execute()
+        project.uploadHybridSDK.execute() */
     }
 
 }
