@@ -10,7 +10,7 @@ import static helpers.Assert.*
 public class CocoaPodsPluginTest {
 
     private static final String UPDATE_TASK = "updatePodspec"
-    private static final String PUSH_TASK = "pushPodspec"
+    private static final String PUBLISH_TASK = "publishPod"
 
     private Project project
 
@@ -26,9 +26,9 @@ public class CocoaPodsPluginTest {
         taskShouldExist(UPDATE_TASK, project)
         taskShouldBeOfType(UPDATE_TASK, UpdatePodspecTask, project)
 
-        taskShouldExist(PUSH_TASK, project)
-        taskShouldBeOfType(PUSH_TASK, PublishPodTask, project)
+        taskShouldExist(PUBLISH_TASK, project)
+        taskShouldBeOfType(PUBLISH_TASK, PublishPodTask, project)
 
-        taskShouldDependOn(PUSH_TASK, UPDATE_TASK, project)
+        taskShouldDependOn(PUBLISH_TASK, UPDATE_TASK, project)
     }
 }
