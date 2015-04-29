@@ -30,7 +30,9 @@ class GapiOSSonarRunnerPlugin implements Plugin<Project> {
             }
         }
 
-        project.tasks.sonarRunner.dependsOn.clear()
+        //project.tasks.sonarRunner.dependsOn.clear()
+
+        project.tasks.sonarRunner.dependsOn << project.tasks.findAll { it.name.equals('test') }
 
         project.afterEvaluate {
             configureGcovReportsPath(it)

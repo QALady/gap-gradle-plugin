@@ -24,11 +24,11 @@ class BuildHybridSDKTask extends DefaultTask {
         def commandRunner = new CommandRunner(project)
 
         project.copy {
-            from "build/${sdkScheme}/Release-iphoneos/${sdkScheme}.framework/"
-            into "build/DerivedData-universal/${sdkScheme}.framework/"
+            from "${project.buildDir}/${sdkScheme}/Release-iphoneos/${sdkScheme}.framework/"
+            into "${project.buildDir}/DerivedData-universal/${sdkScheme}.framework/"
         }
 
-        commandRunner.run("lipo", "-create", "-output", "build/DerivedData-universal/${sdkScheme}.framework/${sdkScheme}", "build/${sdkScheme}/Release-iphonesimulator/${sdkScheme}.framework/${sdkScheme}", "build/${sdkScheme}/Release-iphoneos/${sdkScheme}.framework/${sdkScheme}")
+        commandRunner.run("lipo", "-create", "-output", "${project.buildDir}/DerivedData-universal/${sdkScheme}.framework/${sdkScheme}", "${project.buildDir}/${sdkScheme}/Release-iphonesimulator/${sdkScheme}.framework/${sdkScheme}", "${project.buildDir}/${sdkScheme}/Release-iphoneos/${sdkScheme}.framework/${sdkScheme}")
 
         zipper = new Zipper(commandRunner)
 
@@ -44,8 +44,22 @@ class BuildHybridSDKTask extends DefaultTask {
             hybridSDK
         }
         project.artifacts {
-            hybridSDK new File("${project.buildDir}/DerivedData-universal/${sdkScheme}.framework.zip")
+            hybridSDK hydridSDKFile
         }
+
+        project.uploadHybridSDK {
+            repositories {
+                ivy {
+                    layout "maven"
+                    url project.ivy.url
+                    credentials {
+                        username project.ivy.userName
+                        password project.ivy.password
+                    }
+                }
+            }
+        }
+
         project.uploadHybridSDK.repositories {
             add project.repositories.wm_local_non_prod
         }
