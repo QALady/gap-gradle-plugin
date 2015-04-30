@@ -15,7 +15,8 @@ import static org.testng.Assert.assertEquals
 
 class LinkArtifactsTaskTest {
 
-    private static final String HTML_OUTPUT = "build-artifacts.html"
+    private static final File BASE_DIR = new File("/tmp/artifacts")
+    private static final String OUTPUT_FILE_NAME = "build-artifacts.html"
 
     private Project project
     private LinkArtifactsTask task
@@ -47,13 +48,14 @@ class LinkArtifactsTaskTest {
 
     @Test
     public void shouldCreateHtmlIndex() throws Exception {
-        def baseDir = new File("/tmp/artifacts")
-        def dirHtml = new File(baseDir, HTML_OUTPUT)
+        def fakeOutputFile = new File(BASE_DIR, OUTPUT_FILE_NAME)
+        fakeOutputFile.parentFile.mkdirs()
+        fakeOutputFile.createNewFile()
 
         def jsoupMock = new MockFor(Jsoup)
 
         jsoupMock.demand.parse { file, charset ->
-            assertEquals(file, dirHtml)
+            assertEquals(file, fakeOutputFile)
             assertEquals(charset, "UTF-8")
 
             return new Document("")
@@ -63,14 +65,14 @@ class LinkArtifactsTaskTest {
             task.createHtmlIndex()
         }
 
-        verify(commandRunnerMock).run(baseDir, "tree", "--dirsfirst", "-CF", "-o", HTML_OUTPUT, "-H", ".", "-L", "1", "-T", baseDir, "-I", HTML_OUTPUT)
+        verify(commandRunnerMock).run(BASE_DIR, "tree", "--dirsfirst", "-CF", "-o", OUTPUT_FILE_NAME, "-H", ".", "-L", "1", "-T", BASE_DIR, "-I", OUTPUT_FILE_NAME)
     }
 
     @Test
     public void shouldLinkArtifacts() throws Exception {
         task.linkArtifacts()
 
-        verify(commanderClientMock).addLink(HTML_OUTPUT, "1")
+        verify(commanderClientMock).addLink(OUTPUT_FILE_NAME, "1")
     }
 
 }
