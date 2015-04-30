@@ -93,8 +93,14 @@ class GapSonarRunnerPluginTest {
         }
 
         commanderMock.demand.getCurrentProjectName(){
-            "currentProjectName"
+            "TestProjectName"
         }
+
+        commanderMock.demand.getCurrentSegment(){
+            "TestSegment"
+        }
+
+        commanderMock.ignore.setECProperty()
 
         commanderMock.use {
             project.apply plugin: 'gap-sonar-runner'

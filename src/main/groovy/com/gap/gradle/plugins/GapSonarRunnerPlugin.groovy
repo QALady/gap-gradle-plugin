@@ -4,6 +4,8 @@ import com.gap.pipeline.tasks.SonarLinkTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+import java.text.SimpleDateFormat
+
 class GapSonarRunnerPlugin implements Plugin<Project> {
 
     private static final String SONAR_DATE_FORMAT = "YYYY-MM-dd"
@@ -57,8 +59,15 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                 } else {
                     property "sonar.analysis.mode", "analysis"
 
+                    SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd");
+
                     String ecProjectName = commanderClient.getCurrentProjectName();
-                    println("**** Project in SonarRunner is : ${ecProjectName} ****")
+                    String ecSegmentName = commanderClient.getCurrentSegment();
+                    String useSonarRunnerKey = "${ecProjectName}:${ecSegmentName}"
+                    println("**** Project:Segment in SonarRunner is : " + useSonarRunnerKey + " ****")
+
+                    String key = "/projects/WM Segment Registry/ApplySonarRunner/${useSonarRunnerKey}"
+                    commanderClient.setECProperty(key,simpleDateFormat.format(new Date()));
                 }
             }
         }
