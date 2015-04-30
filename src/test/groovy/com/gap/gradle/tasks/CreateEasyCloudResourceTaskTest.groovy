@@ -35,7 +35,7 @@ class CreateEasyCloudResourceTaskTest {
     private OpenstackCloudProvider openstackCloudProvider;
     
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(8089);      
+    public WireMockRule wireMockRule = new WireMockRule(8088);      
    
     @Test
     public void createCloudResourcePassEtcdTest() {        

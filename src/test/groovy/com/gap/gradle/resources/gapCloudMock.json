@@ -1,9 +1,9 @@
 {
-  "inFluxDBUrl": "http://localhost:8089/db/pipeline/series?u=root&p=root",
+  "inFluxDBUrl": "http://localhost:8088/db/pipeline/series?u=root&p=root",
   "osFlavor": "m1.medium",
   "numberOfInstances": "1",
-  "DNAURL": "http://localhost:8089/pipeline-dna",
-  "etcdHostnameUrl": "http://localhost:8089/v2/keys",
+  "DNAURL": "http://localhost:8088/pipeline-dna",
+  "etcdHostnameUrl": "http://localhost:8088/v2/keys",
   "etcdKey": "iso/create-vm",
   "osSecurityGroupSet": ["default"],
   "autoPurge": "true",
