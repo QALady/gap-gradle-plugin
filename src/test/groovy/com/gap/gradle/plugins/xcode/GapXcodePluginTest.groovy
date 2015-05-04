@@ -100,6 +100,26 @@ class GapXcodePluginTest {
     }
 
     @Test
+    public void shouldRetriveSigningIdentityByName() throws Exception {
+        project.xcode {
+            signing {
+                myIdentity {
+                    description "a test identity"
+                }
+            }
+
+            build {
+                signingIdentity "myIdentity"
+            }
+        }
+
+        def identity = project.xcode.build.signingIdentity
+
+        assertEquals("myIdentity", identity.name)
+        assertEquals("a test identity", identity.description)
+    }
+
+    @Test
     public void shouldAliasCleaningTasksToKeepBackwardsCompatibility() throws Exception {
         taskShouldDependOn('keychain-clean', 'keychainClean', project)
         taskShouldDependOn('provisioning-clean', 'provisioningClean', project)

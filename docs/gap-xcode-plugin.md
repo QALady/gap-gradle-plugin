@@ -42,7 +42,7 @@ xcode {
         configuration 'Debug'      // default is set to 'Release' only specify if it is not 'Release'
         target 'MyApp' // you can also pass a closure, like in the line below
         sdk { 'iphoneos' }
-        signingIdentity { signing.distribution }
+        signingIdentity { signing.distribution } // possible arguments: signing.distribution, signing.development, "distribution", "development"
     }
 
     archive {
@@ -72,7 +72,7 @@ In addition to this documentation, please use the official [xcodebuild documenta
 * `productName` (String or Closure) needs to be the Product Name that your Xcode project uses for your `target`. If not specified the value of `target` will be used.
 * `target` (String or Closure) specifies which target will be built. If not specified the value of `xcode.scheme` will be used. See available targets with `xcodebuild -list`.
 * `sdk` (String or Closure) specifies which SDK will be used to build the target, e.g.: `iphoneos`, `iphonesimulator`. See all available SDKs with `xcodebuild -showsdks`.
-* `signingIdentity` (SigningIdentity or Closure) specifies which Code Signing Identity will be used to sign the app. There are two pre-configured identities available: `signing.development` and `signing.distribution`.
+* `signingIdentity` (SigningIdentity or Closure) specifies which Code Signing Identity will be used to sign the app. There are two pre-configured identities available: `signing.development` and `signing.distribution`. You can also only specify the name of an existing SigningIdentity.
 
 ### Archive options
 
