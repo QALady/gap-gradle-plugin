@@ -32,6 +32,7 @@ class GapXcodePluginTest {
         taskShouldExist('transformJUnitXmlReportToHTML', project)
         taskShouldExist('gcovAnalyze', project)
         taskShouldExist('replaceTokensInSettingsBundle', project)
+        taskShouldExist('buildHybridSDK', project)
     }
 
     @Test

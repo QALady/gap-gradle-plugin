@@ -6,12 +6,13 @@ import org.gradle.api.tasks.TaskAction
 import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.iossigning.Zipper
 import org.apache.commons.io.FileUtils
+import org.gradle.api.tasks.Input
 
 class BuildHybridSDKTask extends DefaultTask {
 
+    @Input
     String sdkScheme
     
-    private String targetDir
     private Zipper zipper
     
     @TaskAction
@@ -46,24 +47,6 @@ class BuildHybridSDKTask extends DefaultTask {
         project.artifacts {
             hybridSDK hydridSDKFile
         }
-/*
-        project.uploadHybridSDK {
-            repositories {
-                ivy {
-                    layout "maven"
-                    url project.ivy.url
-                    credentials {
-                        username project.ivy.userName
-                        password project.ivy.password
-                    }
-                }
-            }
-        }
-
-        project.uploadHybridSDK.repositories {
-            add project.repositories.wm_local_non_prod
-        }
-        project.uploadHybridSDK.execute() */
     }
 
 }
