@@ -40,8 +40,8 @@ class GapiOSSonarRunnerPlugin implements Plugin<Project> {
     }
 
     private void configureGcovReportsPath(project) {
-        def gcovTask = project.tasks.findByName('gcovCoverage')
-
+        def gcovTask = project.tasks.findByName('gcovAnalyze')
+        
         if (gcovTask) {
             project.sonarRunner {
                 sonarProperties {
