@@ -17,8 +17,8 @@ public class CocoaPodsPluginTest {
     @Before
     public void setUp() throws Exception {
         project = ProjectBuilder.builder().build()
+        project.apply plugin: 'gap-cocoapods'
 
-        new CocoaPodsPlugin().apply(project)
     }
 
     @Test
