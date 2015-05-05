@@ -1,4 +1,6 @@
 package com.gap.gradle.plugins
+
+import com.gap.gradle.tasks.GapSonarRunnerAuditorTask
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.SonarLinkTask
 import org.gradle.api.Plugin
@@ -76,6 +78,10 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
 
         project.tasks.create(name: 'sonar', dependsOn: 'sonarRunner') << {
             new SonarLinkTask(project).execute()
+        }
+
+        project.task('gapSonarRunnerAuditor') << {
+            new GapSonarRunnerAuditorTask(project).execute()
         }
     }
 
