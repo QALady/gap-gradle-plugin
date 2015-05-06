@@ -22,7 +22,7 @@ class GapSonarRunnerAuditorTask extends WatchmenTask{
         def jsonSlurped = readPropertySheet()
         def projectList = writeProjectList(jsonSlurped)
         def htmlData = buildHtmlData(projectList)
-        createOrUpdateContents(htmlData)
+        createOrUpdateContents(htmlData.toString())
     }
 
     def readPropertySheet(){
