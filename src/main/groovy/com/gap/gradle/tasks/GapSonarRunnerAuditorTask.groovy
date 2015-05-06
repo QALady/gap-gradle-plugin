@@ -10,7 +10,6 @@ class GapSonarRunnerAuditorTask extends WatchmenTask{
     private CommanderClient commanderClient
 
     final static String AUDITOR_PROPERTY_SHEET = "/projects/WM Segment Registry/ApplySonarRunner/"
-    final static String ECW_REPORTS_DIRECTORY = "/mnt/electriccommander2/ecweb/htdocs/reports/"
     final static String REPORT_FILE_NAME = "gap-sonar-runner-usage.html"
 
 
@@ -71,10 +70,11 @@ class GapSonarRunnerAuditorTask extends WatchmenTask{
         return htmlWriter
     }
 
-    static def createOrUpdateContents(def htmlData, String folder = ECW_REPORTS_DIRECTORY){
-        def htmlReportFile = new File(folder, REPORT_FILE_NAME)
+    static def createOrUpdateContents(def htmlData){
+        def htmlReportFile = new File(REPORT_FILE_NAME)
         htmlReportFile.createNewFile()
         htmlReportFile.write(htmlData)
+        println "Created file : ${htmlReportFile.getAbsoluteFile()}"
     }
 
 

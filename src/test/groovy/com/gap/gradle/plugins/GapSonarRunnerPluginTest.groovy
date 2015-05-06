@@ -1,11 +1,4 @@
 package com.gap.gradle.plugins
-
-import static helpers.Assert.shouldExecuteTask
-import static helpers.Assert.taskShouldExist
-import static junit.framework.Assert.assertTrue
-import static org.hamcrest.CoreMatchers.is
-import static org.junit.Assert.assertThat
-
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.SonarLinkTask
 import groovy.mock.interceptor.MockFor
@@ -13,6 +6,12 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
+
+import static helpers.Assert.shouldExecuteTask
+import static helpers.Assert.taskShouldExist
+import static org.hamcrest.CoreMatchers.is
+import static org.junit.Assert.assertThat
+import static org.junit.Assert.assertTrue
 
 class GapSonarRunnerPluginTest {
     private Project project
@@ -91,20 +90,21 @@ class GapSonarRunnerPluginTest {
         commanderMock.demand.isRunningInPipeline() {
             true
         }
-
-        commanderMock.demand.getCurrentProjectName(){
-            "TestProjectName"
-        }
-
-        commanderMock.demand.getCurrentSegment(){
-            "TestSegment"
-        }
-
-        commanderMock.ignore.setECProperty()
-
         commanderMock.use {
             project.apply plugin: 'gap-sonar-runner'
             assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.analysis.mode'), is('analysis'))
+        }
+    }
+
+    @Test
+    void sonarRunner_shouldDependsOnSaveSonarProperty(){
+        def commanderMock = new MockFor(CommanderClient)
+
+        commanderMock.use {
+            project.apply plugin: 'gap-sonar-runner'
+            def sonarRunner=project.tasks.findByName('sonarRunner')//.dependsOn.findAll {ot -> println "ot:" + ot}
+            def saveSonarProperty=project.tasks.findByName('saveSonarProperty')
+            assertTrue(sonarRunner.getDependsOn().contains(saveSonarProperty))
         }
     }
 }

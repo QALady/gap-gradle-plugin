@@ -60,16 +60,6 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                     property "sonar.projectDate", "${nextDay.format(SONAR_DATE_FORMAT)}"
                 } else {
                     property "sonar.analysis.mode", "analysis"
-
-                    SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd");
-
-                    String ecProjectName = commanderClient.getCurrentProjectName();
-                    String ecSegmentName = commanderClient.getCurrentSegment();
-                    String useSonarRunnerKey = "${ecProjectName}:${ecSegmentName}"
-                    println("**** Project:Segment in SonarRunner is : " + useSonarRunnerKey + " ****")
-
-                    String key = "/projects/WM Segment Registry/ApplySonarRunner/${useSonarRunnerKey}"
-                    commanderClient.setECProperty(key,simpleDateFormat.format(new Date()));
                 }
             }
         }
@@ -80,9 +70,27 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
             new SonarLinkTask(project).execute()
         }
 
+
+
         project.task('gapSonarRunnerAuditor') << {
             new GapSonarRunnerAuditorTask(project).execute()
         }
+
+        project.tasks.create(name: 'saveSonarProperty') << {
+            if(!isLocal()){
+                SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd");
+
+                String ecProjectName = commanderClient.getCurrentProjectName();
+                String ecSegmentName = commanderClient.getCurrentSegment();
+                String useSonarRunnerKey = "${ecProjectName}:${ecSegmentName}"
+                println("**** Project:Segment in SonarRunner is : " + useSonarRunnerKey + " ****")
+
+                String key = "/projects/WM Segment Registry/ApplySonarRunner/${useSonarRunnerKey}".toString()
+                commanderClient.setECProperty(key,simpleDateFormat.format(new Date()));
+            }
+        }
+
+        project.tasks.sonarRunner.dependsOn <<  project.tasks.saveSonarProperty
     }
 
     private boolean isLocal() {
