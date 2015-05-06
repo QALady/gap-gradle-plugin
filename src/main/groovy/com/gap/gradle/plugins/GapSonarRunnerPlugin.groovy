@@ -70,8 +70,6 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
             new SonarLinkTask(project).execute()
         }
 
-
-
         project.task('gapSonarRunnerAuditor') << {
             new GapSonarRunnerAuditorTask(project).execute()
         }
@@ -79,13 +77,10 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
         project.tasks.create(name: 'saveSonarProperty') << {
             if(!isLocal()){
                 SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd");
-
-                String ecProjectName = commanderClient.getCurrentProjectName();
                 String ecSegmentName = commanderClient.getCurrentSegment();
-                String useSonarRunnerKey = "${ecProjectName}:${ecSegmentName}"
-                println("**** Project:Segment in SonarRunner is : " + useSonarRunnerKey + " ****")
+                println("**** Project:Segment in SonarRunner is : " + ecSegmentName + " ****")
 
-                String key = "/projects/WM Segment Registry/ApplySonarRunner/${useSonarRunnerKey}".toString()
+                String key = "/projects/WM Segment Registry/ApplySonarRunner/${ecSegmentName}".toString()
                 commanderClient.setECProperty(key,simpleDateFormat.format(new Date()));
             }
         }
