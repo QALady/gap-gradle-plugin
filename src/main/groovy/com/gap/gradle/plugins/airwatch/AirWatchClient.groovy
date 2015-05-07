@@ -200,9 +200,10 @@ class AirWatchClient {
             uri.path = params.get("path")
             requestContentType = JSON
 
+            println "Contains Body :::: " + params.containsKey("body")
             if (params.containsKey("body")) {
                 body = params.get("body")
-                println "body:::::: ${body}"
+                println "body::::::" + params.get("body")
                 logger.debug("Request body: {}", toJson(params.get("body")))
             }
 
