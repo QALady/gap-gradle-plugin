@@ -203,10 +203,10 @@ class AirWatchClient {
             println "Contains Body :::: " + params.containsKey("body")
             if (params.containsKey("body")) {
                 body = params.get("body")
-                println "body::::::" + params.get("body")
                 logger.debug("Request body: {}", toJson(params.get("body")))
             }
 
+            println "Contains Key :::: " + params.containsKey("query")
             if (params.containsKey("query")) {
                 uri.query = params.get("query")
             }
@@ -226,6 +226,10 @@ class AirWatchClient {
     }
 
     private static String parseResponseBody(body, response) {
+        println "********Inside parseResponseBody**************"
+        println "body::: " + body
+        println "response::: " + response
+        println "********Inside parseResponseBody**************"
         if (emptyBody(body)) return "Response body is empty\n"
 
         if (jsonResponse(response)) return "Response body is: ${toJson(body)}\n"
@@ -234,12 +238,19 @@ class AirWatchClient {
     }
 
     private static boolean jsonResponse(response) {
+        println "********Inside jsonResponse**************"
+        println "response::: " + response
+        println "********Inside jsonResponse**************"
+        
         def contentTypeHeader = response.headers.find { it.name.equals('Content-Type') }
 
         JSON.toString().equals(contentTypeHeader.value)
     }
 
     private static boolean emptyBody(body) {
+        println "********Inside emptyBody**************"
+        println "body::: " + body
+        println "********Inside emptyBody**************"
         !body || (body instanceof String && isBlank(body))
     }
 }
