@@ -202,6 +202,7 @@ class AirWatchClient {
 
             if (params.containsKey("body")) {
                 body = params.get("body")
+                println "body:::::: ${body}"
                 logger.debug("Request body: {}", toJson(params.get("body")))
             }
 
