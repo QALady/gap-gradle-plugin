@@ -35,8 +35,9 @@ apply plugin: 'gappipeline'
 ## Plugin documentation
 
 * [Airwatch plugin](docs/airwatch-plugin.md)
+* [CocoaPods plugin](docs/cocoapods.md)
 * [DBot plugin](docs/dbot-plugin.md)
 * [iOS Appium](docs/gap-ios-appium.md)
 * [iOS Signing plugin](docs/gap-ios-signing.md)
-* [Xcode plugin](docs/gap-xcode-plugin.md)
 * [iOS Sonar Runner plugin](docs/gap-ios-sonar-runner.md)
+* [Xcode plugin](docs/gap-xcode-plugin.md)
