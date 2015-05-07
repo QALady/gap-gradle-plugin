@@ -220,6 +220,12 @@ class AirWatchClient {
             }
             println "333333333333333333333"
             response.failure = { resp, body ->
+
+                println "$$$$$$$ I Failed $$$$$$$$$"
+                println "body::: " + body
+                println "response::: " + resp
+                println "$$$$$$$ I Failed $$$$$$$$$"
+                
                 throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n" +
                         parseResponseBody(body, resp))
             }
