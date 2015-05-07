@@ -84,7 +84,13 @@ class IpaSigningTask extends DefaultTask {
             def entitlements = getEntitlements(mobileProvision, signingDir)
 
             output = ipaPackage.resign(signingIdentity, keychain, entitlements)
-            commanderClient.setECProperty("/myJob/resignedIpaFile", output)
+            //commanderClient.setECProperty("/myJob/resignedIpaFile", output)
+            def artifactsDir = new File(project.buildDir, "artifacts")
+            artifactsDir.mkdirs()
+            project.copy {
+                from output
+                into artifactsDir
+            }
 
         } finally {
             keychain.destroy()
