@@ -211,13 +211,14 @@ class AirWatchClient {
                 uri.query = params.get("query")
             }
 
+            println "1111111111111111111111"
             response.success = { resp, body ->
                 println "AirWatch returned a successful response: ${resp.statusLine}\n" +
                         parseResponseBody(body, resp)
-
+                println "2222222222222222222222"
                 return emptyBody(body) ? emptyMap() : body
             }
-
+            println "333333333333333333333"
             response.failure = { resp, body ->
                 throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n" +
                         parseResponseBody(body, resp))
