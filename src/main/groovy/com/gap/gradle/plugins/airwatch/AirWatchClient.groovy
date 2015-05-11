@@ -216,7 +216,12 @@ class AirWatchClient {
                 println "AirWatch returned a successful response: ${resp.statusLine}\n" +
                         parseResponseBody(body, resp)
                 println "2222222222222222222222"
-                return emptyBody(body) ? emptyMap() : body
+                if(emptyBody(body) || invalidJsonBody(body)) {
+                    return emptyMap()
+                } else {
+                    return body
+                }
+                //return emptyBody(body) ? emptyMap() : body
             }
             println "333333333333333333333"
             response.failure = { resp, body ->
@@ -259,5 +264,16 @@ class AirWatchClient {
         println "body::: " + body
         println "********Inside emptyBody**************"
         !body || (body instanceof String && isBlank(body))
+    }
+
+    private static boolean invalidJsonBody(body) {
+        println "********Inside invalidJsonBody**************"
+        println "body::: " + body
+        println "********Inside invalidJsonBody**************"
+        if (body instanceof String && isBlank(body) && !(body.startsWith("{") || body.startsWith("["))) {
+            return true
+        } else {
+            return false
+        }
     }
 }
