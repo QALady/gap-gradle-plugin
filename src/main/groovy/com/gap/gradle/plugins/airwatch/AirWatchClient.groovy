@@ -44,8 +44,8 @@ class AirWatchClient {
 
         def headers = [
                 'aw-tenant-code': tenantCode,
-                'Authorization' : "Basic ${encodedCredentials}"
-                //'Accept'        : 'application/json'
+                'Authorization' : "Basic ${encodedCredentials}",
+                'Accept'        : 'application/json'
         ]
 
         http = new HTTPBuilder(host)
@@ -200,39 +200,23 @@ class AirWatchClient {
             uri.path = params.get("path")
             requestContentType = JSON
 
-            println "Contains Body :::: " + params.containsKey("body")
             if (params.containsKey("body")) {
                 body = params.get("body")
                 logger.debug("Request body: {}", toJson(params.get("body")))
             }
 
-            println "Contains Key :::: " + params.containsKey("query")
             if (params.containsKey("query")) {
                 uri.query = params.get("query")
             }
 
-            println "1111111111111111111111"
             response.success = { resp, body ->
                 println "AirWatch returned a successful response: ${resp.statusLine}\n" +
                         parseResponseBody(body, resp)
-                println "2222222222222222222222"
-                if(emptyBody(body)) {
-                    return emptyMap()
-                } else if(invalidJsonBody(body)) {
-                    return emptyMap()
-                } else {
-                    return body
-                }
-                //return emptyBody(body) ? emptyMap() : body
-            }
-            println "333333333333333333333"
-            response.failure = { resp, body ->
 
-                println "**************** I Failed ******************"
-                println "body::: " + body
-                println "response::: " + resp
-                println "**************** I Failed ****************"
-                
+                return emptyBody(body) ? emptyMap() : body
+            }
+
+            response.failure = { resp, body ->
                 throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n" +
                         parseResponseBody(body, resp))
             }
@@ -240,10 +224,6 @@ class AirWatchClient {
     }
 
     private static String parseResponseBody(body, response) {
-        println "********Inside parseResponseBody**************"
-        println "body::: " + body
-        println "response::: " + response
-        println "********Inside parseResponseBody**************"
         if (emptyBody(body)) return "Response body is empty\n"
 
         if (jsonResponse(response)) return "Response body is: ${toJson(body)}\n"
@@ -252,49 +232,12 @@ class AirWatchClient {
     }
 
     private static boolean jsonResponse(response) {
-        println "********Inside jsonResponse**************"
-        println "response::: " + response
-        println "********Inside jsonResponse**************"
-        
         def contentTypeHeader = response.headers.find { it.name.equals('Content-Type') }
 
         JSON.toString().equals(contentTypeHeader.value)
     }
 
     private static boolean emptyBody(body) {
-        println "********Inside emptyBody**************"
-        println "body::: " + body
-        println "********Inside emptyBody**************"
         !body || (body instanceof String && isBlank(body))
-    }
-
-    private static boolean invalidJsonBody(body) {
-        println "********Inside invalidJsonBody**************"
-        println "body::: " + body
-        println "********Inside invalidJsonBody**************"
-        if (body instanceof String) {
-            if(body.startsWith("{")) {
-                println "body starts with flower"
-            }
-            if(body.startsWith("[")) {
-                println "body starts with square"
-            }
-        }
-
-        if (body instanceof LinkedHashMap){
-            println "body keyset" + body.keySet()
-        }
-
-        
-        if (body instanceof String && !body.startsWith("{") && !body.startsWith("[")) {
-            println "444444444444444444444444444444444"
-            return true
-        } else if (body instanceof LinkedHashMap && body.keySet().isEmpty()){
-            println "555555555555555555555555555555555"
-            return true
-        } else {
-            println "6666666666666666666666666666666666"
-            return false   
-        }
     }
 }
