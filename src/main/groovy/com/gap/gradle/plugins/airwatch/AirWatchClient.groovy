@@ -44,8 +44,8 @@ class AirWatchClient {
 
         def headers = [
                 'aw-tenant-code': tenantCode,
-                'Authorization' : "Basic ${encodedCredentials}",
-                'Accept'        : 'application/json'
+                'Authorization' : "Basic ${encodedCredentials}"
+                //'Accept'        : 'application/json'
         ]
 
         http = new HTTPBuilder(host)
