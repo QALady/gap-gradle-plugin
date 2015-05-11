@@ -272,7 +272,13 @@ class AirWatchClient {
         println "********Inside invalidJsonBody**************"
         println "body::: " + body
         println "********Inside invalidJsonBody**************"
-        if (body instanceof String && !(body.startsWith("{") || body.startsWith("["))) {
+        if(body.startsWith("{")) {
+            println "body starts with flower"
+        }
+        if(body.startsWith("[")) {
+            println "body starts with square"
+        }
+        if (body instanceof String && !body.startsWith("{") && !body.startsWith("[")) {
             println "444444444444444444444444444444444"
             return true
         } else {
