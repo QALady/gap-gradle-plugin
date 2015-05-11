@@ -280,13 +280,21 @@ class AirWatchClient {
                 println "body starts with square"
             }
         }
+
+        if (body instanceof LinkedHashMap){
+            println "body keyset" + body.keySet()
+        }
+
         
         if (body instanceof String && !body.startsWith("{") && !body.startsWith("[")) {
             println "444444444444444444444444444444444"
             return true
-        } else {
+        } else if (body instanceof LinkedHashMap && body.keySet().isEmpty()){
             println "555555555555555555555555555555555"
-            return false
+            return true
+        } else {
+            println "6666666666666666666666666666666666"
+            return false   
         }
     }
 }
