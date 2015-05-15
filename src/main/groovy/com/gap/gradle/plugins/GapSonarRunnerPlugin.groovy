@@ -54,11 +54,14 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                 property "sonar.issuesReport.html.enable", "true"
                 if (isLocal()) {
                     property "sonar.analysis.mode", "preview"
+
                     //Hardcoded to resolve issue with timezones.
                     //Loca Timezone & Pipeline server timezones are different and
                     //local analysis is running behind latest snapshot time.
                     property "sonar.projectDate", "${nextDay.format(SONAR_DATE_FORMAT)}"
                 } else {
+                    def version = commanderClient.getECProperty("/myJob/version")
+                    property "sonar.projectVersion", version
                     property "sonar.analysis.mode", "analysis"
                 }
             }
@@ -74,21 +77,33 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
             new GapSonarRunnerAuditorTask(project).execute()
         }
 
+        project.tasks.create(name: 'checkProjectVersion') << {
+            def projectVersion = project.sonarRunner.sonarProperties.sonar.projectVersion
+            println "projectCurrentVersion is " + projectVersion
+            if (projectVersion==null|| projectVersion.toString().trim().isEmpty() || "dev".equalsIgnoreCase(projectVersion) || "unspecified".equalsIgnoreCase(projectVersion) || "local".equalsIgnoreCase(projectVersion) ) {
+                //throw new SonarRunnerUndefinedProjectVersionException("Project Version is :${projectVersion}")
+                println "Should trigger an SonarRunnerUndefinedProjectVersionException $projectVersion"
+            }else{
+                println "Project version is ok ${projectVersion}"
+            }
+        }
+
         project.tasks.create(name: 'saveSonarProperty') << {
-            if(!isLocal()){
-                SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd");
+            if (!isLocal()) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String ecSegmentName = commanderClient.getCurrentSegment();
                 println("**** Project:Segment in SonarRunner is : " + ecSegmentName + " ****")
 
                 String key = "/projects/WM Segment Registry/ApplySonarRunner/${ecSegmentName}".toString()
-                commanderClient.setECProperty(key,simpleDateFormat.format(new Date()));
+                commanderClient.setECProperty(key, simpleDateFormat.format(new Date()));
             }
         }
 
-        project.tasks.sonarRunner.dependsOn <<  project.tasks.saveSonarProperty
+        project.tasks.sonarRunner.dependsOn << project.tasks.saveSonarProperty
+        project.tasks.sonarRunner.dependsOn << project.tasks.checkProjectVersion
     }
 
-    private boolean isLocal() {
+    private static boolean isLocal() {
         !new CommanderClient().isRunningInPipeline()
     }
 }
