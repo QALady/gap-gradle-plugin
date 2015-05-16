@@ -43,7 +43,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                 property "sonar.jdbc.url", "jdbc:mysql://sonardb001.phx.gapinc.dev:3306/sonar"
                 property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
                 property "sonar.jdbc.username", "sonar"
-                property "sonar.jdbc.password", "sonarWM1969"
+                property "sonar.jdbc.password", "SonarWM1969"
                 property "sonar.junit.reportsPath", "${project.buildDir}/test-results"
                 property "sonar.projectName", project.name
                 property "sonar.projectKey", "${project.group}:${project.name}"
