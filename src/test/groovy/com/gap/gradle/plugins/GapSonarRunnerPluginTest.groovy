@@ -1,5 +1,4 @@
 package com.gap.gradle.plugins
-
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.SonarLinkTask
 import groovy.mock.interceptor.MockFor
@@ -91,10 +90,6 @@ class GapSonarRunnerPluginTest {
         commanderMock.demand.isRunningInPipeline() {
             true
         }
-
-        commanderMock.demand.getECProperty("/myJob/version"){
-            "myJobVersion"
-        }
         commanderMock.use {
             project.apply plugin: 'gap-sonar-runner'
             assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.analysis.mode'), is('analysis'))
@@ -112,32 +107,4 @@ class GapSonarRunnerPluginTest {
             assertTrue(sonarRunner.getDependsOn().contains(saveSonarProperty))
         }
     }
-
-    @Test
-    void sonarRunner_shouldDependsOnCheckProjectVersion() {
-        def commanderMock = new MockFor(CommanderClient)
-
-        commanderMock.use {
-            project.apply plugin: 'gap-sonar-runner'
-            def sonarRunner = project.tasks.findByName('sonarRunner')
-            def checkProjectVersion = project.tasks.findByName('checkProjectVersion')
-            assertTrue(sonarRunner.getDependsOn().contains(checkProjectVersion))
-        }
-    }
-
-    @Test
-    void sonar_shouldWriteProjectVersionFromECWhenRunningInEC() {
-        def commanderMock = new MockFor(CommanderClient)
-        commanderMock.demand.isRunningInPipeline() {
-            true
-        }
-        commanderMock.demand.getECProperty("/myJob/version"){
-            "runningInPipeline"
-        }
-        commanderMock.use {
-            project.apply plugin: 'gap-sonar-runner'
-            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.projectVersion'), is('runningInPipeline'))
-        }
-    }
-
 }
