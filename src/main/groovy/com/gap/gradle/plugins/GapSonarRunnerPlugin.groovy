@@ -39,15 +39,15 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
 
         project.sonarRunner {
             sonarProperties {
-                property "sonar.host.url", "http://sonar001.phx.gapinc.dev:9000/"
-                property "sonar.jdbc.url", "jdbc:mysql://dgphxmetdb002.phx.gapinc.dev:3306/sonar"
+                property "sonar.host.url", "http://sonar.gapinc.dev/"
+                property "sonar.jdbc.url", "jdbc:mysql://sonardb001.phx.gapinc.dev:3306/sonar"
                 property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
                 property "sonar.jdbc.username", "sonar"
-                property "sonar.jdbc.password", "sonar"
+                property "sonar.jdbc.password", "sonarWM1969"
                 property "sonar.junit.reportsPath", "${project.buildDir}/test-results"
                 property "sonar.projectName", project.name
                 property "sonar.projectKey", "${project.group}:${project.name}"
-                property "sonar.profile", "AAD Reviewed Rules"
+                property "sonar.profile", "GID Reviewed Rules"
                 property "sonar.dynamicAnalysis", "reuseReports"
                 property "sonar.java.coveragePlugin", "jacoco"
                 property "sonar.java.jacoco.reportPath", project.jacoco.reportsDir

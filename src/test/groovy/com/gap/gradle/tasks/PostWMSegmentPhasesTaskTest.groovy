@@ -56,10 +56,10 @@ class PostWMSegmentPhasesTaskTest {
 			}
 			jobLinks {
 				SonarPrepare {
-					link "http://sonar001.phx.gapinc.dev:9000/dashboard/index/prepare"
+					link "http://sonar.gapinc.dev/dashboard/index/prepare"
 				}
 				SonarTest {
-					link "http://sonar001.phx.gapinc.dev:9000/dashboard/index/test"
+					link "http://sonar.gapinc.dev/dashboard/index/test"
 				}
 				MyTestLink {
 					link "http://dummytest.com/"
@@ -73,17 +73,17 @@ class PostWMSegmentPhasesTaskTest {
 		task.execute()
 
 		assertEquals("jobLinks unable to load", "SonarPrepare", project.segment.jobLinks.SonarPrepare.name)
-		assertEquals("jobLinks unable to load", "http://sonar001.phx.gapinc.dev:9000/dashboard/index/prepare",
+		assertEquals("jobLinks unable to load", "http://sonar.gapinc.dev/dashboard/index/prepare",
 				project.segment.jobLinks.SonarPrepare.link)
 
 		assertEquals("jobLinks unable to load", "SonarTest", project.segment.jobLinks.SonarTest.name)
-		assertEquals("jobLinks unable to load", "http://sonar001.phx.gapinc.dev:9000/dashboard/index/test",
+		assertEquals("jobLinks unable to load", "http://sonar.gapinc.dev/dashboard/index/test",
 				project.segment.jobLinks.SonarTest.link)
 
 		assertEquals(4, project.segment.jobLinks.size())
 
-//        verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/SonarPrepare", "http://sonar001.phx.gapinc.dev:9000/dashboard/index/prepare"])
-//        verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/SonarTest", "http://sonar001.phx.gapinc.dev:9000/dashboard/index/test"])
+//        verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/SonarPrepare", "http://sonar.gapinc.dev/dashboard/index/prepare"])
+//        verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/SonarTest", "http://sonar.gapinc.dev/dashboard/index/test"])
 //        verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/MyTestLink", "http://dummytest.com/"])
 //        verify(mockShellCommand).execute(["ectool", "setProperty", "/myJob/report-urls/MyTestLink With Space", "http://dummytest.com/"])
 
