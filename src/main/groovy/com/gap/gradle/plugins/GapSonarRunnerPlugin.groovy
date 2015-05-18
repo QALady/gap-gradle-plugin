@@ -54,6 +54,11 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                 property "sonar.issuesReport.html.enable", "true"
                 if (isLocal()) {
                     property "sonar.analysis.mode", "preview"
+                    //Disabling a Source Control and Issue plugin for preview mode to work
+                    property 'sonar.scm.enabled', 'false'
+                    property 'sonar.scm-stats.enabled','false'
+                    property 'issueassignplugin.enabeld','false'
+
                     //Hardcoded to resolve issue with timezones.
                     //Loca Timezone & Pipeline server timezones are different and
                     //local analysis is running behind latest snapshot time.
