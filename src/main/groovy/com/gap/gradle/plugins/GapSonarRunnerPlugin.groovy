@@ -85,10 +85,39 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
             }
         }
 
-        project.tasks.sonarRunner.dependsOn <<  project.tasks.saveSonarProperty
+        project.tasks.create(name: 'checkProjectVersion') << {
+            if(!isLocal()) {
+              def projectVersion = getSonarProperty("sonar.projectVersion");
+              println "projectCurrentVersion is " + projectVersion
+
+              if (projectVersion == null || projectVersion.toString().trim().isEmpty()) {
+                def version = commanderClient.getECProperty("/myJob/version")
+                if(version == null || version.isEmpty()) {
+                    println "'version' paramter is not passed to sonar task and /myJob/version also doesn't exits. Please run it in a segment or pass the version."
+                }
+                project.sonarRunner {
+                    sonarProperties {
+                      property "sonar.projectVersion", version
+                    }
+                }
+              } else if ("dev".equalsIgnoreCase(projectVersion) || "unspecified".equalsIgnoreCase(projectVersion) || "local".equalsIgnoreCase(projectVersion) ) {
+                  //throw new SonarRunnerUndefinedProjectVersionException("Project Version is :${projectVersion}")
+                  println "Invalid version to publish sonar report: $projectVersion"
+              } else{
+                  println "Project version is ok ${projectVersion}"
+              }
+            }
+        }
+
+        project.tasks.sonarRunner.dependsOn << project.tasks.saveSonarProperty
+        project.tasks.sonarRunner.dependsOn << project.tasks.checkProjectVersion
     }
 
     private boolean isLocal() {
         !new CommanderClient().isRunningInPipeline()
+    }
+
+    private def getSonarProperty(String key) {
+        project.tasks.sonarRunner.sonarProperties.getProperty(key)
     }
 }
