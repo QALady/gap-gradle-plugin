@@ -115,7 +115,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
         }
 
         project.tasks.sonarRunner.dependsOn << project.tasks.saveSonarProperty
-        project.tasks.sonarRunner.dependsOn << project.tasks.checkProjectVersion
+        //project.tasks.sonarRunner.dependsOn << project.tasks.checkProjectVersion
     }
 
     private boolean isLocal() {
