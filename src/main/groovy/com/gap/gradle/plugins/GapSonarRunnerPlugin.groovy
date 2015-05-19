@@ -1,5 +1,6 @@
 package com.gap.gradle.plugins
 
+import com.gap.gradle.exceptions.SonarRunnerUndefinedProjectVersionException
 import com.gap.gradle.tasks.GapSonarRunnerAuditorTask
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.tasks.SonarLinkTask
@@ -56,8 +57,8 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                     property "sonar.analysis.mode", "preview"
                     //Disabling a Source Control and Issue plugin for preview mode to work
                     property 'sonar.scm.enabled', 'false'
-                    property 'sonar.scm-stats.enabled','false'
-                    property 'issueassignplugin.enabeld','false'
+                    property 'sonar.scm-stats.enabled', 'false'
+                    property 'issueassignplugin.enabeld', 'false'
 
                     //Hardcoded to resolve issue with timezones.
                     //Loca Timezone & Pipeline server timezones are different and
@@ -80,49 +81,49 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
         }
 
         project.tasks.create(name: 'saveSonarProperty') << {
-            if(!isLocal()){
-                SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd");
+            if (!isLocal()) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String ecSegmentName = commanderClient.getCurrentSegment();
                 println("**** Project:Segment in SonarRunner is : " + ecSegmentName + " ****")
 
                 String key = "/projects/WM Segment Registry/ApplySonarRunner/${ecSegmentName}".toString()
-                commanderClient.setECProperty(key,simpleDateFormat.format(new Date()));
+                commanderClient.setECProperty(key, simpleDateFormat.format(new Date()));
             }
         }
 
         project.tasks.create(name: 'checkProjectVersion') << {
-            if(!isLocal()) {
-              def projectVersion = getSonarProperty("sonar.projectVersion");
-              println "projectCurrentVersion is " + projectVersion
+            if (!isLocal()) {
+                def projectVersion = getSonarProperty(project, "sonar.projectVersion");
+                println "projectCurrentVersion is '$projectVersion'"
 
-              if (projectVersion == null || projectVersion.toString().trim().isEmpty()) {
-                def version = commanderClient.getECProperty("/myJob/version")
-                if(version == null || version.isEmpty()) {
-                    println "'version' paramter is not passed to sonar task and /myJob/version also doesn't exits. Please run it in a segment or pass the version."
-                }
-                project.sonarRunner {
-                    sonarProperties {
-                      property "sonar.projectVersion", version
+                if (projectVersion == null || projectVersion.toString().trim().isEmpty() || projectVersion.toString().toLowerCase().equalsIgnoreCase("unspecified")) {
+                    def version = commanderClient.getECProperty("/myJob/version")
+                    if (version == null || version.trim().isEmpty()) {
+                        throw new SonarRunnerUndefinedProjectVersionException("'version' parameter is not passed to " +
+                                "sonar task and /myJob/version also doesn't exits. Please run it in a segment or pass " +
+                                "the version.".toString())
                     }
+                    project.sonarRunner {
+                        sonarProperties {
+                            property "sonar.projectVersion", version
+                        }
+                    }
+                } else if (projectVersion.toString().toLowerCase().contains("dev")
+                        || projectVersion.toString().toLowerCase().contains("local")) {
+                    throw new SonarRunnerUndefinedProjectVersionException("Invalid version to publish sonar report: $projectVersion".toString())
                 }
-              } else if ("dev".equalsIgnoreCase(projectVersion) || "unspecified".equalsIgnoreCase(projectVersion) || "local".equalsIgnoreCase(projectVersion) ) {
-                  //throw new SonarRunnerUndefinedProjectVersionException("Project Version is :${projectVersion}")
-                  println "Invalid version to publish sonar report: $projectVersion"
-              } else{
-                  println "Project version is ok ${projectVersion}"
-              }
             }
         }
 
         project.tasks.sonarRunner.dependsOn << project.tasks.saveSonarProperty
-        //project.tasks.sonarRunner.dependsOn << project.tasks.checkProjectVersion
+        project.tasks.sonarRunner.dependsOn << project.tasks.checkProjectVersion
     }
 
     private boolean isLocal() {
         !new CommanderClient().isRunningInPipeline()
     }
 
-    private def getSonarProperty(String key) {
+    private def getSonarProperty(def project, String key) {
         project.tasks.sonarRunner.sonarProperties.getProperty(key)
     }
 }
