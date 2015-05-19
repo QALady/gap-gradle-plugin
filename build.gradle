@@ -28,7 +28,7 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'cobertura'
 apply plugin: 'gappipeline'
-apply plugin: 'sonar-runner'
+apply plugin: 'gap-sonar-runner'
 
 repositories{
     add project.repositories.wm_maven_remote_repos

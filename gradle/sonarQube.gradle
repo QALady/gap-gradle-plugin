@@ -1,10 +1,5 @@
 sonarRunner {
     sonarProperties {
-        property "sonar.host.url", "http://sonar.gapinc.dev/"
-        property "sonar.jdbc.url", "jdbc:mysql://sonardb001.phx.gapinc.dev:3306/sonar"
-        property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
-        property "sonar.jdbc.username", "sonar"
-        property "sonar.jdbc.password", "SonarWM1969"
         property "sonar.language", "grvy"
         property "sonar.projectName", "Watchmen-Gradle-Plugin"
         property "sonar.projectKey", "com.gap:gap-gradle-plugin"
@@ -15,7 +10,7 @@ sonarRunner {
         property "sonar.grvy.coveragePlugin", "cobertura"
         property "sonar.exclusions", "**/*Exception.groovy, **/GapWarPlugin.groovy,**/GemInstall.groovy,**/GapResourcesExtension.groovy,**/Bundle.groovy,**/PhantomJS.groovy"
         property "sonar.groovy.cobertura.reportPath", "target/reports/coverage/coverage.xml"
-        property "sonar.analysis.mode", "$sonarMode"
+        property "sonar.profile", "Sonar way"
         property "sonar.junit.reportsPath", "${buildDir}/test-results/"
     }
 }
