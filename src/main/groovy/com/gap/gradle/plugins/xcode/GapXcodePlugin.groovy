@@ -56,7 +56,9 @@ class GapXcodePlugin implements Plugin<Project> {
     }
 
     private configureExistingTasks() {
-        project.tasks['test'].finalizedBy('transformJUnitXmlReportToHTML')
+        project.tasks['test'].doLast {
+            project.tasks['transformJUnitXmlReportToHTML'].execute()
+        }
 
         project.tasks['xcodebuild'].finalizedBy('replaceTokensInSettingsBundle')
 

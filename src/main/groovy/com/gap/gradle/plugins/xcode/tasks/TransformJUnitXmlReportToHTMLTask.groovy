@@ -63,6 +63,7 @@ class TransformJUnitXmlReportToHTMLTask extends DefaultTask {
             report(todir: dest, format: 'noframes')
         }
 
+        println "Generating unit tests report at ${targetFilePath}"
         project.file("${targetDir}/junit-noframes.html").renameTo(targetFilePath)
     }
 

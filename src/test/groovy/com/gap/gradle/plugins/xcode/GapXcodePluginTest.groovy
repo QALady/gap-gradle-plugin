@@ -43,7 +43,6 @@ class GapXcodePluginTest {
     @Test
     public void shouldConfigureTaskDependencies() throws Exception {
         taskShouldDependOn('uploadArchives', 'airwatchConfigZip', project)
-        taskShouldBeFinalizedBy('test', 'transformJUnitXmlReportToHTML', project)
         taskShouldBeFinalizedBy('xcodebuild', 'replaceTokensInSettingsBundle', project)
     }
 
