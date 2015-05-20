@@ -101,7 +101,7 @@ class GapXcodePlugin implements Plugin<Project> {
             targetFilePath "${project.buildDir}/test/index.html"
         }
 
-        project.task('gcovAnalyze', type: GcovAnalysisTask, dependsOn: 'test') {
+        project.task('gcovAnalyze', type: GcovAnalysisTask) {
             fileNamePattern '**/*.gcda'
             reportsDir project.file("${project.buildDir}/reports/gcov")
         }
