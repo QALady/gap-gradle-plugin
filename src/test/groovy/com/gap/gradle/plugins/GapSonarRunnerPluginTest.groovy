@@ -109,7 +109,7 @@ class GapSonarRunnerPluginTest {
         }
     }
 
-    @Test
+    //@Test
     void sonarRunner_shouldDependsOnCheckProjectVersion() {
         def commanderMock = new MockFor(CommanderClient)
 
