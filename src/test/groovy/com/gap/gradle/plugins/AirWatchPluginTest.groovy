@@ -1,6 +1,8 @@
 package com.gap.gradle.plugins
 
 import com.gap.gradle.plugins.airwatch.*
+import com.gap.gradle.plugins.mobile.credentials.CredentialProvider
+import com.gap.gradle.plugins.mobile.credentials.EctoolCredentialProvider
 import com.google.common.collect.Sets
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -33,7 +35,7 @@ class AirWatchPluginTest {
     void setup() {
         project = ProjectBuilder.builder().build()
         airWatchClientFactory = mock(AirWatchClientFactory)
-        credentialProvider = mock(CredentialProvider)
+        credentialProvider = mock(EctoolCredentialProvider)
 
         def beginInstallConfigValidator = mock(BeginInstallConfigValidator)
         def mockConfigurations = mock(ConfigurationContainerInternal)

@@ -1,4 +1,4 @@
-package com.gap.gradle.plugins.airwatch
+package com.gap.gradle.plugins.mobile.credentials
 
 class Credential {
     final String username

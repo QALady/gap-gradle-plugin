@@ -1,9 +1,10 @@
 package com.gap.gradle.plugins.airwatch
 
+import com.gap.gradle.plugins.mobile.credentials.Credential
+import com.gap.gradle.plugins.mobile.credentials.EctoolCredentialProvider
 import org.junit.Test
 
 import static groovyx.net.http.ContentType.ANY
-import static groovyx.net.http.ContentType.JSON
 import static org.junit.Assert.assertEquals
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
@@ -14,7 +15,7 @@ public class AirWatchClientFactoryTest {
 
     @Test
     public void shouldCreateAnAirwatchClientInstanceWithTheCorrectCredentials() throws Exception {
-        credentialProvider = mock(CredentialProvider)
+        credentialProvider = mock(EctoolCredentialProvider)
         when(credentialProvider.get("testCredential")).thenReturn(new Credential("testUser", "testPass"))
 
         def factory = new AirWatchClientFactory()
