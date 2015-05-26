@@ -33,7 +33,7 @@ class AirwatchUploadExtension implements BeginInstallConfig {
         this.artifact = instantiator.newInstance(ArtifactSpec)
         this.environments = project.container(Environment, { name -> instantiator.newInstance(Environment, name) })
         this.searchParamsToRetireApp = instantiator.newInstance(SearchApplicationConfig)
-        this.uploadChunks = 25
+        this.uploadChunks = 35
     }
 
     void setAppName(Object appName) {
