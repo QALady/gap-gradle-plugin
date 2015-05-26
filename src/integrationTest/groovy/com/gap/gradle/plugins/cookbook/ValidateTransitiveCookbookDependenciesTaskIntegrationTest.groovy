@@ -34,7 +34,7 @@ class ValidateTransitiveCookbookDependenciesTaskIntegrationTest {
         createMetadataRb([
             "version '999.99.9999'",
             "name    'ref-app'",
-            "depends 'gapTomcat', '0.0.23'",
+            "depends 'gapTomcat', '0.0.28'",
             "depends 'gapNagios', '0.4.338'",
             "depends 'gapJava', '0.0.11'",
         ])
