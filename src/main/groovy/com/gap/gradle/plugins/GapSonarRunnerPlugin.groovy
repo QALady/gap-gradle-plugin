@@ -58,7 +58,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                     //Disabling a Source Control and Issue plugin for preview mode to work
                     property 'sonar.scm.enabled', 'false'
                     property 'sonar.scm-stats.enabled', 'false'
-                    property 'issueassignplugin.enabeld', 'false'
+                    property 'issueassignplugin.enabled', 'false'
 
                     //Hardcoded to resolve issue with timezones.
                     //Loca Timezone & Pipeline server timezones are different and
