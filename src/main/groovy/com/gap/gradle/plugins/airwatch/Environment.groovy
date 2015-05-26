@@ -11,11 +11,16 @@ class Environment {
     }
 
     public static final def DEFAULT_PREPRODUCTION = new Environment("preProduction").with {
-        apiHost = "https://cn377.awmdm.com/"
-        consoleHost = "https://cn377.awmdm.com/"
-        tenantCode = "1AVBHIBAAAG6A4NQCFAA"
-        credentialName = "AirWatchPreProd"
-        locationGroupId = "570"
+        //apiHost = "https://cn377.awmdm.com/"
+        //consoleHost = "https://cn377.awmdm.com/"
+        //tenantCode = "1AVBHIBAAAG6A4NQCFAA"
+        //credentialName = "AirWatchPreProd"
+        //locationGroupId = "570"
+        apiHost = "https://gapstorescn.awmdm.com/"
+        consoleHost = "https://gapstorescn.awmdm.com/"
+        tenantCode = "1WZTHMBAAAG7A6JAAEQA"
+        credentialName = "AirWatchPreProdSB"
+        locationGroupId = "620"
         return it
     }
 
