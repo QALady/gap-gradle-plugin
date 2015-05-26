@@ -63,19 +63,20 @@ class GapSonarRunnerAuditorTaskTest {
     void buildHtmlData() {
         def expectedHtml = new XmlSlurper().parse(new FileReader(expectedHtmlDataFile))
 
-        def projectList = []
+        def projectsWithSonar = []
         def project1 = [:]
         project1.put("projectSegment", "projectSegment 1")
         project1.put("lastRun", "lastRun 1")
         def project2 = [:]
         project2.put("projectSegment", "projectSegment 2")
         project2.put("lastRun", "lastRun 2")
-        projectList.add(project1)
-        projectList.add(project2)
+        projectsWithSonar.add(project1)
+        projectsWithSonar.add(project2)
+        def noSonarProjects = ['NoSonarProject1', 'NoSonarProject2', 'NoSonarProject3']
 
-        def actualHtml = new XmlSlurper().parseText(auditorTask.buildHtmlData(projectList).toString())
+        def actualHtml = new XmlSlurper().parseText(auditorTask.buildHtmlData(projectsWithSonar, noSonarProjects).toString())
 
-        Assert.assertEquals(actualHtml, expectedHtml, "Values mismatch")
+        Assert.assertEquals(actualHtml.toString().replaceAll(" ",""), expectedHtml.toString().replaceAll(" ",""), "Values mismatch")
     }
 
     @Test
@@ -85,4 +86,15 @@ class GapSonarRunnerAuditorTaskTest {
         File actualFile = new File(auditorTask.REPORT_FILE_NAME)
         Assert.assertEquals(actualFile.getText(), expectedHtmlData, "Values mismatch")
     }
+
+    @Test
+    void getNoSonarProjects() {
+        def sonarProjects = ["project1:holi", "project2:chao","project3:teni"]
+        def allProjects = ["project1","project2","project3","project4", "project-1"]
+        def noSonarProjects = auditorTask.getNoSonarProjects(sonarProjects,allProjects)
+
+        Assert.assertEquals(noSonarProjects[0], "project4", "Values mismatch")
+        Assert.assertEquals(noSonarProjects[1], "project-1", "Values mismatch")
+    }
+
 }

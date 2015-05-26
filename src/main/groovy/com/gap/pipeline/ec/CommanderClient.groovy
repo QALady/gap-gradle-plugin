@@ -393,4 +393,10 @@ class CommanderClient {
 	def getJobStatus(def jobId) {
 		new XmlSlurper().parseText(String.valueOf(shellCommand.execute("ectool getJobStatus ${jobId}".toString())))
 	}
+
+	def getProjects(){
+		def commands = ["ectool", "--format", "json", "getProjects"]
+		logger.info("getProjects: " + commands)
+		new JsonSlurper().parseText(shellCommand.executeReadEachLine(commands))
+	}
 }
