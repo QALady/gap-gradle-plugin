@@ -1,8 +1,10 @@
 package com.gap.gradle.plugins.airwatch
 
 import com.gap.gradle.plugins.mobile.ArchivesArtifactFinder
+import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.mobile.credentials.CredentialProvider
 import com.gap.gradle.plugins.mobile.credentials.EctoolCredentialProvider
+import com.gap.gradle.plugins.mobile.credentials.GitCryptCredentialProvider
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -25,8 +27,8 @@ class AirWatchPlugin implements Plugin<Project> {
     private Project project
     private AirwatchUploadExtension extension
     private Copy extractAirwatchConfigTask
+    private CredentialProvider credentialProvider
     private AirWatchClientFactory airWatchClientFactory = new AirWatchClientFactory()
-    private CredentialProvider credentialProvider = new EctoolCredentialProvider()
     private BeginInstallConfigValidator beginInstallConfigValidator = new BeginInstallConfigValidator()
 
     @Inject
@@ -38,6 +40,7 @@ class AirWatchPlugin implements Plugin<Project> {
     void apply(Project project) {
         this.project = project
         this.extractAirwatchConfigTask = createExtractAirwatchConfigTask()
+        this.credentialProvider = new GitCryptCredentialProvider(new CommandRunner(project))
 
         this.extension = project.extensions.create("airwatchUpload", AirwatchUploadExtension, project, instantiator, extractAirwatchConfigTask)
         this.extension.environments.add(DEFAULT_PREPRODUCTION)

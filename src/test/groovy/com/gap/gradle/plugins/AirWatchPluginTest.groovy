@@ -2,7 +2,6 @@ package com.gap.gradle.plugins
 
 import com.gap.gradle.plugins.airwatch.*
 import com.gap.gradle.plugins.mobile.credentials.CredentialProvider
-import com.gap.gradle.plugins.mobile.credentials.EctoolCredentialProvider
 import com.google.common.collect.Sets
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -16,7 +15,6 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
-import org.mockito.Mockito
 
 import static helpers.Assert.taskShouldDependOn
 import static helpers.Assert.taskShouldExist
@@ -35,7 +33,7 @@ class AirWatchPluginTest {
     void setup() {
         project = ProjectBuilder.builder().build()
         airWatchClientFactory = mock(AirWatchClientFactory)
-        credentialProvider = mock(EctoolCredentialProvider)
+        credentialProvider = mock(CredentialProvider)
 
         def beginInstallConfigValidator = mock(BeginInstallConfigValidator)
         def mockConfigurations = mock(ConfigurationContainerInternal)
@@ -48,9 +46,10 @@ class AirWatchPluginTest {
 
         def airWatchPlugin = new AirWatchPlugin(((ProjectInternal) project).getServices().get(Instantiator))
         airWatchPlugin.airWatchClientFactory = airWatchClientFactory
-        airWatchPlugin.credentialProvider = credentialProvider
         airWatchPlugin.beginInstallConfigValidator = beginInstallConfigValidator
         airWatchPlugin.apply(project)
+
+        airWatchPlugin.credentialProvider = credentialProvider
     }
 
     @Test
@@ -99,8 +98,10 @@ class AirWatchPluginTest {
     @Test
     public void shouldExposePublishedAppIdAsTaskProperty() throws Exception {
         def airWatchClient = mock(AirWatchClient)
-        when(airWatchClientFactory.create(project.airwatchUpload.environments.preProduction, credentialProvider)).thenReturn(airWatchClient)
         when(airWatchClient.uploadApp(any(File), any(BeginInstallConfig))).thenReturn(["Id": ["Value": "456"]])
+
+        Environment preProdEnvironment = project.airwatchUpload.environments.preProduction
+        when(airWatchClientFactory.create(preProdEnvironment, credentialProvider)).thenReturn(airWatchClient)
 
         project.airwatchUpload {
             artifact.name = 'target'
@@ -206,12 +207,14 @@ class AirWatchPluginTest {
         }
 
         def airWatchClient = mock(AirWatchClient)
-        when(airWatchClientFactory.create(project.airwatchUpload.environments.preProduction, credentialProvider)).thenReturn(airWatchClient)
-        when(airWatchClient.uploadApp(Mockito.any(File), any(BeginInstallConfig))).thenReturn(["Id": ["Value": "456"]])
+        when(airWatchClient.uploadApp(any(File), any(BeginInstallConfig))).thenReturn(["Id": ["Value": "456"]])
+
+        Environment preProdEnvironment = project.airwatchUpload.environments.preProduction
+        when(airWatchClientFactory.create(preProdEnvironment, credentialProvider)).thenReturn(airWatchClient)
 
         project.tasks.pushArtifactToAirWatch.execute()
 
-        verify(airWatchClientFactory).create(project.airwatchUpload.environments.preProduction, credentialProvider)
+        verify(airWatchClientFactory).create(preProdEnvironment, credentialProvider)
     }
 
     @Test
