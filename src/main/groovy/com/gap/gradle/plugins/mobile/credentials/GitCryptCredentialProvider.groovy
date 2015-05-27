@@ -6,10 +6,10 @@ import org.gradle.api.GradleException
 class GitCryptCredentialProvider implements CredentialProvider {
 
     public static final String CREDENTIALS_REPOSITORY = "http://github.gapinc.dev/mpl/credentials.git"
-    public static final File CRYPT_KEY = new File(System.getProperty("user.home"), ".git-crypt/mpl_secret_key")
+    public static final File SYMMETRIC_KEY = new File(System.getProperty("user.home"), ".git-crypt/credentials_key")
 
-    private CommandRunner commandRunner
-    private File workingDir
+    CommandRunner commandRunner
+    File workingDir
 
     GitCryptCredentialProvider(CommandRunner commandRunner) {
         this.commandRunner = commandRunner
@@ -18,8 +18,8 @@ class GitCryptCredentialProvider implements CredentialProvider {
 
     @Override
     Credential get(String credentialName) {
-        if (!CRYPT_KEY.exists()) {
-            throw new GradleException("Unable to load symmetric key from ${CRYPT_KEY.absolutePath}")
+        if (!SYMMETRIC_KEY.exists()) {
+            throw new GradleException("Unable to load symmetric key from ${SYMMETRIC_KEY.absolutePath}")
         }
 
         cloneCredentialsRepo()
@@ -39,7 +39,7 @@ class GitCryptCredentialProvider implements CredentialProvider {
     }
 
     void unlockCredentials() {
-        commandRunner.run(workingDir, "git-crypt", "unlock", CRYPT_KEY.absolutePath)
+        commandRunner.run(workingDir, "git-crypt", "unlock", SYMMETRIC_KEY.absolutePath)
     }
 
     void cloneCredentialsRepo() {
