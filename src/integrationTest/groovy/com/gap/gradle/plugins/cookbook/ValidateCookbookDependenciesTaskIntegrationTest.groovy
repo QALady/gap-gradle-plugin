@@ -37,7 +37,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
             "version '999.99.9999'",
             "name    'ref-app'",
             //"depends 'gapTomcat', '0.0.23'",
-            "depends 'gapNagios', '0.0.1'",
+            "depends 'gapNagios', '>= 0.0.1'",
         ])
         executeTasks()
     }
