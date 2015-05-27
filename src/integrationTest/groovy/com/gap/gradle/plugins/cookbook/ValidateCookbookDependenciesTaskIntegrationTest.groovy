@@ -36,7 +36,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
         createMetadataRb([
             "version '999.99.9999'",
             "name    'ref-app'",
-            "depends 'gapTomcat', '0.0.23'",
+            //"depends 'gapTomcat', '0.0.23'",
             "depends 'gapNagios', '0.0.1'",
         ])
         executeTasks()
@@ -57,7 +57,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
             createMetadataRb([
                 "version '999.99.9999'",
                 "name    'ref-app'",
-                "depends 'gapTomcat', '0.0.23'",
+                //"depends 'gapTomcat', '0.0.23'",
                 "depends 'gapNagios', '>= 0.0.1'",
             ])
             executeTasks()
@@ -73,7 +73,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
             createMetadataRb([
                 "version '999.99.9999'",
                 "name    'ref-app'",
-                "depends 'gapTomcat', '0.0.23'",
+                //"depends 'gapTomcat', '0.0.23'",
                 "depends 'gapNagios'",
             ])
             executeTasks()
