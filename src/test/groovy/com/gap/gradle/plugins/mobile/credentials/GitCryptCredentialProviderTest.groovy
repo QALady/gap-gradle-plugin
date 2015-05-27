@@ -5,7 +5,7 @@ import org.junit.Before
 import org.junit.Test
 
 import static com.gap.gradle.plugins.mobile.credentials.GitCryptCredentialProvider.CREDENTIALS_REPOSITORY
-import static com.gap.gradle.plugins.mobile.credentials.GitCryptCredentialProvider.CRYPT_KEY
+import static com.gap.gradle.plugins.mobile.credentials.GitCryptCredentialProvider.SYMMETRIC_KEY
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.verify
 
@@ -29,7 +29,7 @@ public class GitCryptCredentialProviderTest {
     @Test
     public void shouldUnlockSecrets() throws Exception {
         credentialProvider.unlockCredentials()
-        verify(commandRunner).run(credentialProvider.workingDir, "git-crypt", "unlock", CRYPT_KEY.absolutePath)
+        verify(commandRunner).run(credentialProvider.workingDir, "git-crypt", "unlock", SYMMETRIC_KEY.absolutePath)
     }
 
     @Test
