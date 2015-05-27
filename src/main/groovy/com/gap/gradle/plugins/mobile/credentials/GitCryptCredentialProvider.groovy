@@ -1,7 +1,6 @@
 package com.gap.gradle.plugins.mobile.credentials
 
 import com.gap.gradle.plugins.mobile.CommandRunner
-import org.gradle.api.GradleException
 
 class GitCryptCredentialProvider implements CredentialProvider {
 
@@ -10,39 +9,40 @@ class GitCryptCredentialProvider implements CredentialProvider {
     public static final File WORKING_DIR = new File(System.getProperty("java.io.tmpdir"), "credentials")
 
     private final CommandRunner commandRunner
+    private GitCrypt gitCrypt
+    private CredentialFileParser credentialFileParser
 
     GitCryptCredentialProvider(CommandRunner commandRunner) {
         this.commandRunner = commandRunner
+        this.gitCrypt = new GitCrypt(commandRunner)
+        this.credentialFileParser = new CredentialFileParser(WORKING_DIR)
     }
 
     @Override
     Credential get(String credentialName) {
-        if (!SYMMETRIC_KEY.exists()) {
-            throw new GradleException("Unable to load symmetric key from ${SYMMETRIC_KEY.absolutePath}")
-        }
-
         cloneCredentialsRepo()
 
-        unlockCredentials()
+        gitCrypt.unlock(WORKING_DIR, SYMMETRIC_KEY)
 
-        Credential credential = new CredentialFileParser(WORKING_DIR).parse(credentialName)
+        Credential credential = credentialFileParser.parse(credentialName)
 
-        lockCredentials()
+        gitCrypt.lock(WORKING_DIR)
+
+        WORKING_DIR.deleteDir()
 
         return credential
-    }
-
-    void lockCredentials() {
-        commandRunner.run(WORKING_DIR, "git-crypt", "lock")
-        WORKING_DIR.deleteDir()
-    }
-
-    void unlockCredentials() {
-        commandRunner.run(WORKING_DIR, "git-crypt", "unlock", SYMMETRIC_KEY.absolutePath)
     }
 
     void cloneCredentialsRepo() {
         WORKING_DIR.deleteDir()
         commandRunner.run("git", "clone", "--quiet", "--depth", "1", CREDENTIALS_REPOSITORY, WORKING_DIR.absolutePath)
+    }
+
+    void setGitCrypt(GitCrypt gitCrypt) {
+        this.gitCrypt = gitCrypt
+    }
+
+    void setCredentialFileParser(CredentialFileParser credentialFileParser) {
+        this.credentialFileParser = credentialFileParser
     }
 }

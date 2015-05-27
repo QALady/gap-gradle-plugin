@@ -22,18 +22,21 @@ public class GitCryptCredentialProviderTest {
     @Test
     public void shouldCloneRepo() throws Exception {
         credentialProvider.cloneCredentialsRepo()
+
         verify(commandRunner).run("git", "clone", "--quiet", "--depth", "1", CREDENTIALS_REPOSITORY, WORKING_DIR.absolutePath)
     }
 
     @Test
     public void shouldUnlockSecrets() throws Exception {
-        credentialProvider.unlockCredentials()
-        verify(commandRunner).run(WORKING_DIR, "git-crypt", "unlock", SYMMETRIC_KEY.absolutePath)
-    }
+        def gitCrypt = mock(GitCrypt)
+        def fileParser = mock(CredentialFileParser)
 
-    @Test
-    public void shouldLockSecrets() throws Exception {
-        credentialProvider.lockCredentials()
-        verify(commandRunner).run(WORKING_DIR, "git-crypt", "lock")
+        credentialProvider.gitCrypt = gitCrypt
+        credentialProvider.credentialFileParser = fileParser
+        credentialProvider.get("foo")
+
+        verify(gitCrypt).unlock(WORKING_DIR, SYMMETRIC_KEY)
+        verify(gitCrypt).lock(WORKING_DIR)
+        verify(fileParser).parse("foo")
     }
 }
