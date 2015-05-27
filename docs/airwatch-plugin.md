@@ -87,7 +87,7 @@ You can also add a custom one or overwrite. e.g.: Adding a new environment calle
     environments {
       myEnv {
         apiHost 'http://example.com'
-        credentialName 'credential-name-in-EC'
+        credentialName 'credential-name'
         locationGroupId '123'
         // ...
       }
@@ -101,7 +101,7 @@ And you can overwrite pre-configured values for existing ones. e.g.: Override va
   airwatchUpload {
     environments {
       preProduction {
-        credentialName 'some-other-value'
+        credentialName 'another-credential-name'
         locationGroupId 'new-value'
       }
     }
@@ -113,7 +113,7 @@ And you can overwrite pre-configured values for existing ones. e.g.: Override va
 * `consoleHost`: the URL for the Airwatch Console (Web interface) -- used to configure the application configuration variables
 * `tenantCode`: the Airwatch tenant code
 * `locationGroupId`: defines under which Airwatch location group you'll create the application
-* `credentialName`: this is the name of the credential in EletricCommander (project [WM Credentials](https://commander.gapinc.dev/commander/link/projectDetails/projects/WM%20Credentials?objectId=project-85a02ed1-42a2-11e4-a559-00505625f614&filterName0=projectsPageSearch&filterDepth=1&tabGroup=credentialsHeader&s=Projects)) that knows the actual username/password to access Airwatch
+* `credentialName`: the name of the credential stored in the [credentials](http://github.gapinc.dev/mpl/credentials) repository
 
 ### searchParamsToRetireApp
 
