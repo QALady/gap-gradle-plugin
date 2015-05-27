@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -31,7 +32,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
         validateTask = project.tasks.findByName("validateCookbookDependencies")
     }
 
-    @Test
+    @Ignore
     void shouldSucceed_whenCookbookDependenciesHavePinnedVersions() {
         createMetadataRb([
             "version '999.99.9999'",
@@ -51,7 +52,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
         executeTasks()
     }
 
-    @Test
+    @Ignore
     void shouldFail_whenCookbookDependencyVersionContainsRange() {
         try {
             createMetadataRb([
@@ -67,7 +68,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
         }
     }
 
-    @Test
+    @Ignore
     void shouldFail_whenCookbookDependencyVersionIsMissing() {
         try {
             createMetadataRb([
