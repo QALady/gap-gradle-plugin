@@ -129,11 +129,13 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
         println "Created file : ${htmlReportFile.getAbsoluteFile()}"
     }
 
-    static def getNoSonarProjects(List sonarProjects, List allProjects){
+    static def getNoSonarProjects(List<LinkedHashMap> sonarProjects, List allProjects){
 
         def sonarProjectNamesList = []
         sonarProjects.each{ p ->
-            sonarProjectNamesList.push(p.get("projectSegment").split(':')[0])
+            println "Elements is : ${p}"
+            String projectSegment = p.get("projectSegment").toString().split(':')[0]
+            sonarProjectNamesList.add(projectSegment)
         }
 
         def noSonarProjects = [];
