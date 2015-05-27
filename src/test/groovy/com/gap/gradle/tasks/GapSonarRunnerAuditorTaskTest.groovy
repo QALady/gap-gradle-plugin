@@ -89,7 +89,16 @@ class GapSonarRunnerAuditorTaskTest {
 
     @Test
     void getNoSonarProjects() {
-        def sonarProjects = ["project1:holi", "project2:chao","project3:teni"]
+        def sonarProjects = []
+        def temp1=[:]
+        temp1.put("projectSegment","project1:holi")
+        sonarProjects.add(temp1)
+        def temp2=[:]
+        sonarProjects.add(temp2)
+        temp2.put("projectSegment","project2:chao")
+        def temp3=[:]
+        sonarProjects.add(temp3)
+        temp3.put("projectSegment","project3:teni")
         def allProjects = ["project1","project2","project3","project4", "project-1"]
         def noSonarProjects = auditorTask.getNoSonarProjects(sonarProjects,allProjects)
 
