@@ -20,14 +20,14 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
 
     def execute() {
         def sonarPropertySheetList = readPropertySheet()
-        List<String> sonarProjects = writeSonarProjectList(sonarPropertySheetList)
-        List<String> allProjects = getAllProjects()
+        List sonarProjects = writeSonarProjectList(sonarPropertySheetList)
+        List allProjects = getAllProjects()
         def noSonarProjects = getNoSonarProjects(sonarProjects, allProjects)
         def htmlData = buildHtmlData(sonarProjects, noSonarProjects)
         createOrUpdateContents(htmlData.toString())
     }
 
-    List<String> getAllProjects() {
+    List getAllProjects() {
         def projects= commanderClient.getProjects()
         return projects.project.projectName
     }
@@ -139,7 +139,7 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
         def noSonarProjects = [];
         allProjects.each{ p ->
             if(!sonarProjectNamesList.contains(p)){
-                noSonarProjects.push(p)
+                noSonarProjects.add(p)
             }
         }
 
