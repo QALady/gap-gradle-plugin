@@ -4,8 +4,7 @@ import com.gap.gradle.plugins.mobile.CommandRunner
 import org.junit.Before
 import org.junit.Test
 
-import static com.gap.gradle.plugins.mobile.credentials.GitCryptCredentialProvider.CREDENTIALS_REPOSITORY
-import static com.gap.gradle.plugins.mobile.credentials.GitCryptCredentialProvider.SYMMETRIC_KEY
+import static com.gap.gradle.plugins.mobile.credentials.GitCryptCredentialProvider.*
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.verify
 
@@ -23,18 +22,18 @@ public class GitCryptCredentialProviderTest {
     @Test
     public void shouldCloneRepo() throws Exception {
         credentialProvider.cloneCredentialsRepo()
-        verify(commandRunner).run("git", "clone", "--quiet", "--depth", "1", CREDENTIALS_REPOSITORY, credentialProvider.workingDir.absolutePath)
+        verify(commandRunner).run("git", "clone", "--quiet", "--depth", "1", CREDENTIALS_REPOSITORY, WORKING_DIR.absolutePath)
     }
 
     @Test
     public void shouldUnlockSecrets() throws Exception {
         credentialProvider.unlockCredentials()
-        verify(commandRunner).run(credentialProvider.workingDir, "git-crypt", "unlock", SYMMETRIC_KEY.absolutePath)
+        verify(commandRunner).run(WORKING_DIR, "git-crypt", "unlock", SYMMETRIC_KEY.absolutePath)
     }
 
     @Test
     public void shouldLockSecrets() throws Exception {
         credentialProvider.lockCredentials()
-        verify(commandRunner).run(credentialProvider.workingDir, "git-crypt", "lock")
+        verify(commandRunner).run(WORKING_DIR, "git-crypt", "lock")
     }
 }

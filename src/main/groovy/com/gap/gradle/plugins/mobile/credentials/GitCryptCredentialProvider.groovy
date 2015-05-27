@@ -7,13 +7,12 @@ class GitCryptCredentialProvider implements CredentialProvider {
 
     public static final String CREDENTIALS_REPOSITORY = "http://github.gapinc.dev/mpl/credentials.git"
     public static final File SYMMETRIC_KEY = new File(System.getProperty("user.home"), ".git-crypt/credentials_key")
+    public static final File WORKING_DIR = new File(System.getProperty("java.io.tmpdir"), "credentials")
 
-    CommandRunner commandRunner
-    File workingDir
+    private final CommandRunner commandRunner
 
     GitCryptCredentialProvider(CommandRunner commandRunner) {
         this.commandRunner = commandRunner
-        this.workingDir = new File(System.getProperty("java.io.tmpdir"), "credentials")
     }
 
     @Override
@@ -26,7 +25,7 @@ class GitCryptCredentialProvider implements CredentialProvider {
 
         unlockCredentials()
 
-        Credential credential = new CredentialFileParser(workingDir).parse(credentialName)
+        Credential credential = new CredentialFileParser(WORKING_DIR).parse(credentialName)
 
         lockCredentials()
 
@@ -34,16 +33,16 @@ class GitCryptCredentialProvider implements CredentialProvider {
     }
 
     void lockCredentials() {
-        commandRunner.run(workingDir, "git-crypt", "lock")
-        workingDir.deleteDir()
+        commandRunner.run(WORKING_DIR, "git-crypt", "lock")
+        WORKING_DIR.deleteDir()
     }
 
     void unlockCredentials() {
-        commandRunner.run(workingDir, "git-crypt", "unlock", SYMMETRIC_KEY.absolutePath)
+        commandRunner.run(WORKING_DIR, "git-crypt", "unlock", SYMMETRIC_KEY.absolutePath)
     }
 
     void cloneCredentialsRepo() {
-        workingDir.deleteDir()
-        commandRunner.run("git", "clone", "--quiet", "--depth", "1", CREDENTIALS_REPOSITORY, workingDir.absolutePath)
+        WORKING_DIR.deleteDir()
+        commandRunner.run("git", "clone", "--quiet", "--depth", "1", CREDENTIALS_REPOSITORY, WORKING_DIR.absolutePath)
     }
 }

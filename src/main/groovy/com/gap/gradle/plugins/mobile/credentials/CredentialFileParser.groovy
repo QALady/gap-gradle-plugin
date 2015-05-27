@@ -6,7 +6,7 @@ class CredentialFileParser {
 
     public static final String CREDENTIAL_PATTERN = ~/username:\s(.*?)\s+?password:\s(.*?)\s+?/
 
-    private File workingDir
+    private final File workingDir
 
     CredentialFileParser(File workingDir) {
         this.workingDir = workingDir
