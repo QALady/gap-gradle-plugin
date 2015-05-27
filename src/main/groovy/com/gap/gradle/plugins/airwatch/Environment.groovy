@@ -19,7 +19,7 @@ class Environment {
         apiHost = "https://gapstorescn.awmdm.com/"
         consoleHost = "https://gapstorescn.awmdm.com/"
         tenantCode = "1WZTHMBAAAG7A6JAAEQA"
-        credentialName = "AirWatchPreProdSB"
+        credentialName = "AirWatchPreProd"
         locationGroupId = "620"
         return it
     }
