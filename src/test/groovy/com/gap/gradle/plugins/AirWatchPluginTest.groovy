@@ -115,8 +115,6 @@ class AirWatchPluginTest {
         assertEquals("456", pushArtifactsTask.publishedAppId)
     }
 
-    @Ignore
-    // TODO Re-enable after AirWatch feature pack 6 upgrade (MPL-342)
     @Test
     public void shouldNotConfigureAppIfAirwatchUploadConfigFileDoesNotExist() throws Exception {
         def configureAppTask = project.tasks.configureApp
@@ -131,8 +129,6 @@ class AirWatchPluginTest {
         assertEquals(true, configureAppTask.state.skipped)
     }
 
-    @Ignore
-    // TODO Re-enable after AirWatch feature pack 6 upgrade (MPL-342)
     @Test
     public void shouldNotInstallAirwatchGemIfConfigFileDoesNotExist() throws Exception {
         def installGemTask = project.tasks.installAirwatchGem

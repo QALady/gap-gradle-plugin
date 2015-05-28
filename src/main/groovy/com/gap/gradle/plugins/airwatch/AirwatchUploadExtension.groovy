@@ -15,7 +15,7 @@ class AirwatchUploadExtension implements BeginInstallConfig {
     final SearchApplicationConfig searchParamsToRetireApp
     final ArtifactSpec artifact
     final NamedDomainObjectSet<Environment> environments
-    String configFilename
+    String configFilename = ""
     Environment targetEnvironment
     File configFile
     String pushMode
