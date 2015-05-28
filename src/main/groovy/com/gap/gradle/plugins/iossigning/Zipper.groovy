@@ -13,7 +13,7 @@ class Zipper {
     }
 
     def unzip(File zipFile, File destinationDir) {
-        commandRunner.run(UNZIP_TOOL, zipFile.absolutePath, "-d", destinationDir.absolutePath)
+        commandRunner.run(UNZIP_TOOL, "-o", zipFile.absolutePath, "-d", destinationDir.absolutePath)
     }
 
     def zip(File baseDir, File destinationZip) {

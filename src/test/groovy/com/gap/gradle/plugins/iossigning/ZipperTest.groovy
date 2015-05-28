@@ -37,7 +37,7 @@ public class ZipperTest {
 
         zipper.unzip(zipFile, destinationDir)
 
-        verify(commandRunner).run(UNZIP_TOOL, zipFile.absolutePath, "-d", destinationDir.absolutePath)
+        verify(commandRunner).run(UNZIP_TOOL, "-o", zipFile.absolutePath, "-d", destinationDir.absolutePath)
     }
 
     private static File fakeFileWithAbsolutePath(String filePath) {
