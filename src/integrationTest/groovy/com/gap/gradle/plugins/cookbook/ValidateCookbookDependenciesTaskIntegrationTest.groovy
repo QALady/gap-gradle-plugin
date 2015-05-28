@@ -32,7 +32,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
         validateTask = project.tasks.findByName("validateCookbookDependencies")
     }
 
-    @Ignore
+    @Test
     void shouldSucceed_whenCookbookDependenciesHavePinnedVersions() {
         createMetadataRb([
             "version '999.99.9999'",
@@ -52,7 +52,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
         executeTasks()
     }
 
-    @Ignore
+    @Test
     void shouldFail_whenCookbookDependencyVersionContainsRange() {
         try {
             createMetadataRb([
@@ -68,7 +68,7 @@ class ValidateCookbookDependenciesTaskIntegrationTest {
         }
     }
 
-    @Ignore
+    @Test
     void shouldFail_whenCookbookDependencyVersionIsMissing() {
         try {
             createMetadataRb([
