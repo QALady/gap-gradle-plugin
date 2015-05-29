@@ -78,12 +78,6 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
                             th("Last Run")
                         }
                     }
-                    tfoot {
-                        tr {
-                            th("Sonar Project:Segment")
-                            th("Last Run")
-                        }
-                    }
                     tbody{
                         projectsWithSonar.each { row ->
                             tr {
@@ -99,11 +93,6 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
                 hr{}
                 table(id:'table2', class:'display') {
                     thead{
-                        tr {
-                            th("No Sonar Projects")
-                        }
-                    }
-                    tfoot{
                         tr {
                             th("No Sonar Projects")
                         }
