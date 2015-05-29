@@ -26,14 +26,9 @@ class WaitDeviceToGetAppTask extends DefaultTask {
     def waitDeviceToGetApp() {
         String connectedDeviceUdid = getConnectedDeviceUdid()
 
-        File infopList = project.zipTree(publishedArtifactFile).matching {
-            include 'Payload/*.app/Info.plist'
-        }.getSingleFile()
+        def ipaDetails = new IpaDetails(project, publishedArtifactFile)
 
-        String appBundleIdentifier = readPlistKeyValue(infopList, "CFBundleIdentifier")
-        String appBundleVersion = readPlistKeyValue(infopList, "CFBundleVersion")
-
-        queryDeviceForRequiredAppUntilTimeout(connectedDeviceUdid, appBundleIdentifier, appBundleVersion)
+        queryDeviceForRequiredAppUntilTimeout(connectedDeviceUdid, ipaDetails.bundleIdentifier, ipaDetails.bundleVersion)
     }
 
     private void queryDeviceForRequiredAppUntilTimeout(String connectedDeviceUdid, String appBundleIdentifier, String appBundleVersion) {
@@ -56,14 +51,6 @@ class WaitDeviceToGetAppTask extends DefaultTask {
             throw new GradleException("Device did not receive the required application version number " +
                     "(bundle identifier = $appBundleIdentifier, build version = $appBundleVersion).", e)
         }
-    }
-
-    private String readPlistKeyValue(File plist, String key) {
-        def result = new PlistBuddy(commandRunner).printEntry(":${key}", plist)
-
-        println "Value from plist for key $key = $result"
-
-        result
     }
 
     private String getConnectedDeviceUdid() {

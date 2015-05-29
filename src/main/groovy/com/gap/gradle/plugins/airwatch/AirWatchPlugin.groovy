@@ -3,11 +3,11 @@ package com.gap.gradle.plugins.airwatch
 import com.gap.gradle.plugins.mobile.ArchivesArtifactFinder
 import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.mobile.credentials.CredentialProvider
-import com.gap.gradle.plugins.mobile.credentials.EctoolCredentialProvider
 import com.gap.gradle.plugins.mobile.credentials.GitCryptCredentialProvider
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
@@ -77,7 +77,32 @@ class AirWatchPlugin implements Plugin<Project> {
             onlyIf { extension.searchParamsToRetireApp.hasSearchParams() }
         }
 
-        def pushArtifactToAirWatchTask = project.task("pushArtifactToAirWatch", dependsOn: "searchAppToRetire") {
+        def versionCheckTask = project.task("checkIfVersionAlreadyExists") << {
+            def ipaDetails = new IpaDetails(project, getIpaToBeUploaded())
+
+            def desiredBundleId = ipaDetails.bundleIdentifier
+            def desiredVersion = ipaDetails.bundleVersion
+
+            def searchParams = new SearchApplicationConfig().with {
+                bundleId = desiredBundleId
+                status = "Active"
+                return it
+            }
+
+            def searchResults = airWatchClient.searchApplication(searchParams)
+            def existingVersions = searchResults["Application"].collect {
+                ["id": it["Id"]["Value"], "version": it["AppVersion"]]
+            }
+
+            def versionFound = existingVersions.find { it.version == desiredVersion }
+
+            if (versionFound) {
+                project.logger.warn("Version \"${desiredVersion}\" of \"${desiredBundleId}\" is already uploaded. Will not try to upload again.")
+                ext.publishedAppId = versionFound.id
+            }
+        }
+
+        def pushArtifactToAirWatchTask = project.task("pushArtifactToAirWatch", dependsOn: ["searchAppToRetire", "checkIfVersionAlreadyExists"]) {
             group = "AirWatch"
             description = "Distributes the app (.ipa) from Artifactory to AirWatch"
 
@@ -92,13 +117,15 @@ class AirWatchPlugin implements Plugin<Project> {
                 ext.uploadedArtifactFile = ipaToUpload
                 ext.publishedAppId = createdApp["Id"]["Value"]
             }
+
+            onlyIf { !versionCheckTask.hasProperty("publishedAppId") }
         }
 
         project.task("autoAssignSmartGroups", dependsOn: "pushArtifactToAirWatch") {
             doFirst {
                 String smartGroups = extension.smartGroups
                 String locationGroupId = targetEnvironment.locationGroupId
-                String appId = pushArtifactToAirWatchTask.publishedAppId
+                String appId = getPublishedAppId(versionCheckTask, pushArtifactToAirWatchTask)
 
                 airWatchClient.assignSmartGroupToApplication(smartGroups, appId, locationGroupId)
             }
@@ -126,8 +153,9 @@ class AirWatchPlugin implements Plugin<Project> {
             executable 'bundle'
 
             doFirst {
+                def publishedAppId = getPublishedAppId(versionCheckTask, pushArtifactToAirWatchTask)
                 def credential = credentialProvider.get(extension.targetEnvironment.credentialName)
-                args = ['exec', 'airwatch-app-config', extension.configFile, pushArtifactToAirWatchTask.publishedAppId, extension.appName]
+                args = ['exec', 'airwatch-app-config', extension.configFile, publishedAppId, extension.appName]
                 environment AW_URL: extension.targetEnvironment.consoleHost, AW_USER: credential.username, AW_PASS: credential.password
             }
 
@@ -144,6 +172,17 @@ class AirWatchPlugin implements Plugin<Project> {
             sleepTimeout = 1
             sleepTimeUnit = TimeUnit.MINUTES
         }
+    }
+
+    String getPublishedAppId(Task... tasks) {
+        def task = tasks.find { it.hasProperty("publishedAppId") }
+
+        if (task) {
+            println "Using publishedAppId \"${task.publishedAppId}\" from task \"${task.name}\""
+            return task.publishedAppId
+        }
+
+        throw new GradleException("App version not yet published to AirWatch")
     }
 
     File getIpaToBeUploaded() {
