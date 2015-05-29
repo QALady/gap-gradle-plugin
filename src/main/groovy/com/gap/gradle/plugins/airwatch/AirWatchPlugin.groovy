@@ -134,7 +134,7 @@ class AirWatchPlugin implements Plugin<Project> {
             onlyIf { extension.configFile.isFile() }
         }
 
-        project.task("waitDeviceToGetApp", type: WaitDeviceToGetAppTask, dependsOn: "configureApp") {
+        project.task("waitDeviceToGetApp", type: WaitDeviceToGetAppTask, dependsOn: "pushArtifactToAirWatch") {
             doFirst {
                 airwatchClient = airWatchClient
                 publishedArtifactFile = pushArtifactToAirWatchTask.uploadedArtifactFile
