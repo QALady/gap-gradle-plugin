@@ -123,7 +123,7 @@ class AirWatchClient {
     }
 
     Map searchApplication(SearchApplicationConfig config) {
-        println "Looking for older ipa versions to be retired...\n${config}"
+        logger.info config.toString()
 
         Map args = [
                 "path" : APP_SEARCH_PATH,
@@ -210,7 +210,7 @@ class AirWatchClient {
             }
 
             response.success = { resp, body ->
-                println "AirWatch returned a successful response: ${resp.statusLine}\n" +
+                logger.info "AirWatch returned a successful response: ${resp.statusLine}\n" +
                         parseResponseBody(body, resp)
 
                 return emptyBody(body) ? emptyMap() : body

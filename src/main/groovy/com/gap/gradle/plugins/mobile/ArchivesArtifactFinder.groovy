@@ -16,7 +16,7 @@ class ArchivesArtifactFinder {
         def artifactFinder = new ArtifactFinder(spec)
         return project.configurations['archives'].resolvedConfiguration.resolvedArtifacts.find {
             def matchResult = artifactFinder.matches(it)
-            println "Artifact ${it} from archives ${matchResult ? 'matches':'does not match'} artifact spec."
+            project.logger.info "Artifact ${it} from archives ${matchResult ? 'matches':'does not match'} artifact spec."
             matchResult
         }
     }
