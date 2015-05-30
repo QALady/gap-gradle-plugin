@@ -30,6 +30,7 @@ class AirWatchPlugin implements Plugin<Project> {
     private CredentialProvider credentialProvider
     private AirWatchClientFactory airWatchClientFactory = new AirWatchClientFactory()
     private BeginInstallConfigValidator beginInstallConfigValidator = new BeginInstallConfigValidator()
+    private File ipaToUpload
 
     @Inject
     public AirWatchPlugin(Instantiator instantiator) {
@@ -47,6 +48,12 @@ class AirWatchPlugin implements Plugin<Project> {
         this.extension.environments.add(DEFAULT_PRODUCTION)
 
         createTasks()
+
+        project.gradle.taskGraph.whenReady { taskGraph ->
+            if (taskGraph.hasTask(':checkIfVersionAlreadyExists') || taskGraph.hasTask(':pushArtifactToAirWatch')) {
+                this.ipaToUpload = getIpaToBeUploaded()
+            }
+        }
     }
 
     Copy createExtractAirwatchConfigTask() {
@@ -78,7 +85,7 @@ class AirWatchPlugin implements Plugin<Project> {
         }
 
         def versionCheckTask = project.task("checkIfVersionAlreadyExists") << {
-            def ipaDetails = new IpaDetails(project, getIpaToBeUploaded())
+            def ipaDetails = new IpaDetails(project, ipaToUpload)
 
             def desiredBundleId = ipaDetails.bundleIdentifier
             def desiredVersion = ipaDetails.bundleVersion
@@ -107,14 +114,11 @@ class AirWatchPlugin implements Plugin<Project> {
             description = "Distributes the app (.ipa) from Artifactory to AirWatch"
 
             doFirst {
-                File ipaToUpload = getIpaToBeUploaded()
-
                 beginInstallConfigValidator.validate(extension)
 
                 println "Pushing artifact \"${ipaToUpload.name}\" to Airwatch ${targetEnvironment}...\n"
-                def createdApp = airWatchClient.uploadApp(ipaToUpload, extension)
 
-                ext.uploadedArtifactFile = ipaToUpload
+                def createdApp = airWatchClient.uploadApp(ipaToUpload, extension)
                 ext.publishedAppId = createdApp["Id"]["Value"]
             }
 
@@ -165,7 +169,7 @@ class AirWatchPlugin implements Plugin<Project> {
         project.task("waitDeviceToGetApp", type: WaitDeviceToGetAppTask, dependsOn: "pushArtifactToAirWatch") {
             doFirst {
                 airwatchClient = airWatchClient
-                publishedArtifactFile = pushArtifactToAirWatchTask.uploadedArtifactFile
+                publishedArtifactFile = ipaToUpload
             }
 
             numberOfTries = NUMBER_OF_TRIES
