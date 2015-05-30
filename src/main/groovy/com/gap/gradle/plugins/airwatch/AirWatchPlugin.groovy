@@ -68,7 +68,7 @@ class AirWatchPlugin implements Plugin<Project> {
     }
 
     void createTasks() {
-        def searchAppToRetire = project.task("searchAppToRetire") {
+        def searchAppToRetireTask = project.task("searchAppToRetire") {
             doFirst {
                 def appList = airWatchClient.searchApplication(extension.searchParamsToRetireApp)
 
@@ -139,12 +139,12 @@ class AirWatchPlugin implements Plugin<Project> {
 
         project.task("autoRetireAppPreviousVersion", dependsOn: ["searchAppToRetire", "pushArtifactToAirWatch"]) {
             doFirst {
-                def retireVersion = searchAppToRetire.retireVersion
+                String retireVersion = searchAppToRetireTask.retireVersion
 
                 airWatchClient.retireApplication(retireVersion)
             }
 
-            onlyIf { searchAppToRetire.hasProperty('retireVersion') }
+            onlyIf { searchAppToRetireTask.hasProperty('retireVersion') }
         }
 
         project.task("installAirwatchGem", type: Exec) {
@@ -153,7 +153,7 @@ class AirWatchPlugin implements Plugin<Project> {
             onlyIf { extension.configFile.isFile() }
         }
 
-        project.task("configureApp", type: Exec, dependsOn: ["installAirwatchGem", "extractAirwatchConfig", "pushArtifactToAirWatch"]) {
+        project.task("configureApp", type: Exec, dependsOn: ["pushArtifactToAirWatch", "installAirwatchGem", "extractAirwatchConfig"]) {
             executable 'bundle'
 
             doFirst {
