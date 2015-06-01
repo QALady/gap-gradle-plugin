@@ -210,8 +210,8 @@ class AirWatchClient {
             }
 
             response.success = { resp, body ->
-                logger.info "AirWatch returned a successful response: ${resp.statusLine}\n" +
-                        parseResponseBody(body, resp)
+                logger.info "AirWatch returned a successful response: ${resp.statusLine}\n"
+                logger.info parseResponseBody(body, resp) + "\n"
 
                 return emptyBody(body) ? emptyMap() : body
             }
@@ -238,6 +238,6 @@ class AirWatchClient {
     }
 
     private static boolean emptyBody(body) {
-        !body || (body == null) || (body instanceof String && isBlank(body))
+        !body || (body instanceof String && isBlank(body))
     }
 }
