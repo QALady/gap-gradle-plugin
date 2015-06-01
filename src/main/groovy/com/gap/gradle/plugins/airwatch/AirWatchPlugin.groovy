@@ -159,7 +159,7 @@ class AirWatchPlugin implements Plugin<Project> {
                 environment AW_URL: extension.targetEnvironment.consoleHost, AW_USER: credential.username, AW_PASS: credential.password
             }
 
-            onlyIf { extension.configFile.isFile() }
+            onlyIf { extension.configFile.isFile() && !versionCheckTask.hasProperty("publishedAppId") }
         }
 
         project.task("waitDeviceToGetApp", type: WaitDeviceToGetAppTask, dependsOn: "pushArtifactToAirWatch") {
