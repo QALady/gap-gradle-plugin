@@ -76,7 +76,7 @@ class AirWatchPluginTest {
         }
 
         taskShouldExist('waitDeviceToGetApp', project)
-        taskShouldDependOn('waitDeviceToGetApp', 'configureApp', project)
+        taskShouldDependOn('waitDeviceToGetApp', 'pushArtifactToAirWatch', project)
 
         taskShouldExist('checkIfVersionAlreadyExists', project)
     }

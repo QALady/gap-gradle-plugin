@@ -48,12 +48,6 @@ class AirWatchPlugin implements Plugin<Project> {
         this.extension.environments.add(DEFAULT_PRODUCTION)
 
         createTasks()
-
-        project.gradle.taskGraph.whenReady { taskGraph ->
-            if (taskGraph.hasTask(':checkIfVersionAlreadyExists') || taskGraph.hasTask(':pushArtifactToAirWatch')) {
-                this.ipaToUpload = getIpaToBeUploaded()
-            }
-        }
     }
 
     Copy createExtractAirwatchConfigTask() {
@@ -85,7 +79,7 @@ class AirWatchPlugin implements Plugin<Project> {
         }
 
         def versionCheckTask = project.task("checkIfVersionAlreadyExists") << {
-            def ipaDetails = new IpaDetails(project, ipaToUpload)
+            def ipaDetails = new IpaDetails(project, getIpaToBeUploaded())
 
             def desiredBundleId = ipaDetails.bundleIdentifier
             def desiredVersion = ipaDetails.bundleVersion
@@ -116,9 +110,11 @@ class AirWatchPlugin implements Plugin<Project> {
             doFirst {
                 beginInstallConfigValidator.validate(extension)
 
-                println "Pushing artifact \"${ipaToUpload.name}\" to Airwatch ${targetEnvironment}...\n"
+                def ipaFile = getIpaToBeUploaded()
 
-                def createdApp = airWatchClient.uploadApp(ipaToUpload, extension)
+                println "Pushing artifact \"${ipaFile.name}\" to Airwatch ${targetEnvironment}...\n"
+
+                def createdApp = airWatchClient.uploadApp(ipaFile, extension)
                 ext.publishedAppId = createdApp["Id"]["Value"]
             }
 
@@ -169,7 +165,7 @@ class AirWatchPlugin implements Plugin<Project> {
         project.task("waitDeviceToGetApp", type: WaitDeviceToGetAppTask, dependsOn: "pushArtifactToAirWatch") {
             doFirst {
                 airwatchClient = airWatchClient
-                publishedArtifactFile = ipaToUpload
+                publishedArtifactFile = getIpaToBeUploaded()
             }
 
             numberOfTries = NUMBER_OF_TRIES
@@ -194,13 +190,23 @@ class AirWatchPlugin implements Plugin<Project> {
             return extension.ipaFile
         }
 
+        if (ipaToUpload) {
+            return ipaToUpload
+        }
+
+        resolveIpaFromArtifactory()
+    }
+
+    private File resolveIpaFromArtifactory() {
         ResolvedArtifact resolvedArtifact = new ArchivesArtifactFinder(project).find(extension.artifact)
 
         if (resolvedArtifact == null) {
             throw new GradleException("Could not find artifact that matches configured artifact in archives configuration.")
         }
 
-        return resolvedArtifact.file
+        ipaToUpload = resolvedArtifact.file
+
+        return ipaToUpload
     }
 
     private AirWatchClient getAirWatchClient() {
