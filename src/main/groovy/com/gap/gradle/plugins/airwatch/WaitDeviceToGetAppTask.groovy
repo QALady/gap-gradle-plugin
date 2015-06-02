@@ -2,7 +2,6 @@ package com.gap.gradle.plugins.airwatch
 
 import com.gap.gradle.utils.Barrier
 import com.gap.gradle.plugins.mobile.CommandRunner
-import com.gap.gradle.plugins.iossigning.PlistBuddy
 import com.gap.gradle.plugins.mobile.MobileDeviceUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException

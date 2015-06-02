@@ -230,6 +230,7 @@ class AirWatchClient {
         }
     }
 
+  /*
     private static String parseResponseBody(body, response) {
         if (emptyBody(body)) return "Response body is empty\n"
 
@@ -238,11 +239,13 @@ class AirWatchClient {
         return body
     }
 
+
     private static boolean jsonResponse(response) {
         def contentTypeHeader = response.headers.find { it.name.equals('Content-Type') }
 
         JSON.toString().equals(contentTypeHeader.value)
     }
+*/
 
     private static boolean emptyBody(body) {
         !body || (body instanceof String && isBlank(body))

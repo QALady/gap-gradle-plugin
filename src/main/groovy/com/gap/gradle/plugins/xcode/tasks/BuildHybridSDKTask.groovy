@@ -1,11 +1,9 @@
 package com.gap.gradle.plugins.xcode.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 import com.gap.gradle.plugins.mobile.CommandRunner
 import com.gap.gradle.plugins.iossigning.Zipper
-import org.apache.commons.io.FileUtils
 import org.gradle.api.tasks.Input
 
 class BuildHybridSDKTask extends DefaultTask {
