@@ -41,59 +41,65 @@ class GapUploadPlugin implements Plugin<Project>{
         from "src/test/smoke"
       }
 
-      project.configure(project){
-        uploadArchives {
-
-          dependsOn('uploadTestRuntime', 'uploadConfig', 'uploadIntegrationTest', 'uploadSmokeTest')
-
-          //Upload Project dependencies as well
-          project.configurations.compile.dependencies.each{
-            if (it instanceof org.gradle.api.artifacts.ProjectDependency)
-              uploadArchives.dependsOn(it.dependencyProject.path + ':uploadArchives')}
-
-          repositories {
-            ivy {
-              layout 'maven'
-              url "${ivyUrl}"
-              credentials {
-                username "${ivyUsername}"
-                password "${ivyPassword}"
-              }
-            }
-          }
-        }
-
-        configurations {
-          config
-          testRuntime{visible true}
-          integrationTest
-          smokeTest
-        }
-
-        artifacts {
-          config packageConfigs
-          testRuntime packageTests
-          integrationTest packageIntegrationTests
-          smokeTest packageSmokeTests
-        }
-
-        uploadTestRuntime {
-          repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
-        }
-
-        uploadConfig {
-          repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
-        }
-
-        uploadIntegrationTest {
-          repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
-        }
-
-        uploadSmokeTest {
-          repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
-        }
-
-      }
+        projectCongigure(project,ivyUrl,ivyUsername,ivyPassword)
     }
   }
+
+
+    private void projectCongigure(project,ivyUrl,ivyUsername,ivyPassword){
+
+        project.configure(project){
+            uploadArchives {
+
+                dependsOn('uploadTestRuntime', 'uploadConfig', 'uploadIntegrationTest', 'uploadSmokeTest')
+
+                //Upload Project dependencies as well
+                project.configurations.compile.dependencies.each{
+                    if (it instanceof org.gradle.api.artifacts.ProjectDependency)
+                        uploadArchives.dependsOn(it.dependencyProject.path + ':uploadArchives')}
+
+                repositories {
+                    ivy {
+                        layout 'maven'
+                        url "${ivyUrl}"
+                        credentials {
+                            username "${ivyUsername}"
+                            password "${ivyPassword}"
+                        }
+                    }
+                }
+            }
+
+            configurations {
+                config
+                testRuntime{visible true}
+                integrationTest
+                smokeTest
+            }
+
+            artifacts {
+                config packageConfigs
+                testRuntime packageTests
+                integrationTest packageIntegrationTests
+                smokeTest packageSmokeTests
+            }
+
+            uploadTestRuntime {
+                repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
+            }
+
+            uploadConfig {
+                repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
+            }
+
+            uploadIntegrationTest {
+                repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
+            }
+
+            uploadSmokeTest {
+                repositories { uploadArchives.repositories.each{add it}} //Use same repos as uploadArchives
+            }
+
+        }
+    }
 }
