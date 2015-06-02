@@ -15,6 +15,7 @@ import static java.lang.System.getProperty
 class AppiumPlugin implements Plugin<Project> {
 
     public static final String DEFAULT_INSTRUMENTS_TEMPLATE_URI = 'http://github.gapinc.dev/mpl/instruments-standard-template/raw/master/instruments-standard-template.tracetemplate'
+    public static final String DEFAULT_TRUST_STORE_URI = 'http://github.gapinc.dev/mpl/ca-trust-store/raw/master/TrustStore.sqlite3'
 
     private AppiumPluginExtension extension
     private Project project
@@ -33,7 +34,7 @@ class AppiumPlugin implements Plugin<Project> {
     private void createTasks(Project project) {
         project.task('importTrustStoreIntoSimulators', type: CopyTrustStore) {
             doFirst {
-                trustStoreFileURI = new File(extension.trustStoreFileURI)
+                trustStoreFile = getTrustStore()
             }
 
             onlyIf { extension.simulatorMode }
@@ -91,11 +92,20 @@ class AppiumPlugin implements Plugin<Project> {
         }
     }
 
+    private File getTrustStore() {
+        def downloadDir = project.buildDir
+        def trustStoreUri = extension.trustStoreFileURI ?: DEFAULT_TRUST_STORE_URI
+
+        println "Downloading custom TrustStore from ${trustStoreUri} into ${downloadDir}..."
+
+        new FileDownloader(project).download(trustStoreUri, downloadDir)
+    }
+
     private String getTraceTemplate() {
         def downloadDir = project.buildDir
         def templateUri = extension.instrumentsTemplateURI ?: DEFAULT_INSTRUMENTS_TEMPLATE_URI
 
-        println "Downloading Instruments trace template from ${templateUri} into ${downloadDir}...\n"
+        println "Downloading Instruments trace template from ${templateUri} into ${downloadDir}..."
 
         def template = new FileDownloader(project).download(templateUri, downloadDir)
 
