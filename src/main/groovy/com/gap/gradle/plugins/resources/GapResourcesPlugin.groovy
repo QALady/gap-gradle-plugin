@@ -73,25 +73,28 @@ class GapResourcesPlugin implements Plugin<Project>{
               include "${sourceSet.name}${project.templates.dataExt}"
             }
 
-            erbs.each { erbFile ->
-              def processedFile = (erbFile.path =~ Pattern.compile(project.templates.fileExt + '$')).replaceFirst('')
-              logger.debug "$erbFile --> $processedFile"
-              delete(processedFile)
-
-              exec {
-                //excutable "/usr/bin/erubis" if gem is installed
-                executable "java"
-                args "-jar", configurations.erubis.asPath, "-f", dataMainSet.files.join(',') + ',' + dataCurrentSet.files.join(',') , erbFile
-                standardOutput = new BufferedOutputStream(new FileOutputStream(processedFile))
-              }
-
-              delete(erbFile)
-            }
+              processErbs(erbs, project, configurations, dataMainSet, dataCurrentSet)
 
           }
         }
-
       }
     }
   }
+
+    private void processErbs(erbs, project, configurations, dataMainSet, dataCurrentSet) {
+        erbs.each { erbFile ->
+            def processedFile = (erbFile.path =~ Pattern.compile(project.templates.fileExt + '$')).replaceFirst('')
+            logger.debug "$erbFile --> $processedFile"
+            delete(processedFile)
+
+            exec {
+                //excutable "/usr/bin/erubis" if gem is installed
+                executable "java"
+                args "-jar", configurations.erubis.asPath, "-f", dataMainSet.files.join(',') + ',' + dataCurrentSet.files.join(','), erbFile
+                standardOutput = new BufferedOutputStream(new FileOutputStream(processedFile))
+            }
+
+            delete(erbFile)
+        }
+    }
 }
