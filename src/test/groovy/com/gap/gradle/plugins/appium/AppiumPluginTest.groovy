@@ -11,7 +11,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
-import static com.gap.gradle.plugins.appium.GapiOSTestAppiumPlugin.DEFAULT_INSTRUMENTS_TEMPLATE_URI
+import static AppiumPlugin.DEFAULT_INSTRUMENTS_TEMPLATE_URI
 import static helpers.Assert.*
 import static org.hamcrest.CoreMatchers.containsString
 import static org.junit.Assert.assertThat
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
-class GapiOSTestAppiumPluginTest {
+class AppiumPluginTest {
 
     private Project project
 

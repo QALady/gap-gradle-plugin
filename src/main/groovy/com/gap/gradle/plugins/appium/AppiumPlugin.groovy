@@ -12,7 +12,7 @@ import org.gradle.api.tasks.bundling.Zip
 
 import static java.lang.System.getProperty
 
-class GapiOSTestAppiumPlugin implements Plugin<Project> {
+class AppiumPlugin implements Plugin<Project> {
 
     public static final String DEFAULT_INSTRUMENTS_TEMPLATE_URI = 'http://github.gapinc.dev/mpl/instruments-standard-template/raw/master/instruments-standard-template.tracetemplate'
 
