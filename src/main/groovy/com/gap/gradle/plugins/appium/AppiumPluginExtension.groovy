@@ -8,6 +8,7 @@ class AppiumPluginExtension {
     boolean simulatorMode
     File logFile
     String instrumentsTemplateURI
+    String trustStoreFileURI
 
     AppiumPluginExtension(Project project) {
         this.serverFlags = []

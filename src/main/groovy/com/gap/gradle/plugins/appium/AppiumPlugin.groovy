@@ -31,6 +31,14 @@ class AppiumPlugin implements Plugin<Project> {
     }
 
     private void createTasks(Project project) {
+        project.task('importTrustStoreIntoSimulators', type: CopyTrustStore) {
+            doFirst {
+                trustStoreFileURI = new File(extension.trustStoreFileURI)
+            }
+
+            onlyIf { extension.simulatorMode }
+        }
+
         project.task('configureAppiumForRealDevices') {
             doFirst {
                 instrumentsTraceOutputDir.mkdirs()
@@ -52,7 +60,8 @@ class AppiumPlugin implements Plugin<Project> {
             onlyIf { !extension.simulatorMode }
         }
 
-        project.task('startAppium', type: StartBackgroundProcessTask, dependsOn: ['configureAppiumForRealDevices', 'startiOSWebkitDebugProxy']) {
+        project.task('startAppium', type: StartBackgroundProcessTask, dependsOn: ['importTrustStoreIntoSimulators',
+                                                                                  'configureAppiumForRealDevices', 'startiOSWebkitDebugProxy']) {
             doFirst {
                 extension.logFile.parentFile.mkdirs()
 

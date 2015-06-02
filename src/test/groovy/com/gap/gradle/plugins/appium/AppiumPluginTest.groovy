@@ -45,6 +45,8 @@ class AppiumPluginTest {
         taskShouldBeOfType('startiOSWebkitDebugProxy', StartBackgroundProcessTask, project)
 
         taskShouldExist('zipInstrumentsTraceResults', project)
+
+        taskShouldExist('importTrustStoreIntoSimulators', project)
     }
 
     @Test
