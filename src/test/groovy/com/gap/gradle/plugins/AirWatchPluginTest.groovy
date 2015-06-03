@@ -98,26 +98,6 @@ class AirWatchPluginTest {
     }
 
     @Test
-    public void shouldExposePublishedAppIdAsTaskProperty() throws Exception {
-        def airWatchClient = mock(AirWatchClient)
-        when(airWatchClient.uploadApp(any(File), any(BeginInstallConfig))).thenReturn(["Id": ["Value": "456"]])
-
-        Environment preProdEnvironment = project.airwatchUpload.environments.preProduction
-        when(airWatchClientFactory.create(preProdEnvironment, credentialProvider)).thenReturn(airWatchClient)
-
-        project.airwatchUpload {
-            artifact.name = 'target'
-            targetEnvironment environments.preProduction
-        }
-
-        def pushArtifactsTask = project.tasks.pushArtifactToAirWatch
-
-        pushArtifactsTask.execute()
-
-        assertEquals("456", pushArtifactsTask.publishedAppId)
-    }
-
-    @Test
     public void shouldNotConfigureAppIfAirwatchUploadConfigFileDoesNotExist() throws Exception {
         def configureAppTask = project.tasks.configureApp
         configureAppTask.dependsOn.clear()
