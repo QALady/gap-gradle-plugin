@@ -1,6 +1,7 @@
 package com.gap.gradle.utils
 
 import groovy.json.JsonSlurper
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 
 class ConfigUtil {
@@ -44,7 +45,7 @@ class ConfigUtil {
 	def loadConfigFromJson(String filePath) {
 		File configFile = new File(filePath)
 		if(!configFile.exists()) {
-			throw new Exception("Prod Deploy Config file (${filePath}) is missing")
+			throw new GradleException("Prod Deploy Config file (${filePath}) is missing")
 		}
 		new JsonSlurper().parseText(configFile.text)
 	}

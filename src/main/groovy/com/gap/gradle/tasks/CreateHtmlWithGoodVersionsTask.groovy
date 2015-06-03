@@ -45,7 +45,7 @@ class CreateHtmlWithGoodVersionsTask extends WatchmenTask {
 			linkSelectionPageToThisJob(htmlFile.name)
 		} catch (ignored) {
 			logger.error(ignored.getCause(), ignored)
-			logger.info(ignored.printStackTrace())
+			//logger.info(ignored.printStackTrace())
 			logger.info("Unable to create HTML with good versions")
 		}
 	}
