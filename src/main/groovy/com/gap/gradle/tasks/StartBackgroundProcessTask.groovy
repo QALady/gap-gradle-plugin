@@ -7,8 +7,11 @@ import org.gradle.api.tasks.TaskAction
 
 import static java.util.concurrent.TimeUnit.SECONDS
 
+import org.apache.commons.logging.LogFactory
+
 class StartBackgroundProcessTask extends DefaultTask {
 
+    private static final logger = LogFactory.getLog(StartBackgroundProcessTask)
     private static final int MAX_RETRIES = 12
     private static final int RETRY_INTERVAL = 5
 
@@ -25,7 +28,7 @@ class StartBackgroundProcessTask extends DefaultTask {
     def exec() {
         validateParameters()
 
-        println "Starting background process with command \"${command}\"...\n"
+        logger.info("Starting background process with command \"${command}\"...\n")
 
         executeCommand(command)
 
@@ -38,7 +41,7 @@ class StartBackgroundProcessTask extends DefaultTask {
                 def pid = getPidForCommand(command)
 
                 if (pid.isEmpty()) {
-                    println 'Waiting for process to start...'
+                    logger.info('Waiting for process to start...')
 
                     return false
                 } else {

@@ -5,7 +5,11 @@ import com.gap.pipeline.tasks.WatchmenTask
 import groovy.xml.MarkupBuilder
 import org.gradle.api.Project
 
+import org.apache.commons.logging.LogFactory
+
 class GapSonarRunnerAuditorTask extends WatchmenTask {
+
+    private static final logger = LogFactory.getLog(GapSonarRunnerAuditorTask)
 
     private CommanderClient commanderClient
 
@@ -115,14 +119,14 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
         def htmlReportFile = new File(REPORT_FILE_NAME)
         htmlReportFile.createNewFile()
         htmlReportFile.write(htmlData)
-        println "Created file : ${htmlReportFile.getAbsoluteFile()}"
+        logger.info("Created file : ${htmlReportFile.getAbsoluteFile()}")
     }
 
     static def getNoSonarProjects(List<LinkedHashMap> sonarProjects, List allProjects){
 
         def sonarProjectNamesList = []
         sonarProjects.each{ p ->
-            println "Elements is : ${p}"
+            logger.info("Elements is : ${p}")
             String projectSegment = p.get("projectSegment").toString().split(':')[0]
             sonarProjectNamesList.add(projectSegment)
         }

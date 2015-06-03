@@ -9,8 +9,11 @@ import org.gradle.api.Project
 
 import java.text.SimpleDateFormat
 
+import org.apache.commons.logging.LogFactory
+
 class GapSonarRunnerPlugin implements Plugin<Project> {
 
+    private static final logger = LogFactory.getLog(GapSonarRunnerPlugin)
     private static final String SONAR_DATE_FORMAT = "YYYY-MM-dd"
     CommanderClient commanderClient = new CommanderClient();
 
@@ -84,7 +87,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
             if (!isLocal()) {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String ecSegmentName = commanderClient.getCurrentSegment();
-                println("**** Project:Segment in SonarRunner is : " + ecSegmentName + " ****")
+                logger.info("**** Project:Segment in SonarRunner is : " + ecSegmentName + " ****")
 
                 String key = "/projects/WM Segment Registry/ApplySonarRunner/${ecSegmentName}".toString()
                 commanderClient.setECProperty(key, simpleDateFormat.format(new Date()));
@@ -94,7 +97,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
         project.tasks.create(name: 'checkProjectVersion') << {
             if (!isLocal()) {
                 def projectVersion = getSonarProperty(project, "sonar.projectVersion");
-                println "projectCurrentVersion is '$projectVersion'"
+                logger.info("projectCurrentVersion is '$projectVersion'")
 
                 if (projectVersion == null || projectVersion.toString().trim().isEmpty() || projectVersion.toString().toLowerCase().equalsIgnoreCase("unspecified")) {
                     def version = commanderClient.getECProperty("/myJob/version")

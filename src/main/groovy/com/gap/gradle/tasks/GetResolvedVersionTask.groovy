@@ -7,11 +7,15 @@ import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
 import com.gap.pipeline.utils.IvyCoordinateParser
 
+import org.apache.commons.logging.LogFactory
+
 @RequiredParameters([
 @Require(parameter = 'dependencyGroup', description = 'group of the dependency we want to resolve'),
 @Require(parameter = 'dependencyName', description = 'name of the dependency we want to resolve')
 ])
 class GetResolvedVersionTask extends WatchmenTask {
+
+    private static final logger = LogFactory.getLog(GetResolvedVersionTask)
 
     private def commanderClient
 
@@ -22,10 +26,10 @@ class GetResolvedVersionTask extends WatchmenTask {
 
     def execute () {
         def version = findVersion(project.dependencyGroup, project.dependencyName)
-        print "resolved version of ${project.dependencyGroup}:${project.dependencyName} is ${version}"
+        logger.info("resolved version of ${project.dependencyGroup}:${project.dependencyName} is ${version}")
         if (project.hasProperty('ecProperty')) {
             commanderClient.setECProperty("/myJob/${project.ecProperty}", version)
-            print "property /myJob/${project.ecProperty} set to value ${version}"
+            logger.info("property /myJob/${project.ecProperty} set to value ${version}")
         }
     }
 

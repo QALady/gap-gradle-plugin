@@ -6,7 +6,11 @@ import org.gradle.api.Project
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.gradle.utils.Constants.*
 
+import org.apache.commons.logging.LogFactory
+
 class GapWMExperimentsPlugin implements Plugin<Project> {
+
+    private static final logger = LogFactory.getLog(GapWMExperimentsPlugin)
 
   CommanderClient ecclient = new CommanderClient()
 
@@ -42,8 +46,8 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
            def userName = ecclient.getArtifactoryUserName()
            def password = ecclient.getArtifactoryPassword()
 
-           println userName
-           println password
+           logger.info(userName)
+           logger.info(password)
       }
   }
 }

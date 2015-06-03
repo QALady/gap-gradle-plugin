@@ -179,7 +179,7 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 		String timeStamp = simpleDateFormat.format(new Date())
 		gradlelizedFile = new File(project.getProjectDir(), "${gradleFileBaseName}-${timeStamp}.gradle")
 		gradlelizedFile.write(gradlelizedData)
-		println("File location is : " + gradlelizedFile.getAbsolutePath())
+		logger.info("File location is : " + gradlelizedFile.getAbsolutePath())
 	}
 
 	private static String getBaseName(String absoluteFile) {

@@ -6,8 +6,12 @@ import org.gradle.api.tasks.bundling.Zip
 import java.util.zip.ZipOutputStream
 import java.util.zip.ZipEntry
 
+import org.apache.commons.logging.LogFactory
 
 class UploadFunctionalTestsTask extends WatchmenTask {
+
+    private static final logger = LogFactory.getLog(UploadFunctionalTestsTask)
+
     Project project
     public UploadFunctionalTestsTask(Project project){
         super(project)
@@ -27,7 +31,7 @@ class UploadFunctionalTestsTask extends WatchmenTask {
                 include '** /*'
             }
         }
-        println project.projectDir
+        logger.info(project.projectDir)
         def task = project.tasks.findByName('ZipFT')
         task.execute()
     }

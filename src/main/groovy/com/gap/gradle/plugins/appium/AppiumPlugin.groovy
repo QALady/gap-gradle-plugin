@@ -11,8 +11,11 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Zip
 
 import static java.lang.System.getProperty
+import org.apache.commons.logging.LogFactory
 
 class AppiumPlugin implements Plugin<Project> {
+
+    private static final logger = LogFactory.getLog(AppiumPlugin)
 
     public static final String DEFAULT_INSTRUMENTS_TEMPLATE_URI = 'http://github.gapinc.dev/mpl/instruments-standard-template/raw/master/instruments-standard-template.tracetemplate'
     public static final String DEFAULT_TRUST_STORE_URI = 'http://github.gapinc.dev/mpl/ca-trust-store/raw/master/TrustStore.sqlite3'
@@ -96,7 +99,7 @@ class AppiumPlugin implements Plugin<Project> {
         def downloadDir = project.buildDir
         def trustStoreUri = extension.trustStoreFileURI ?: DEFAULT_TRUST_STORE_URI
 
-        println "Downloading custom TrustStore from ${trustStoreUri} into ${downloadDir}..."
+        logger.info( "Downloading custom TrustStore from ${trustStoreUri} into ${downloadDir}...")
 
         new FileDownloader(project).download(trustStoreUri, downloadDir)
     }
@@ -105,7 +108,7 @@ class AppiumPlugin implements Plugin<Project> {
         def downloadDir = project.buildDir
         def templateUri = extension.instrumentsTemplateURI ?: DEFAULT_INSTRUMENTS_TEMPLATE_URI
 
-        println "Downloading Instruments trace template from ${templateUri} into ${downloadDir}..."
+        logger.info( "Downloading Instruments trace template from ${templateUri} into ${downloadDir}...")
 
         def template = new FileDownloader(project).download(templateUri, downloadDir)
 
@@ -120,7 +123,7 @@ class AppiumPlugin implements Plugin<Project> {
             throw new GradleException("No iPod device detected. Please connect a device or use `Simulator Mode`")
         }
 
-        println "Connected device UDID: ${deviceUdid}"
+        logger.info( "Connected device UDID: ${deviceUdid}")
 
         deviceUdid
     }

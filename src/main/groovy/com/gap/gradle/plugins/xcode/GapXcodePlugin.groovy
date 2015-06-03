@@ -12,11 +12,14 @@ import org.gradle.internal.reflect.Instantiator
 
 import javax.inject.Inject
 
+import org.apache.commons.logging.LogFactory
+
 import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DEVELOPMENT
 import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DISTRIBUTION
 
 class GapXcodePlugin implements Plugin<Project> {
 
+    private static final logger = LogFactory.getLog(GapXcodePlugin)
     private final Instantiator instantiator
     private Project project
     private XcodeExtension extension
@@ -170,7 +173,7 @@ class GapXcodePlugin implements Plugin<Project> {
             if (taskGraph.hasTask(':uploadArchives')) {
 
                 project.fileTree(dir: getArtifactsDir()).each { file ->
-                    println "Found artifact ${file.absolutePath}"
+                    logger.info("Found artifact ${file.absolutePath}")
 
                     (file.name =~ /^(\w+?)-(.*)\.(ipa|zip)$/).each { match, artifactName, artifactClassifier, type ->
 
