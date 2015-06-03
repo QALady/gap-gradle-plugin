@@ -210,14 +210,12 @@ class AirWatchClient {
             }
 
             response.success = { resp, body ->
-
                 logger.info "AirWatch returned a successful response: ${resp.statusLine}\n" + parseResponseBody(body, resp)
-                
+
                 return emptyBody(body) ? emptyMap() : body
             }
 
             response.failure = { resp, body ->
-                
                 throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n" +
                         parseResponseBody(body, resp))
             }

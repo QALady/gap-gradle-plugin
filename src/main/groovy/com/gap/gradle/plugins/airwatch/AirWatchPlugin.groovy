@@ -133,7 +133,7 @@ class AirWatchPlugin implements Plugin<Project> {
                 airWatchClient.assignSmartGroupToApplication(smartGroups, appId, locationGroupId)
             }
 
-            onlyIf { !shouldSkipPush() && extension.smartGroups }
+            onlyIf { extension.smartGroups }
         }
 
         project.task("autoRetireAppPreviousVersion", dependsOn: ["searchAppToRetire", "pushArtifactToAirWatch"]) {
@@ -149,7 +149,6 @@ class AirWatchPlugin implements Plugin<Project> {
         project.task("installAirwatchGem", type: Exec) {
             executable 'bundle'
             args = ['install', '--path', '/tmp/bundle']
-            onlyIf { !shouldSkipPush() && extension.configFile.isFile() }
         }
 
         project.task("configureApp", type: Exec, dependsOn: ["pushArtifactToAirWatch", "installAirwatchGem", "extractAirwatchConfig"]) {
@@ -160,8 +159,6 @@ class AirWatchPlugin implements Plugin<Project> {
                 args = ['exec', 'airwatch-app-config', extension.configFile, project.publishedAppId, extension.appName]
                 environment AW_URL: extension.targetEnvironment.consoleHost, AW_USER: credential.username, AW_PASS: credential.password
             }
-
-            onlyIf { !shouldSkipPush() && extension.configFile.isFile() }
         }
 
         project.task("waitDeviceToGetApp", type: WaitDeviceToGetAppTask, dependsOn: "pushArtifactToAirWatch") {
