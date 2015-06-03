@@ -4,8 +4,11 @@ import groovy.json.JsonSlurper
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.apache.commons.logging.LogFactory
 
 class CapDeployPlugin implements Plugin<Project> {
+
+    def logger = LogFactory.getLog(CapDeployPlugin)
 
     void apply(Project project) {
         project.extensions.create('deploy', CapDeployExtension)
@@ -17,7 +20,7 @@ class CapDeployPlugin implements Plugin<Project> {
                 configuration.each { segment, coords ->
                     def versions = gatherConfiguration(project, coords, dependencies)
                     if (versions.isEmpty()) {
-                        println("No version information found for component '${component}:${segment}'")
+                        logger.info("No version information found for component '${component}:${segment}'")
                     } else {
                         deployVersions[component][segment] = versions
                     }
@@ -37,7 +40,7 @@ class CapDeployPlugin implements Plugin<Project> {
                     from project.zipTree(component.capfiles.file)
                     into "${name}-capfiles"
                 }
-                println "Deploying ${name}..."
+                logger.info("Deploying ${name}...")
                 def builder = new ProcessBuilder()
                 builder.redirectErrorStream(true)
                 builder.command(
@@ -50,32 +53,29 @@ class CapDeployPlugin implements Plugin<Project> {
                 def proc = builder.start()
                 proc.waitFor()
                 if (proc.exitValue() == 0) {
-                    println "Deployment result for ${name}:"
-                    proc.inputStream.eachLine { println it }
+                    logger.info("Deployment result for ${name}:")
+                    proc.inputStream.eachLine { logger.info(it) }
                 } else {
-                    println "Error occured while deploying ${name}:"
-                    proc.inputStream.eachLine { println it }
-                    println()
+                    logger.error("Error occured while deploying ${name}:")
+                    proc.inputStream.eachLine { logger.info(it) }
                     throw new GradleException("Halting deployment!")
                 }
             } else {
-                println "No capfiles found for ${name}"
+                logger.info("No capfiles found for ${name}")
             }
-            println()
         }
     }
 
     def reportDeployVersions(deployVersions) {
-        println "Deploy versions: "
+        logger.info("Deploy versions: ")
         deployVersions.each { name, component ->
-            println "\t${name} component:"
+            logger.info("\t${name} component:")
             component.each { k, v ->
-                println "\t\t${k} version: ${v.version}"
+                logger.info("\t\t${k} version: ${v.version}")
                 if (k == 'capfiles') {
-                    println "\t\tcapfiles archive: ${v.file}"
+                    logger.info("\t\tcapfiles archive: ${v.file}")
                 }
             }
-            println()
         }
     }
 

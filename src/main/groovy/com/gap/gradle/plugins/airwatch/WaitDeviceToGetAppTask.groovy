@@ -7,9 +7,13 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
+import org.apache.commons.logging.LogFactory
+
 import java.util.concurrent.TimeUnit
 
 class WaitDeviceToGetAppTask extends DefaultTask {
+
+    private static final logger = LogFactory.getLog(WaitDeviceToGetAppTask)
 
     private static final String INSTALLED_STATUS = "2"
 
@@ -33,7 +37,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
     private void queryDeviceForRequiredAppUntilTimeout(String connectedDeviceUdid, String appBundleIdentifier, String appBundleVersion) {
         try {
             new Barrier(numberOfTries, sleepTimeout, sleepTimeUnit).executeUntil {
-                println "\nQuerying the device apps..."
+                logger.info( "\nQuerying the device apps...")
 
                 airwatchClient.queryDevice(connectedDeviceUdid)
 
@@ -42,7 +46,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
                 def hasRequiredVersion = hasAppInResults && mapAppNameToInfo[appBundleIdentifier]["BuildVersion"] == appBundleVersion
                 def isAppInstalled = hasAppInResults && mapAppNameToInfo[appBundleIdentifier]["Status"].toString() == INSTALLED_STATUS
 
-                println "App listed in device apps? ${hasAppInResults}; Is app installed? ${isAppInstalled}; Is required version? ${hasRequiredVersion}"
+                logger.info( "App listed in device apps? ${hasAppInResults}; Is app installed? ${isAppInstalled}; Is required version? ${hasRequiredVersion}")
 
                 hasRequiredVersion && isAppInstalled
             }
@@ -59,7 +63,7 @@ class WaitDeviceToGetAppTask extends DefaultTask {
             throw new GradleException("No iPod device detected.")
         }
 
-        println "Connected device UDID = $deviceUdid"
+        logger.info( "Connected device UDID = $deviceUdid")
 
         deviceUdid
     }

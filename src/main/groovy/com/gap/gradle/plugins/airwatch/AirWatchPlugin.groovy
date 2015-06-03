@@ -14,11 +14,14 @@ import org.gradle.internal.reflect.Instantiator
 
 import javax.inject.Inject
 import java.util.concurrent.TimeUnit
+import org.apache.commons.logging.LogFactory
 
 import static com.gap.gradle.plugins.airwatch.Environment.DEFAULT_PREPRODUCTION
 import static com.gap.gradle.plugins.airwatch.Environment.DEFAULT_PRODUCTION
 
 class AirWatchPlugin implements Plugin<Project> {
+
+    private static final logger = LogFactory.getLog(AirWatchPlugin)
 
     private static final int NUMBER_OF_TRIES = 10
 
@@ -68,7 +71,7 @@ class AirWatchPlugin implements Plugin<Project> {
                 if (!appList.isEmpty()) {
                     def app = appList["Application"][0]
 
-                    println "The following ipa will be retired after the new version is deployed: ${app}\n"
+                    logger.info( "The following ipa will be retired after the new version is deployed: ${app}\n")
 
                     ext.retireVersion = app["Id"]["Value"].toString()
                 }
@@ -112,7 +115,7 @@ class AirWatchPlugin implements Plugin<Project> {
 
                 def ipaFile = getIpaToBeUploaded()
 
-                println "Pushing artifact \"${ipaFile.name}\" to Airwatch ${targetEnvironment}...\n"
+                logger.info( "Pushing artifact \"${ipaFile.name}\" to Airwatch ${targetEnvironment}...\n")
 
                 def createdApp = airWatchClient.uploadApp(ipaFile, extension)
                 project.ext.publishedAppId = createdApp["Id"]["Value"]

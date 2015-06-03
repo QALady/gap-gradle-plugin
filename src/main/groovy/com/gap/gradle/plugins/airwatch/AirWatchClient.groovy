@@ -56,7 +56,7 @@ class AirWatchClient {
     Map uploadApp(File ipaFile, BeginInstallConfig config) {
         def transactionId = uploadFile(ipaFile, config)
 
-        println "Creating the app in AirWatch using the uploaded chunks..."
+        logger.info("Creating the app in AirWatch using the uploaded chunks...")
 
         beginInstall(transactionId, config)
     }
@@ -71,7 +71,7 @@ class AirWatchClient {
             byte[] bufferSlice = copyOfRange(buffer, 0, sizeRead)
             String encodedChunk = bufferSlice.encodeBase64().toString()
 
-            println "Uploading chunk ${chunkSequenceNumber} of ${config.uploadChunks}..."
+            logger.info("Uploading chunk ${chunkSequenceNumber} of ${config.uploadChunks}...")
 
             def response = uploadChunk(transactionId, encodedChunk, chunkSequenceNumber, fileSize, chunkSize)
             transactionId = response.get("TranscationId")
@@ -134,7 +134,7 @@ class AirWatchClient {
     }
 
     void retireApplication(String appId) {
-        println "Retiring an application with id \"${appId}\"..."
+        logger.info( "Retiring an application with id \"${appId}\"...")
 
         Map args = ["path": format(APP_RETIRE_PATH, appId)]
 
@@ -153,7 +153,7 @@ class AirWatchClient {
     }
 
     void queryDevice(String udid) {
-        println "\nSending query command to device with UDID $udid..."
+        logger.info( "\nSending query command to device with UDID $udid...")
 
         doRequest(POST, ["path": format(MDM_QUERY_DEVICE_BY_UDID_PATH, udid)])
     }
@@ -168,7 +168,7 @@ class AirWatchClient {
     }
 
     Map smartGroupSearch(String smartGroupName, String locationGroupId) {
-        println "Searching for Smart Group \"${smartGroupName}\"..."
+        logger.info( "Searching for Smart Group \"${smartGroupName}\"...")
 
         Map args = [
                 "path" : SMARTGROUPS_SEARCH_PATH,
@@ -185,7 +185,7 @@ class AirWatchClient {
     }
 
     void addSmartGroup(String appId, String smartGroupId) {
-        println "Assigning Smart Group id \"${smartGroupId}\" to app id \"${appId}\"..."
+        logger.info( "Assigning Smart Group id \"${smartGroupId}\" to app id \"${appId}\"...")
 
         Map args = [
                 "path": format(ADD_SMARTGROUP_PATH, appId, smartGroupId)

@@ -11,9 +11,13 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Upload
 import org.gradle.api.JavaVersion
 
+import org.apache.commons.logging.LogFactory
+
 //CookbookConfig cookbookDetail
 
 class GapPipelinePlugin implements Plugin<Project> {
+
+    def logger = LogFactory.getLog(GapPipelinePlugin)
 
   private static final String WM_LOCAL_NON_PROD = "wm_local_non_prod"
 
@@ -121,18 +125,18 @@ class GapPipelinePlugin implements Plugin<Project> {
 
       project.task('ivyIdentifiers') << {
         if(isRootProject(project)){
-          ivyInfo.identifiers().each {println it}
+          ivyInfo.identifiers().each {logger.info(it)}
         }
       }
 
       project.task('ivyDependencies') << {
         if(isRootProject(project)){
-          ivyInfo.dependencies().each {println it}
+          ivyInfo.dependencies().each {logger.info(it)}
         }
       }
 
       project.task('ivySegmentVersion') << {
-        println ivyInfo.version()
+          logger.info( ivyInfo.version())
       }
 
       project.task('populateSegmentRegistry') << {
@@ -163,11 +167,11 @@ class GapPipelinePlugin implements Plugin<Project> {
 
 
       project.task('resolveCookbookDependencies') << {
-        getCookbookVersions(project.configurations).each() { name, version -> println name + "," + version }
+        getCookbookVersions(project.configurations).each() { name, version -> logger.info( name + "," + version) }
       }
 
       project.task('resolveCookbookShaId') << {
-        getCookbookDetails(project.configurations).each() { name, sha1ID -> println name + "," + sha1ID}
+        getCookbookDetails(project.configurations).each() { name, sha1ID -> logger.info( name + "," + sha1ID)}
       }
 
       project.task("linkUpstreamChangelogReport") << {
