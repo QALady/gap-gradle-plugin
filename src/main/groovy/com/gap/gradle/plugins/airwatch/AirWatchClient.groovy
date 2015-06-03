@@ -211,26 +211,19 @@ class AirWatchClient {
 
             response.success = { resp, body ->
 
-                //Fixing the airwatch response body issue
-                //logger.info "AirWatch returned a successful response: ${resp.statusLine}\n" + parseResponseBody(body, resp)
-                logger.info "AirWatch returned a successful response: ${resp.statusLine}\n"
+                logger.info "AirWatch returned a successful response: ${resp.statusLine}\n" + parseResponseBody(body, resp)
                 
                 return emptyBody(body) ? emptyMap() : body
             }
 
             response.failure = { resp, body ->
-                throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n")
-
-//Fixing the airwatch response body issue
-/*
+                
                 throw new AirWatchClientException("AirWatch returned an unexpected error: ${resp.statusLine}\n" +
                         parseResponseBody(body, resp))
-*/
             }
         }
     }
 
-  /*
     private static String parseResponseBody(body, response) {
         if (emptyBody(body)) return "Response body is empty\n"
 
@@ -245,7 +238,6 @@ class AirWatchClient {
 
         JSON.toString().equals(contentTypeHeader.value)
     }
-*/
 
     private static boolean emptyBody(body) {
         !body || (body instanceof String && isBlank(body))
