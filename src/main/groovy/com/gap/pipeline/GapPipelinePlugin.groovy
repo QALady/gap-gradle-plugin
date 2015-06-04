@@ -125,18 +125,18 @@ class GapPipelinePlugin implements Plugin<Project> {
 
       project.task('ivyIdentifiers') << {
         if(isRootProject(project)){
-          ivyInfo.identifiers().each {logger.info(it)}
+          ivyInfo.identifiers().each {println it}
         }
       }
 
       project.task('ivyDependencies') << {
         if(isRootProject(project)){
-          ivyInfo.dependencies().each {logger.info(it)}
+          ivyInfo.dependencies().each {println it}
         }
       }
 
       project.task('ivySegmentVersion') << {
-          logger.info( ivyInfo.version())
+            println ivyInfo.version()
       }
 
       project.task('populateSegmentRegistry') << {
