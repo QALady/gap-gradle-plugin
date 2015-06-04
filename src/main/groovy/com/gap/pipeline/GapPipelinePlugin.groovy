@@ -167,11 +167,11 @@ class GapPipelinePlugin implements Plugin<Project> {
 
 
       project.task('resolveCookbookDependencies') << {
-        getCookbookVersions(project.configurations).each() { name, version -> logger.info( name + "," + version) }
+        getCookbookVersions(project.configurations).each() { name, version -> println name + "," + version }
       }
 
       project.task('resolveCookbookShaId') << {
-        getCookbookDetails(project.configurations).each() { name, sha1ID -> logger.info( name + "," + sha1ID)}
+        getCookbookDetails(project.configurations).each() { name, sha1ID -> println name + "," + sha1ID}
       }
 
       project.task("linkUpstreamChangelogReport") << {
