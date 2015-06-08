@@ -51,7 +51,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                 property "sonar.junit.reportsPath", "${project.buildDir}/test-results"
                 property "sonar.projectName", project.name
                 property "sonar.projectKey", "${project.group}:${project.name}"
-                property "sonar.profile", "AAD Reviewed Rules"
+                //property "sonar.profile", "AAD Reviewed Rules"
                 property "sonar.dynamicAnalysis", "reuseReports"
                 property "sonar.java.coveragePlugin", "jacoco"
                 property "sonar.java.jacoco.reportPath", project.jacoco.reportsDir
