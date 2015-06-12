@@ -80,6 +80,9 @@ class GapPipelinePlugin implements Plugin<Project> {
       new CreateECLinksTask(project).execute()
     }
 
+    project.task('insertResolvedVersion') << {
+      new InsertResolvedVersionTask(project).execute()
+    }
 
     project.task('buildJsonWithAllResolvedVersions') << {
       new BuildJsonWithAllResolvedVersionsTask(project).execute()
