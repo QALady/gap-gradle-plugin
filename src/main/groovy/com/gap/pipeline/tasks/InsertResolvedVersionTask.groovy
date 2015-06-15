@@ -54,12 +54,14 @@ class InsertResolvedVersionTask extends WatchmenTask {
 
         project.configurations.each{ conf ->
 
+            log.info("configuration name : " + conf.name)
             def configuration = [:]
             configuration['name'] = conf.name
             configuration['dependencies'] = []
 
             project.configurations[conf.name].allDependencies.each{ dep ->
 
+                log.info("dependency name : " + dep.name + " org : " + dep.group + " revision : " + dep.version)
                 def dependency = [:]
                 dependency['org'] = dep.group
                 dependency['rev'] = dep.version
