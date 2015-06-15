@@ -33,6 +33,7 @@ class InsertResolvedVersionTask extends WatchmenTask {
     def execute() {
 
         //check if ivy.xml file exist in t ci/build folder
+        log.info("------------------------------------------>"+ivyXmlPath)
         def ivyXml = new File(ivyXmlPath)
         if(ivyXml.exists()){
 
