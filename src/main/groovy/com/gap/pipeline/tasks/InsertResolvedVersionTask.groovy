@@ -1,11 +1,11 @@
 package com.gap.pipeline.tasks
 
-import com.gap.pipeline.ec.CommanderClient
+import com.gap.gradle.utils.ShellCommand
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
 /**
- *Created by Cl3s1l0 on 12-07-14.
+ *Created by Cl3s1l0 on 06-08-15.
  *
  * This task will replace the actual InsertResolvedVersion EC Plugin
  *
@@ -22,12 +22,12 @@ class InsertResolvedVersionTask extends WatchmenTask {
     def configurations = []
     def artifactInfo = [:]
 
-    CommanderClient commanderClient
+    ShellCommand shellCommand
 
-    InsertResolvedVersionTask(Project project, commanderClient = new CommanderClient()) {
+    InsertResolvedVersionTask(Project project, shellCommand = new ShellCommand()) {
         super(project)
         this.project = project
-        this.commanderClient = commanderClient
+        this.shellCommand = shellCommand
     }
 
     def execute() {
@@ -38,6 +38,7 @@ class InsertResolvedVersionTask extends WatchmenTask {
 
             configurations = get_configurations()
             modify_ivy_xml()
+            upload_ivy_file()
 
         } else {
 
@@ -108,6 +109,11 @@ class InsertResolvedVersionTask extends WatchmenTask {
         artifactInfo['path'] = "${artifactInfo['organisation']}/${artifactInfo['module']}/${artifactInfo['revision']}/ivy-${artifactInfo['revision']}.xml"
 
         log.info "\n\n${ivyXmlTex}\n"
+    }
+
+    private void upload_ivy_file(){
+        def command = ["curl", "-u", "ec-build:ECDev-artifact\$", "-T", "${ivyXmlPath}", "http://artifactory.gapinc.dev/artifactory/local-non-prod/", "${artifactInfo['path']}"]
+        shellCommand.execute(command)
     }
 
 }

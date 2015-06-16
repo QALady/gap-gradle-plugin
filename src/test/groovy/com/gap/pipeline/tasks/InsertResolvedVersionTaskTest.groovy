@@ -1,8 +1,6 @@
 package com.gap.pipeline.tasks
 
 import com.gap.gradle.utils.ShellCommand
-import com.gap.pipeline.ec.CommanderClient
-import com.gap.pipeline.utils.EnvironmentStub
 import org.apache.commons.io.FileUtils
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -16,7 +14,7 @@ import static org.junit.Assert.assertEquals
 import static org.mockito.Mockito.mock
 
 /**
- * Created by user on 6/12/15.
+ * Created by Cl3s1l0 on 06-08-15.
  */
 class InsertResolvedVersionTaskTest {
 
@@ -24,9 +22,7 @@ class InsertResolvedVersionTaskTest {
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
     private Project project
-    private CommanderClient commanderClient
     private ShellCommand mockShellCommand
-
     private String projectDirPath
     private InsertResolvedVersionTask task
 
@@ -35,7 +31,6 @@ class InsertResolvedVersionTaskTest {
 
         //init the mock for shell command
         mockShellCommand = mock(ShellCommand, Mockito.RETURNS_SMART_NULLS)
-        commanderClient = new CommanderClient(mockShellCommand, new EnvironmentStub())
 
         //creating project with its own project folder and a ci folder and applying the gappipeline plugin
         project = new ProjectBuilder().builder().withProjectDir(new File("${tempFolder.root.path}")).withName("test").build()
@@ -44,7 +39,7 @@ class InsertResolvedVersionTaskTest {
         build_dir.mkdirs()
 
         //creating the task to be tested, we are overriding the get configuration method
-        task = new InsertResolvedVersionTask(project, commanderClient){
+        task = new InsertResolvedVersionTask(project,mockShellCommand){
             @Override
             def get_configurations(){
                 def configurations = []
@@ -113,7 +108,6 @@ class InsertResolvedVersionTaskTest {
 
 
     def create_ivy_file(){
-
         def ivyXml = new File("${tempFolder.root.path}/build/ivy.xml")
         ivyXml.createNewFile()
 
