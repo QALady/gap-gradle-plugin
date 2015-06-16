@@ -33,7 +33,6 @@ class InsertResolvedVersionTask extends WatchmenTask {
     def execute() {
 
         //check if ivy.xml file exist in t ci/build folder
-        log.info("------------------------------------------>"+ivyXmlPath)
         def ivyXml = new File(ivyXmlPath)
         if(ivyXml.exists()){
 
@@ -59,16 +58,16 @@ class InsertResolvedVersionTask extends WatchmenTask {
             configuration['name'] = conf.name
             configuration['dependencies'] = []
 
-            project.configurations[conf.name].allDependencies.each{ dep ->
+            def firstLevelDeps = conf.resolvedConfiguration.getFirstLevelModuleDependencies()
+            firstLevelDeps.each{ dep ->
 
-                log.info("dependency name : " + dep.name + " org : " + dep.group + " revision : " + dep.version)
                 def dependency = [:]
-                dependency['org'] = dep.group
-                dependency['rev'] = dep.version
-                dependency['name'] = dep.name
-
+                dependency['org'] = dep.name.split(":")[0]
+                dependency['rev'] = dep.name.split(":")[2]
+                dependency['name'] = dep.name.split(":")[1]
                 configuration['dependencies'].push(dependency)
             }
+
             configurations.push(configuration)
         }
 
@@ -110,4 +109,5 @@ class InsertResolvedVersionTask extends WatchmenTask {
 
         log.info "\n\n${ivyXmlTex}\n"
     }
+
 }
