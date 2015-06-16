@@ -54,7 +54,6 @@ class InsertResolvedVersionTask extends WatchmenTask {
 
         project.configurations.each{ conf ->
 
-            log.info("configuration name : " + conf.name)
             def configuration = [:]
             configuration['name'] = conf.name
             configuration['dependencies'] = []
@@ -112,7 +111,8 @@ class InsertResolvedVersionTask extends WatchmenTask {
     }
 
     private void upload_ivy_file(){
-        def command = ["curl", "-u", "ec-build:ECDev-artifact\$", "-T", "${ivyXmlPath}", "http://artifactory.gapinc.dev/artifactory/local-non-prod/", "${artifactInfo['path']}"]
+        log.info("\n\n curl command: curl -u ec-build:ECDev-artifact\$ -T ${ivyXmlPath} http://artifactory.gapinc.dev/artifactory/local-non-prod/${artifactInfo['path']}\n")
+        def command = ["curl", "-u", "ec-build:ECDev-artifact\$", "-T", "${ivyXmlPath}", "http://artifactory.gapinc.dev/artifactory/local-non-prod/${artifactInfo['path']}"]
         shellCommand.execute(command)
     }
 
