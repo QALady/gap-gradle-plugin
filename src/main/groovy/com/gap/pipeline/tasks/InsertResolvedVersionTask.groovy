@@ -1,6 +1,7 @@
 package com.gap.pipeline.tasks
 
 import com.gap.gradle.utils.ShellCommand
+import com.gap.pipeline.ec.CommanderClient
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
@@ -17,17 +18,19 @@ class InsertResolvedVersionTask extends WatchmenTask {
     def log = LogFactory.getLog(InsertResolvedVersionTask)
 
     def Project project
-    String ivyXmlPath = "${project.rootDir.path}/build/ivy.xml"
+    String ivyXmlPath = "${project.buildDir.path}/ivy.xml"
 
     def configurations = []
     def artifactInfo = [:]
 
     ShellCommand shellCommand
+    CommanderClient commanderClient
 
-    InsertResolvedVersionTask(Project project, shellCommand = new ShellCommand()) {
+    InsertResolvedVersionTask(Project project, shellCommand = new ShellCommand(), commanderClient = new CommanderClient()) {
         super(project)
         this.project = project
         this.shellCommand = shellCommand
+        this.commanderClient = commanderClient
     }
 
     def execute() {
@@ -62,9 +65,9 @@ class InsertResolvedVersionTask extends WatchmenTask {
             firstLevelDeps.each{ dep ->
 
                 def dependency = [:]
-                dependency['org'] = dep.name.split(":")[0]
-                dependency['rev'] = dep.name.split(":")[2]
-                dependency['name'] = dep.name.split(":")[1]
+                dependency['org'] = dep.getModuleGroup()
+                dependency['rev'] = dep.getModuleVersion()
+                dependency['name'] = dep.getModuleName()
                 configuration['dependencies'].push(dependency)
             }
 
@@ -111,8 +114,8 @@ class InsertResolvedVersionTask extends WatchmenTask {
     }
 
     private void upload_ivy_file(){
-        log.info("\n\n curl command: curl -u ec-build:ECDev-artifact\$ -T ${ivyXmlPath} http://artifactory.gapinc.dev/artifactory/local-non-prod/${artifactInfo['path']}\n")
-        def command = ["curl", "-u", "ec-build:ECDev-artifact\$", "-T", "${ivyXmlPath}", "http://artifactory.gapinc.dev/artifactory/local-non-prod/${artifactInfo['path']}"]
+        log.info("\n\n curl command: curl -u ec-build:******** -T ${ivyXmlPath} http://artifactory.gapinc.dev/artifactory/local-non-prod/${artifactInfo['path']}\n")
+        def command = ["curl", "-u", "${commanderClient.getArtifactoryUserName()}:${commanderClient.getArtifactoryPassword()}", "-T", "${ivyXmlPath}", "http://artifactory.gapinc.dev/artifactory/local-non-prod/${artifactInfo['path']}"]
         shellCommand.execute(command)
     }
 

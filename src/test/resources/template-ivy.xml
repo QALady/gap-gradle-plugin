@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+    <info organisation="com.gap.watchmen.diamondDependency.iso.diamondDependencyA" module="ci" revision="2481" status="integration" publication="20150617121944">
+        <description/>
+    </info>
+    <configurations>
+        <conf name="archives" visibility="public" description="Configuration for archive artifacts."/>
+        <conf name="default" visibility="public" description="Configuration for default artifacts."/>
+        <conf name="pipeline" visibility="public"/>
+    </configurations>
+    <publications/>
+    <dependencies>
+        <dependency org="com.gap.watchmen.diamondDependency" name="diamondDependencyA" rev="+" conf="archives-&gt;archives"/>
+    </dependencies>
+</ivy-module>
