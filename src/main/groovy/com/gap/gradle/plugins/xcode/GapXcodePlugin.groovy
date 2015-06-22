@@ -9,6 +9,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.internal.reflect.Instantiator
+import com.gap.gradle.plugins.mobile.CommandRunner
 
 import javax.inject.Inject
 
@@ -72,6 +73,9 @@ class GapXcodePlugin implements Plugin<Project> {
         // Xcode gradle plugin version 0.10 moved the IPA creation and signing to the 'package' task.
         // To keep projects backwards compatible we're running package after 'archive' runs.
         project.tasks['archive'].doLast {
+            /* please remove this hack once openbakery xcodeplugin has been upgraded to  0.11.2
+            as that will take care of embedded framework signing as part of package task*/
+            signEmbeddedFramework()
             project.tasks['package'].execute()
         }
 
@@ -242,5 +246,33 @@ class GapXcodePlugin implements Plugin<Project> {
         def appName = extension.build.productName
 
         "${targetOutputDir()}/${configuration}-${sdk}/${appName}.app/Settings.bundle/Root.plist"
+    }
+
+    void signEmbeddedFramework() {
+        def sdk = project.xcodebuild.sdk
+        def productName = project.xcodebuild.productName
+        def target = project.xcodebuild.target
+        File frameworksDirectory = new File(project.buildDir, "archive/${target}.xcarchive/Products/Applications/${productName}.app/Frameworks")
+
+        if (frameworksDirectory.exists() && sdk == 'iphoneos') {
+
+            FilenameFilter filter = new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().endsWith(".dylib") || name.toLowerCase().endsWith(".framework");
+                }
+            };
+            def commandRunner = new CommandRunner(project)
+
+            for (File file in frameworksDirectory.listFiles(filter)) {
+                commandRunner.run("/usr/bin/codesign",
+                        "--force",
+                        "--sign",project.xcodebuild.getSigning().getIdentity(),
+                        "--verbose",
+                        file.absolutePath,
+                        "--keychain",
+                        project.xcodebuild.signing.keychainPathInternal.absolutePath)
+            }
+        }
+
     }
 }
