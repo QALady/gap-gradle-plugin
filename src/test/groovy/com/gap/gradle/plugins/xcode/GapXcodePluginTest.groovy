@@ -1,5 +1,5 @@
 package com.gap.gradle.plugins.xcode
-
+import com.gap.gradle.plugins.mobile.CommandRunner
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
@@ -10,6 +10,9 @@ import org.junit.Test
 import static helpers.Assert.*
 import static org.hamcrest.CoreMatchers.containsString
 import static org.junit.Assert.*
+import org.apache.commons.io.FileUtils
+import groovy.mock.interceptor.MockFor
+
 
 class GapXcodePluginTest {
 
@@ -25,6 +28,7 @@ class GapXcodePluginTest {
 
         plugin.apply(project)
     }
+
 
     @Test
     public void shouldAddNewTasks() throws Exception {
@@ -149,4 +153,32 @@ class GapXcodePluginTest {
         assertThat(plist.text, containsString('1'))
         assertThat(plist.text, containsString('foobar'))
     }
+
+    @Test
+    public void shouldSignEmbeddedFrameworks(){
+        project.xcode {
+            build {
+                productName 'MyApp'
+                target 'MyApp'
+                sdk 'iphoneos'
+                signingIdentity signing.development
+            }
+
+            archive {
+                version '1'
+                scmRevision 'foobar'
+            }
+        }
+        File frameworkDir = new File(project.buildDir, "archive/MyApp.xcarchive/Products/Applications/MyApp.app/Frameworks")
+        frameworkDir.mkdirs()
+        File frameworkFile = new File(frameworkDir, "Test.Framework/dummyFile")
+        FileUtils.writeStringToFile(frameworkFile, "dummy")
+        def commandRunnerMock =  new MockFor(CommandRunner.class)
+        commandRunnerMock.demand.run(0..1){}
+        commandRunnerMock.use {
+            this.plugin.signEmbeddedFramework()
+        }
+
+    }
+
 }
