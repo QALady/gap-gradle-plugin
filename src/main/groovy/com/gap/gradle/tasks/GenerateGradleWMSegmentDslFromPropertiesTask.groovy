@@ -190,7 +190,8 @@ class GenerateGradleWMSegmentDslFromPropertiesTask extends WatchmenTask {
 	}
 }
 
-private class GradleOutput extends JsonOutput {
+//private class GradleOutput extends JsonOutput {
+ class GradleOutput extends JsonOutput {
 
 	static String prettyPrint(String jsonPayload) {
 		int indent = 0

@@ -52,7 +52,7 @@ public class PodspecValidatorTest {
     }
 }
 
-private class FakePodspec implements Podspec {
+ class FakePodspec implements Podspec {
     String name = "FakePod"
     String version = "FakeVersion"
     String sourceLocation = "FakeUrl"

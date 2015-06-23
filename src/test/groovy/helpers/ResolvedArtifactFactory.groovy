@@ -4,7 +4,8 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier
 import org.gradle.api.internal.artifacts.DefaultResolvedArtifact
 import org.gradle.api.internal.artifacts.ivyservice.dynamicversions.DefaultResolvedModuleVersion
-import org.gradle.api.internal.artifacts.metadata.DefaultIvyArtifactName
+//import org.gradle.api.internal.artifacts.metadata.DefaultIvyArtifactName
+import org.gradle.internal.component.model.DefaultIvyArtifactName
 
 class ResolvedArtifactFactory {
     static ResolvedArtifact resolvedArtifact(Map<String, ?> map) {
