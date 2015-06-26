@@ -30,7 +30,8 @@ class GapSonarRunnerAuditorTaskTest {
 
     def expectedJsonDataFile = "src/test/groovy/com/gap/gradle/resources/expectedJsonFileAuditorTaskTest.json"
 
-    def expectedHtmlDataFile = "src/test/groovy/com/gap/gradle/resources/expectedHtmlFileAuditorTaskTest.html"
+    def sonarProjectsExpectedHtmlDataFile = "src/test/groovy/com/gap/gradle/resources/sonarProjectsExpectedHtmlFileAuditorTaskTest.html"
+    def noSonarProjectsExpectedHtmlDataFile = "src/test/groovy/com/gap/gradle/resources/noSonarProjectsExpectedHtmlFileAuditorTaskTest.html"
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder()
@@ -61,29 +62,33 @@ class GapSonarRunnerAuditorTaskTest {
 
     @Test
     void buildHtmlData() {
-        def expectedHtml = new XmlSlurper().parse(new FileReader(expectedHtmlDataFile))
+        def sonarProjectsExpectedHtml = new XmlSlurper().parse(new FileReader(sonarProjectsExpectedHtmlDataFile))
+        def noSonarProjectsExpectedHtml = new XmlSlurper().parse(new FileReader(noSonarProjectsExpectedHtmlDataFile))
 
-        def projectsWithSonar = []
+        def sonarProjects = []
         def project1 = [:]
         project1.put("projectSegment", "projectSegment 1")
         project1.put("lastRun", "lastRun 1")
         def project2 = [:]
         project2.put("projectSegment", "projectSegment 2")
         project2.put("lastRun", "lastRun 2")
-        projectsWithSonar.add(project1)
-        projectsWithSonar.add(project2)
+        sonarProjects.add(project1)
+        sonarProjects.add(project2)
         def noSonarProjects = ['NoSonarProject1', 'NoSonarProject2', 'NoSonarProject3']
 
-        def actualHtml = new XmlSlurper().parseText(auditorTask.buildHtmlData(projectsWithSonar, noSonarProjects).toString())
+        def (sonarProjectsHtmlData,noSonarProjectsHtmlData) = auditorTask.buildHtmlData(sonarProjects, noSonarProjects)
+        def sonarProjectsActualHtml = new XmlSlurper().parseText(sonarProjectsHtmlData.toString())
+        def noSonarProjectsActualHtml = new XmlSlurper().parseText(noSonarProjectsHtmlData.toString())
 
-        Assert.assertEquals(actualHtml.toString().replaceAll(" ",""), expectedHtml.toString().replaceAll(" ",""), "Values mismatch")
+        Assert.assertEquals(sonarProjectsActualHtml.toString().replaceAll(" ",""), sonarProjectsExpectedHtml.toString().replaceAll(" ",""), "Values mismatch")
+        Assert.assertEquals(noSonarProjectsActualHtml.toString().replaceAll(" ",""), noSonarProjectsExpectedHtml.toString().replaceAll(" ",""), "Values mismatch")
     }
 
     @Test
     void createOrUpdateContents() {
-        def expectedHtmlData = new File(expectedHtmlDataFile).getText()
-        auditorTask.createOrUpdateContents(expectedHtmlData)
-        File actualFile = new File(auditorTask.REPORT_FILE_NAME)
+        def expectedHtmlData = new File(sonarProjectsExpectedHtmlDataFile).getText()
+        auditorTask.createOrUpdateContents(auditorTask.SONAR_REPORT_FILE_NAME, expectedHtmlData)
+        File actualFile = new File(auditorTask.SONAR_REPORT_FILE_NAME)
         Assert.assertEquals(actualFile.getText(), expectedHtmlData, "Values mismatch")
     }
 

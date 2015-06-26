@@ -14,7 +14,8 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
     private CommanderClient commanderClient
 
     final static String AUDITOR_PROPERTY_SHEET = "/projects/WM Segment Registry/ApplySonarRunner/"
-    final static String REPORT_FILE_NAME = "gap-sonar-runner-usage.html"
+    final static String SONAR_REPORT_FILE_NAME = "gap-sonar-runner-usage.html"
+    final static String NO_SONAR_REPORT_FILE_NAME = "gap-nosonar-runner-usage.html"
 
 
     GapSonarRunnerAuditorTask(Project project, commanderClient = new CommanderClient()) {
@@ -27,8 +28,10 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
         List sonarProjects = writeSonarProjectList(sonarPropertySheetList)
         List allProjects = getAllProjects()
         def noSonarProjects = getNoSonarProjects(sonarProjects, allProjects)
-        def htmlData = buildHtmlData(sonarProjects, noSonarProjects)
-        createOrUpdateContents(htmlData.toString())
+        def (sonarProjectsHtmlData,noSonarProjectsHtmlData) = buildHtmlData(sonarProjects, noSonarProjects)
+        createOrUpdateContents(SONAR_REPORT_FILE_NAME, sonarProjectsHtmlData.toString())
+        createOrUpdateContents(NO_SONAR_REPORT_FILE_NAME, noSonarProjectsHtmlData.toString())
+
     }
 
     List getAllProjects() {
@@ -54,28 +57,19 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
         return projectList
     }
 
-    static def buildHtmlData(def projectsWithSonar, def noSonarProjects) {
-        def htmlWriter = new StringWriter()
-        def builder = new MarkupBuilder(htmlWriter)
-        builder
-        builder.html {
+    static def buildHtmlData(def sonarProjects, def noSonarProjects) {
+        def htmlWriterSonarProjects = new StringWriter()
+        def builderSonarProjects = new MarkupBuilder(htmlWriterSonarProjects)
+        builderSonarProjects.html {
             head {
-                link( rel:'stylesheet', type:'text/css', href:'https://cdn.datatables.net/1.10.7/css/jquery.dataTables.css')
-                script( '', type:'text/javascript', src:'https://code.jquery.com/jquery-1.10.2.min.js')
-                script( '', type:'text/javascript', src:'https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js' )
-                script """
-                    \$(document).ready(function() {
-                        \$('#table1').DataTable();
-                        \$('#table2').DataTable();
-                    } );"""
-                title "Auditor For GapSonarRunner"
+                title "Auditor For GapSonarRunner - Sonar Projects"
             }
             body {
                 center{
-                    h1 "Auditor For GapSonarRunner"
+                    h1 "Auditor For GapSonarRunner - Sonar Projects"
                 }
 
-                table(id:'table1', class:'display') {
+                table(border:'1', cellspacing:'1', cellpadding:'4') {
                     thead {
                         tr {
                             th("Sonar Project:Segment")
@@ -83,7 +77,7 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
                         }
                     }
                     tbody{
-                        projectsWithSonar.each { row ->
+                        sonarProjects.each { row ->
                             tr {
 
                                 td(row.get("projectSegment"))
@@ -92,13 +86,24 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
                         }
                     }
                 }
-                hr{}
-                br{}
-                hr{}
-                table(id:'table2', class:'display') {
+            }
+        }
+
+        def htmlWriterNoSonarProjects = new StringWriter()
+        def builderNoSonarProjects = new MarkupBuilder(htmlWriterNoSonarProjects)
+        builderNoSonarProjects.html {
+            head {
+                title "Auditor For GapSonarRunner -  Non Sonar Projects"
+            }
+            body {
+                center{
+                    h1 "Auditor For GapSonarRunner -  Non Sonar Projects"
+                }
+
+                table(border:'1', cellspacing:'1', cellpadding:'4') {
                     thead{
                         tr {
-                            th("No Sonar Projects")
+                            th("Non Sonar Projects")
                         }
                     }
                     tbody{
@@ -112,11 +117,12 @@ class GapSonarRunnerAuditorTask extends WatchmenTask {
                 }
             }
         }
-        return htmlWriter
+
+        return [htmlWriterSonarProjects, htmlWriterNoSonarProjects]
     }
 
-    static def createOrUpdateContents(String htmlData) {
-        def htmlReportFile = new File(REPORT_FILE_NAME)
+    static def createOrUpdateContents(String reportName, String htmlData) {
+        def htmlReportFile = new File(reportName)
         htmlReportFile.createNewFile()
         htmlReportFile.write(htmlData)
         logger.info("Created file : ${htmlReportFile.getAbsoluteFile()}")
