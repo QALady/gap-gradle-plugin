@@ -34,7 +34,7 @@ class GenerateChangeListReportTaskTest {
 		project.prodPrepare.cookbookSha1Id = cookbookSha1Id_1
         project.prodPrepare.roleName = 'webposCompile'
         project.prodPrepare.nodes = 'dgphxposci004.phx.gapinc.dev'
-        project.metaclass.userId = 'testUser'
+        project.metaClass.userId = 'testUser'
         project.metaClass.userName = 'testName'
         project.metaClass.startTime = '20140214'
 

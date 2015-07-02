@@ -34,7 +34,7 @@ class GetResolvedVersionTaskTest {
 
     @Test
     public void execute_shouldSetECPropertyIfParameterIsGiven(){
-        project.ecProperty = 'refAppCookbookVersion'
+        project.metaClass.ecProperty = 'refAppCookbookVersion'
         def task = new GetResolvedVersionTask(project, commanderClient)
 
         ivyInfo.use {

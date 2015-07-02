@@ -30,8 +30,8 @@ class DownloadArtifactsTaskTest {
         Project project = ProjectBuilder.builder().build()
         project.metaClass.destination = 'dest'
         //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
-        project.artifactCoordinates="ivy.group:ivyname:1234"
-        project.artifactConfiguration = "ivyConfig"
+        project.metaClass.artifactCoordinates="ivy.group:ivyname:1234"
+        project.metaClass.artifactConfiguration = "ivyConfig"
 
         def task = new DownloadArtifactsTask(project)
         project = task.configure()
@@ -44,8 +44,8 @@ class DownloadArtifactsTaskTest {
         Project project = ProjectBuilder.builder().build()
         project.metaClass.destination = 'dest'
         //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
-        project.artifactCoordinates="ivy.group:ivyname:1234"
-        project.artifactConfiguration = "ivyConfig"
+        project.metaClass.artifactCoordinates="ivy.group:ivyname:1234"
+        project.metaClass.artifactConfiguration = "ivyConfig"
 
         def task = new DownloadArtifactsTask(project)
         project = task.configure()
@@ -64,7 +64,7 @@ class DownloadArtifactsTaskTest {
         Project project = ProjectBuilder.builder().build()
         project.metaClass.destination = 'dest'
         //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
-        project.artifactCoordinates="ivy.group:ivyname:1234"
+        project.metaClass.artifactCoordinates="ivy.group:ivyname:1234"
         def task = new DownloadArtifactsTask(project)
         task.configure()
     }
@@ -76,7 +76,7 @@ class DownloadArtifactsTaskTest {
 
         Project project = ProjectBuilder.builder().build()
         project.metaClass.destination = 'dest'
-        project.artifactConfiguration = "ivyConfig"
+        project.metaClass.artifactConfiguration = "ivyConfig"
         def task = new DownloadArtifactsTask(project)
         task.configure()
     }
@@ -89,7 +89,7 @@ class DownloadArtifactsTaskTest {
         Project project = ProjectBuilder.builder().build()
         //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
         project.metaClass.artifactCoordinates="ivy.group:ivyname:1234"
-        project.artifactConfiguration = "ivyConfig"
+        project.metaClass.artifactConfiguration = "ivyConfig"
         def task = new DownloadArtifactsTask(project)
         task.configure()
     }

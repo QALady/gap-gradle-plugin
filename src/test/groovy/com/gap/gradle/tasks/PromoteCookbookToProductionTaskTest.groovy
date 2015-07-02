@@ -49,7 +49,7 @@ class PromoteCookbookToProductionTaskTest {
         project.jenkins.cookbookUser = "jenkins_user"
         project.jenkins.cookbookAuthToken = "jenkins_password"
         project.chef.environment = "local"
-		project.cookbookJenkinsApiAuthToken = "testtoken"
+		project.metaClass.cookbookJenkinsApiAuthToken = "testtoken"
     }
 
 
