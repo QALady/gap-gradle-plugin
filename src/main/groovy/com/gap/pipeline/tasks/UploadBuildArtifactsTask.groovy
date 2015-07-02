@@ -54,7 +54,6 @@ class UploadBuildArtifactsTask extends com.gap.pipeline.tasks.WatchmenTask {
                     }
                 }
             }
-
         }
         project.uploadArchives.execute()
     }

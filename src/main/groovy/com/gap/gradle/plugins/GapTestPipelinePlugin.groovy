@@ -31,7 +31,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
 		    }
     	}
 
-		project.tasks.add(name:'packageFunctionalTests', type: Zip) {
+		project.tasks.create(name:'packageFunctionalTests', type: Zip) {
 	        appendix = 'functionalTests'
 	        classifier = 'tests'
 	        from ("${project.projectDir}/${folderFunctionalTest}")
@@ -80,7 +80,7 @@ class GapTestPipelinePlugin implements Plugin<Project> {
       		}
       	}
 
-		project.tasks.add(name: 'executeFunctionalTests', type: GradleBuild, dependsOn: 'downloadFunctionalTests') {
+		project.tasks.create(name: 'executeFunctionalTests', type: GradleBuild, dependsOn: 'downloadFunctionalTests') {
 	        buildFile = "${folderFunctionalTest}/build.gradle"
 			tasks << 'runFunctionalTests'
 	  	}

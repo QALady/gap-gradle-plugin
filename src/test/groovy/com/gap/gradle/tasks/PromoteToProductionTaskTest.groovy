@@ -33,12 +33,12 @@ class PromoteToProductionTaskTest {
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
-		project.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
-		project.ticketId = ticketId
-		project.tagMessageComment = comment
+		project.metaClass.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
+		project.metaClass.ticketId = ticketId
+		project.metaClass.tagMessageComment = comment
 		project.apply plugin: 'gapproddeploy'
         project.apply plugin: 'gapcookbook'
-		project.prodDeploy.sha1IdList = ["1234", "24343"]
+		project.metaClass.prodDeploy.sha1IdList = ["1234", "24343"]
         promoteToProdTask = project.tasks.findByName('promoteChefObjectsToProduction')
         mockJenkinsRunner = new MockFor(JenkinsRunner.class)
 		mockCommanderClient = new MockFor(CommanderClient.class)

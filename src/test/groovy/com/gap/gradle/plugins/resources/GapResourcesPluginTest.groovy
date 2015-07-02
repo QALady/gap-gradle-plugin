@@ -13,7 +13,7 @@ class GapResourcesPluginTest {
         Project project = ProjectBuilder.builder().build();
         project.apply plugin: 'java'
         project.apply plugin: 'gapresources'
-        project.sourceSets.add('blah')
+        project.sourceSets.create('blah')
         taskShouldExist('processTemplates', project)
         taskShouldExist('processBlahTemplates', project)
     }

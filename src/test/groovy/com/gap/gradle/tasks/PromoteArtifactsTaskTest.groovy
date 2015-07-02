@@ -20,11 +20,11 @@ class PromoteArtifactsTaskTest {
     @Before
     void setUp() {
         project = ProjectBuilder.builder().withProjectDir(new File(temporaryFolder.root.path)).build()
-        project.fromCoordinates = 'com.gap.sandbox:testDownload:123'
-        project.toCoordinates = 'com.gap.sandbox:prod'
-        project.fromConfiguration = 'archives'
-        project.toArtifactoryUrl = 'http://www.artifactory.url/prod'
-        project.ivy = [:]
+        project.metaClass.fromCoordinates = 'com.gap.sandbox:testDownload:123'
+        project.metaClass.toCoordinates = 'com.gap.sandbox:prod'
+        project.metaClass.fromConfiguration = 'archives'
+        project.metaClass.toArtifactoryUrl = 'http://www.artifactory.url/prod'
+        project.metaClass.ivy = [:]
         task = new PromoteArtifactsTask(project)
     }
 

@@ -114,9 +114,9 @@ class GapPipelinePluginTest {
     @Test
     void shouldSetProdDeployExtensionPropertiesFromString() {
         def project = ProjectBuilder.builder().build()
-        project['prodPrepare.shaId'] = 'git sha id'
-        project['prodPrepare.roleName'] = 'role name'
-        project['prodPrepare.cookbookName'] = 'cookbook name'
+        project.metaClass.prodPrepare.shaId = 'git sha id'
+        project.metaClass.prodPrepare.roleName = 'role name'
+        project.metaClass.prodPrepare.cookbookName = 'cookbook name'
         project.apply plugin: 'gappipeline'
         assertThat(project.prodPrepare.shaId, is('git sha id'))
         assertThat(project.prodPrepare.roleName, is('role name'))

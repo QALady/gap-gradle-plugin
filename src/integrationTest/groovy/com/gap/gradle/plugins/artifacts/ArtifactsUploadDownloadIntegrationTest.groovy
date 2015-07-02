@@ -52,7 +52,7 @@ class ArtifactsUploadDownloadIntegrationTest {
         def project = ProjectBuilder.builder().withProjectDir(new File("${temporaryFolder.root.path}/upload")).withName("test").build()
         project.apply plugin: 'base'
         project.apply plugin: 'gappipeline'
-        project.artifactCoordinates = coordinates
+        project.metaClass.artifactCoordinates = coordinates
         project.ivy.checkIfExists = true;
         project.tasks.findByName("uploadBuildArtifacts").execute()
     }

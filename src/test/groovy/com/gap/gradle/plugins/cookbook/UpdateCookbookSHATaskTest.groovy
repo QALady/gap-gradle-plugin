@@ -26,7 +26,7 @@ class UpdateCookbookSHATaskTest {
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
-        project.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
+        project.metaClass.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
         project.apply plugin: 'gapproddeploy'
         println("**************" + project.git.fullRepoName)
         updateBerksfileTask = project.tasks.findByName('promoteCookbookBerksfile')

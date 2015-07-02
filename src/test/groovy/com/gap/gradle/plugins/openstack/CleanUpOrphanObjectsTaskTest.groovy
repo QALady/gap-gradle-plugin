@@ -65,7 +65,7 @@ class CleanUpOrphanObjectsTaskTest {
     @Test
     void shouldInvokeConfiguredJenkinsCleanupJob(){
         setupTaskProperties()
-        project.nodeToDelete = "someNode"
+        project.metaClass.nodeToDelete = "someNode"
         mockJenkinsRunner.demand.runJob{jobName,jobParams ->
             assertEquals("cleanupJob", jobName)
             assertEquals("someNode", jobParams["NODE_NAME"])

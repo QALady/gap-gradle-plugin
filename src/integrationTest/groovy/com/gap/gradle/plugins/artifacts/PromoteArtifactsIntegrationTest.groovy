@@ -61,7 +61,7 @@ class PromoteArtifactsIntegrationTest {
         def project = ProjectBuilder.builder().withProjectDir(new File("${temporaryFolder.root.path}/upload")).withName("testPromoteArtifacts").build()
         project.apply plugin: 'base'
         project.apply plugin: 'gappipeline'
-        project.artifactCoordinates = coordinates
+        project.metaClass.artifactCoordinates = coordinates
         project.tasks.findByName("uploadBuildArtifacts").execute()
     }
 

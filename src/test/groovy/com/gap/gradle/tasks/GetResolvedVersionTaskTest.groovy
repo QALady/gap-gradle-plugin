@@ -21,8 +21,8 @@ class GetResolvedVersionTaskTest {
     @Before
     public void setUp() {
         project = ProjectBuilder.builder().build()
-        project.dependencyGroup = 'com.gap.ref-app.infra'
-        project.dependencyName = 'ci'
+        project.metaClass.dependencyGroup = 'com.gap.ref-app.infra'
+        project.metaClass.dependencyName = 'ci'
 
         ivyInfo = new MockFor(IvyInfo)
         ivyInfo.demand.getAllResolvedDependencies {

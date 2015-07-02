@@ -26,7 +26,7 @@ class LinkArtifactsTaskTest {
     @Before
     void setUp() {
         project = ProjectBuilder.builder().build()
-        project.artifactLocation = "artifacts"
+        project.metaClass.artifactLocation = "artifacts"
 
         commanderClientMock = mock(CommanderClient)
         when(commanderClientMock.getCurrentJobDir()).thenReturn("/tmp")

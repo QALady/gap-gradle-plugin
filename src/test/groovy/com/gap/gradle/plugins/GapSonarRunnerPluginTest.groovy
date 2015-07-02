@@ -68,7 +68,7 @@ class GapSonarRunnerPluginTest {
         }
         commanderMock.use {
             project.apply plugin: 'gap-sonar-runner'
-            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.analysis.mode'), is('preview'))
+            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.get('sonar.analysis.mode'), is('preview'))
         }
     }
 
@@ -81,7 +81,7 @@ class GapSonarRunnerPluginTest {
         }
         commanderMock.use {
             project.apply plugin: 'gap-sonar-runner'
-            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.projectDate'), is(nextDay.format('YYYY-MM-dd')))
+            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.get('sonar.projectDate'), is(nextDay.format('YYYY-MM-dd')))
         }
     }
 
@@ -93,7 +93,7 @@ class GapSonarRunnerPluginTest {
         }
         commanderMock.use {
             project.apply plugin: 'gap-sonar-runner'
-            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.getProperty('sonar.analysis.mode'), is('analysis'))
+            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.get('sonar.analysis.mode'), is('analysis'))
         }
     }
 

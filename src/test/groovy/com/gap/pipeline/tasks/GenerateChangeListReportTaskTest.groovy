@@ -34,9 +34,9 @@ class GenerateChangeListReportTaskTest {
 		project.prodPrepare.cookbookSha1Id = cookbookSha1Id_1
         project.prodPrepare.roleName = 'webposCompile'
         project.prodPrepare.nodes = 'dgphxposci004.phx.gapinc.dev'
-        project.userId = 'testUser'
-        project.userName = 'testName'
-        project.startTime = '20140214'
+        project.metaclass.userId = 'testUser'
+        project.metaClass.userName = 'testName'
+        project.metaClass.startTime = '20140214'
 
         generateChangeListReportTask = new GenerateChangeListReportTask(project)
         mockCommanderClient = new MockFor(CommanderClient)

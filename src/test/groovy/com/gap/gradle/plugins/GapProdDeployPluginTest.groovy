@@ -26,8 +26,8 @@ class GapProdDeployPluginTest {
 	@Before
 	void setup() {
 		project = ProjectBuilder.builder().build()
-		project.paramJsonPath = testJsonPath
-		project.ecUser = "testuser"
+		project.metaClass.paramJsonPath = testJsonPath
+		project.metaClass.ecUser = "testuser"
 		project.apply plugin: pluginName
 	}
 
@@ -61,8 +61,8 @@ class GapProdDeployPluginTest {
 	@Test
 	void testJenkinsExtensionConfigurationDoesNotLoadAgain() {
 		project = ProjectBuilder.builder().build()
-		project.paramJsonPath = testJsonPath
-		project.ecUser = "testuser"
+		project.metaClass.paramJsonPath = testJsonPath
+		project.metaClass.ecUser = "testuser"
 		project.apply plugin: 'gapcookbook' // cookbook plugin already loads the jenkins extension
 		project.apply plugin: pluginName // this should not complain that jenkins already exist on the project
 		def jenkinsConfig = project.extensions.findByName("jenkins")

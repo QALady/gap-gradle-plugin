@@ -13,7 +13,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 import static helpers.Assert.taskShouldDependOn
@@ -177,8 +176,9 @@ class AirWatchPluginTest {
         }
 
         def pushArtifactsTask = project.tasks.pushArtifactToAirWatch
-        pushArtifactsTask.airwatchClient = mock(AirWatchClient)
-        pushArtifactsTask.publishedAppId = '123'
+
+        pushArtifactsTask.metaClass.airwatchClient = mock(AirWatchClient)
+        pushArtifactsTask.metaClass.publishedAppId = '123'
 
         def autoAssignSmartGroups = project.tasks.autoAssignSmartGroups
         autoAssignSmartGroups.execute()
@@ -194,7 +194,7 @@ class AirWatchPluginTest {
         }
 
         def pushArtifactsTask = project.tasks.pushArtifactToAirWatch
-        pushArtifactsTask.airwatchClient = mock(AirWatchClient)
+        pushArtifactsTask.metaClass.airwatchClient = mock(AirWatchClient)
 
         def retirePreviousVersion = project.tasks.autoRetireAppPreviousVersion
 

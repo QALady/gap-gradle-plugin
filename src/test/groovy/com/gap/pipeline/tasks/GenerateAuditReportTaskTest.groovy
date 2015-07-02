@@ -26,12 +26,12 @@ class GenerateAuditReportTaskTest {
         project = ProjectBuilder.builder().build()
         project.apply plugin: 'gappipeline'
 
-        project.tagMessageComment = 'Deploying to Prod'
-        project.ticketId = 'T123456'
-        project.artifactCoordinates = 'com.gap.sandbox:prod_1234'
-        project.userId = 'testUser'
-        project.userName = 'testName'
-        project.startTime = '20140214'
+        project.metaClass.tagMessageComment = 'Deploying to Prod'
+        project.metaClass.ticketId = 'T123456'
+        project.metaClass.artifactCoordinates = 'com.gap.sandbox:prod_1234'
+        project.metaClass.userId = 'testUser'
+        project.metaClass.userName = 'testName'
+        project.metaClass.startTime = '20140214'
 
         generateAuditReportTask = new GenerateAuditReportTask(project)
         mockCommanderClient = new MockFor(CommanderClient)
