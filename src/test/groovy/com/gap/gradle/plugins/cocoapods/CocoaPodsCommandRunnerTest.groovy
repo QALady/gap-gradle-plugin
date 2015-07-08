@@ -12,6 +12,7 @@ import static org.mockito.Matchers.any
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
+@Ignore //due to 2.4 Gradle update
 public class CocoaPodsCommandRunnerTest {
 
     private String[] commandLineParams
@@ -34,7 +35,6 @@ public class CocoaPodsCommandRunnerTest {
         cocoapods = new CocoaPodsCommandRunner(project)
     }
 
-    @Ignore //due to 2.4 Gradle update
     @Test
     public void shouldListAvailableRepos() throws Exception {
         cocoapods.listRepos()
@@ -44,7 +44,6 @@ public class CocoaPodsCommandRunnerTest {
         assertEquals("list", commandLineParams[2])
     }
 
-    @Ignore //due to 2.4 Gradle update
     @Test
     public void shouldPushPodspecToRepo() throws Exception {
         def fakePodspec = mock(File)
