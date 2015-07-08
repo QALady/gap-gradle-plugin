@@ -13,6 +13,7 @@ import static org.mockito.Matchers.any
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
+@Ignore //due to 2.4 Gradle update
 public class CommandRunnerTest {
 
     private File workingDirParam
@@ -39,7 +40,6 @@ public class CommandRunnerTest {
         commandRunner = new CommandRunner(project)
     }
     
-    @Ignore //due to 2.4 Gradle update
     @Test
     public void shouldCaptureExecOutput() throws Exception {
         def output = commandRunner.run("foo")
@@ -49,7 +49,6 @@ public class CommandRunnerTest {
         assertEquals("hello\n world", output)
     }
 
-    @Ignore //due to 2.4 Gradle update
     @Test
     public void shouldAcceptOverridingWorkingDir() throws Exception {
         def baseDir = new File("/path/to/some/dir")
