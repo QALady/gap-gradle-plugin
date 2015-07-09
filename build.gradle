@@ -9,9 +9,14 @@ buildscript {
             layout "maven"
             url "${artifactoryUrl}/remote-repos"
         }
+        ivy {
+           layout "maven"
+           url "${artifactoryUrl}/watchmen-dev-local"
+       }
     }
     dependencies {
-        classpath 'com.gap:gap-gradle-plugin:+'
+       //classpath 'com.gap:gap-gradle-plugin:+'
+         classpath 'com.gap:gap-gradle-plugin-neo4j:+'  
         classpath 'net.saliman:gradle-cobertura-plugin:2.2.4'
     }
 }
