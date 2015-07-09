@@ -128,6 +128,6 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
     }
 
     private def getSonarProperty(def project, String key) {
-        project.tasks.sonarRunner.sonarProperties.getProperty(key)
+        project.tasks.sonarRunner.sonarProperties.get(key)
     }
 }
