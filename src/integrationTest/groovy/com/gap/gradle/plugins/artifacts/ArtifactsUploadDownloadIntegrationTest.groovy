@@ -36,9 +36,9 @@ class ArtifactsUploadDownloadIntegrationTest {
             }
         }
         project.apply plugin: 'gappipeline'
-        project.artifactCoordinates = coordinates
-        project.artifactConfiguration = 'archives'
-        project.destination = 'destination'
+        project.metaClass.artifactCoordinates = coordinates
+        project.metaClass.artifactConfiguration = 'archives'
+        project.metaClass.destination = 'destination'
 
         new DownloadArtifactsTask(project).configure()
         project.tasks.findByName("downloadArtifacts").execute()
