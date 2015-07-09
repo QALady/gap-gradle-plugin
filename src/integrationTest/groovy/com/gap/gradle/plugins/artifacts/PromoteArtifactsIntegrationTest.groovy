@@ -44,10 +44,10 @@ class PromoteArtifactsIntegrationTest {
         }
         project.apply plugin: 'base'
         project.apply plugin: 'gappipeline'
-        project.fromCoordinates = fromCoordinates
-        project.fromConfiguration = 'archives'
-        project.toCoordinates = toCoordinates
-        project.toArtifactoryUrl = destinationArtifactoryUrl
+        project.metaClass.fromCoordinates = fromCoordinates
+        project.metaClass.fromConfiguration = 'archives'
+        project.metaClass.toCoordinates = toCoordinates
+        project.metaClass.toArtifactoryUrl = destinationArtifactoryUrl
         new PromoteArtifactsTask(project).configure()
         project.tasks.findByName("promoteArtifacts").execute()
 
