@@ -3,6 +3,7 @@ package com.gap.gradle.plugins.cocoapods
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
@@ -12,7 +13,7 @@ import static org.mockito.Matchers.any
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
-@Ignore //due to 2.4 Gradle update
+
 public class CocoaPodsCommandRunnerTest {
 
     private String[] commandLineParams
@@ -35,6 +36,7 @@ public class CocoaPodsCommandRunnerTest {
         cocoapods = new CocoaPodsCommandRunner(project)
     }
 
+    @Ignore // FIXME pending since 2.4 migration
     @Test
     public void shouldListAvailableRepos() throws Exception {
         cocoapods.listRepos()
@@ -44,6 +46,7 @@ public class CocoaPodsCommandRunnerTest {
         assertEquals("list", commandLineParams[2])
     }
 
+    @Ignore // FIXME pending since 2.4 migration
     @Test
     public void shouldPushPodspecToRepo() throws Exception {
         def fakePodspec = mock(File)
