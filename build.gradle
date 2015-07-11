@@ -178,13 +178,3 @@ task writeVersionToEC(type: Exec) {
 writeVersionToEC.doLast {
   println standardOutput;
 }
-
-sonarRunner {
-    sonarProperties {
-        property "sonar.host.url", "http://10.9.59.82:9000/"
-        property "sonar.jdbc.url", "jdbc:mysql://10.9.59.176:3306/sonar45?autoReconnect=true&useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true"
-        property "sonar.jdbc.username", "sonar45"
-        property "sonar.jdbc.password", "sonar45"
-        property "sonar.analysis.mode", "analysis"
-    }
-}

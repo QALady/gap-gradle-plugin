@@ -5,7 +5,7 @@ gap-gradle-plugin
 
 ## Requirements
 - Java 7
-- Gradle 1.11 + (tested with 1.11)
+- Gradle 2.4
 
 ## Usage
 
