@@ -22,8 +22,8 @@ class GapAntHelperPluginTest {
    @Test
     void testAntPathInjection() {
         project = ProjectBuilder.builder().build()
-        project.antDepConf = "athenadeps"
-        project.antPathName = "build.classpath"
+        project.metaClass.antDepConf = "athenadeps"
+        project.metaClass.antPathName = "build.classpath"
         project.configurations {
             athenadeps
         }

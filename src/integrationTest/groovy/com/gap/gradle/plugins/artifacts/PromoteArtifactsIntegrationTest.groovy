@@ -44,10 +44,10 @@ class PromoteArtifactsIntegrationTest {
         }
         project.apply plugin: 'base'
         project.apply plugin: 'gappipeline'
-        project.fromCoordinates = fromCoordinates
-        project.fromConfiguration = 'archives'
-        project.toCoordinates = toCoordinates
-        project.toArtifactoryUrl = destinationArtifactoryUrl
+        project.metaClass.fromCoordinates = fromCoordinates
+        project.metaClass.fromConfiguration = 'archives'
+        project.metaClass.toCoordinates = toCoordinates
+        project.metaClass.toArtifactoryUrl = destinationArtifactoryUrl
         new PromoteArtifactsTask(project).configure()
         project.tasks.findByName("promoteArtifacts").execute()
 
@@ -61,7 +61,7 @@ class PromoteArtifactsIntegrationTest {
         def project = ProjectBuilder.builder().withProjectDir(new File("${temporaryFolder.root.path}/upload")).withName("testPromoteArtifacts").build()
         project.apply plugin: 'base'
         project.apply plugin: 'gappipeline'
-        project.artifactCoordinates = coordinates
+        project.metaClass.artifactCoordinates = coordinates
         project.tasks.findByName("uploadBuildArtifacts").execute()
     }
 
@@ -75,9 +75,9 @@ class PromoteArtifactsIntegrationTest {
             }
         }
         project.apply plugin: 'gappipeline'
-        project.artifactCoordinates = coordinates
-        project.artifactConfiguration = 'archives'
-        project.destination = toFolder
+        project.metaClass.artifactCoordinates = coordinates
+        project.metaClass.artifactConfiguration = 'archives'
+        project.metaClass.destination = toFolder
 
         new DownloadArtifactsTask(project).configure()
         project.tasks.findByName("downloadArtifacts").execute()

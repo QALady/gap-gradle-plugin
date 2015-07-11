@@ -70,7 +70,7 @@ org.codehaus.groovy:groovy-all"""
 
 		segmentRegistry = new SegmentRegistry(commanderClient)
 
-		project.segmentIdentifier = "Test Project:Test Procedure"
+		project.metaClass.segmentIdentifier = "Test Project:Test Procedure"
 
 		task = new CreateHtmlWithGoodVersionsTask(project, commanderClient, segmentRegistry)
 

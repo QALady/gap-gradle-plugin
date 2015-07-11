@@ -50,7 +50,7 @@ class InsertResolvedVersionTask extends WatchmenTask {
     }
 
     //this method should be overrided in the unit test
-    @Override
+   // @Override
     def get_configurations(){
 
         def configurations = []

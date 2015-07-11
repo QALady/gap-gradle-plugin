@@ -9,9 +9,14 @@ buildscript {
             layout "maven"
             url "${artifactoryUrl}/remote-repos"
         }
+        ivy {
+           layout "maven"
+           url "${artifactoryUrl}/watchmen-dev-local"
+       }
     }
     dependencies {
-        classpath 'com.gap:gap-gradle-plugin:+'
+       //classpath 'com.gap:gap-gradle-plugin:+'
+         classpath 'com.gap:gap-gradle-plugin-neo4j:+'  
         classpath 'net.saliman:gradle-cobertura-plugin:2.2.4'
     }
 }
@@ -59,11 +64,11 @@ configurations {
 }
 
 dependencies{
-    compile "org.codehaus.groovy:groovy-all:2.3.6"
+    compile "org.codehaus.groovy:groovy-all:2.3.10"
     compile "org.jfrog.artifactory.client:artifactory-java-client-api:0.16"
     compile "org.jfrog.artifactory.client:artifactory-java-client-services:0.16"
 
-    functionalTest "org.codehaus.groovy:groovy-all:2.3.6"
+    functionalTest "org.codehaus.groovy:groovy-all:2.3.10"
     functionalTest "commons-logging:commons-logging:1.1.3"
     compile gradleApi()
 
@@ -73,7 +78,9 @@ dependencies{
     compile 'org.apache.httpcomponents:httpclient:4.3.1'
     compile 'com.gap:gap-cloud:+'
     compile 'net.sourceforge.cobertura:cobertura:2.0.3'
-    compile 'net.saliman:gradle-cobertura-plugin:2.2.4'
+    compile ('net.saliman:gradle-cobertura-plugin:2.2.4') {
+        exclude(module:'groovy-all')
+    } 
     compile 'org.openbakery:xcodePlugin:0.10.3-gradle1'
     compile 'org.jsoup:jsoup:1.8.2'
     compile 'org.apache.commons:commons-io:1.3.2'
@@ -143,7 +150,7 @@ tasks.withType(Test) {
 
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.11'
+    gradleVersion = '2.4'
 }
 
 uploadArchives {
@@ -170,4 +177,14 @@ task writeVersionToEC(type: Exec) {
 
 writeVersionToEC.doLast {
   println standardOutput;
+}
+
+sonarRunner {
+    sonarProperties {
+        property "sonar.host.url", "http://10.9.59.82:9000/"
+        property "sonar.jdbc.url", "jdbc:mysql://10.9.59.176:3306/sonar45?autoReconnect=true&useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true"
+        property "sonar.jdbc.username", "sonar45"
+        property "sonar.jdbc.password", "sonar45"
+        property "sonar.analysis.mode", "analysis"
+    }
 }

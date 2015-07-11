@@ -43,7 +43,7 @@ class PrepareForProductionDeployTaskTest {
         project.prodPrepare.deployECProcedure="Project:Procedure"
         project.prodPrepare.sha1Ids = "${sha1_1}"
 		project.prodPrepare.appVersion = 'default'
-        project.artifactCoordinates = "com.gap.sandbox:iso:1234"
+        project.metaClass.artifactCoordinates = "com.gap.sandbox:iso:1234"
 		project.prodPrepare.cookbookName = "test-ref-app"
 		project.prodPrepare.cookbookSha1Id = cookbookSha1Id_1
         project.prodPrepare.yumSourceUrl = "http://devyum/repo/org/channel"

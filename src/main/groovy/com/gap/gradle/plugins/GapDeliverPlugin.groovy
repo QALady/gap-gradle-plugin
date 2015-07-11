@@ -18,7 +18,7 @@ class GapDeliverPlugin implements Plugin<Project> {
       configurations { deliverables }
 
       //delivers output for packaging task
-      target.tasks.add(name: "deliverApp", dependsOn: configurations.deliverables) {
+      target.tasks.create(name: "deliverApp", dependsOn: configurations.deliverables) {
         ext.dropDir = "${buildDir}/drop"
         inputs.files configurations.deliverables
         outputs.files file(dropDir)

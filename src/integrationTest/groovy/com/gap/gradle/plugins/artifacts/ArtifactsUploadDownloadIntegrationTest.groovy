@@ -36,9 +36,9 @@ class ArtifactsUploadDownloadIntegrationTest {
             }
         }
         project.apply plugin: 'gappipeline'
-        project.artifactCoordinates = coordinates
-        project.artifactConfiguration = 'archives'
-        project.destination = 'destination'
+        project.metaClass.artifactCoordinates = coordinates
+        project.metaClass.artifactConfiguration = 'archives'
+        project.metaClass.destination = 'destination'
 
         new DownloadArtifactsTask(project).configure()
         project.tasks.findByName("downloadArtifacts").execute()
@@ -52,7 +52,7 @@ class ArtifactsUploadDownloadIntegrationTest {
         def project = ProjectBuilder.builder().withProjectDir(new File("${temporaryFolder.root.path}/upload")).withName("test").build()
         project.apply plugin: 'base'
         project.apply plugin: 'gappipeline'
-        project.artifactCoordinates = coordinates
+        project.metaClass.artifactCoordinates = coordinates
         project.ivy.checkIfExists = true;
         project.tasks.findByName("uploadBuildArtifacts").execute()
     }

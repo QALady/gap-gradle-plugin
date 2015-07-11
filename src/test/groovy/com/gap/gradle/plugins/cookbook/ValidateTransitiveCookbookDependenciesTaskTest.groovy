@@ -85,8 +85,9 @@ class ValidateTransitiveCookbookDependenciesTaskTest {
             } catch (Exception exception) {
                 assertCause(exception, UnpinnedDependencyException,
                     "These transitive dependencies don't exist in prod:"
-                    + " gapTomcat@0.0.28 (latest is 0.0.27)"
-                    + ", gapJava@0.0.13 (latest is 0.0.11)")
+                            + " gapJava@0.0.13 (latest is 0.0.11)"
+                            + ", gapTomcat@0.0.28 (latest is 0.0.27")
+
             }
         }
     }

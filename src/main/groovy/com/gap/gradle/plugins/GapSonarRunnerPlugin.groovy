@@ -42,6 +42,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
         def nextDay = new Date().next()
 
         project.sonarRunner {
+            toolVersion = "2.4"
             sonarProperties {
                 property "sonar.host.url", "http://sonar.gapinc.dev/"
                 property "sonar.jdbc.url", "jdbc:mysql://sonardb001.phx.gapinc.dev:3306/sonar"
@@ -127,6 +128,6 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
     }
 
     private def getSonarProperty(def project, String key) {
-        project.tasks.sonarRunner.sonarProperties.getProperty(key)
+        project.tasks.sonarRunner.sonarProperties.get(key)
     }
 }

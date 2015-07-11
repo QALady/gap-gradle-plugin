@@ -25,7 +25,7 @@ class PromoteCookbookToProductionTaskTest {
     @Before
     void setUp (){
         project = ProjectBuilder.builder().build()
-		project.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
+		project.metaClass.paramJsonPath = "src/test/groovy/com/gap/gradle/resources/"
 		project.apply plugin: 'gapproddeploy'
         publishCookbookToChefServerTask = project.tasks.findByName('promoteCookbookToProdChefServer')
         mockJenkinsRunner = new MockFor(JenkinsRunner.class)
@@ -49,7 +49,7 @@ class PromoteCookbookToProductionTaskTest {
         project.jenkins.cookbookUser = "jenkins_user"
         project.jenkins.cookbookAuthToken = "jenkins_password"
         project.chef.environment = "local"
-		project.cookbookJenkinsApiAuthToken = "testtoken"
+		project.metaClass.cookbookJenkinsApiAuthToken = "testtoken"
     }
 
 

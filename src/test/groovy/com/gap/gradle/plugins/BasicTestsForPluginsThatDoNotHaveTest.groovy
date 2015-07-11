@@ -5,7 +5,7 @@ import org.junit.Test
 
 //NOTE: If you are writing a new plugin, you should write a separate test
 class BasicTestsForPluginsThatDoNotHaveTest {
-    def plugins = [ 'gapbuild','gapupload','gapmetrics','gapci']
+    def plugins = ['gapbuild','gapupload','gapmetrics','gapci']
 
     @Test
     void shouldBeAbleToApplyThePlugins()

@@ -27,12 +27,12 @@ class UploadBuildArtifactsTaskTest {
     @Before
     public void setUp() {
         project = ProjectBuilder.builder().withProjectDir(new File(temporaryFolder.root.path)).build()
-        project.artifactCoordinates = "com.gap.test.myapp:${project.name}:5432"
+        project.metaClass.artifactCoordinates = "com.gap.test.myapp:${project.name}:5432"
         project.apply plugin: 'base' //doing this because uploadArchives is implemented in base as a rule
         project.apply plugin: 'gappipeline'
         project.ivy.password = "wrong password" //just to prevent unit tests from accidentally uploading to ivy
         project.task('uploadArchives', overwrite: true) << {}
-        project.uploadArchives.repositories = {  }
+        project.uploadArchives.metaClass.repositories = {  }
 
         def artifactsDir = new File(temporaryFolder.root.path, 'build/artifacts')
         artifactsDir.mkdirs()
@@ -71,7 +71,7 @@ class UploadBuildArtifactsTaskTest {
     void shouldExecuteUploadArchivesTask () {
         def executed = false
         project.task('uploadArchives', overwrite: true) << { executed = true}
-        project.uploadArchives.repositories = {}
+        project.uploadArchives.metaClass.repositories = {}
         uploadBuildArtifactsTask.execute()
         assertTrue("Did not execute uploadArchives", executed)
     }
@@ -96,7 +96,7 @@ class UploadBuildArtifactsTaskTest {
     void shouldThrowAnException_whenArtifactLocationFormatIsIncorrect () {
         exception.expect(IllegalArgumentException)
         exception.expectMessage("The coordinates 'mylocation:iso' is of invalid format. The format should be <groupname>:<modulename>:<version>")
-        project.artifactCoordinates = "mylocation:iso"
+        project.artifactCoordinates = "${'mylocation:iso'}"
         new UploadBuildArtifactsTask(project).validate()
     }
 
@@ -105,8 +105,7 @@ class UploadBuildArtifactsTaskTest {
         exception.expect(IllegalArgumentException)
         exception.expectMessage("The module name in archiveLocation['iso'] does not match project name['12345']")
         project = ProjectBuilder.builder().withName("12345").build()
-        project.artifactCoordinates = "com.gap.ref-app:iso:5432"
-
+        project.metaClass.artifactCoordinates = "${'com.gap.ref-app:iso:5432'}"
         new UploadBuildArtifactsTask(project).validate()
     }
 

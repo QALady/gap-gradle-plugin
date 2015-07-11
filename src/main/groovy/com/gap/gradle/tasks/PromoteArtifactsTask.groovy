@@ -55,9 +55,9 @@ class PromoteArtifactsTask extends WatchmenTask {
     }
 
     private configureParametersForDownloadTask() {
-        project.artifactCoordinates = project.fromCoordinates
-        project.artifactConfiguration = project.fromConfiguration
-        project.destination = "${project.rootDir}/downloads"
+        project.metaClass.artifactCoordinates = project.fromCoordinates
+        project.metaClass.artifactConfiguration = project.fromConfiguration
+        project.metaClass.destination = "${project.rootDir}/downloads"
     }
 
     def configure() {

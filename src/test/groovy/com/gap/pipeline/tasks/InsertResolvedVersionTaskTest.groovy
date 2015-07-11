@@ -45,7 +45,7 @@ class InsertResolvedVersionTaskTest {
 
         //creating the task to be tested, we are overriding the get configuration method
         task = new InsertResolvedVersionTask(project,mockShellCommand,mockCommanderClient){
-            @Override
+            //@Override
             def get_configurations(){
                 def configurations = []
 

@@ -25,6 +25,6 @@ class SonarLinkTask {
     }
 
     private def getSonarProperty(String key) {
-        project.tasks.sonarRunner.sonarProperties.getProperty(key)
+        project.tasks.sonarRunner.sonarProperties.get(key)
     }
 }

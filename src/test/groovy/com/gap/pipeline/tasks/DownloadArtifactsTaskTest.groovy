@@ -28,10 +28,10 @@ class DownloadArtifactsTaskTest {
     @Test
     public void configure_shouldAddWatchmenInternalConfigurationToProject(){
         Project project = ProjectBuilder.builder().build()
-        project.destination = 'dest'
+        project.metaClass.destination = 'dest'
         //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
-        project.artifactCoordinates="ivy.group:ivyname:1234"
-        project.artifactConfiguration = "ivyConfig"
+        project.metaClass.artifactCoordinates="ivy.group:ivyname:1234"
+        project.metaClass.artifactConfiguration = "ivyConfig"
 
         def task = new DownloadArtifactsTask(project)
         project = task.configure()
@@ -42,10 +42,10 @@ class DownloadArtifactsTaskTest {
     @Test
     public void configure_shouldAddDependencyToConfiguration_whenRequiredParametersAreGiven(){
         Project project = ProjectBuilder.builder().build()
-        project.destination = 'dest'
+        project.metaClass.destination = 'dest'
         //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
-        project.artifactCoordinates="ivy.group:ivyname:1234"
-        project.artifactConfiguration = "ivyConfig"
+        project.metaClass.artifactCoordinates="ivy.group:ivyname:1234"
+        project.metaClass.artifactConfiguration = "ivyConfig"
 
         def task = new DownloadArtifactsTask(project)
         project = task.configure()
@@ -62,9 +62,9 @@ class DownloadArtifactsTaskTest {
         exception.expect(MissingParameterException)
         exception.expectMessage("Missing required parameter: 'artifactConfiguration'")
         Project project = ProjectBuilder.builder().build()
-        project.destination = 'dest'
+        project.metaClass.destination = 'dest'
         //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
-        project.artifactCoordinates="ivy.group:ivyname:1234"
+        project.metaClass.artifactCoordinates="ivy.group:ivyname:1234"
         def task = new DownloadArtifactsTask(project)
         task.configure()
     }
@@ -75,8 +75,8 @@ class DownloadArtifactsTaskTest {
         exception.expectMessage("Missing required parameter: 'artifactCoordinates'")
 
         Project project = ProjectBuilder.builder().build()
-        project.destination = 'dest'
-        project.artifactConfiguration = "ivyConfig"
+        project.metaClass.destination = 'dest'
+        project.metaClass.artifactConfiguration = "ivyConfig"
         def task = new DownloadArtifactsTask(project)
         task.configure()
     }
@@ -88,8 +88,8 @@ class DownloadArtifactsTaskTest {
 
         Project project = ProjectBuilder.builder().build()
         //project.artifactCoordinates="ivy.group:ivyname:7e184eca-0b87-11e4-8dba-00505625f614"
-        project.artifactCoordinates="ivy.group:ivyname:1234"
-        project.artifactConfiguration = "ivyConfig"
+        project.metaClass.artifactCoordinates="ivy.group:ivyname:1234"
+        project.metaClass.artifactConfiguration = "ivyConfig"
         def task = new DownloadArtifactsTask(project)
         task.configure()
     }
@@ -100,9 +100,9 @@ class DownloadArtifactsTaskTest {
         exception.expectMessage("The coordinates 'ivy.group:ivyname' is of invalid format. The format should be <groupname>:<modulename>:<version>")
 
         Project project = ProjectBuilder.builder().build()
-        project.artifactCoordinates="ivy.group:ivyname"
-        project.artifactConfiguration = "ivyConfig"
-        project.destination = "dest"
+        project.metaClass.artifactCoordinates="ivy.group:ivyname"
+        project.metaClass.artifactConfiguration = "ivyConfig"
+        project.metaClass.destination = "dest"
         def task = new DownloadArtifactsTask(project)
         task.configure()
     }
@@ -110,7 +110,7 @@ class DownloadArtifactsTaskTest {
     @Test
     public void execute_shouldCopyArtifactsFromWatchmenInternalConfigurationToDestination(){
         Project project = ProjectBuilder.builder().build()
-        project.destination = destinationFolder.root.path
+        project.metaClass.destination = destinationFolder.root.path
         project.configurations.create('_watchmenInternal')
 
         //project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile-7e184eca-0b87-11e4-8dba-00505625f614.tmp')
@@ -125,7 +125,7 @@ class DownloadArtifactsTaskTest {
     @Test
     public void execute_shouldRemoveIvyVersionFromFileName(){
         Project project = ProjectBuilder.builder().build()
-        project.destination = destinationFolder.root.path
+        project.metaClass.destination = destinationFolder.root.path
         project.configurations.create('_watchmenInternal')
 
         //project = addNewFileToConfiguration(project, '_watchmenInternal', 'myFile-7e184eca-0b87-11e4-8dba-00505625f614.tmp')
