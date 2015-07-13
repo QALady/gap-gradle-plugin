@@ -1,11 +1,15 @@
 package com.gap.gradle.plugins.resources
 
+import org.apache.commons.logging.LogFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 import java.util.regex.Pattern
 
 class GapResourcesPlugin implements Plugin<Project>{
+
+    def logger = LogFactory.getLog(GapResourcesPlugin)
+
   void apply(Project target) {
     target.configure(target) {
 
