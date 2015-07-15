@@ -255,8 +255,8 @@ class GapPipelinePlugin implements Plugin<Project> {
 
   private configureDefaultJavaVersion6(Project project) {
     if(project.hasProperty("sourceCompatibility")) {
-      project.setProperty("sourceCompatibility", JavaVersion.VERSION_1_6)
-      project.setProperty("targetCompatibility", JavaVersion.VERSION_1_6)
+        project.metaClass.sourceCompatibility =  JavaVersion.VERSION_1_6
+        project.metaClass.targetCompatibility =  JavaVersion.VERSION_1_6
     }
   }
 }
