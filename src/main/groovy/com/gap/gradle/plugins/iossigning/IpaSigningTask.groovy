@@ -19,6 +19,8 @@ import javax.inject.Inject
 
 import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DEVELOPMENT
 import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DISTRIBUTION
+import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DISTRIBUTION_IOS8
+
 
 class IpaSigningTask extends DefaultTask {
 
@@ -42,6 +44,7 @@ class IpaSigningTask extends DefaultTask {
         signing = project.container(SigningIdentity)
         signing.add(DEFAULT_DEVELOPMENT)
         signing.add(DEFAULT_DISTRIBUTION)
+        signing.add(DEFAULT_DISTRIBUTION_IOS8)
 
         artifact = instantiator.newInstance(ArtifactSpec)
         downloader = instantiator.newInstance(FileDownloader, project)
