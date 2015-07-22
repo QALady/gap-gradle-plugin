@@ -255,7 +255,6 @@ class CommanderClient {
 	def getCurrentSegmentConfig() {
 		new SegmentConfig(getSegmentConfigPropertyValue('configSCMUrl'),
 				getSegmentConfigPropertyValue('workingDir'),
-				getSegmentConfigPropertyValue('ciDir'),
 				getSegmentConfigPropertyValue('gradleFile'),
 				getSegmentConfigPropertyValue('scmConfigName'),
 				isManualSegment())

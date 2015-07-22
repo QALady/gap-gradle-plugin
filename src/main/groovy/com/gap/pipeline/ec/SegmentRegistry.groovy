@@ -7,7 +7,7 @@ class SegmentRegistry {
     def logger = LoggerFactory.getLogger(com.gap.pipeline.ec.SegmentRegistry)
     CommanderClient commander
     def segmentRegistryPath = "/projects[WM Segment Registry]/SegmentRegistry"
-    def identifierRegistryPath = "/projects[WM Segment Registry]/IdentifierRegistry" 
+    def identifierRegistryPath = "/projects[WM Segment Registry]/IdentifierRegistry"
 
 
     SegmentRegistry(commander = new CommanderClient()){
@@ -24,7 +24,6 @@ class SegmentRegistry {
         setSegmentRegistryValue(segment, 'ivyDependencies', ivyInfo.dependencies().join('\n'))
         setSegmentRegistryValue(segment, 'svnUrl', segmentConfig.scmUrl)
         setSegmentRegistryValue(segment, 'workingDir', segmentConfig.workingDir)
-        setSegmentRegistryValue(segment, 'ciDir', segmentConfig.ciDir)
         setSegmentRegistryValue(segment, 'gradleFile', segmentConfig.gradleFile)
         setSegmentRegistryValue(segment, 'scmConfigName', segmentConfig.scmConfigName)
         setSegmentRegistryValue(segment, 'isManual', segmentConfig.isManual.toString())
@@ -129,11 +128,11 @@ class SegmentRegistry {
         commander.setECProperty("/projects[WM Segment Registry]/IdentifierRegistry/${identifier}/segment", segment.toString())
     }
 
-    
+
     public def getIdentifierRegistryValue(segment, key){
         commander.getECProperty("${identifierRegistryPath}/${segment}/${key}").value
     }
-    
+
     public def getSegmentRegistryPropertySheetData(propertSheetName, segmentId) {
          def propertiesPath = "${segmentRegistryPath}/${segmentId}/${propertSheetName}"
          return commander.getECProperties([path: propertiesPath, recurse: 1])
