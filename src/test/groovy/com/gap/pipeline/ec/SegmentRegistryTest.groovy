@@ -33,7 +33,7 @@ class SegmentRegistryTest {
         project.group = 'com.gap.watchmen'
 
         def segment = new Segment(projectName, procedureName)
-        def segmentConfig = new SegmentConfig('http://svn.gap.dev/path/to/repo', '/dev/shm/1234/job_id', '/mnt/electric-commander/workspace/job_id', 'build.gradle', 'ci svn repo', false)
+        def segmentConfig = new SegmentConfig('http://svn.gap.dev/path/to/repo', '/dev/shm/1234/job_id', 'build.gradle', 'ci svn repo', false)
         commander = mock(CommanderClient)
         when(commander.getCurrentSegmentConfig()).thenReturn(segmentConfig)
         when(commander.getCurrentSegment()).thenReturn(segment)
