@@ -10,6 +10,7 @@ sonarRunner {
         property "sonar.grvy.coveragePlugin", "cobertura"
         property "sonar.exclusions", "**/*Exception.groovy, **/GapWarPlugin.groovy,**/GemInstall.groovy,**/GapResourcesExtension.groovy,**/Bundle.groovy,**/PhantomJS.groovy"
         property "sonar.groovy.cobertura.reportPath", "target/reports/coverage/coverage.xml"
+        property "sonar.profile", "Product Engineering Reviewed Rules"
         property "sonar.junit.reportsPath", "${buildDir}/test-results/"
     }
 }
