@@ -49,7 +49,6 @@ targetCompatibility=JavaVersion.VERSION_1_7
 
 apply from: 'gradle/sonarQube.gradle'
 
-tasks.sonarRunner.dependsOn('cobertura')
 cobertura {
     coverageFormats = ['xml', 'html']
     coverageReportDir = mkdir('target/reports/coverage')
