@@ -13,6 +13,7 @@ class CommanderClient {
 	def logger = LoggerFactory.getLogger(CommanderClient)
 	private final String PROJECT_NAME_PROPERTY = '/myJob/projectName'
 	private final String PROCEDURE_NAME_PROPERTY = '/myJob/liveProcedure'
+    private final String STEP_NAME_PROPERTY = '/myJobStep/stepName'
 
 	CommanderClient(shellCommand = new ShellCommand(), environment = new Environment()) {
 		this.shellCommand = shellCommand
@@ -167,13 +168,17 @@ class CommanderClient {
 		}
 	}
 
-	def getCurrentProjectName() {
+	public getCurrentProjectName() {
 		getECProperty(PROJECT_NAME_PROPERTY).value
 	}
 
-	private def getCurrentProcedureName() {
+	public def getCurrentProcedureName() {
 		getECProperty(PROCEDURE_NAME_PROPERTY).value
 	}
+
+    public def getCurrentStepName() {
+        getECProperty(STEP_NAME_PROPERTY).value
+    }
 
 	private def getProjectName(jobId) {
 		def projectNameProperty = "/jobs[$jobId]/projectName"

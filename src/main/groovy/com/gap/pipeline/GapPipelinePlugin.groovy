@@ -87,6 +87,8 @@ class GapPipelinePlugin implements Plugin<Project> {
     project.task('buildJsonWithAllResolvedVersions') << {
       new BuildJsonWithAllResolvedVersionsTask(project).execute()
     }
+
+      project.defaultTasks.add('pluginUsage')
   }
 
   private configureRepositories(Project project) {
@@ -181,8 +183,27 @@ class GapPipelinePlugin implements Plugin<Project> {
         new GenerateAndLinkUpstreamChangelogReportTask(project).execute()
       }
 
-    }
+        project.task("pluginUsage") << {
 
+            if (project.hasProperty("plugin_usage")) {
+                if (ecclient.isRunningInPipeline()) {
+
+                    def property_name = "${ecclient.getCurrentProjectName()}-${ecclient.getCurrentProcedureName()}-${ecclient.getCurrentStepName()}"
+
+                    def property_value = "{plugins: [null"
+                    project.plugins.each { property_value = "${property_value},${it.toString().split('@')[0]}" }
+                    property_value = "${property_value}],"
+
+                    property_value = "${property_value}tasks : [null"
+                    project.getGradle().taskGraph.getAllTasks().each {property_value = "${property_value},${it.name}" }
+                    property_value = "${property_value}]}"
+
+                    ecclient.setECProperty("/projects/Chile Sandbox/plugin_usage/${property_name}", "${property_value}")
+                }
+            }
+        }
+    }
+      
   }
 
   private boolean isRootProject(def project) {
