@@ -14,6 +14,7 @@ class CommanderClient {
 	private final String PROJECT_NAME_PROPERTY = '/myJob/projectName'
 	private final String PROCEDURE_NAME_PROPERTY = '/myJob/liveProcedure'
     private final String STEP_NAME_PROPERTY = '/myJobStep/stepName'
+    private final String PARENT_STEP_NAME_PROPERTY = '/myJobStep/parentStepName'
 
 	CommanderClient(shellCommand = new ShellCommand(), environment = new Environment()) {
 		this.shellCommand = shellCommand
@@ -168,7 +169,7 @@ class CommanderClient {
 		}
 	}
 
-	public getCurrentProjectName() {
+	public def getCurrentProjectName() {
 		getECProperty(PROJECT_NAME_PROPERTY).value
 	}
 
@@ -180,7 +181,11 @@ class CommanderClient {
         getECProperty(STEP_NAME_PROPERTY).value
     }
 
-	private def getProjectName(jobId) {
+    public def getCurrentParentStepName() {
+        getECProperty(PARENT_STEP_NAME_PROPERTY).value
+    }
+
+    private def getProjectName(jobId) {
 		def projectNameProperty = "/jobs[$jobId]/projectName"
 		getECProperty(projectNameProperty).value
 	}

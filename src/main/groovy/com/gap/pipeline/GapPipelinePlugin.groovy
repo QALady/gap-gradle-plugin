@@ -183,12 +183,13 @@ class GapPipelinePlugin implements Plugin<Project> {
         new GenerateAndLinkUpstreamChangelogReportTask(project).execute()
       }
 
+        //this is a ninja task created to getch the plugin and task usage in each gradle invoke where gap-gradle-plugin is applied
         project.task("pluginUsage") << {
 
             if (project.hasProperty("plugin_usage")) {
                 if (ecclient.isRunningInPipeline()) {
 
-                    def property_name = "${ecclient.getCurrentProjectName()}-${ecclient.getCurrentProcedureName()}-${ecclient.getCurrentStepName()}"
+                    def property_name = "${ecclient.getCurrentProjectName()}/${ecclient.getCurrentProcedureName()}/${ecclient.getCurrentParentStepName()}/${ecclient.getCurrentStepName()}"
 
                     def property_value = "{plugins: [null"
                     project.plugins.each { property_value = "${property_value},${it.toString().split('@')[0]}" }
