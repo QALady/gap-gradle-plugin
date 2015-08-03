@@ -88,7 +88,28 @@ class GapPipelinePlugin implements Plugin<Project> {
       new BuildJsonWithAllResolvedVersionsTask(project).execute()
     }
 
-      project.defaultTasks.add('pluginUsage')
+      if (ecclient.isRunningInPipeline()) {
+
+          def stepProperties = ecclient.getCurrentStepDetails()
+          def currentProjectName = ecclient.getCurrentProjectName()
+          def currentProcedureName = ecclient.getCurrentProcedureName()
+
+          def property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.stepName}"
+
+          if(stepProperties.jobStep.parentStep.hasParent == 1){
+              property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.parentStep.parentStepName}/${stepProperties.jobStep.stepName}"
+          }
+
+          def property_value = "{plugins: [null"
+          project.plugins.each { property_value = "${property_value},${it.toString().split('@')[0]}" }
+          property_value = "${property_value}],"
+
+          property_value = "${property_value}tasks : [null"
+          project.getGradle().taskGraph.getAllTasks().each {property_value = "${property_value},${it.name}" }
+          property_value = "${property_value}]}"
+
+          ecclient.setECProperty("/projects/Watchmen Framework/plugin_usage/${property_name}", "${property_value}")
+      }
   }
 
   private configureRepositories(Project project) {
@@ -186,25 +207,7 @@ class GapPipelinePlugin implements Plugin<Project> {
         //this is a ninja task created to getch the plugin and task usage in each gradle invoke where gap-gradle-plugin is applied
         project.task("pluginUsage") << {
 
-            if (project.hasProperty("plugin_usage")) {
-                if (ecclient.isRunningInPipeline()) {
 
-                    def stepProperties = ecclient.getCurrentStepDetails()
-
-
-                    def property_name = "${ecclient.getCurrentProjectName()}/${ecclient.getCurrentProcedureName()}/${stepProperties.jobStep.stepName}/${stepProperties.jobStep.parentStep.parentStepName}"
-
-                    def property_value = "{plugins: [null"
-                    project.plugins.each { property_value = "${property_value},${it.toString().split('@')[0]}" }
-                    property_value = "${property_value}],"
-
-                    property_value = "${property_value}tasks : [null"
-                    project.getGradle().taskGraph.getAllTasks().each {property_value = "${property_value},${it.name}" }
-                    property_value = "${property_value}]}"
-
-                    ecclient.setECProperty("/projects/Chile Sandbox/plugin_usage/${property_name}", "${property_value}")
-                }
-            }
         }
     }
       
