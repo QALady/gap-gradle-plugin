@@ -14,7 +14,7 @@ class CommanderClient {
 	private final String PROJECT_NAME_PROPERTY = '/myJob/projectName'
 	private final String PROCEDURE_NAME_PROPERTY = '/myJob/liveProcedure'
     private final String STEP_NAME_PROPERTY = '/myJobStep/stepName'
-    private final String PARENT_STEP_NAME_PROPERTY = '/myJobStep/parentStepName'
+    private final String PARENT_STEP_NAME_PROPERTY = '/myJobStep/parentStep/parentStepName'
 
 	CommanderClient(shellCommand = new ShellCommand(), environment = new Environment()) {
 		this.shellCommand = shellCommand
