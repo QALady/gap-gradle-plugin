@@ -186,8 +186,10 @@ class GapPipelinePlugin implements Plugin<Project> {
         //this is a ninja task created to getch the plugin and task usage in each gradle invoke where gap-gradle-plugin is applied
         project.task("pluginUsage") << {
 
-            if (project.hasProperty("plugin_usage") && project.getGradle().getTaskGraph() != null) {
+            if (project.hasProperty("plugin_usage")) {
                 if (ecclient.isRunningInPipeline()) {
+
+                    println "it passing...."
 
                     def stepProperties = ecclient.getCurrentStepDetails()
                     def currentProjectName = ecclient.getCurrentProjectName()
