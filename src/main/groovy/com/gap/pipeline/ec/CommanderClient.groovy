@@ -175,10 +175,6 @@ class CommanderClient {
 		getECProperty(STEP_ID_PROPERTY).value
 	}
 
-    public def getCurrentStepId() {
-        getECProperty(PROCEDURE_NAME_PROPERTY).value
-    }
-
     public def getCurrentStepDetails() {
         def stepId = environment.getValue('COMMANDER_JOBSTEPID')
         def output = shellCommand.execute("ectool --format json getJobStepDetails ${stepId}")
