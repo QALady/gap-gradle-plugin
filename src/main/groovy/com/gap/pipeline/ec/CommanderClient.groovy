@@ -13,8 +13,6 @@ class CommanderClient {
 	def logger = LoggerFactory.getLogger(CommanderClient)
 	private final String PROJECT_NAME_PROPERTY = '/myJob/projectName'
 	private final String PROCEDURE_NAME_PROPERTY = '/myJob/liveProcedure'
-    private final String STEP_NAME_PROPERTY = '/myJobStep/stepName'
-    private final String PARENT_STEP_NAME_PROPERTY = '/myJobStep/parentStep/parentStepName'
 
 	CommanderClient(shellCommand = new ShellCommand(), environment = new Environment()) {
 		this.shellCommand = shellCommand
@@ -177,12 +175,11 @@ class CommanderClient {
 		getECProperty(PROCEDURE_NAME_PROPERTY).value
 	}
 
-    public def getCurrentStepName() {
-        getECProperty(STEP_NAME_PROPERTY).value
-    }
+    public def getCurrentStepDetails() {
+        def jobId = environment.getValue('COMMANDER_JOBID')
+        def output = shellCommand.execute("ectool --format json getJobStepDetails ${jobId}")
 
-    public def getCurrentParentStepName() {
-        getECProperty(PARENT_STEP_NAME_PROPERTY).value
+        return new JsonSlurper().parseText(output)
     }
 
     private def getProjectName(jobId) {

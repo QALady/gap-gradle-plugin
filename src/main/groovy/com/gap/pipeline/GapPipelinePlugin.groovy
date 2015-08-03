@@ -189,7 +189,9 @@ class GapPipelinePlugin implements Plugin<Project> {
             if (project.hasProperty("plugin_usage")) {
                 if (ecclient.isRunningInPipeline()) {
 
-                    def property_name = "${ecclient.getCurrentProjectName()}/${ecclient.getCurrentProcedureName()}/${ecclient.getCurrentParentStepName()}/${ecclient.getCurrentStepName()}"
+                    def stepProperties = ecclient.getCurrentStepDetails()
+
+                    def property_name = "${ecclient.getCurrentProjectName()}/${ecclient.getCurrentProcedureName()}/${stepProperties.jobStep.stepName}/${stepProperties.jobStep.parentStep.parentStepName}"
 
                     def property_value = "{plugins: [null"
                     project.plugins.each { property_value = "${property_value},${it.toString().split('@')[0]}" }
