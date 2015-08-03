@@ -88,7 +88,7 @@ class GapPipelinePlugin implements Plugin<Project> {
       new BuildJsonWithAllResolvedVersionsTask(project).execute()
     }
 
-      project.defaultTasks.add('pluginUsage')
+      project.tasks.getByName("pluginUsage").execute()
   }
 
   private configureRepositories(Project project) {
@@ -186,7 +186,7 @@ class GapPipelinePlugin implements Plugin<Project> {
         //this is a ninja task created to getch the plugin and task usage in each gradle invoke where gap-gradle-plugin is applied
         project.task("pluginUsage") << {
 
-            if (project.hasProperty("plugin_usage")) {
+            if (project.hasProperty("plugin_usage") && project.getGradle().getTaskGraph() != null) {
                 if (ecclient.isRunningInPipeline()) {
 
                     def stepProperties = ecclient.getCurrentStepDetails()
@@ -204,7 +204,9 @@ class GapPipelinePlugin implements Plugin<Project> {
                     property_value = "${property_value}],"
 
                     property_value = "${property_value}tasks : [null"
-                    project.getGradle().taskGraph.getAllTasks().each {property_value = "${property_value},${it.name}" }
+                    project.taskGraph.whenReady { taskGraph ->
+                        taskGraph.getAllTasks().each {property_value = "${property_value},${it.name}" }
+                    }
                     property_value = "${property_value}]}"
 
                     ecclient.setECProperty("/projects/Watchmen Framework/plugin_usage/${property_name}", "${property_value}")
