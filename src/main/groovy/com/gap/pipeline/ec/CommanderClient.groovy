@@ -172,12 +172,16 @@ class CommanderClient {
 	}
 
 	public def getCurrentProcedureName() {
-		getECProperty(PROCEDURE_NAME_PROPERTY).value
+		getECProperty(STEP_ID_PROPERTY).value
 	}
 
+    public def getCurrentStepId() {
+        getECProperty(PROCEDURE_NAME_PROPERTY).value
+    }
+
     public def getCurrentStepDetails() {
-        def jobId = environment.getValue('COMMANDER_JOBID')
-        def output = shellCommand.execute("ectool --format json getJobStepDetails ${jobId}")
+        def stepId = environment.getValue('COMMANDER_JOBSTEPID')
+        def output = shellCommand.execute("ectool --format json getJobStepDetails ${stepId}")
 
         return new JsonSlurper().parseText(output)
     }
