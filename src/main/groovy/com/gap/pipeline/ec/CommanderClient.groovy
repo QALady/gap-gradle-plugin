@@ -171,9 +171,9 @@ class CommanderClient {
 		getECProperty(PROJECT_NAME_PROPERTY).value
 	}
 
-	public def getCurrentProcedureName() {
-		getECProperty(STEP_ID_PROPERTY).value
-	}
+    public def getCurrentProcedureName() {
+        getECProperty(PROCEDURE_NAME_PROPERTY).value
+    }
 
     public def getCurrentStepDetails() {
         def stepId = environment.getValue('COMMANDER_JOBSTEPID')
