@@ -206,7 +206,7 @@ class GapPipelinePlugin implements Plugin<Project> {
                     property_value = "${property_value}],"
 
                     property_value = "${property_value}tasks : [null"
-                    project.taskGraph.whenReady { taskGraph ->
+                    project.getGradle().getTaskGraph().whenReady { taskGraph ->
                         taskGraph.getAllTasks().each {property_value = "${property_value},${it.name}" }
                     }
                     property_value = "${property_value}]}"
