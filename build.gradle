@@ -160,7 +160,7 @@ uploadFunctionalTest {
     }
 }
 
-tasks.sonarRunner.dependsOn('cobertura')
+//tasks.sonarRunner.dependsOn('cobertura')
 
 task writeVersionToEC(type: Exec) {
   commandLine "ectool", "setProperty", "/projects[Watchmen Framework]/gradlePluginVersion", "$version"
