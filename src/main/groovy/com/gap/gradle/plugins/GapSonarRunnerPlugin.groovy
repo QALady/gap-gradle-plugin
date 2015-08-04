@@ -58,7 +58,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                 property "sonar.java.jacoco.reportPath", project.jacoco.reportsDir
                 property "sonar.issuesReport.html.enable", "true"
                 if (isLocal()) {
-                    property "sonar.analysis.mode", "preview"
+                    property "sonar.analysis.mode", "incremental"
                     //Disabling a Source Control and Issue plugin for preview mode to work
                     property 'sonar.scm.enabled', 'false'
                     property 'sonar.scm-stats.enabled', 'false'
