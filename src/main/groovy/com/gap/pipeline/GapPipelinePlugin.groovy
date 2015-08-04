@@ -189,15 +189,15 @@ class GapPipelinePlugin implements Plugin<Project> {
             if (project.hasProperty("plugin_usage")) {
                 if (ecclient.isRunningInPipeline()) {
 
-                    println "it passing...."
-
                     def stepProperties = ecclient.getCurrentStepDetails()
                     def currentProjectName = ecclient.getCurrentProjectName()
                     def currentProcedureName = ecclient.getCurrentProcedureName()
 
                     def property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.stepName}"
 
-                    if(stepProperties.jobStep.parentStep.hasParent == 1){
+                    println "-----> ${stepProperties.jobStep.parentStep.hasParent}"
+
+                    if(stepProperties.jobStep.parentStep.hasParent == '1'){
                          property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.parentStep.parentStepName}/${stepProperties.jobStep.stepName}"
                     }
 
@@ -206,9 +206,7 @@ class GapPipelinePlugin implements Plugin<Project> {
                     property_value = "${property_value}],"
 
                     property_value = "${property_value}tasks : [null"
-                    project.getGradle().getTaskGraph().whenReady { taskGraph ->
-                        taskGraph.getAllTasks().each {property_value = "${property_value},${it.name}" }
-                    }
+                    project.getGradle().getTaskGraph().getAllTasks().each {property_value = "${property_value},${it.name}"}
                     property_value = "${property_value}]}"
 
                     ecclient.setECProperty("/projects/Watchmen Framework/plugin_usage/${property_name}", "${property_value}")
