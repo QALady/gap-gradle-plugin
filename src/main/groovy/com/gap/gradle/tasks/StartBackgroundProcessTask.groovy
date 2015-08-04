@@ -35,7 +35,7 @@ class StartBackgroundProcessTask extends DefaultTask {
         waitForProcessToFinish()
     }
 
-    private void waitForProcessToFinish() {
+    def waitForProcessToFinish() {
         try {
             barrier.executeUntil {
                 def pid = getPidForCommand(command)
@@ -57,19 +57,19 @@ class StartBackgroundProcessTask extends DefaultTask {
         }
     }
 
-    private static void writePidToFile(String pid, File file) {
+    def writePidToFile(String pid, File file) {
         file.append(pid + "\n")
     }
 
-    private static String getPidForCommand(String cmd) {
+    def getPidForCommand(String cmd) {
         executeCommand("pgrep -f '$cmd'").text.trim()
     }
 
-    private static Process executeCommand(String cmd) {
+    def executeCommand(String cmd) {
         ["bash", "-c", cmd].execute()
     }
 
-    private void validateParameters() {
+    def validateParameters() {
         def errorMessages = []
 
         if (!command) {
