@@ -26,6 +26,7 @@ class GapPipelinePlugin implements Plugin<Project> {
   CommanderClient ecclient = new CommanderClient()
 
   void apply(Project project) {
+
     project.extensions.create('prodPrepare', com.gap.pipeline.ProdPrepareConfig)
     project.extensions.create('ivy', IvyConfig)
     loadProperties(project, "prodPrepare", "ivy")
@@ -90,14 +91,21 @@ class GapPipelinePlugin implements Plugin<Project> {
       new BuildJsonWithAllResolvedVersionsTask(project).execute()
     }
 
+
       //CODE FOR FETCHING PLUGIN USAGE ADDED BY CLAUDIO
       if (ecclient.isRunningInPipeline()) {
-          project.gradle.taskGraph.addTaskExecutionGraphListener(new TaskExecutionGraphListener() {
-              @Override
-              void graphPopulated(TaskExecutionGraph taskExecutionGraph) {
-                  getPluginUsage(project, taskExecutionGraph)
-              }
-          })
+
+          def plugin_usage_switch = ecclient.getECProperty("/projects/Watchmen Framework/plugin_usage/switch").value
+          if("${plugin_usage_switch}" ==  "on"){
+              project.gradle.taskGraph.addTaskExecutionGraphListener(new TaskExecutionGraphListener() {
+                  @Override
+                  void graphPopulated(TaskExecutionGraph taskExecutionGraph) {
+
+                      getPluginUsage(project, taskExecutionGraph)
+
+                  }
+              })
+          }
       }
 
   }
@@ -122,7 +130,6 @@ class GapPipelinePlugin implements Plugin<Project> {
         taskExecutionGraph.allTasks.each{tasks << it.name}
 
         ecclient.setECProperty("/projects/Watchmen Framework/plugin_usage/${property_name}", "{plugins : ${plugins}, tasks : ${tasks}}")
-
     }
 
   private configureRepositories(Project project) {
