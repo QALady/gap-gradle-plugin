@@ -94,7 +94,7 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         vmMetadatas = virtualMachineBuilder.withProvider(openstackCloudProvider).withGroupName(globalProperties.get(HOSTNAME))
                       .withHardwareProfileNameRegex(globalProperties.get(OS_FLAVOR)).withOsImageRegex(globalProperties.get(OS_IMAGENAME)).withNetworks(osNetworkNameSet)
                       .withSecurityGroups(osSecurityGroupSet).withKeypairName(globalProperties.get(OS_KEYNAME)).withUserData(this.getUserDataString())
-                      .withUserMetadata(userMetadata).buildVirtualMachine(count);
+                      .withUserMetadata(userMetadata).withOsAvailabilityZone(globalProperties.get(OS_AVAILABILITY_ZONE)).buildVirtualMachine(count);
                       
         for (VMMetadata eachVMMetadata : vmMetadatas) {
             LOGGER.info(eachVMMetadata.toString())
@@ -177,6 +177,9 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
                 globalProperties.put(OS_TENANT, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_TENANT]);
                 globalProperties.put(OS_KEYNAME, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_KEYNAME]);
                 globalProperties.put(OS_AVAILABILITY_ZONE, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_AVAILABILITY_ZONE]);
+                if (jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_REGION] != null) {
+                    globalProperties.put(OS_REGION, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_REGION])
+                }
                 
             } else {
                 throw new InvalidPropertyAccessException("No such tenant " + tenantName + " exists in the cloud. Please check tenant name");
@@ -306,6 +309,9 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         properties.put("password", globalProperties.get(OS_PASSWORD));
         properties.put("endpoint", globalProperties.get(OS_ENDPOINT));
         properties.put("tenant", globalProperties.get(OS_TENANT));
+        if (globalProperties.hasProperty(OS_REGION)) {
+            properties.put("region", globalProperties.getProperty(OS_REGION));
+        }
         return properties;
     }
 
@@ -338,6 +344,7 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         public static final String OS_ENDPOINT = "osEndpoint";
         public static final String OS_TENANT = "osTenant";
         public static final String OS_AVAILABILITY_ZONE = "osAvailabilityZone";
+        public static final String OS_REGION = "osRegion";
         public static final String DNAURL = "DNAURL";
         public static final String DNATYPE = "DNAType";
         public static final String ETCD_HOSTNAME_URL = "etcdHostnameUrl";

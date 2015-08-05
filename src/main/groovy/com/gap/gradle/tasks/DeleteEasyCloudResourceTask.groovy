@@ -15,6 +15,8 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 
+import static com.gap.gradle.tasks.DeleteEasyCloudResourceTask.Constants.*
+
 @RequiredParameters([
     @Require(parameter = 'tenant', description = 'Openstack Tenant'),
     @Require(parameter = 'resourceToDelete', description = 'hostname of the resource to Delete')
@@ -52,7 +54,7 @@ class DeleteEasyCloudResourceTask extends WatchmenTask {
     def deleteEasyCloudResource() {
         super.validate()        
         Set<String> virtualMachineHostnames = new HashSet<String>();
-        globalProperties.get(DeleteEasyCloudResourceTask.Constants.RESOURCE_TO_DELETE).split(',').each { eachResourceToDelete ->
+        globalProperties.get(RESOURCE_TO_DELETE).split(',').each { eachResourceToDelete ->
             virtualMachineHostnames.add(eachResourceToDelete);
         }        
         LOGGER.info("*******************************************************************");
@@ -84,7 +86,7 @@ class DeleteEasyCloudResourceTask extends WatchmenTask {
     def deleteEasyECResource() {
         super.validate()
         Set<String> virtualMachineHostnames = new HashSet<String>();
-        globalProperties.get(DeleteEasyCloudResourceTask.Constants.RESOURCE_TO_DELETE).split(',').each { eachResourceToDelete ->
+        globalProperties.get(RESOURCE_TO_DELETE).split(',').each { eachResourceToDelete ->
             virtualMachineHostnames.add(eachResourceToDelete);
         }
         LOGGER.info("*******************************************************************");
@@ -100,18 +102,21 @@ class DeleteEasyCloudResourceTask extends WatchmenTask {
         globalProperties = new Properties();
         
         if (project.hasProperty('resourceToDelete')) {
-            globalProperties.put(DeleteEasyCloudResourceTask.Constants.RESOURCE_TO_DELETE, project[DeleteEasyCloudResourceTask.Constants.RESOURCE_TO_DELETE].replace(" ", ""));
+            globalProperties.put(RESOURCE_TO_DELETE, project[RESOURCE_TO_DELETE].replace(" ", ""));
         } else {
             throw new InvalidPropertyAccessException("Resource to Delete property not set in project. Please set project property 'resourceToDelete'");
         }
         
         if (project.hasProperty('tenant')) {
             tenantName = project.tenant;
-            if (jsonObject[DeleteEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName] != null) {                
-                globalProperties.put(DeleteEasyCloudResourceTask.Constants.OS_USERNAME, jsonObject[DeleteEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][DeleteEasyCloudResourceTask.Constants.OS_USERNAME]);
-                globalProperties.put(DeleteEasyCloudResourceTask.Constants.OS_PASSWORD, jsonObject[DeleteEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][DeleteEasyCloudResourceTask.Constants.OS_PASSWORD]);
-                globalProperties.put(DeleteEasyCloudResourceTask.Constants.OS_ENDPOINT, jsonObject[DeleteEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][DeleteEasyCloudResourceTask.Constants.OS_ENDPOINT]);
-                globalProperties.put(DeleteEasyCloudResourceTask.Constants.OS_TENANT, jsonObject[DeleteEasyCloudResourceTask.Constants.JSON_OBJECT_TENANTS][tenantName][DeleteEasyCloudResourceTask.Constants.OS_TENANT]);                                
+            if (jsonObject[JSON_OBJECT_TENANTS][tenantName] != null) {
+                globalProperties.put(OS_USERNAME, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_USERNAME]);
+                globalProperties.put(OS_PASSWORD, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_PASSWORD]);
+                globalProperties.put(OS_ENDPOINT, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_ENDPOINT]);
+                globalProperties.put(OS_TENANT, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_TENANT]);
+                if (jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_REGION] != null) {
+                    globalProperties.put(OS_REGION, jsonObject[JSON_OBJECT_TENANTS][tenantName][OS_REGION])
+                }
             } else {
                 throw new InvalidPropertyAccessException("No such tenant " + tenantName + " exists in the cloud. Please check tenant name");
             }
@@ -125,10 +130,13 @@ class DeleteEasyCloudResourceTask extends WatchmenTask {
 
     private Properties getOpenstackProperties() {
         Properties properties = new Properties();
-        properties.put("username", globalProperties.get(DeleteEasyCloudResourceTask.Constants.OS_USERNAME));
-        properties.put("password", globalProperties.get(DeleteEasyCloudResourceTask.Constants.OS_PASSWORD));
-        properties.put("endpoint", globalProperties.get(DeleteEasyCloudResourceTask.Constants.OS_ENDPOINT));
-        properties.put("tenant", globalProperties.get(DeleteEasyCloudResourceTask.Constants.OS_TENANT));
+        properties.put("username", globalProperties.get(OS_USERNAME));
+        properties.put("password", globalProperties.get(OS_PASSWORD));
+        properties.put("endpoint", globalProperties.get(OS_ENDPOINT));
+        properties.put("tenant", globalProperties.get(OS_TENANT));
+        if (globalProperties.hasProperty(OS_REGION)) {
+            properties.put("region", globalProperties.getProperty(OS_REGION));
+        }
         return properties;
     }
     
@@ -140,6 +148,7 @@ class DeleteEasyCloudResourceTask extends WatchmenTask {
         public static final String OS_PASSWORD = "osPassword";
         public static final String OS_ENDPOINT = "osEndpoint";
         public static final String OS_TENANT = "osTenant";
+        public static final String OS_REGION = "osRegion";
         public static final String JSON_OBJECT_TENANTS = "tenants";
         public static final String RESOURCE_TO_DELETE = "resourceToDelete";      
     }
