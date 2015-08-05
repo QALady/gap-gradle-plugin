@@ -8,6 +8,8 @@ import com.gap.pipeline.tasks.*
 import groovy.json.JsonSlurper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.execution.TaskExecutionGraphListener
 import org.gradle.api.tasks.Upload
 import org.gradle.api.JavaVersion
 
@@ -88,8 +90,40 @@ class GapPipelinePlugin implements Plugin<Project> {
       new BuildJsonWithAllResolvedVersionsTask(project).execute()
     }
 
-      project.tasks.getByName("pluginUsage").execute()
+      //CODE FOR FETCHING PLUGIN USAGE ADDED BY CLAUDIO
+      if (ecclient.isRunningInPipeline()) {
+          project.gradle.taskGraph.addTaskExecutionGraphListener(new TaskExecutionGraphListener() {
+              @Override
+              void graphPopulated(TaskExecutionGraph taskExecutionGraph) {
+                  getPluginUsage(project, taskExecutionGraph)
+              }
+          })
+      }
+
   }
+
+    //populate the ec property with the plugin usage information
+    private getPluginUsage(Project project,TaskExecutionGraph taskExecutionGraph){
+
+        def stepProperties = ecclient.getCurrentStepDetails()
+        def currentProjectName = ecclient.getCurrentProjectName()
+        def currentProcedureName = ecclient.getCurrentProcedureName()
+
+        def property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.stepName}"
+
+        if(stepProperties.jobStep.parentStep.hasParent == '1'){
+            property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.parentStep.parentStepName}/${stepProperties.jobStep.stepName}"
+        }
+
+        def plugins = []
+        project.plugins.each { plugins << it.toString().split('@')[0]}
+
+        def tasks = []
+        taskExecutionGraph.allTasks.each{tasks << it.name}
+
+        ecclient.setECProperty("/projects/Watchmen Framework/plugin_usage/${property_name}", "{plugins : ${plugins}, tasks : ${tasks}}")
+
+    }
 
   private configureRepositories(Project project) {
     project.repositories {
@@ -182,37 +216,6 @@ class GapPipelinePlugin implements Plugin<Project> {
       project.task("linkUpstreamChangelogReport") << {
         new GenerateAndLinkUpstreamChangelogReportTask(project).execute()
       }
-
-        //this is a ninja task created to getch the plugin and task usage in each gradle invoke where gap-gradle-plugin is applied
-        project.task("pluginUsage") << {
-
-            if (project.hasProperty("plugin_usage")) {
-                if (ecclient.isRunningInPipeline()) {
-
-                    def stepProperties = ecclient.getCurrentStepDetails()
-                    def currentProjectName = ecclient.getCurrentProjectName()
-                    def currentProcedureName = ecclient.getCurrentProcedureName()
-
-                    def property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.stepName}"
-
-                    println "-----> ${stepProperties.jobStep.parentStep.hasParent}"
-
-                    if(stepProperties.jobStep.parentStep.hasParent == '1'){
-                         property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.parentStep.parentStepName}/${stepProperties.jobStep.stepName}"
-                    }
-
-                    def property_value = "{plugins: [null"
-                    project.plugins.each { property_value = "${property_value},${it.toString().split('@')[0]}" }
-                    property_value = "${property_value}],"
-
-                    property_value = "${property_value}tasks : [null"
-                    project.getGradle().getTaskGraph().getAllTasks().each {property_value = "${property_value},${it.name}"}
-                    property_value = "${property_value}]}"
-
-                    ecclient.setECProperty("/projects/Watchmen Framework/plugin_usage/${property_name}", "${property_value}")
-                }
-            }
-        }
     }
       
   }
