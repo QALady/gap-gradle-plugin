@@ -68,7 +68,7 @@ class GapSonarRunnerPluginTest {
         }
         commanderMock.use {
             project.apply plugin: 'gap-sonar-runner'
-            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.get('sonar.analysis.mode'), is('preview'))
+            assertThat(project.tasks.findByName('sonarRunner').sonarProperties.get('sonar.analysis.mode'), is('incremental'))
         }
     }
 
