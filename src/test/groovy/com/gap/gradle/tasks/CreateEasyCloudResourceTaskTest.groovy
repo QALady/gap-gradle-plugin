@@ -380,7 +380,8 @@ class CreateEasyCloudResourceTaskTest {
                                   .withSecurityGroups(osSecurityGroupSet)
                                   .withKeypairName("root_at_isolated")
                                   .withUserData("User data String")
-                                  .withUserMetadata(userMetadata))
+                                  .withUserMetadata(userMetadata)
+                                  .withOsAvailabilityZone("nova"))
             .thenReturn(virtualMachineBuilder);
        
         when(virtualMachineBuilder.buildVirtualMachine(2))
