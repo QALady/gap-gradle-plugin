@@ -115,19 +115,21 @@ class GapPipelinePlugin implements Plugin<Project> {
 
         def stepProperties = ecclient.getCurrentStepDetails()
         def currentProjectName = ecclient.getCurrentProjectName()
+        def currentAction = ""
         def currentProcedureName = ecclient.getCurrentProcedureName()
 
         def property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.stepName}"
 
         if(stepProperties.jobStep.parentStep.hasParent == '1'){
+            currentAction = stepProperties.jobStep.parentStep.parentStepName
             property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.parentStep.parentStepName}/${stepProperties.jobStep.stepName}"
         }
 
         def plugins = []
-        project.plugins.each { plugins << it.toString().split('@')[0]}
+        project.plugins.each { plugins << "{name : ${it.toString().split('@')[0]}, project : ${currentProjectName}, procedure : ${currentProcedureName}, step : ${currentAction}, subStep : ${stepProperties.jobStep.stepName}, date : ${stepProperties.jobStep.modifyTime}}"}
 
         def tasks = []
-        taskExecutionGraph.allTasks.each{tasks << it.name}
+        taskExecutionGraph.allTasks.each{tasks << "{name : ${it.name}, project : ${currentProjectName}, procedure : ${currentProcedureName}, step : ${currentAction}, subStep : ${stepProperties.jobStep.stepName}, date : ${stepProperties.jobStep.modifyTime}}"}
 
         ecclient.setECProperty("/projects/Watchmen Framework/plugin_usage/${property_name}", "{plugins : ${plugins}, tasks : ${tasks}}")
     }
