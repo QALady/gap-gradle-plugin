@@ -126,12 +126,12 @@ class GapPipelinePlugin implements Plugin<Project> {
         }
 
         def plugins = []
-        project.plugins.each { plugins << "{name : ${it.toString().split('@')[0]}, project : ${currentProjectName}, procedure : ${currentProcedureName}, step : ${currentAction}, subStep : ${stepProperties.jobStep.stepName}, date : ${stepProperties.jobStep.modifyTime}}"}
+        project.plugins.each { plugins << "{\"name\" : \"${it.toString().split('@')[0]}\", \"project\" : \"${currentProjectName}\", \"procedure\" : \"${currentProcedureName}\", \"step\" : \"${currentAction}\", \"subStep\" : \"${stepProperties.jobStep.stepName}\", \"date\" : \"${stepProperties.jobStep.modifyTime}\"}"}
 
         def tasks = []
-        taskExecutionGraph.allTasks.each{tasks << "{name : ${it.name}, project : ${currentProjectName}, procedure : ${currentProcedureName}, step : ${currentAction}, subStep : ${stepProperties.jobStep.stepName}, date : ${stepProperties.jobStep.modifyTime}}"}
+        taskExecutionGraph.allTasks.each{tasks << "{\"name\" : \"${it.name}\", \"project\" : \"${currentProjectName}\", \"procedure\" : \"${currentProcedureName}\", \"step\" : \"${currentAction}\", \"subStep\" : \"${stepProperties.jobStep.stepName}\", \"date\" : \"${stepProperties.jobStep.modifyTime}\"}"}
 
-        ecclient.setECProperty("/projects/Watchmen Framework/plugin_usage/${property_name}", "{plugins : ${plugins}, tasks : ${tasks}}")
+        ecclient.setECProperty("/projects/Watchmen Framework/plugin_usage/${property_name}", "{\"plugins\" : ${plugins}, \"tasks\" : ${tasks}}")
     }
 
   private configureRepositories(Project project) {
