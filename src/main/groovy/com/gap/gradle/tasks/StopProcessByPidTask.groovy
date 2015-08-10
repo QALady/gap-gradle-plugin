@@ -30,11 +30,11 @@ class StopProcessByPidTask extends DefaultTask {
         pidFile.write('')
     }
 
-    private static int stopProcess(String pid) {
+    def stopProcess(String pid) {
         "kill -9 $pid".execute().waitFor()
     }
 
-    private boolean noProcessesToStop() {
+    def noProcessesToStop() {
         !pidFile.exists() || pidFile.length() == 0
     }
 }
