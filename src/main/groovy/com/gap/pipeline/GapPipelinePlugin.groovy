@@ -120,9 +120,11 @@ class GapPipelinePlugin implements Plugin<Project> {
 
         def property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.stepName}"
 
-        if(stepProperties.jobStep.parentStep.hasParent == '1'){
-            currentAction = stepProperties.jobStep.parentStep.parentStepName
-            property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.parentStep.parentStepName}/${stepProperties.jobStep.stepName}"
+        if(stepProperties.jobStep.parentStep != null) {
+            if (stepProperties.jobStep.parentStep.hasParent == '1') {
+                currentAction = stepProperties.jobStep.parentStep.parentStepName
+                property_name = "${currentProjectName}/${currentProcedureName}/${stepProperties.jobStep.parentStep.parentStepName}/${stepProperties.jobStep.stepName}"
+            }
         }
 
         def plugins = []
