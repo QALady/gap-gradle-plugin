@@ -5,7 +5,8 @@ import com.gap.cloud.VirtualMachineBuilder;
 import com.gap.cloud.openstack.OpenstackCloudProvider;
 import com.gap.gradle.exceptions.InvalidPropertyAccessException;
 import com.gap.gradle.extensions.GapCloudResource;
-import com.gap.pipeline.ec.CommanderClient;
+import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.exception.MissingParameterException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 
 import groovy.json.JsonSlurper;
@@ -115,6 +116,14 @@ class CreateEasyCloudResourceTaskTest {
         this.setVirtualMachineBuilder();
         project.ext.tenant = 'watchmen'
         CreateEasyCloudResourceTask createEasyCloudResourceTask = new CreateEasyCloudResourceTask(commander, virtualMachineBuilder, openstackCloudProvider, this.getJsonObject(), project);
+    }
+
+    @Test(expected = MissingParameterException)
+    public void encryptedCredentialsWithoutPasswordSetTest() {
+        this.setUpEncryptedCredentialsProject();
+        this.setUpECProperties();
+        this.setVirtualMachineBuilder();
+        CreateEasyCloudResourceTask createEasyCloudResourceTask = new CreateEasyCloudResourceTask(commander, this.getJsonObject(), project);
     }
     
     @Test
@@ -274,6 +283,16 @@ class CreateEasyCloudResourceTaskTest {
         project.extensions.create("gapCloud", GapCloudResource)
         project.ext.hostname = 'watchmen-test-group'
         project.ext.tenant = 'watchmen_sf'
+        project.ext.roleName = 'wm-build-resource'
+        project.ext.numberOfInstances = '2'
+    }
+
+    private void setUpEncryptedCredentialsProject() {
+        project = ProjectBuilder.builder().withName("gapCloudResource").build()
+        project.group = 'com.gap.watchmen'
+        project.extensions.create("gapCloud", GapCloudResource)
+        project.ext.hostname = 'watchmen-test-group'
+        project.ext.tenant = 'watchmen_sf_actual'
         project.ext.roleName = 'wm-build-resource'
         project.ext.numberOfInstances = '2'
     }

@@ -187,9 +187,9 @@
       "osAvailabilityZone": "nova",
       "osEndpoint": "https://sfcloud.gid.gap.com:5000/v2.0",
       "osKeyName": "root_at_isolated",
-      "osPassword": "Password@2!",
+      "osPassword": "ENC(1XkDCE1O6VCFvsm37KESrcMi1hoX3/qH)",
       "osTenant": "watchmen_sf",
-      "osUsername": "watchmen",
+      "osUsername": "ENC(XtjaoqqGPKbp3uYkqzgr1c2KitFaxipD)",
       "defaultNetwork": "public",
       "defaultMachine": "tdev_prebaked"
     }

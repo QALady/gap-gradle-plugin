@@ -5,5 +5,6 @@ class GapCloudResource {
     def jsonUrl
     def allInstances
     def allRegisteredInstances
+    def encryptionPassword
 
 }

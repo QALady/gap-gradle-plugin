@@ -4,8 +4,9 @@ import com.gap.cloud.VMMetadata
 import com.gap.cloud.VirtualMachineBuilder
 import com.gap.cloud.openstack.OpenstackCloudProvider
 import com.gap.gradle.exceptions.InvalidPropertyAccessException
+import com.gap.gradle.extensions.GapCloudResource
 import com.gap.pipeline.ec.CommanderClient
-
+import com.gap.pipeline.exception.MissingParameterException
 import groovy.json.JsonSlurper
 
 import org.gradle.api.Project
@@ -38,6 +39,15 @@ class DeleteEasyCloudResourceTaskTest {
         this.setVirtualMachineBuilder()
         project.ext.tenant = 'watchmen_sf'
         DeleteEasyCloudResourceTask deleteEasyCloudResourceTask = new DeleteEasyCloudResourceTask(commander, virtualMachineBuilder, openstackCloudProvider, this.getJsonObject(), project);
+    }
+
+    @Test(expected = MissingParameterException)
+    public void encryptedCredentialsWithoutPasswordSetTest() {
+        this.setUpEncryptedCredentialsProject();
+        this.setUpECProperties();
+        this.setVirtualMachineBuilder();
+        project.ext.resourceToDelete = 'watchmen-test-group-ace,watchmen-test-group-fgh'
+        DeleteEasyCloudResourceTask deleteEasyCloudResourceTask = new DeleteEasyCloudResourceTask(commander, this.getJsonObject(), project);
     }
     
     @Test
@@ -73,6 +83,16 @@ class DeleteEasyCloudResourceTaskTest {
     private void setUpProject() {
         project = ProjectBuilder.builder().withName("gapCloudResource").build()
         project.group = 'com.gap.watchmen'   
+    }
+
+    private void setUpEncryptedCredentialsProject() {
+        project = ProjectBuilder.builder().withName("gapCloudResource").build()
+        project.group = 'com.gap.watchmen'
+        project.extensions.create("gapCloud", GapCloudResource)
+        project.ext.hostname = 'watchmen-test-group'
+        project.ext.tenant = 'watchmen_sf_actual'
+        project.ext.roleName = 'wm-build-resource'
+        project.ext.numberOfInstances = '2'
     }
     
     private Object getJsonObject() {

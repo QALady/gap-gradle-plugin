@@ -6,10 +6,13 @@ import com.gap.cloud.openstack.OpenstackCloudProvider;
 import com.gap.gradle.exceptions.InvalidPropertyAccessException
 import com.gap.gradle.threads.CreateECResourceThread
 import com.gap.gradle.threads.PostVMCreationThread
-import com.gap.pipeline.ec.CommanderClient;
+import com.gap.gradle.utils.EncryptedString
+import com.gap.pipeline.ec.CommanderClient
+import com.gap.pipeline.exception.MissingParameterException;
 import com.gap.pipeline.tasks.WatchmenTask;
 import com.gap.pipeline.tasks.annotations.Require
-import com.gap.pipeline.tasks.annotations.RequiredParameters;
+import com.gap.pipeline.tasks.annotations.RequiredParameters
+import com.gap.pipeline.utils.Environment;
 import com.google.common.base.Function
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
@@ -298,21 +301,35 @@ class CreateEasyCloudResourceTask extends WatchmenTask {
         } else {
             globalProperties.put(AUTO_PURGE, jsonObject[AUTO_PURGE]);
         }
-        /*    for (Map.Entry<String, String> entry : globalProperties.entrySet()) {
-         println (entry.getKey() + " ==> " + entry.getValue())
-     }*/
     }
 
     private Properties getOpenstackProperties() {
         Properties properties = new Properties();
-        properties.put("username", globalProperties.get(OS_USERNAME));
-        properties.put("password", globalProperties.get(OS_PASSWORD));
+        isEncryptedProperty(globalProperties.get(OS_USERNAME)) ? properties.put("username",
+                new EncryptedString(globalProperties.get(OS_USERNAME), project.gapCloud.encryptionPassword).decrypt())
+                : properties.put("username", globalProperties.get(OS_USERNAME));
+        isEncryptedProperty(globalProperties.get(OS_PASSWORD)) ? properties.put("password",
+                new EncryptedString(globalProperties.get(OS_PASSWORD), project.gapCloud.encryptionPassword).decrypt())
+                : properties.put("password", globalProperties.get(OS_PASSWORD));
         properties.put("endpoint", globalProperties.get(OS_ENDPOINT));
         properties.put("tenant", globalProperties.get(OS_TENANT));
         if (globalProperties.hasProperty(OS_REGION)) {
             properties.put("region", globalProperties.getProperty(OS_REGION));
         }
         return properties;
+    }
+
+    private boolean isEncryptedProperty(String property) {
+        boolean isEncrypted = false;
+        if (property.contains("ENC")) {
+            if (project.gapCloud.encryptionPassword == null) {
+                throw new MissingParameterException("Encryption password \"gapCloud " +
+                        "{ encryptionPassword }\" " + "needs to be set since property is encrypted. " +
+                        "This password is used decrypt the encrypted property ");
+            }
+            isEncrypted = true;
+        }
+        return isEncrypted;
     }
 
     private String getUserDataString() {
