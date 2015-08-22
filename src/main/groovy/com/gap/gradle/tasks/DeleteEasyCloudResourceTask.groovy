@@ -10,7 +10,6 @@ import com.gap.pipeline.exception.MissingParameterException
 import com.gap.pipeline.tasks.WatchmenTask
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
-import com.gap.pipeline.utils.Environment
 import groovy.json.JsonSlurper
 
 import org.apache.commons.logging.Log

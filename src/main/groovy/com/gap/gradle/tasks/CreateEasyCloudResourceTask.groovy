@@ -12,7 +12,6 @@ import com.gap.pipeline.exception.MissingParameterException;
 import com.gap.pipeline.tasks.WatchmenTask;
 import com.gap.pipeline.tasks.annotations.Require
 import com.gap.pipeline.tasks.annotations.RequiredParameters
-import com.gap.pipeline.utils.Environment;
 import com.google.common.base.Function
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
