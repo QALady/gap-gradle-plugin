@@ -19,9 +19,10 @@ import org.apache.commons.logging.LogFactory
 
 class GapPipelinePlugin implements Plugin<Project> {
 
-    def logger = LogFactory.getLog(GapPipelinePlugin)
+  def logger = LogFactory.getLog(GapPipelinePlugin)
 
   private static final String WM_LOCAL_NON_PROD = "wm_local_non_prod"
+  private static final String WATCHMEN_DEV_LOCAL = "watchmen_dev_local"
 
   CommanderClient ecclient = new CommanderClient()
 
@@ -143,6 +144,11 @@ class GapPipelinePlugin implements Plugin<Project> {
         layout "maven"
         url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
       }
+      ivy {
+        name WATCHMEN_DEV_LOCAL
+        layout "maven"
+        url "http://artifactory.gapinc.dev/artifactory/watchmen-dev-local"
+      }
       maven {
         name "wm_maven_remote_repos"
         url "http://artifactory.gapinc.dev/artifactory/remote-repos"
@@ -160,9 +166,15 @@ class GapPipelinePlugin implements Plugin<Project> {
   private setIvyCredentialsIfAnyUploadIsGoingToHappen(Project project) {
     project.gradle.taskGraph.whenReady { taskGraph ->
       if (taskGraph.allTasks.any { it instanceof Upload }) {
+        def artifactoryUserName = ecclient.getArtifactoryUserName()
+        def artifactoryPassword = ecclient.getArtifactoryPassword()
         project.repositories[WM_LOCAL_NON_PROD].credentials {
-          username ecclient.getArtifactoryUserName()
-          password ecclient.getArtifactoryPassword()
+          username artifactoryUserName
+          password artifactoryPassword
+        }
+        project.repositories[WATCHMEN_DEV_LOCAL].credentials {
+          username artifactoryUserName
+          password artifactoryPassword
         }
       }
     }
@@ -228,7 +240,7 @@ class GapPipelinePlugin implements Plugin<Project> {
         new GenerateAndLinkUpstreamChangelogReportTask(project).execute()
       }
     }
-      
+
   }
 
   private boolean isRootProject(def project) {
