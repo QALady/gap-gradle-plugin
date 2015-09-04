@@ -17,6 +17,7 @@ import org.mockito.Mockito
 import com.gap.pipeline.ec.CommanderClient
 import com.gap.pipeline.ec.SegmentRegistry
 
+@Ignore
 class UploadGradleWithSelectedDependencyVersionsTaskTest {
 	Project project
 	UploadGradleWithSelectedDependencyVersionsTask task

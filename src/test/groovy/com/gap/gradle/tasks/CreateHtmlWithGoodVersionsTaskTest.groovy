@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -22,6 +23,7 @@ import static org.junit.Assert.assertTrue
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 
+@Ignore
 class CreateHtmlWithGoodVersionsTaskTest {
 	def logger = LogFactory.getLog(CreateHtmlWithGoodVersionsTaskTest)
 

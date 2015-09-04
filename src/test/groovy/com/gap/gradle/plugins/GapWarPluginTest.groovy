@@ -1,11 +1,14 @@
 package com.gap.gradle.plugins
 
+import org.junit.Ignore
+
 import static helpers.Assert.taskShouldExist
 import static helpers.Assert.taskShouldNotExist
 
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
 
+@Ignore
 class GapWarPluginTest {
 
     @Test

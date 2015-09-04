@@ -1,5 +1,7 @@
 package com.gap.gradle.plugins
 
+import org.junit.Ignore
+
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
 
@@ -11,6 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+@Ignore
 class GapAntHelperPluginTest {
 
 	private Project project

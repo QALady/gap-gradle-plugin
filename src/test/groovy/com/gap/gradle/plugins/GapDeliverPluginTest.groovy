@@ -1,5 +1,7 @@
 package com.gap.gradle.plugins
 
+import org.junit.Ignore
+
 import static helpers.Assert.taskShouldExist
 
 import org.gradle.api.Project
@@ -7,6 +9,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
+@Ignore
 class GapDeliverPluginTest {
 
     Project project
