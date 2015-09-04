@@ -34,7 +34,7 @@ repositories{
     add project.repositories.wm_maven_remote_repos
     add project.repositories.wm_ivy_remote_repos
     ivy {
-        name 'watchmen_dev_local'
+        name 'local_watchmen_dev_local'
         layout 'maven'
         url "${artifactoryUrl}/watchmen-dev-local"
         credentials {
@@ -76,7 +76,7 @@ dependencies{
     compile 'net.sourceforge.cobertura:cobertura:2.0.3'
     compile ('net.saliman:gradle-cobertura-plugin:2.2.4') {
         exclude(module:'groovy-all')
-    } 
+    }
     compile 'org.openbakery:xcodePlugin:0.10.3-gradle1'
     compile 'org.jsoup:jsoup:1.8.2'
     compile 'org.apache.commons:commons-io:1.3.2'
@@ -151,13 +151,13 @@ task wrapper(type: Wrapper) {
 
 uploadArchives {
     repositories{
-        add project.repositories.watchmen_dev_local
+        add project.repositories.local_watchmen_dev_local
     }
  }
 
 uploadFunctionalTest {
     repositories{
-        add project.repositories.watchmen_dev_local
+        add project.repositories.local_watchmen_dev_local
     }
 }
 
