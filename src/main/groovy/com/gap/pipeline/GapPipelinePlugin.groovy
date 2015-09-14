@@ -23,6 +23,7 @@ class GapPipelinePlugin implements Plugin<Project> {
 
   private static final String WM_LOCAL_NON_PROD = "wm_local_non_prod"
   private static final String WATCHMEN_DEV_LOCAL = "watchmen_dev_local"
+  private static final int GRADLE_CACHE_TIME = 15
 
   CommanderClient ecclient = new CommanderClient()
 
@@ -35,6 +36,7 @@ class GapPipelinePlugin implements Plugin<Project> {
     configureTasksRequiredByWatchmenSegment(project)
     configureRepositories(project)
     configureDefaultJavaVersion6(project)
+    configureGradleCache(project)
 
     project.task('setupBuildDirectories') <<{
       new SetUpBuildDirectoriesTask(project).execute()
@@ -315,6 +317,13 @@ class GapPipelinePlugin implements Plugin<Project> {
     if(project.hasProperty("sourceCompatibility")) {
         project.metaClass.sourceCompatibility =  JavaVersion.VERSION_1_6
         project.metaClass.targetCompatibility =  JavaVersion.VERSION_1_6
+    }
+  }
+
+  private configureGradleCache(Project project) {
+    def cacheTime = project.hasProperty("cacheTime") ? project.cacheTime.toInteger() : GRADLE_CACHE_TIME
+    project.configurations.all {
+      resolutionStrategy.cacheDynamicVersionsFor cacheTime, 'minutes'
     }
   }
 }
