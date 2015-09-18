@@ -168,11 +168,11 @@ class CommanderClient {
 	}
 
 	public def getCurrentProjectName() {
-		getECProperty(PROJECT_NAME_PROPERTY).value
+		getECProperty(PROJECT_NAME_PROPERTY).value.trim()
 	}
 
     public def getCurrentProcedureName() {
-        getECProperty(PROCEDURE_NAME_PROPERTY).value
+        getECProperty(PROCEDURE_NAME_PROPERTY).value.trim()
     }
 
     public def getCurrentStepDetails() {
@@ -184,12 +184,12 @@ class CommanderClient {
 
     private def getProjectName(jobId) {
 		def projectNameProperty = "/jobs[$jobId]/projectName"
-		getECProperty(projectNameProperty).value
+		getECProperty(projectNameProperty).value.trim()
 	}
 
 	private def getProcedureName(jobId) {
 		def projectNameProperty = "/jobs[$jobId]/liveProcedure"
-		getECProperty(projectNameProperty).value
+		getECProperty(projectNameProperty).value.trim()
 	}
 
 
