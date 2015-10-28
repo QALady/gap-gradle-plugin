@@ -16,7 +16,6 @@ import javax.inject.Inject
 import org.apache.commons.logging.LogFactory
 
 import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DEVELOPMENT
-import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DISTRIBUTION
 import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DISTRIBUTION_IOS8
 
 class GapXcodePlugin implements Plugin<Project> {
@@ -36,7 +35,6 @@ class GapXcodePlugin implements Plugin<Project> {
         this.project = project
         this.extension = project.extensions.create('xcode', XcodeExtension, instantiator, project)
         this.extension.signing.add(DEFAULT_DEVELOPMENT)
-        this.extension.signing.add(DEFAULT_DISTRIBUTION)
         this.extension.signing.add(DEFAULT_DISTRIBUTION_IOS8)
 
         this.project.plugins.apply('xcode')
