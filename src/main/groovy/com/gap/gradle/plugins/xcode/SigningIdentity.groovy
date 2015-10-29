@@ -12,7 +12,7 @@ class SigningIdentity {
     public static final def DEFAULT_DISTRIBUTION = new SigningIdentity('distribution').with {
         description = 'iPhone Distribution: Gap Inc.'
         certificateURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/ProdSigningCert.p12'
-        certificatePassword = 'tickl3m3pink!'
+        certificatePassword = 'Gapinc2016!'
         mobileProvisionURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/GapInternalDistribution_2015.mobileprovision'
         return it
     }
