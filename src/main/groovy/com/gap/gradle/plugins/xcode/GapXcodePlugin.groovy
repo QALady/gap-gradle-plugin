@@ -134,7 +134,7 @@ class GapXcodePlugin implements Plugin<Project> {
                     }
 
                     configuration = 'Debug'
-                    additionalParameters = ['VALID_ARCHS=i386', 'ONLY_ACTIVE_ARCH=NO', 'GCC_GENERATE_TEST_COVERAGE_FILES=YES', 'GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES']
+                    additionalParameters = ['VALID_ARCHS=i386 x86_64', 'ONLY_ACTIVE_ARCH=NO', 'GCC_GENERATE_TEST_COVERAGE_FILES=YES', 'GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES']
                 }
             }
 
@@ -160,7 +160,7 @@ class GapXcodePlugin implements Plugin<Project> {
                     }
 
                     if (sdk == 'iphonesimulator') {
-                        additionalParameters = ['VALID_ARCHS=i386', 'ONLY_ACTIVE_ARCH=NO']
+                        additionalParameters = ['VALID_ARCHS=i386 x86_64', 'ONLY_ACTIVE_ARCH=NO']
                     }
                 }
             }
