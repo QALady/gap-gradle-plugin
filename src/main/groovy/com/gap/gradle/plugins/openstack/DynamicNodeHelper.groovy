@@ -19,7 +19,7 @@ class DynamicNodeHelper {
 	
 	public def createDynamicNodes(dynamicNodesDSL) {
 		def easyCreateParams
-		def projectName = "Nova-CLI"
+		def projectName = "Nova CLI"
 		def procedureName = "Easy Create"
 		def nodeList = []
 		dynamicNodesDSL.each { node ->
@@ -89,7 +89,7 @@ class DynamicNodeHelper {
 		}
 		
 		def deleteNode(def node) {
-			def projectName = "Nova-CLI"
+			def projectName = "Nova CLI"
 			def procedureName = "Easy Delete"
 			def easyCreateParams = [:]
 			easyCreateParams.put("resourceToDelete", "${node.name}".toString())

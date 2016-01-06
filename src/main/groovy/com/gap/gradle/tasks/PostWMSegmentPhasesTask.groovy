@@ -37,7 +37,7 @@ class PostWMSegmentPhasesTask extends WatchmenTask{
 
 	def executeDeleteDynamicNodes() {
 		def easyCreateParams
-		def projectName = "Nova-CLI"
+		def projectName = "Nova CLI"
 		def procedureName = "Easy Delete"
 		segmentDsl.dynamicNodes.each { node ->
 			easyCreateParams = [:]

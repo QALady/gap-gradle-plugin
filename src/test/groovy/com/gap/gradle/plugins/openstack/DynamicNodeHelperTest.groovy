@@ -30,9 +30,9 @@ class DynamicNodeHelperTest {
 	@Test
 	void shouldRunWithDynamicNodesWithNoException() {
 
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('1')
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('2')
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('3')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('1')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('2')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('3')
 		def jobStatusResponse1 = """<response requestId="1" nodeId="10.105.68.77">
     <jobId>1</jobId>
     <outcome>success</outcome>
@@ -71,9 +71,9 @@ class DynamicNodeHelperTest {
 
 		helper.createDynamicNodes(nodes)
 
-		def command1= ['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
-		def command2= ['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
-		def command3= ['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
+		def command1= ['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
+		def command2= ['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
+		def command3= ['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
 
 		verify(mockShellCommand).execute(command1)
 		verify(mockShellCommand).execute(command2)
@@ -88,9 +88,9 @@ class DynamicNodeHelperTest {
 	@Test(expected = DynamicNodesException.class)
 	void shouldRunWithDynamicNodesException() {
 
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('1')
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('2')
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('3')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('1')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('2')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('3')
 		def jobStatusResponse1 = """<response requestId="1" nodeId="10.105.68.77">
     <jobId>1</jobId>
     <outcome>success</outcome>
@@ -128,9 +128,9 @@ class DynamicNodeHelperTest {
 		def nodes = [node1, node2, node3]
 		helper.createDynamicNodes(nodes)
 
-		def commandCreate1= ['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
-		def commandCreate2= ['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
-		def commandCreate3= ['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
+		def commandCreate1= ['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
+		def commandCreate2= ['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
+		def commandCreate3= ['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
 
 		verify(mockShellCommand).execute(commandCreate1)
 		verify(mockShellCommand).execute(commandCreate2)
@@ -144,9 +144,9 @@ class DynamicNodeHelperTest {
 		verify(mockShellCommand).execute(commandCreate2)
 		verify(mockShellCommand).execute(commandCreate3)
 
-		def commandDelete1=['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node1', 'tenant=tenant-name1']
-		def commandDelete2=['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node2', 'tenant=tenant-name2']
-		def commandDelete3=['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node3', 'tenant=tenant-name3']
+		def commandDelete1=['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node1', 'tenant=tenant-name1']
+		def commandDelete2=['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node2', 'tenant=tenant-name2']
+		def commandDelete3=['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node3', 'tenant=tenant-name3']
 
 		verify(mockShellCommand).execute(commandDelete1)
 		verify(mockShellCommand).execute(commandDelete2)
@@ -157,9 +157,9 @@ class DynamicNodeHelperTest {
 	@Test(expected = DynamicNodesException.class)
 	void shouldRunWithRetryTimeOutException() {
 
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('1')
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('2')
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('3')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('1')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('2')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('3')
 		def jobStatusResponse1 = """<response requestId="1" nodeId="10.105.68.77">
     <jobId>1</jobId>
     <outcome>success</outcome>
@@ -197,9 +197,9 @@ class DynamicNodeHelperTest {
 		def nodes = [node1, node2, node3]
 		helper.createDynamicNodes(nodes)
 
-		def commandCreate1= ['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
-		def commandCreate2= ['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
-		def commandCreate3= ['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
+		def commandCreate1= ['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
+		def commandCreate2= ['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
+		def commandCreate3= ['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null']
 
 		verify(mockShellCommand).execute(commandCreate1)
 		verify(mockShellCommand).execute(commandCreate2)
@@ -213,9 +213,9 @@ class DynamicNodeHelperTest {
 		verify(mockShellCommand).execute(commandCreate2)
 		verify(mockShellCommand).execute(commandCreate3)
 
-		def commandDelete1=['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node1', 'tenant=tenant-name1']
-		def commandDelete2=['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node2', 'tenant=tenant-name2']
-		def commandDelete3=['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node3', 'tenant=tenant-name3']
+		def commandDelete1=['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node1', 'tenant=tenant-name1']
+		def commandDelete2=['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node2', 'tenant=tenant-name2']
+		def commandDelete3=['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Delete', '--actualParameter', 'resourceToDelete=node3', 'tenant=tenant-name3']
 
 		verify(mockShellCommand).execute(commandDelete1)
 		verify(mockShellCommand).execute(commandDelete2)

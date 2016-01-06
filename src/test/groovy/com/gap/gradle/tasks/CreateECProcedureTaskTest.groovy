@@ -43,9 +43,9 @@ class CreateECProcedureTaskTest {
 		when(mockShellCommand.execute(['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', '--actualParameter', 'openstackTenant=tenant-name1', 'chefRole=the-chef-role-to-apply-on-the-node1'])).thenReturn(1)
 		when(mockShellCommand.execute(['ectool', 'runProcedure', '"Watchmen Experimental"', '--procedureName', '"Create Dynamic Build Node"', '--actualParameter', 'openstackTenant=tenant-name2', 'chefRole=the-chef-role-to-apply-on-the-node2'])).thenReturn(2)
 
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('1')
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('2')
-		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova-CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('3')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name1', 'roleName=the-chef-role-to-apply-on-the-node1', 'hostname=node1', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('1')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name2', 'roleName=the-chef-role-to-apply-on-the-node2', 'hostname=node2', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('2')
+		when(mockShellCommand.execute(['ectool', 'runProcedure', 'Nova CLI', '--procedureName', 'Easy Create', '--actualParameter', 'tenant=tenant-name3', 'roleName=the-chef-role-to-apply-on-the-node3', 'hostname=node3', 'network=public', 'autoPurge=true', 'createResource=true', 'type=null'])).thenReturn('3')
 
 		def jobStatusResponse1 = """<response requestId="1" nodeId="10.105.68.77">
     <jobId>f80a312a-a007-11e4-8eb1-00505625f614</jobId>
