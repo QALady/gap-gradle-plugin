@@ -1,10 +1,16 @@
 package com.gap.gradle.plugins.xcode
 
+import com.gap.gradle.utils.EncryptedString
+import com.gap.gradle.utils.EncryptionUtil
+
 class SigningIdentity {
+
+    private EncryptionUtil util = new EncryptionUtil()
+
     public static final def DEFAULT_DEVELOPMENT = new SigningIdentity('development').with {
         description = 'iPhone Developer: Alan Orchaton (DY23J3NF52)'
         certificateURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/DevPrivateKey.p12'
-        certificatePassword = 'jlohr1'
+        certificatePassword = new EncryptedString("ENC(M9jgG8VLYBBaTU/FBspmXQ==)", util.jasyptKey).decrypt()
         mobileProvisionURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/GapDevelopment.mobileprovision'
         return it
     }
@@ -12,7 +18,7 @@ class SigningIdentity {
     public static final def DEFAULT_DISTRIBUTION = new SigningIdentity('distribution').with {
         description = 'iPhone Distribution: Gap Inc.'
         certificateURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/ProdSigningCert.p12'
-        certificatePassword = 'Gapinc2016!'
+        certificatePassword = new EncryptedString("ENC(oszKgh+kh9Ew6+bZ+b3ocWzEAUF4azPB)", util.jasyptKey).decrypt()
         mobileProvisionURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/GapInternalDistribution_2015.mobileprovision'
         return it
     }
