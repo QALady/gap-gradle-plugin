@@ -23,7 +23,6 @@ class GapPipelinePlugin implements Plugin<Project> {
 
   private static final String WM_LOCAL_NON_PROD = "wm_local_non_prod"
   private static final String WATCHMEN_DEV_LOCAL = "watchmen_dev_local"
-  private static final String PLATFORM_TESTING_LOCAL = "platform_testing_local"
   private static final int GRADLE_CACHE_TIME = 15
 
   CommanderClient ecclient = new CommanderClient()
@@ -152,11 +151,6 @@ class GapPipelinePlugin implements Plugin<Project> {
         layout "maven"
         url "http://artifactory.gapinc.dev/artifactory/watchmen-dev-local"
       }
-      ivy {
-        name PLATFORM_TESTING_LOCAL
-        layout "maven"
-        url "http://artifactory.gapinc.dev/artifactory/platform-testing-local"
-      }
       maven {
         name "wm_maven_remote_repos"
         url "http://artifactory.gapinc.dev/artifactory/remote-repos"
@@ -181,10 +175,6 @@ class GapPipelinePlugin implements Plugin<Project> {
           password artifactoryPassword
         }
         project.repositories[WATCHMEN_DEV_LOCAL].credentials {
-          username artifactoryUserName
-          password artifactoryPassword
-        }
-        project.repositories[PLATFORM_TESTING_LOCAL].credentials {
           username artifactoryUserName
           password artifactoryPassword
         }
