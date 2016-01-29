@@ -10,12 +10,15 @@ import org.gradle.api.Project
 import java.text.SimpleDateFormat
 
 import org.apache.commons.logging.LogFactory
+import com.gap.gradle.utils.EncryptedString
+import com.gap.gradle.utils.EncryptionUtil
 
 class GapSonarRunnerPlugin implements Plugin<Project> {
 
     private static final logger = LogFactory.getLog(GapSonarRunnerPlugin)
     private static final String SONAR_DATE_FORMAT = "YYYY-MM-dd"
     CommanderClient commanderClient = new CommanderClient();
+    private EncryptionUtil util = new EncryptionUtil()
 
     @Override
     void apply(Project project) {
@@ -48,7 +51,7 @@ class GapSonarRunnerPlugin implements Plugin<Project> {
                 property "sonar.jdbc.url", "jdbc:mysql://sonardb001.phx.gapinc.dev:3306/sonar"
                 property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
                 property "sonar.jdbc.username", "sonar"
-                property "sonar.jdbc.password", "SonarWM1969"
+                property "sonar.jdbc.password", new EncryptedString("ENC(9ikwKqZ7AGv06Sz1BMxeBCCiXFfslciu)", util.jasyptKey).decrypt()
                 property "sonar.junit.reportsPath", "${project.buildDir}/test-results"
                 property "sonar.projectName", project.name
                 property "sonar.projectKey", "${project.group}:${project.name}"
