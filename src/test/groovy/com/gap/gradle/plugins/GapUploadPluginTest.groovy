@@ -8,9 +8,11 @@ import org.gradle.testfixtures.ProjectBuilder
 
 import static org.hamcrest.CoreMatchers.notNullValue
 import org.junit.Test
+import org.junit.Ignore
 
 import static org.hamcrest.CoreMatchers.is
 
+@Ignore
 class GapUploadPluginTest {
 
     Project project
