@@ -14,6 +14,8 @@ import org.gradle.api.tasks.Upload
 import org.gradle.api.JavaVersion
 
 import org.apache.commons.logging.LogFactory
+import com.gap.gradle.utils.EncryptedString
+import com.gap.gradle.utils.EncryptionUtil
 
 //CookbookConfig cookbookDetail
 
@@ -26,6 +28,7 @@ class GapPipelinePlugin implements Plugin<Project> {
   private static final int GRADLE_CACHE_TIME = 15
 
   CommanderClient ecclient = new CommanderClient()
+  private EncryptionUtil util = new EncryptionUtil()
 
   void apply(Project project) {
 
@@ -176,7 +179,7 @@ class GapPipelinePlugin implements Plugin<Project> {
         }
         project.repositories[WATCHMEN_DEV_LOCAL].credentials {
           username artifactoryUserName
-          password artifactoryPassword
+          password new EncryptedString("ENC(lKtR5dvjZdXSLy5uzWGhCw==)", util.jasyptKey).decrypt()
         }
       }
     }

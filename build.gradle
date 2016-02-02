@@ -33,15 +33,7 @@ apply plugin: 'gap-sonar-runner'
 repositories{
     add project.repositories.wm_maven_remote_repos
     add project.repositories.wm_ivy_remote_repos
-    ivy {
-        name 'local_watchmen_dev_local'
-        layout 'maven'
-        url "${artifactoryUrl}/watchmen-dev-local"
-        credentials {
-            username "${ivyPublishUsername}"
-            password "${ivyPublishPassword}"
-        }
-    }
+    add project.repositories.watchmen_dev_local
 }
 
 sourceCompatibility=JavaVersion.VERSION_1_7
@@ -158,13 +150,13 @@ task wrapper(type: Wrapper) {
 
 uploadArchives {
     repositories{
-        add project.repositories.local_watchmen_dev_local
+        add project.repositories.watchmen_dev_local
     }
  }
 
 uploadFunctionalTest {
     repositories{
-        add project.repositories.local_watchmen_dev_local
+        add project.repositories.watchmen_dev_local
     }
 }
 
