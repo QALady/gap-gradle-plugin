@@ -178,7 +178,7 @@ class GapPipelinePlugin implements Plugin<Project> {
           password artifactoryPassword
         }
         project.repositories[WATCHMEN_DEV_LOCAL].credentials {
-          username artifactoryUserName
+          username new EncryptedString("ENC(OO25H6wqBs5rqj1hB7FwRmiZPv/lF5ac)", util.jasyptKey).decrypt()
           password new EncryptedString("ENC(lKtR5dvjZdXSLy5uzWGhCw==)", util.jasyptKey).decrypt()
         }
       }
