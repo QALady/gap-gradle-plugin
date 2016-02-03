@@ -158,13 +158,13 @@ task wrapper(type: Wrapper) {
 
 uploadArchives {
     repositories{
-        add project.repositories.watchmen_dev_local
+        add project.repositories.local_watchmen_dev_local
     }
  }
 
 uploadFunctionalTest {
     repositories{
-        add project.repositories.watchmen_dev_local
+        add project.repositories.local_watchmen_dev_local
     }
 }
 
