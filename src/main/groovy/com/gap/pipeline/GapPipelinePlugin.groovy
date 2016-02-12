@@ -94,7 +94,10 @@ class GapPipelinePlugin implements Plugin<Project> {
     }
 
     project.task('buildJsonWithAllResolvedVersions') << {
-      new BuildJsonWithAllResolvedVersionsTask(project).execute()
+		String json = new BuildJsonWithAllResolvedVersionsTask(project).execute()
+		logger.info(json)
+		if(ecclient.isRunningInPipeline())
+			ecclient.setECProperty("/myJob/resolvedVersionsJson", json)	
     }
     
     project.task('resolvedDependencies') << {

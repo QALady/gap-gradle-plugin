@@ -46,8 +46,7 @@ class BuildJsonWithAllResolvedVersionsTask extends WatchmenTask {
         versionsMap.put("cookbooks", cookbookVersionsMap)
 
         jsonBuilder(versionsMap)
-        print jsonBuilder.toString()
-
+        jsonBuilder.toString()
     }
 
 }
