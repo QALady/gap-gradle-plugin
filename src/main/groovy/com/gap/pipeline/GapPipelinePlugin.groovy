@@ -96,24 +96,27 @@ class GapPipelinePlugin implements Plugin<Project> {
     project.task('buildJsonWithAllResolvedVersions') << {
       new BuildJsonWithAllResolvedVersionsTask(project).execute()
     }
-
-
-      //CODE FOR FETCHING PLUGIN USAGE ADDED BY CLAUDIO
-      if (ecclient.isRunningInPipeline()) {
-
-          def plugin_usage_switch = ecclient.getECProperty("/projects/Watchmen Framework/plugin_usage/switch").value
-          if("${plugin_usage_switch}" ==  "on"){
-              project.gradle.taskGraph.addTaskExecutionGraphListener(new TaskExecutionGraphListener() {
-                  @Override
-                  void graphPopulated(TaskExecutionGraph taskExecutionGraph) {
-
-                      getPluginUsage(project, taskExecutionGraph)
-
-                  }
-              })
-          }
-      }
-
+    
+    project.task('resolvedDependencies') << {
+      def deps = new IvyInfo(project).getAllResolvedDependencies()
+	  if(eclient.isRunningInPipeline())
+	  	ecclient.setECProperty("/myJob/resolvedDependencies", deps.join("\n"))
+	  else
+	  	logger.info(deps.join("\n"))
+    }
+	
+	//CODE FOR FETCHING PLUGIN USAGE ADDED BY CLAUDIO
+	if (ecclient.isRunningInPipeline()) {
+		def plugin_usage_switch = ecclient.getECProperty("/projects/Watchmen Framework/plugin_usage/switch").value
+		if("${plugin_usage_switch}" ==  "on"){
+			project.gradle.taskGraph.addTaskExecutionGraphListener(new TaskExecutionGraphListener() {
+				@Override
+	            void graphPopulated(TaskExecutionGraph taskExecutionGraph) {
+					getPluginUsage(project, taskExecutionGraph)
+	            }
+			})
+		}
+	}
   }
 
     //populate the ec property with the plugin usage information
@@ -234,7 +237,11 @@ class GapPipelinePlugin implements Plugin<Project> {
 
 
       project.task('resolveCookbookDependencies') << {
-        getCookbookVersions(project.configurations).each() { name, version -> println name + "," + version }
+		def cookbooks = []
+        getCookbookVersions(project.configurations).each() { name, version -> 
+			cookbooks.add(name + "," + version) 
+		}
+		ecclient.setECProperty("/myJob/cookbookDependencies", cookbooks.join("\n"))
       }
 
       project.task('resolveCookbookShaId') << {

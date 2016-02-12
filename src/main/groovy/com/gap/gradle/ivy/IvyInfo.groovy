@@ -31,25 +31,24 @@ class IvyInfo {
     }
 
 
-    private List getDependenciesFromConfiguration(Configuration config) {
+    private Set getDependenciesFromConfiguration(Configuration config) {
         def dependencies = []
         config.dependencies.each { subProject ->
             dependencies.add(getIdentifier(subProject))
         }
-        return dependencies
+        return dependencies as Set
     }
 
-    def Set getAllResolvedDependencies() {
+    def getAllResolvedDependencies() {
         def dependencies = []
         project.allprojects.each { subProject ->
             subProject.configurations.each { config ->
-                config.resolve()
                 dependencies.addAll(config.getIncoming().getResolutionResult().allDependencies.collect {
                     it.selected.toString()
                 })
             }
         }
-        return dependencies as Set
+        return dependencies.unique()
     }
 
     def Set getLeafDepsFromDepGraph() {
