@@ -42,7 +42,7 @@ class IvyInfoIntegrationTest {
         project.configurations.archives.resolve()
         def ivyInfo = new IvyInfo(project)
         def resolvedDependencies = ivyInfo.allResolvedDependencies
-        def expectedDependencies = ["com.gap.ref-app.iso:ci:1698", "com.gap.ref-app.infra:ci:0.0.46.2407750", "com.gap.test_wmsegment:test_wmsegment:254"] as Set
+        def expectedDependencies = ["com.gap.ref-app.iso:ci:1698", "com.gap.ref-app.infra:ci:0.0.46.2407750", "com.gap.test_wmsegment:test_wmsegment:254"]
         assertThat(resolvedDependencies, is(expectedDependencies))
     }
 }
