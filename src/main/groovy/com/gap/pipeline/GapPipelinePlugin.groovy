@@ -102,7 +102,7 @@ class GapPipelinePlugin implements Plugin<Project> {
     
     project.task('resolvedDependencies') << {
       def deps = new IvyInfo(project).getAllResolvedDependencies()
-	  if(eclient.isRunningInPipeline())
+	  if(ecclient.isRunningInPipeline())
 	  	ecclient.setECProperty("/myJob/resolvedDependencies", deps.join("\n"))
 	  else
 	  	logger.info(deps.join("\n"))
