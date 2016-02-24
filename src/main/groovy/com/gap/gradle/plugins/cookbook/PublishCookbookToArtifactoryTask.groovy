@@ -4,11 +4,14 @@ import groovy.json.JsonSlurper
 import org.gradle.api.Project
 import com.gap.gradle.utils.ShellCommand
 import com.gap.pipeline.ec.CommanderClient
+import com.gap.gradle.utils.EncryptedString
+import com.gap.gradle.utils.EncryptionUtil
 
 class PublishCookbookToArtifactoryTask {
     private Project project
     def shellCommand
     private def commanderClient
+    private EncryptionUtil util = new EncryptionUtil()
 
     PublishCookbookToArtifactoryTask(Project project){
         this.project = project
@@ -30,8 +33,8 @@ class PublishCookbookToArtifactoryTask {
                 layout 'maven'
                 url "http://artifactory.gapinc.dev/artifactory/local-non-prod"
                 credentials {
-                    username 'ec-build-snap'
-                    password '$nap4me'
+                  username new EncryptedString("ENC(OO25H6wqBs5rqj1hB7FwRmiZPv/lF5ac)", util.jasyptKey).decrypt()
+                  password new EncryptedString("ENC(Xnm5wk0TMxzO98d8doOsi0gWbCr9Zzt0)", util.jasyptKey).decrypt()
                 }
             }
         }

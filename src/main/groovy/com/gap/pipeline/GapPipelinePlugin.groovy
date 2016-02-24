@@ -97,9 +97,9 @@ class GapPipelinePlugin implements Plugin<Project> {
 		String json = new BuildJsonWithAllResolvedVersionsTask(project).execute()
 		logger.info(json)
 		if(ecclient.isRunningInPipeline())
-			ecclient.setECProperty("/myJob/resolvedVersionsJson", json)	
+			ecclient.setECProperty("/myJob/resolvedVersionsJson", json)
     }
-    
+
     project.task('resolvedDependencies') << {
       def deps = new IvyInfo(project).getAllResolvedDependencies()
 	  if(ecclient.isRunningInPipeline())
@@ -107,7 +107,7 @@ class GapPipelinePlugin implements Plugin<Project> {
 	  else
 	  	logger.info(deps.join("\n"))
     }
-	
+
 	//CODE FOR FETCHING PLUGIN USAGE ADDED BY CLAUDIO
 	if (ecclient.isRunningInPipeline()) {
 		def plugin_usage_switch = ecclient.getECProperty("/projects/Watchmen Framework/plugin_usage/switch").value
@@ -185,7 +185,7 @@ class GapPipelinePlugin implements Plugin<Project> {
         }
         project.repositories[WATCHMEN_DEV_LOCAL].credentials {
           username new EncryptedString("ENC(OO25H6wqBs5rqj1hB7FwRmiZPv/lF5ac)", util.jasyptKey).decrypt()
-          password new EncryptedString("ENC(lKtR5dvjZdXSLy5uzWGhCw==)", util.jasyptKey).decrypt()
+          password new EncryptedString("ENC(Xnm5wk0TMxzO98d8doOsi0gWbCr9Zzt0)", util.jasyptKey).decrypt()
         }
       }
     }
@@ -241,8 +241,8 @@ class GapPipelinePlugin implements Plugin<Project> {
 
       project.task('resolveCookbookDependencies') << {
 		def cookbooks = []
-        getCookbookVersions(project.configurations).each() { name, version -> 
-			cookbooks.add(name + "," + version) 
+        getCookbookVersions(project.configurations).each() { name, version ->
+			cookbooks.add(name + "," + version)
 		}
 		ecclient.setECProperty("/myJob/cookbookDependencies", cookbooks.join("\n"))
       }
