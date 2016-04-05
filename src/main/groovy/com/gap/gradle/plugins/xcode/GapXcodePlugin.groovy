@@ -37,7 +37,7 @@ class GapXcodePlugin implements Plugin<Project> {
         this.extension.signing.add(DEFAULT_DEVELOPMENT)
         this.extension.signing.add(DEFAULT_DISTRIBUTION)
 
-        this.project.plugins.apply('xcode')
+        this.project.plugins.apply('org.openbakery.xcode-plugin')
         this.project.configurations.create('airwatchConfig')
 
         configureWorkspaceAndScheme()
@@ -60,10 +60,12 @@ class GapXcodePlugin implements Plugin<Project> {
     }
 
     private configureExistingTasks() {
-        project.tasks['test'].doLast {
+        project.tasks['xcodetest'].doLast {
             project.tasks['transformJUnitXmlReportToHTML'].execute()
         }
 
+        project.tasks['xcodebuild'].dependsOn('keychainCreate')
+        project.tasks['xcodebuild'].dependsOn('provisioningInstall')
         project.tasks['xcodebuild'].finalizedBy('replaceTokensInSettingsBundle')
 
         project.tasks['package'].doLast {
@@ -73,9 +75,6 @@ class GapXcodePlugin implements Plugin<Project> {
         // Xcode gradle plugin version 0.10 moved the IPA creation and signing to the 'package' task.
         // To keep projects backwards compatible we're running package after 'archive' runs.
         project.tasks['archive'].doLast {
-            /* please remove this hack once openbakery xcodeplugin has been upgraded to  0.11.2
-            as that will take care of embedded framework signing as part of package task*/
-            signEmbeddedFramework()
             project.tasks['package'].execute()
         }
 
@@ -120,13 +119,20 @@ class GapXcodePlugin implements Plugin<Project> {
 
         project.gradle.taskGraph.whenReady { taskGraph ->
 
-            if (taskGraph.hasTask(':test')) {
+            if (taskGraph.hasTask(':xcodetest')) {
                 extension.test.validate()
                 def testConfig = extension.test
 
                 project.xcodebuild {
                     scheme = testConfig.scheme
-
+                    // Openbakery xocde plugin 0.13 requires target to be specifed
+                    // To make gap-xcode plugin backward compatible 'scheme' is assigned to 'target' if not specified
+                    if (testConfig.target == null) {
+                        target = testConfig.scheme
+                    }
+                    else {
+                        target = testConfig.target
+                    }
                     destination {
                         platform = testConfig.destination.platform
                         name = testConfig.destination.name
@@ -144,8 +150,11 @@ class GapXcodePlugin implements Plugin<Project> {
 
                 project.xcodebuild {
                     productName = buildConfig.productName
-                    target = buildConfig.target
-                    sdk = buildConfig.sdk
+                    target = buildConfig.target 
+                    simulator = (buildConfig.sdk == 'iphoneos')? false : true
+                    if(!simulator){
+                        type = "iOS" // This parameter is replacement of sdk parameter in 0.10.3 plugin
+                    }
                     configuration = buildConfig.configuration
                     symRoot = targetOutputDir()
 
@@ -159,7 +168,7 @@ class GapXcodePlugin implements Plugin<Project> {
                         }
                     }
 
-                    if (sdk == 'iphonesimulator') {
+                    if (simulator) {
                         additionalParameters = ['VALID_ARCHS=i386 x86_64', 'ONLY_ACTIVE_ARCH=NO']
                     }
                 }
@@ -202,7 +211,6 @@ class GapXcodePlugin implements Plugin<Project> {
                         }
                     }
                 }
-
             }
         }
     }
@@ -218,6 +226,7 @@ class GapXcodePlugin implements Plugin<Project> {
         def productName = project.xcodebuild.productName
 
         def artifactsDir = getArtifactsDir()
+
         artifactsDir.mkdirs()
 
         if (sdk == 'iphoneos') {
@@ -249,13 +258,15 @@ class GapXcodePlugin implements Plugin<Project> {
     }
 
     void signEmbeddedFramework() {
-        def sdk = project.xcodebuild.sdk
+        def sdk = project.xcodebuild.simulator
         def productName = project.xcodebuild.productName
         def target = project.xcodebuild.target
+        def type = project.xcodebuild.type
+
         File frameworksDirectory = new File(project.buildDir, "archive/${target}.xcarchive/Products/Applications/${productName}.app/Frameworks")
 
-        if (frameworksDirectory.exists() && sdk == 'iphoneos') {
-
+        //if (frameworksDirectory.exists() && sdk == 'iphoneos') {
+          if (frameworksDirectory.exists() && !sdk) {
             FilenameFilter filter = new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return name.toLowerCase().endsWith(".dylib") || name.toLowerCase().endsWith(".framework");

@@ -8,10 +8,10 @@ class SigningIdentity {
     private EncryptionUtil util = new EncryptionUtil()
 
     public static final def DEFAULT_DEVELOPMENT = new SigningIdentity('development').with {
-        description = 'iPhone Developer: Alan Orchaton (DY23J3NF52)'
-        certificateURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/DevPrivateKey.p12'
-        certificatePassword = new EncryptedString("ENC(M9jgG8VLYBBaTU/FBspmXQ==)", util.jasyptKey).decrypt()
-        mobileProvisionURI = 'http://github.gapinc.dev/mpl/ios-code-signing/raw/master/GapDevelopment.mobileprovision'
+        description = 'iPhone Developer: Zakeeruddin Mohammed (7NKV3X7B6B)'
+        certificateURI = 'http://github.gapinc.dev/Za3i0u5/ios-code-signing/raw/master/DevPrivateKey_2016.p12'
+        certificatePassword = new EncryptedString("ENC(hKiNy38PLtEoxfaZfzEdGP52/TmI9CiE)", util.jasyptKey).decrypt()
+        mobileProvisionURI = 'http://github.gapinc.dev/Za3i0u5/ios-code-signing/raw/master/DevelopmentProvisionProv_Sep29.mobileprovision'
         return it
     }
 

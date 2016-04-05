@@ -9,6 +9,7 @@ import static org.apache.commons.lang.StringUtils.isBlank
 class XcodeTestConfig implements XcodeConfig {
     private XcodeExtension extension
     private Property<String> scheme
+    private Property<String> target
     DestinationConfig destination
 
     XcodeTestConfig(Instantiator instantiator, XcodeExtension extension) {
@@ -29,10 +30,22 @@ class XcodeTestConfig implements XcodeConfig {
         action.execute(destination)
     }
 
+    String getTarget() {
+        def testTarget = target?.get()
+        return isBlank(testTarget) ? extension.scheme : testTarget
+    }
+
+    void setTarget(Object target) {
+        this.target = new Property(target)
+    }
+
     @Override
     void validate() throws InvalidXcodeConfigurationException {
         if (isBlank(getScheme())) {
             throw new InvalidXcodeConfigurationException("Please configure the `xcode.scheme` or the `xcode.test.scheme`.")
+        }
+        if (extension.isTargetRequired() && isBlank(target?.get())) {
+            errorMessages << "- Please configure the build `target`, or the `xcode.workspace` and `xcode.scheme`. See available targets with `xcodebuild -list`."
         }
 
         destination.validate()
