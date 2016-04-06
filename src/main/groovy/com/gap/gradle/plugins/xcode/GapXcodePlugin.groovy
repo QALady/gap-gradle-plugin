@@ -152,9 +152,7 @@ class GapXcodePlugin implements Plugin<Project> {
                     productName = buildConfig.productName
                     target = buildConfig.target 
                     simulator = (buildConfig.sdk == 'iphoneos')? false : true
-                    if(!simulator){
-                        type = "iOS" // This parameter is replacement of sdk parameter in 0.10.3 plugin
-                    }
+                    type = "iOS" // This parameter is replacement of sdk parameter in 0.10.3 plugin
                     configuration = buildConfig.configuration
                     symRoot = targetOutputDir()
 
@@ -255,35 +253,5 @@ class GapXcodePlugin implements Plugin<Project> {
         def appName = extension.build.productName
 
         "${targetOutputDir()}/${configuration}-${sdk}/${appName}.app/Settings.bundle/Root.plist"
-    }
-
-    void signEmbeddedFramework() {
-        def sdk = project.xcodebuild.simulator
-        def productName = project.xcodebuild.productName
-        def target = project.xcodebuild.target
-        def type = project.xcodebuild.type
-
-        File frameworksDirectory = new File(project.buildDir, "archive/${target}.xcarchive/Products/Applications/${productName}.app/Frameworks")
-
-        //if (frameworksDirectory.exists() && sdk == 'iphoneos') {
-          if (frameworksDirectory.exists() && !sdk) {
-            FilenameFilter filter = new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(".dylib") || name.toLowerCase().endsWith(".framework");
-                }
-            };
-            def commandRunner = new CommandRunner(project)
-
-            for (File file in frameworksDirectory.listFiles(filter)) {
-                commandRunner.run("/usr/bin/codesign",
-                        "--force",
-                        "--sign",project.xcodebuild.getSigning().getIdentity(),
-                        "--verbose",
-                        file.absolutePath,
-                        "--keychain",
-                        project.xcodebuild.signing.keychainPathInternal.absolutePath)
-            }
-        }
-
     }
 }

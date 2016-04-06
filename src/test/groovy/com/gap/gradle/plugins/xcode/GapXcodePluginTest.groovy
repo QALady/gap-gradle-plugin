@@ -47,6 +47,8 @@ class GapXcodePluginTest {
     @Test
     public void shouldConfigureTaskDependencies() throws Exception {
         taskShouldDependOn('uploadArchives', 'airwatchConfigZip', project)
+        taskShouldDependOn('xcodebuild', 'keychainCreate', project)
+        taskShouldDependOn('xcodebuild', 'provisioningInstall', project)
         taskShouldBeFinalizedBy('xcodebuild', 'replaceTokensInSettingsBundle', project)
     }
 
@@ -152,33 +154,6 @@ class GapXcodePluginTest {
 
         assertThat(plist.text, containsString('1'))
         assertThat(plist.text, containsString('foobar'))
-    }
-
-    @Test
-    public void shouldSignEmbeddedFrameworks(){
-        project.xcode {
-            build {
-                productName 'MyApp'
-                target 'MyApp'
-                sdk 'iphoneos'
-                signingIdentity signing.development
-            }
-
-            archive {
-                version '1'
-                scmRevision 'foobar'
-            }
-        }
-        File frameworkDir = new File(project.buildDir, "archive/MyApp.xcarchive/Products/Applications/MyApp.app/Frameworks")
-        frameworkDir.mkdirs()
-        File frameworkFile = new File(frameworkDir, "Test.Framework/dummyFile")
-        FileUtils.writeStringToFile(frameworkFile, "dummy")
-        def commandRunnerMock =  new MockFor(CommandRunner.class)
-        commandRunnerMock.demand.run(0..1){}
-        commandRunnerMock.use {
-            this.plugin.signEmbeddedFramework()
-        }
-
     }
 
 }

@@ -35,17 +35,21 @@ public class XcodeTestConfigTest {
     }
 
     @Test
-    public void shouldSupportSchemeAsString() throws Exception {
+    public void shouldSupportTestPropertiesAsString() throws Exception {
         testConfig.scheme = 'some scheme'
+        testConfig.target = 'some target'
 
         assertEquals(testConfig.scheme, 'some scheme')
+        assertEquals(testConfig.target, 'some target')
     }
 
     @Test
-    public void shouldSupportSchemeAsClosure() throws Exception {
+    public void shouldSupportTestPropertiesAsClosure() throws Exception {
         testConfig.scheme = { 'some scheme' }
+        testConfig.target = { 'some target' }
 
         assertEquals(testConfig.scheme, 'some scheme')
+        assertEquals(testConfig.target, 'some target')
     }
 
     @Test

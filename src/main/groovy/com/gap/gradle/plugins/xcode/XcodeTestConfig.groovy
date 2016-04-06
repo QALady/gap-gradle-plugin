@@ -41,13 +41,24 @@ class XcodeTestConfig implements XcodeConfig {
 
     @Override
     void validate() throws InvalidXcodeConfigurationException {
+        def errorMessages = []
+
         if (isBlank(getScheme())) {
-            throw new InvalidXcodeConfigurationException("Please configure the `xcode.scheme` or the `xcode.test.scheme`.")
+            errorMessages << "Please configure the `xcode.scheme` or the `xcode.test.scheme`."
         }
         if (extension.isTargetRequired() && isBlank(target?.get())) {
-            errorMessages << "- Please configure the build `target`, or the `xcode.workspace` and `xcode.scheme`. See available targets with `xcodebuild -list`."
+            errorMessages << "Please configure the `xcode.test.target` or `xcode.scheme`. See available targets with `xcodebuild -list`."
         }
 
-        destination.validate()
+        try {
+            destination.validate()
+        }
+        catch(InvalidXcodeConfigurationException e) {
+            errorMessages << e.message
+        }
+        
+        if(!errorMessages.isEmpty()) {
+            throw new InvalidXcodeConfigurationException(errorMessages.join("\n"))
+        }
     }
 }
