@@ -1,11 +1,15 @@
 package com.gap.gradle.ivy
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.internal.artifacts.result.DefaultUnresolvedDependencyResult
 
 class IvyInfo {
 
     Project project
+    Log logger = LogFactory.getLog(IvyInfo)
 
     IvyInfo(Project project) {
         this.project = project
@@ -43,9 +47,14 @@ class IvyInfo {
         def dependencies = []
         project.allprojects.each { subProject ->
             subProject.configurations.each { config ->
-                dependencies.addAll(config.getIncoming().getResolutionResult().allDependencies.collect {
-                    it.selected.toString()
-                })
+                config.getIncoming().getResolutionResult().allDependencies.each {
+                    if(it instanceof DefaultUnresolvedDependencyResult) {
+                        logger.info("Resolve failed - ${it.toString()}")
+                    } else {
+                        dependencies.add(it.selected.toString())
+                    }
+                }
+
             }
         }
         return dependencies.unique()
