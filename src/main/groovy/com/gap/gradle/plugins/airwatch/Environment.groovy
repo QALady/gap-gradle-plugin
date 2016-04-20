@@ -13,7 +13,7 @@ class Environment {
     public static final def DEFAULT_PREPRODUCTION = new Environment("preProduction").with {
         apiHost = "https://cn377.awmdm.com/"
         consoleHost = "https://cn377.awmdm.com/"
-        tenantCode = "1AVBHIBAAAG6A4NQCFAA"
+        tenantCode = "e6YiHuz8QXx3mn2Q2hfH+UcKt4+z7YesTrtzwtYG/xs="
         credentialName = "AirWatchPreProd"
         locationGroupId = "570"
         return it
