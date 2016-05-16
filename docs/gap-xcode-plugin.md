@@ -8,11 +8,11 @@ This plugin exposes an extension called `xcode` that provides some syntax sugar 
 ```groovy
 buildscript {
     repositories {
-        maven { url 'http://artifactory.gapinc.dev/artifactory/remote-repos' }
+        maven { url 'http://artifactory.gapinc.dev/artifactory/maven-repos' }
         maven { url 'http://artifactory.gapinc.dev/artifactory/local-non-prod' }
         ivy {
             layout 'maven'
-            url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+            url "http://artifactory.gapinc.dev/artifactory/maven-repos"
         }
     }
 

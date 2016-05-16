@@ -19,7 +19,7 @@ class IvyInfoIntegrationTest {
         project.repositories{
             ivy {
                 layout "maven"
-                url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+                url "http://artifactory.gapinc.dev/artifactory/maven-repos"
             }
         }
         project.dependencies{
@@ -32,7 +32,7 @@ class IvyInfoIntegrationTest {
         childProject.repositories{
             ivy {
                 layout "maven"
-                url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+                url "http://artifactory.gapinc.dev/artifactory/maven-repos"
             }
         }
         childProject.dependencies{

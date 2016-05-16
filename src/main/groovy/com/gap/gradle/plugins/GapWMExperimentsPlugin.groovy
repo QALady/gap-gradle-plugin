@@ -29,12 +29,12 @@ class GapWMExperimentsPlugin implements Plugin<Project> {
           }
           maven {
               name "wm_maven_remote_repos"
-              url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+              url "http://artifactory.gapinc.dev/artifactory/maven-repos"
           }
           ivy {
               name "wm_ivy_remote_repos"
               layout "maven"
-              url "http://artifactory.gapinc.dev/artifactory/remote-repos"
+              url "http://artifactory.gapinc.dev/artifactory/maven-repos"
           }
       }
 

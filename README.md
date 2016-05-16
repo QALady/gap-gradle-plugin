@@ -16,10 +16,10 @@ buildscript {
     repositories {
         ivy {
             layout 'maven'
-            url 'http://artifactory.gapinc.dev/artifactory/remote-repos'
+            url 'http://artifactory.gapinc.dev/artifactory/maven-repos'
         }
         maven {
-            url 'http://artifactory.gapinc.dev/artifactory/remote-repos'
+            url 'http://artifactory.gapinc.dev/artifactory/maven-repos'
         }
     }
     dependencies {

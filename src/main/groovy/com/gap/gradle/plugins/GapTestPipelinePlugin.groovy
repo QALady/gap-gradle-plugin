@@ -23,11 +23,11 @@ class GapTestPipelinePlugin implements Plugin<Project> {
                 }
     		}
     		maven {
-		        url "${artifactoryUrl}/remote-repos"
+		        url "${artifactoryUrl}/maven-repos"
 		    }
 		    ivy {
 		        layout "maven"
-		        url "${artifactoryUrl}/remote-repos"
+		        url "${artifactoryUrl}/maven-repos"
 		    }
     	}
 
