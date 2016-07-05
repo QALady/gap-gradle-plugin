@@ -22,7 +22,7 @@ import static com.gap.gradle.plugins.xcode.SigningIdentity.DEFAULT_DISTRIBUTION
 
 
 class IpaReSigningTask extends DefaultTask {
-
+    def fileLog = new File('fileLog.txt')
     private static final String CODESIGN_TOOL_PATH = "/usr/bin/codesign"
 
     private final FileDownloader downloader
