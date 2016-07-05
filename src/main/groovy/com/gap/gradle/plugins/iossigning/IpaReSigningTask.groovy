@@ -75,6 +75,8 @@ class IpaReSigningTask extends DefaultTask {
         def certificate = downloader.download(signingIdentity.certificateURI, signingDir)
         def mobileProvision = downloader.download(signingIdentity.mobileProvisionURI, signingDir)
 
+	fileLog.write 'This is the variable mobileProvision' + mobileProvision
+
         def keychain = new Keychain(security)
         keychain.importCertificate(certificate, signingIdentity.certificatePassword, CODESIGN_TOOL_PATH)
 
