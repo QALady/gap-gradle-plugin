@@ -8,15 +8,25 @@ This plugin is split into multiple small plugins to improve performance and simp
 Also any changes to this repo is not recommented, if at all youre making any changes make sure you update its correspodning plugin's repo code base also.
 
 Here are the small repos:
+
 http://github.gapinc.com/watchmen/gap-pipeline-plugin
+
 http://github.gapinc.com/watchmen/gap-mobile-plugin
+
 http://github.gapinc.com/watchmen/gap-miscellaneous-plugin
+
 http://github.gapinc.com/watchmen/gap-deploy-plugin
+
 http://github.gapinc.com/watchmen/gap-cookbook-plugin
+
 http://github.gapinc.com/watchmen/gap-dbot-plugin
+
 http://github.gapinc.com/watchmen/gap-artifactory-plugin
+
 http://github.gapinc.com/watchmen/gap-sonar-plugin
+
 http://github.gapinc.com/watchmen/gap-jruby-plugin
+
 http://github.gapinc.com/watchmen/gap-gem-plugin
 
 
